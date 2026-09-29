@@ -84,7 +84,8 @@ static func build(gen: WorldGen, cx: int, cz: int, lod: int, veg_density: float)
 			norms[k] = nrm
 			var wx := ox + x
 			var wz := oz + z
-			cols[k] = Color(gen.forest_density(wx, wz), 0.0, 0.0, 1.0)
+			# Surface masks for the terrain shader: forest, trail, damp, desert.
+			cols[k] = Color(gen.forest_density(wx, wz), gen.path_mask(wx, wz), gen.wet_mask(wx, wz, h), gen.desert_k(wx, wz))
 			if lod == 0:
 				collision[k] = h
 
@@ -138,11 +139,16 @@ static func _add_skirts(verts: PackedVector3Array, norms: PackedVector3Array, co
 				idx.append_array([a, b, c, b, d, c])
 
 
-## Deterministic vegetation. Returns { kind: Array[Transform3D] }.
+## Deterministic vegetation by biome. Returns { kind: Array[Transform3D] }
+## for every tree species in MeshKit.TREES and every shrub in MeshKit.SHRUBS.
 static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: int, density: float) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = WorldGen.chunk_seed(cx, cz, 11)
-	var out := {"pine": [], "broadleaf": [], "bush": [], "rock": [], "grass": [], "flower": []}
+	var out := {&"rock": []}
+	for k in MeshKit.TREES:
+		out[k] = []
+	for k in MeshKit.SHRUBS:
+		out[k] = []
 	var ox := cx * CHUNK_SIZE
 	var oz := cz * CHUNK_SIZE
 
@@ -154,27 +160,25 @@ static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: 
 			var x := ox + (i + rng.randf()) * cell
 			var z := oz + (j + rng.randf()) * cell
 			var roll := rng.randf()
+			var pick := rng.randf()
 			var h := grid.height(x, z)
-			if h < 2.0:
+			if h < 1.8:
 				continue
 			var nrm := grid.normal(x, z)
-			if nrm.y < 0.8:
+			if nrm.y < 0.78:
 				continue
-			var forest := gen.forest_density(x, z)
-			var alpine := smoothstep(70.0, 110.0, h)
-			var chance := 0.03 + forest * 0.55 + alpine * 0.2
-			if h > gen.snow_line() + 25.0:
-				chance *= 0.15
-			if roll > chance:
+			var species := _tree_species(gen, x, z, h, nrm, roll, pick)
+			if species == &"":
 				continue
 			var s := rng.randf_range(0.8, 1.35)
-			var t := Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s, s * rng.randf_range(0.9, 1.15), s)), Vector3(x - ox, h - 0.2, z - oz))
-			if alpine > 0.5 or (forest < 0.3 and rng.randf() < 0.35):
-				out["pine"].append(t)
-			else:
-				out["broadleaf"].append(t)
+			var tilt := Vector3(rng.randf_range(-1, 1), 0, rng.randf_range(-1, 1)).normalized()
+			var basis := Basis(Vector3.UP, rng.randf() * TAU)
+			if tilt != Vector3.ZERO:
+				basis = Basis(tilt, rng.randf_range(0.0, 0.07)) * basis
+			basis = basis.scaled(Vector3(s, s * rng.randf_range(0.9, 1.15), s))
+			out[species].append(Transform3D(basis, Vector3(x - ox, h - 0.25, z - oz)))
 
-	# Boulders: rarer, larger, sit on slopes too.
+	# Boulders (mossy in damp or forested ground)
 	for k in 3:
 		var x := ox + rng.randf() * CHUNK_SIZE
 		var z := oz + rng.randf() * CHUNK_SIZE
@@ -183,24 +187,24 @@ static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: 
 			if h > 0.5:
 				var s := rng.randf_range(0.7, 2.6)
 				var b := Basis(Vector3(rng.randf(), rng.randf(), rng.randf()).normalized(), rng.randf() * TAU).scaled(Vector3(s, s * 0.7, s))
-				out["rock"].append(Transform3D(b, Vector3(x - ox, h - 0.3 * s, z - oz)))
+				out[&"rock"].append(Transform3D(b, Vector3(x - ox, h - 0.3 * s, z - oz)))
 
 	if lod > 0:
 		return out
 
-	# Undergrowth: bushes, grass clumps, flowers (density scales with quality).
-	var bush_count := int(18 * density)
-	for k in bush_count:
+	# Undergrowth (density scales with quality)
+	var shrub_count := int(40 * density)
+	for k in shrub_count:
 		var x := ox + rng.randf() * CHUNK_SIZE
 		var z := oz + rng.randf() * CHUNK_SIZE
 		var h := grid.height(x, z)
-		if h < 2.5 or h > gen.snow_line():
+		if h < 0.8 or h > gen.snow_line():
 			continue
-		var f := gen.forest_density(x, z)
-		if rng.randf() > 0.25 + f * 0.7:
+		var kind := _shrub_kind(gen, x, z, h, rng.randf())
+		if kind == &"":
 			continue
 		var s := rng.randf_range(0.6, 1.3)
-		out["bush"].append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s), Vector3(x - ox, h - 0.1, z - oz)))
+		out[kind].append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s), Vector3(x - ox, h - 0.1, z - oz)))
 
 	var grass_count := int(2000 * density)
 	for k in grass_count:
@@ -209,17 +213,69 @@ static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: 
 		var h := grid.height(ox + lx, oz + lz)
 		if h < 2.8 or h > gen.snow_line() - 20.0:
 			continue
+		if gen.desert_k(ox + lx, oz + lz) > 0.4 or gen.veil_k(ox + lx, oz + lz) > 0.5:
+			continue
 		var nrm := grid.normal(ox + lx, oz + lz)
 		if nrm.y < 0.82:
 			continue
 		var s := rng.randf_range(0.75, 1.3)
 		var basis := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s, s * rng.randf_range(0.8, 1.4), s))
 		var t := Transform3D(basis, Vector3(lx, h - 0.05, lz))
-		if rng.randf() < 0.04:
-			out["flower"].append(t)
+		if rng.randf() < 0.045:
+			out[&"flower"].append(t)
 		else:
-			out["grass"].append(t)
+			out[&"grass"].append(t)
 	return out
+
+
+## Which tree grows here (or none). Every biome has its own silhouette.
+static func _tree_species(gen: WorldGen, x: float, z: float, h: float, nrm: Vector3, roll: float, pick: float) -> StringName:
+	var dk := gen.desert_k(x, z)
+	if dk > 0.5:
+		var wet := gen.wet_mask(x, z, h)
+		if wet > 0.3:
+			return &"palm" if roll < 0.45 else &""
+		return &"deadtree" if roll < 0.012 else &""
+	if gen.veil_k(x, z) > 0.5:
+		return &"crystal" if roll < 0.07 else &""
+	var forest := gen.forest_density(x, z)
+	var alpine := smoothstep(70.0, 110.0, h)
+	var wet := gen.wet_mask(x, z, h)
+	var chance := 0.035 + forest * 0.55 + alpine * 0.2 + wet * 0.12
+	if h > gen.snow_line() + 25.0:
+		chance *= 0.15
+	if roll > chance:
+		return &""
+	if alpine > 0.5:
+		return &"cloud_pine" if pick < 0.35 or nrm.y < 0.88 else &"pine"
+	if wet > 0.5:
+		return &"willow" if pick < 0.5 else (&"bamboo" if pick < 0.8 else &"broadleaf")
+	var grove := gen.grove_mask(x, z)
+	if forest > 0.4:
+		if grove > 0.5:
+			return &"bamboo"
+		return &"cloud_pine" if pick < 0.12 else &"broadleaf"
+	if grove > 0.45:
+		return &"blossom"
+	return &"cloud_pine" if pick < 0.35 else &"broadleaf"
+
+
+static func _shrub_kind(gen: WorldGen, x: float, z: float, h: float, roll: float) -> StringName:
+	if gen.desert_k(x, z) > 0.5:
+		return &"cactus" if roll < 0.12 else &""
+	if gen.veil_k(x, z) > 0.5:
+		return &"rock_moss" if roll < 0.15 else &""
+	var wet := gen.wet_mask(x, z, h)
+	if wet > 0.55:
+		return &"reeds" if roll < 0.7 else &"rock_moss"
+	var forest := gen.forest_density(x, z)
+	if forest > 0.5:
+		return &"fern" if roll < 0.55 else (&"bush" if roll < 0.85 else &"rock_moss")
+	if roll < 0.35:
+		return &"bush"
+	if roll < 0.5:
+		return &"fern"
+	return &""
 
 
 ## Gameplay placements for this sector: resource nodes and wildlife/enemy

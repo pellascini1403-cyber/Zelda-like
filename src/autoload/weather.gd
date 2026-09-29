@@ -23,6 +23,8 @@ var storm := 0.0
 var temperature_mod := 0.0
 var wetness := 0.0
 var snow := 0.0
+## Sandstorm intensity (desert).
+var sand := 0.0
 
 var _region: StringName = &"valley"
 var _rng := RandomNumberGenerator.new()
@@ -98,7 +100,7 @@ func set_weather(id: StringName, instant: bool = false) -> void:
 
 func _snapshot() -> Dictionary:
 	return {"rain": rain, "cloud_cover": cloud_cover, "fog": fog, "wind": wind_strength,
-		"storm": storm, "temperature": temperature_mod, "snow": snow}
+		"storm": storm, "temperature": temperature_mod, "snow": snow, "sand": sand}
 
 
 func _apply(t: float) -> void:
@@ -110,6 +112,7 @@ func _apply(t: float) -> void:
 	storm = lerpf(_from.get("storm", 0.0), _to.get("storm", 0.0), k)
 	temperature_mod = lerpf(_from.get("temperature", 0.0), _to.get("temperature", 0.0), k)
 	snow = lerpf(_from.get("snow", 0.0), _to.get("snow", 0.0), k)
+	sand = lerpf(_from.get("sand", 0.0), _to.get("sand", 0.0), k)
 
 
 ## Lightning seeks metal: a player carrying metal gear during a storm gets a

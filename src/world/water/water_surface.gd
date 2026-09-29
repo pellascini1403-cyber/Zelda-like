@@ -3,7 +3,7 @@ extends MeshInstance3D
 ## One water plane at sea level that follows the camera in fixed steps (so
 ## the wave pattern never swims). Covers sea, lake and river at once.
 
-const SIZE := 3200.0
+const SIZE := 4400.0
 const SNAP := 32.0
 
 

@@ -60,6 +60,14 @@ func _start() -> void:
 	water.name = "Water"
 	add_child(water)
 	water.setup(island.texture)
+	var mist := MistBanks.new()
+	mist.name = "Mist"
+	add_child(mist)
+	mist.build(gen)
+	for f in DB.world.get("falls", []):
+		var wf := Waterfall.create(f, gen)
+		wf.name = "Falls_" + String(f["id"])
+		add_child(wf)
 
 	# 3. Atmosphere
 	environment_ctl = EnvironmentController.new()

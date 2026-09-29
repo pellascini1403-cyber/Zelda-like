@@ -90,25 +90,28 @@ func _apply_vegetation(data: Dictionary, veg_distance: float) -> void:
 	add_child(_veg_root)
 	var veg: Dictionary = data["veg"]
 	var far := veg_distance * 4.0
-	if lod == 0:
-		# HLOD: full trees near, simplified trees further out, same sector.
-		var near := veg_distance * 1.3
-		_add_mm(veg["pine"], &"pine", &"foliage", true, near)
-		_add_mm(veg["pine"], &"pine_lod", &"foliage", false, far, near)
-		_add_mm(veg["broadleaf"], &"broadleaf", &"foliage", true, near)
-		_add_mm(veg["broadleaf"], &"broadleaf_lod", &"foliage", false, far, near)
-		_add_mm(veg["rock"], &"rock", &"rock", true, far)
-	else:
-		_add_mm(veg["pine"], &"pine_lod", &"foliage", false, far)
-		_add_mm(veg["broadleaf"], &"broadleaf_lod", &"foliage", false, far)
-		_add_mm(veg["rock"], &"rock_lod", &"rock", false, far * 0.6)
+	var near := veg_distance * 1.3
+	for species in MeshKit.TREES:
+		var t: Array = veg.get(species, [])
+		if t.is_empty():
+			continue
+		var def: Array = MeshKit.TREES[species]
+		var mat := &"crystal" if species == &"crystal" else &"foliage"
+		if lod == 0 and def[0] != def[1]:
+			# HLOD: full tree near, simplified tree further out, same sector.
+			_add_mm(t, def[0], mat, true, near)
+			_add_mm(t, def[1], mat, false, far, near)
+		else:
+			_add_mm(t, def[1] if lod > 0 else def[0], mat, lod == 0, far)
+	_add_mm(veg[&"rock"], &"rock" if lod == 0 else &"rock_lod", &"rock", lod == 0, far if lod == 0 else far * 0.6)
 	if lod == 0:
 		# Visibility ranges are measured to the sector's centre, so pad them by
 		# the sector half-diagonal; the grass shader fades each blade itself.
 		var pad := ChunkBuilder.CHUNK_SIZE * 0.72
-		_add_mm(veg["bush"], &"bush", &"foliage", false, veg_distance * 1.5 + pad)
-		_add_mm(veg["grass"], &"grass", &"grass", false, veg_distance + pad)
-		_add_mm(veg["flower"], &"flower", &"vertex_color", false, veg_distance * 0.8 + pad)
+		for kind in [&"bush", &"fern", &"reeds", &"cactus", &"rock_moss"]:
+			_add_mm(veg[kind], kind, &"rock" if kind == &"rock_moss" else &"foliage", false, veg_distance * 1.5 + pad)
+		_add_mm(veg[&"grass"], &"grass", &"grass", false, veg_distance + pad)
+		_add_mm(veg[&"flower"], &"flower", &"vertex_color", false, veg_distance * 0.8 + pad)
 		_add_tree_colliders(veg)
 
 
@@ -143,17 +146,18 @@ func _add_tree_colliders(veg: Dictionary) -> void:
 	body.collision_layer = 1
 	body.collision_mask = 0
 	_veg_root.add_child(body)
-	for kind in ["pine", "broadleaf"]:
-		for t: Transform3D in veg[kind]:
+	for species in MeshKit.TREES:
+		var def: Array = MeshKit.TREES[species]
+		for t: Transform3D in veg.get(species, []):
 			var s := t.basis.get_scale()
 			var cs := CollisionShape3D.new()
 			var shape := CylinderShape3D.new()
-			shape.radius = 0.38 * s.x
-			shape.height = (2.4 if kind == "pine" else 4.2) * s.y
+			shape.radius = float(def[2]) * s.x
+			shape.height = float(def[3]) * s.y
 			cs.shape = shape
 			cs.position = t.origin + Vector3(0, shape.height * 0.5, 0)
 			body.add_child(cs)
-	for t: Transform3D in veg["rock"]:
+	for t: Transform3D in veg[&"rock"]:
 		var s := t.basis.get_scale()
 		var cs := CollisionShape3D.new()
 		var shape := SphereShape3D.new()

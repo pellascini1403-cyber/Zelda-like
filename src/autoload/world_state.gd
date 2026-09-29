@@ -2,7 +2,7 @@ extends Node
 ## Persistent world facts: harvested nodes, opened chests, defeated camps,
 ## discovered places and the explored-map mask.
 
-const MAP_CELLS := 64  # exploration mask resolution (32 m per cell)
+const MAP_CELLS := 96  # exploration mask resolution (32 m per cell)
 
 ## node id -> Clock.total_hours() when it respawns
 var harvested: Dictionary = {}

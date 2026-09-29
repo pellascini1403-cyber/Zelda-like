@@ -1,26 +1,33 @@
 class_name EnvironmentController
 extends Node3D
-## Presentation of time of day + weather. One directional light (sun by day,
-## moon by night), one Environment, one sky material: everything global,
-## updated once per frame — no per-light work.
+## Presentation of time of day + weather ("Jade, Cinnabar & Ink Mist").
+##
+## One directional light (sun by day, moon by night), one Environment, one sky
+## material and a baked 3D colour-grading LUT: all global, updated once per
+## frame. Warm key light against cool jade/blue ambient is the core of the
+## look; height fog makes the mist bands between depth planes.
 
 var sun: DirectionalLight3D
 var env: Environment
 var world_env: WorldEnvironment
 var sky_mat: ShaderMaterial
 
-# Key colors through the day: [hour, sky_top, horizon, light color, light energy, ambient, fog]
+# [hour, sky_top, horizon, light color, light energy, ambient, fog]
 const KEYS := [
-	[0.0, Color(0.02, 0.04, 0.1), Color(0.07, 0.1, 0.18), Color(0.5, 0.6, 0.9), 0.18, Color(0.1, 0.13, 0.22), Color(0.07, 0.09, 0.16)],
-	[5.0, Color(0.05, 0.08, 0.18), Color(0.2, 0.2, 0.3), Color(0.55, 0.6, 0.85), 0.15, Color(0.14, 0.16, 0.25), Color(0.18, 0.18, 0.26)],
-	[6.3, Color(0.3, 0.42, 0.66), Color(0.98, 0.62, 0.42), Color(1.0, 0.62, 0.38), 0.7, Color(0.42, 0.36, 0.38), Color(0.85, 0.6, 0.48)],
-	[8.0, Color(0.28, 0.5, 0.82), Color(0.74, 0.84, 0.92), Color(1.0, 0.9, 0.75), 1.25, Color(0.5, 0.56, 0.62), Color(0.7, 0.8, 0.9)],
-	[13.0, Color(0.22, 0.46, 0.84), Color(0.7, 0.83, 0.94), Color(1.0, 0.97, 0.9), 1.45, Color(0.55, 0.6, 0.66), Color(0.68, 0.8, 0.92)],
-	[17.3, Color(0.27, 0.46, 0.78), Color(0.84, 0.8, 0.72), Color(1.0, 0.82, 0.6), 1.1, Color(0.5, 0.5, 0.55), Color(0.8, 0.75, 0.7)],
-	[18.9, Color(0.24, 0.26, 0.5), Color(1.0, 0.5, 0.35), Color(1.0, 0.5, 0.3), 0.55, Color(0.4, 0.3, 0.36), Color(0.8, 0.48, 0.4)],
-	[20.3, Color(0.04, 0.06, 0.16), Color(0.15, 0.14, 0.26), Color(0.5, 0.6, 0.9), 0.16, Color(0.12, 0.13, 0.22), Color(0.12, 0.12, 0.2)],
-	[24.0, Color(0.02, 0.04, 0.1), Color(0.07, 0.1, 0.18), Color(0.5, 0.6, 0.9), 0.18, Color(0.1, 0.13, 0.22), Color(0.07, 0.09, 0.16)],
+	[0.0, Color(0.03, 0.05, 0.13), Color(0.1, 0.14, 0.24), Color(0.58, 0.68, 1.0), 0.32, Color(0.13, 0.17, 0.28), Color(0.1, 0.13, 0.22)],
+	[4.8, Color(0.06, 0.09, 0.2), Color(0.24, 0.24, 0.36), Color(0.6, 0.66, 0.95), 0.26, Color(0.17, 0.19, 0.3), Color(0.22, 0.22, 0.32)],
+	[6.2, Color(0.32, 0.42, 0.66), Color(1.0, 0.68, 0.46), Color(1.0, 0.64, 0.38), 0.95, Color(0.36, 0.36, 0.46), Color(0.9, 0.7, 0.58)],
+	[8.0, Color(0.26, 0.5, 0.84), Color(0.74, 0.86, 0.93), Color(1.0, 0.88, 0.68), 1.45, Color(0.36, 0.47, 0.52), Color(0.74, 0.84, 0.88)],
+	[13.0, Color(0.2, 0.45, 0.84), Color(0.7, 0.84, 0.93), Color(1.0, 0.95, 0.84), 1.6, Color(0.38, 0.5, 0.55), Color(0.72, 0.84, 0.9)],
+	[17.2, Color(0.24, 0.44, 0.78), Color(0.84, 0.84, 0.82), Color(1.0, 0.82, 0.6), 1.3, Color(0.36, 0.44, 0.54), Color(0.78, 0.8, 0.8)],
+	[18.9, Color(0.26, 0.26, 0.5), Color(1.0, 0.56, 0.4), Color(1.0, 0.52, 0.3), 0.8, Color(0.34, 0.28, 0.4), Color(0.86, 0.54, 0.46)],
+	[20.2, Color(0.05, 0.07, 0.18), Color(0.2, 0.18, 0.32), Color(0.58, 0.66, 1.0), 0.3, Color(0.15, 0.16, 0.28), Color(0.16, 0.16, 0.26)],
+	[24.0, Color(0.03, 0.05, 0.13), Color(0.1, 0.14, 0.24), Color(0.58, 0.68, 1.0), 0.32, Color(0.13, 0.17, 0.28), Color(0.1, 0.13, 0.22)],
 ]
+
+## Supernatural tint applied while inside the Veil Reaches (0..1).
+var veil := 0.0
+var desert := 0.0
 
 
 func _ready() -> void:
@@ -32,6 +39,7 @@ func _ready() -> void:
 	sun.shadow_bias = 0.08
 	sun.shadow_normal_bias = 2.4
 	sun.directional_shadow_fade_start = 0.7
+	sun.light_angular_distance = 0.6
 	add_child(sun)
 
 	sky_mat = ShaderMaterial.new()
@@ -47,25 +55,28 @@ func _ready() -> void:
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
-	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.0
-	env.tonemap_white = 6.0
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.tonemap_exposure = 1.05
+	env.tonemap_white = 5.0
 	env.fog_enabled = true
+	env.fog_mode = Environment.FOG_MODE_EXPONENTIAL
 	env.fog_light_energy = 1.0
-	env.fog_sun_scatter = 0.25
-	env.fog_density = 0.0012
-	env.fog_sky_affect = 0.35
-	env.fog_height = 40.0
-	env.fog_height_density = 0.004
-	env.fog_aerial_perspective = 0.35
+	env.fog_sun_scatter = 0.45
+	env.fog_density = 0.0016
+	env.fog_sky_affect = 0.55
+	env.fog_height = 32.0
+	env.fog_height_density = 0.018
+	env.fog_aerial_perspective = 0.55
 	env.glow_enabled = true
-	env.glow_intensity = 0.5
-	env.glow_strength = 0.9
-	env.glow_bloom = 0.05
-	env.glow_hdr_threshold = 1.1
+	env.glow_intensity = 0.6
+	env.glow_strength = 1.0
+	env.glow_bloom = 0.08
+	env.glow_hdr_threshold = 0.95
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
 	env.adjustment_enabled = true
-	env.adjustment_saturation = 1.08
-	env.adjustment_contrast = 1.04
+	env.adjustment_saturation = 1.05
+	env.adjustment_contrast = 1.06
+	env.adjustment_color_correction = ColorGrade.build_lut()
 	world_env = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
@@ -81,7 +92,7 @@ func _apply_quality() -> void:
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY if Quality.level > Quality.Level.LOW else Environment.REFLECTION_SOURCE_DISABLED
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	var h := Clock.hour
 	var k := _sample(h)
 	var sky_top: Color = k[0]
@@ -91,35 +102,65 @@ func _process(_delta: float) -> void:
 	var ambient: Color = k[4]
 	var fog_col: Color = k[5]
 
+	# Regional moods blend in smoothly (desert heat haze, Veil otherworld).
+	var target_desert := 0.0
+	var target_veil := 0.0
+	if Game.player:
+		var r: StringName = (Game.player as Player).region
+		target_desert = 1.0 if r == &"desert" else 0.0
+		target_veil = 1.0 if r == &"veil" else 0.0
+	desert = move_toward(desert, target_desert, delta * 0.25)
+	veil = move_toward(veil, target_veil, delta * 0.25)
+	if desert > 0.0:
+		horizon = horizon.lerp(Color(0.98, 0.84, 0.64) * maxf(Clock.daylight(), 0.25), desert * 0.6)
+		fog_col = fog_col.lerp(Color(0.95, 0.8, 0.6) * maxf(Clock.daylight(), 0.25), desert * 0.7)
+		light_col = light_col.lerp(Color(1.0, 0.86, 0.66), desert * 0.5)
+	if veil > 0.0:
+		sky_top = sky_top.lerp(Color(0.2, 0.12, 0.38), veil * 0.7)
+		horizon = horizon.lerp(Color(0.62, 0.5, 0.86), veil * 0.7)
+		fog_col = fog_col.lerp(Color(0.56, 0.46, 0.8), veil * 0.8)
+		ambient = ambient.lerp(Color(0.36, 0.3, 0.55), veil * 0.6)
+
 	# Sun path: rises in the east (+X), sets in the west, tilted south.
 	var day_angle := (h - 6.0) / 24.0 * TAU
 	var sun_dir := Vector3(cos(day_angle), sin(day_angle), 0.35).normalized()
 	var moon_dir := -sun_dir
 	var daylight := Clock.daylight()
 	var light_dir := sun_dir if sun_dir.y > -0.05 else moon_dir
+	# Keep the light a little above the horizon so shadows never go infinite.
+	light_dir.y = maxf(light_dir.y, 0.12)
+	light_dir = light_dir.normalized()
 	sun.look_at_from_position(Vector3.ZERO, -light_dir, Vector3.UP if absf(light_dir.y) < 0.99 else Vector3.FORWARD)
 
 	# Weather dims and greys everything.
 	var overcast := clampf(Weather.cloud_cover * 1.1 - 0.35, 0.0, 1.0)
 	var storm := Weather.storm
-	var grey := Color(0.55, 0.58, 0.62).lerp(Color(0.28, 0.3, 0.34), storm)
+	var grey := Color(0.6, 0.64, 0.67).lerp(Color(0.3, 0.32, 0.37), storm)
 	sky_top = sky_top.lerp(grey * maxf(daylight, 0.15), overcast * 0.8)
-	horizon = horizon.lerp(grey * 1.2 * maxf(daylight, 0.15), overcast * 0.7)
-	light_energy *= lerpf(1.0, 0.35, overcast)
+	horizon = horizon.lerp(grey * 1.15 * maxf(daylight, 0.15), overcast * 0.7)
+	light_energy *= lerpf(1.0, 0.4, overcast)
 	fog_col = fog_col.lerp(grey * maxf(daylight, 0.2), overcast * 0.8)
+	if Weather.sand > 0.0:
+		fog_col = fog_col.lerp(Color(0.8, 0.6, 0.38) * maxf(daylight, 0.2), Weather.sand)
+		horizon = horizon.lerp(Color(0.85, 0.66, 0.44) * maxf(daylight, 0.2), Weather.sand)
+		light_energy *= lerpf(1.0, 0.55, Weather.sand)
 
 	sun.light_color = light_col
 	sun.light_energy = light_energy
-	sun.shadow_enabled = light_energy > 0.3
-	env.ambient_light_color = ambient.lerp(grey * 0.7, overcast * 0.5)
+	sun.shadow_enabled = light_energy > 0.2
+	env.ambient_light_color = ambient.lerp(grey * 0.75, overcast * 0.5)
 	env.ambient_light_energy = 1.0
 	env.fog_light_color = fog_col
-	env.fog_density = 0.0009 + Weather.fog * 0.02 + Weather.rain * 0.004 + overcast * 0.0015
-	env.fog_height_density = 0.003 + Weather.fog * 0.02
+	env.fog_density = 0.0009 + Weather.fog * 0.018 + Weather.rain * 0.004 + overcast * 0.0012 + Weather.sand * 0.02 + veil * 0.002
+	env.fog_height_density = 0.01 + Weather.fog * 0.03 + Weather.rain * 0.01
+	# Dawn mist settles in the valleys.
+	var dawn := smoothstep(4.5, 6.5, h) * (1.0 - smoothstep(7.5, 10.0, h))
+	env.fog_height = 30.0 + dawn * 25.0
+	env.fog_height_density += dawn * 0.02
 
 	sky_mat.set_shader_parameter("top_color", sky_top)
 	sky_mat.set_shader_parameter("horizon_color", horizon)
-	sky_mat.set_shader_parameter("ground_color", horizon * 0.55)
+	sky_mat.set_shader_parameter("ground_color", horizon * 0.62)
 	sky_mat.set_shader_parameter("sun_dir", sun_dir)
 	sky_mat.set_shader_parameter("moon_dir", moon_dir)
 	sky_mat.set_shader_parameter("sun_color", light_col)
@@ -127,11 +168,14 @@ func _process(_delta: float) -> void:
 	sky_mat.set_shader_parameter("cloud_darkness", clampf(overcast * 0.7 + storm * 0.3, 0.0, 1.0))
 	sky_mat.set_shader_parameter("night", 1.0 - daylight)
 	sky_mat.set_shader_parameter("star_intensity", smoothstep(0.55, 0.95, 1.0 - daylight) * (1.0 - overcast))
+	sky_mat.set_shader_parameter("veil", veil)
 
 	# Lanterns & windows at night (group-based, a handful of lights at most).
-	var night_energy := (1.0 - daylight) * 1.4
+	var night_energy := (1.0 - daylight) * 1.6
 	for l in get_tree().get_nodes_in_group(&"night_lights"):
 		(l as Light3D).light_energy = night_energy
+	RenderingServer.global_shader_parameter_set(&"night_glow", 1.0 - daylight)
+	RenderingServer.global_shader_parameter_set(&"mist_color", Vector3(fog_col.r, fog_col.g, fog_col.b) * 1.04)
 
 
 func _sample(h: float) -> Array:

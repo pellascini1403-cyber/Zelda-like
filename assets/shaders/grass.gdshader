@@ -8,9 +8,9 @@ global uniform float wetness;
 global uniform vec3 player_pos;
 
 uniform sampler2D noise_tex : filter_linear_mipmap, repeat_enable;
-uniform vec3 grass_lush : source_color = vec3(0.30, 0.47, 0.16);
-uniform vec3 grass_dry : source_color = vec3(0.56, 0.58, 0.27);
-uniform vec3 tip_color : source_color = vec3(0.72, 0.78, 0.38);
+uniform vec3 grass_lush : source_color = vec3(0.26, 0.47, 0.27);
+uniform vec3 grass_dry : source_color = vec3(0.62, 0.6, 0.32);
+uniform vec3 tip_color : source_color = vec3(0.7, 0.8, 0.46);
 uniform float fade_start = 38.0;
 uniform float fade_end = 52.0;
 
@@ -35,9 +35,10 @@ void vertex() {
 	float cd = length(origin - CAMERA_POSITION_WORLD);
 	VERTEX *= 1.0 - smoothstep(fade_start, fade_end, cd);
 
-	float macro = texture(noise_tex, origin.xz * 0.0021).r;
-	float mid = texture(noise_tex, origin.xz * 0.019).r;
-	base_col = mix(grass_lush, grass_dry, smoothstep(0.45, 0.75, macro + mid * 0.25));
+	float macro = texture(noise_tex, origin.xz * 0.0019).r;
+	float mid = texture(noise_tex, origin.xz * 0.017).r;
+	base_col = mix(grass_lush, grass_lush * 1.45, smoothstep(0.35, 0.7, mid));
+	base_col = mix(base_col, grass_dry, smoothstep(0.55, 0.8, macro + mid * 0.2) * 0.65);
 }
 
 void fragment() {

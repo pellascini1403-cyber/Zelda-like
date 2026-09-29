@@ -10,7 +10,7 @@ extends RefCounted
 ##
 ## Coordinates: meters, origin at island center, -Z is north. Sea level = 0.
 
-const WORLD_HALF := 1024.0
+const WORLD_HALF := 1536.0
 const ISLAND_RADIUS := 900.0
 const SEA_LEVEL := 0.0
 
@@ -23,6 +23,12 @@ const LAKE_RADIUS := 150.0
 const FOREST_CENTER := Vector2(470.0, 230.0)
 const FOREST_RADIUS := 300.0
 const PLATEAU_CENTER := Vector2(390.0, -230.0)
+# Eastern desert landmass and the north-eastern Veil Reaches (supernatural).
+const DESERT_CENTER := Vector2(1170.0, 250.0)
+const DESERT_RADIUS := Vector2(470.0, 400.0)
+const OASIS_CENTER := Vector2(1080.0, 340.0)
+const VEIL_CENTER := Vector2(880.0, -880.0)
+const VEIL_RADIUS := 330.0
 const RIVER := [Vector2(-395.0, 200.0), Vector2(-330.0, 380.0), Vector2(-300.0, 560.0), Vector2(-250.0, 760.0), Vector2(-230.0, 960.0)]
 
 enum Surface { GRASS, FOREST_FLOOR, ROCK, SNOW, SAND, DIRT }
@@ -32,8 +38,13 @@ var _detail := FastNoiseLite.new()
 var _ridge := FastNoiseLite.new()
 var _warp := FastNoiseLite.new()
 var _mask := FastNoiseLite.new()
+var _dune := FastNoiseLite.new()
 ## POI pads: Array of [Vector2 center, radius, target height or NAN for "local"]
 var _pads: Array = []
+## Waterfall pools carved into the terrain: [Vector2 center, radius, bottom]
+var _pools: Array = []
+## Trails between places: Array of PackedVector2Array polylines
+var _paths: Array = []
 
 
 func _init(seed_value: int = 1337, pads: Array = []) -> void:
@@ -59,6 +70,8 @@ func _init(seed_value: int = 1337, pads: Array = []) -> void:
 
 	_mask.seed = seed_value + 4
 	_mask.frequency = 1.0 / 180.0
+	_dune.seed = seed_value + 5
+	_dune.frequency = 1.0 / 90.0
 	_pads = pads
 
 
@@ -69,7 +82,19 @@ static func from_world_data(world: Dictionary) -> WorldGen:
 		if poi.has("flatten"):
 			var p: Array = poi["pos"]
 			pads.append([Vector2(p[0], p[1]), float(poi["flatten"]), float(poi.get("pad_height", NAN))])
-	return WorldGen.new(int(world.get("seed", 1337)), pads)
+	var g := WorldGen.new(int(world.get("seed", 1337)), pads)
+	for f in world.get("falls", []):
+		var b: Array = f["bottom"]
+		g._pools.append([Vector2(b[0], b[1]), float(f.get("pool_radius", 9.0)), float(f["pool_y"]) - 1.6])
+	var poi_pos := {}
+	for poi in world.get("pois", []):
+		poi_pos[poi["id"]] = Vector2(poi["pos"][0], poi["pos"][1])
+	for path in world.get("paths", []):
+		var line := PackedVector2Array()
+		for node in path:
+			line.append(poi_pos[node] if node is String else Vector2(node[0], node[1]))
+		g._paths.append(line)
+	return g
 
 
 func height(x: float, z: float) -> float:
@@ -79,6 +104,9 @@ func height(x: float, z: float) -> float:
 	var wz := _warp.get_noise_2d(z + 500.0, x - 300.0) * 140.0
 	var d := Vector2(x + wx, z + wz).length() / ISLAND_RADIUS
 	var land := 1.0 - smoothstep(0.78, 1.0, d)
+	var dk := desert_k(x + wx * 0.5, z + wz * 0.5)
+	var vk := veil_k(x + wx * 0.5, z + wz * 0.5)
+	land = maxf(land, maxf(dk, vk))
 	var h := lerpf(-22.0, 5.0, land)
 
 	# --- Rolling hills with terraced rock bands (climbable cliffs) -----------
@@ -103,6 +131,28 @@ func height(x: float, z: float) -> float:
 		mh = lerpf(mh, _terrace(mh, 22.0, 0.25), 0.55 * smoothstep(0.1, 0.6, m))
 		h += mh
 
+	# --- Desert: dune fields, sandstone mesas, an oasis ------------------------
+	if dk > 0.0:
+		var u := x * 0.8 + z * 0.35 + _dune.get_noise_2d(x, z) * 60.0
+		var dune := pow(absf(sin(u * 0.045)), 1.6) * 7.0 + _dune.get_noise_2d(x * 2.0, z * 2.0) * 3.0
+		var mesa_n := _mask.get_noise_2d(x * 0.8 + 3000.0, z * 0.8)
+		var mesa := smoothstep(0.32, 0.4, mesa_n) * 34.0
+		mesa = lerpf(mesa, _terrace(mesa + 0.01, 11.0, 0.12), 0.7)
+		var desert_h := 9.0 + dune + mesa
+		var od := p.distance_to(OASIS_CENTER) / 55.0
+		if od < 1.8:
+			desert_h = lerpf(desert_h, -2.5, smoothstep(1.8, 0.7, od))
+		h = lerpf(h, desert_h, smoothstep(0.0, 0.55, dk))
+
+	# --- Veil Reaches: a crater rim around a still, glowing lake ----------------
+	if vk > 0.0:
+		var vd := p.distance_to(VEIL_CENTER) / VEIL_RADIUS
+		var rim := exp(-pow((vd - 0.62) / 0.14, 2.0)) * (62.0 + _ridge.get_noise_2d(x, z) * 30.0)
+		var basin := smoothstep(0.55, 0.2, vd) * -16.0
+		var spikes := pow(maxf(_ridge.get_noise_2d(x * 2.5, z * 2.5), 0.0), 3.0) * 40.0 * smoothstep(0.9, 0.6, vd)
+		var veil_h := 6.0 + rim + basin + spikes
+		h = lerpf(h, veil_h, smoothstep(0.0, 0.6, vk))
+
 	# --- Needle plateau: raised table land ------------------------------------
 	var pd := p.distance_to(PLATEAU_CENTER) / 230.0
 	if pd < 1.0:
@@ -119,6 +169,12 @@ func height(x: float, z: float) -> float:
 	if rd < 40.0:
 		var carve := smoothstep(40.0, 7.0, rd)
 		h = lerpf(h, minf(h, -3.5), carve)
+
+	# --- Waterfall pools ---------------------------------------------------------
+	for pool in _pools:
+		var pdist: float = p.distance_to(pool[0])
+		if pdist < pool[1] * 1.6:
+			h = lerpf(h, minf(h, pool[2]), smoothstep(pool[1] * 1.6, pool[1] * 0.6, pdist))
 
 	# --- POI pads (village, ruins, camps) --------------------------------------
 	for pad in _pads:
@@ -150,6 +206,10 @@ func forest_density(x: float, z: float) -> float:
 
 
 func region_at(x: float, z: float) -> StringName:
+	if veil_k(x, z) > 0.45:
+		return &"veil"
+	if desert_k(x, z) > 0.45:
+		return &"desert"
 	var h := height(x, z)
 	var p := Vector2(x, z)
 	if h > 85.0 or p.distance_to(MOUNTAIN_CENTER) < MOUNTAIN_RADIUS * 0.8:
@@ -168,11 +228,56 @@ func surface_at(x: float, z: float, h: float, n: Vector3) -> Surface:
 		return Surface.ROCK
 	if h > snow_line() + _detail.get_noise_2d(x, z) * 10.0:
 		return Surface.SNOW
-	if h < 2.5:
+	if h < 2.5 or desert_k(x, z) > 0.5:
 		return Surface.SAND
 	if forest_density(x, z) > 0.55:
 		return Surface.FOREST_FLOOR
 	return Surface.GRASS
+
+
+## 0..1 influence of the eastern desert landmass.
+func desert_k(x: float, z: float) -> float:
+	var q := (Vector2(x, z) - DESERT_CENTER) / DESERT_RADIUS
+	return 1.0 - smoothstep(0.65, 1.0, q.length())
+
+
+## 0..1 influence of the Veil Reaches.
+func veil_k(x: float, z: float) -> float:
+	return 1.0 - smoothstep(0.7, 1.0, Vector2(x, z).distance_to(VEIL_CENTER) / VEIL_RADIUS)
+
+
+## Patches where special groves grow (blossom orchards, bamboo stands).
+func grove_mask(x: float, z: float) -> float:
+	return smoothstep(0.2, 0.45, _dune.get_noise_2d(x * 0.9 + 777.0, z * 0.9 - 333.0))
+
+
+## 1 on a trail, fading to 0 at its edge (vertex colour mask; no height change).
+func path_mask(x: float, z: float) -> float:
+	var p := Vector2(x, z)
+	var best := INF
+	for line: PackedVector2Array in _paths:
+		for i in line.size() - 1:
+			var a := line[i]
+			var b := line[i + 1]
+			var ab := b - a
+			var t := clampf((p - a).dot(ab) / maxf(ab.length_squared(), 0.001), 0.0, 1.0)
+			best = minf(best, p.distance_to(a + ab * t))
+	if best > 12.0:
+		return 0.0
+	best += _detail.get_noise_2d(x * 0.7, z * 0.7) * 1.4
+	return 1.0 - smoothstep(0.9, 2.6, best)
+
+
+## 0..1 dampness near lakes, rivers, pools and shores.
+func wet_mask(x: float, z: float, h: float) -> float:
+	var p := Vector2(x, z)
+	var w := 1.0 - smoothstep(0.0, 22.0, _distance_to_river(p) - 8.0)
+	w = maxf(w, 1.0 - smoothstep(LAKE_RADIUS * 1.05, LAKE_RADIUS * 1.45, p.distance_to(LAKE_CENTER)))
+	w = maxf(w, 1.0 - smoothstep(60.0, 100.0, p.distance_to(OASIS_CENTER)))
+	for pool in _pools:
+		w = maxf(w, 1.0 - smoothstep(pool[1], pool[1] * 3.0, p.distance_to(pool[0])))
+	w = maxf(w, 1.0 - smoothstep(1.5, 4.0, h))
+	return clampf(w, 0.0, 1.0)
 
 
 func snow_line() -> float:

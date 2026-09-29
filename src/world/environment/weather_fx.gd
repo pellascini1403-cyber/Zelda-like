@@ -1,11 +1,16 @@
 class_name WeatherFX
 extends Node3D
-## Rain / snow particles around the camera, lightning bolts, ambience levels.
+## Rain / snow / sand particles around the camera, ambient life (fireflies at
+## night, drifting motes by day, Veil sparks), lightning bolts, ambience.
 ## Particle budgets come from Quality; emitters follow the camera so the cost
 ## is constant no matter how big the world is.
 
 var rain: GPUParticles3D
 var snow: GPUParticles3D
+var sandstorm: GPUParticles3D
+var fireflies: GPUParticles3D
+var motes: GPUParticles3D
+var veil_sparks: GPUParticles3D
 var _flash: OmniLight3D
 var _flash_t := 0.0
 var _gen: WorldGen
@@ -17,6 +22,12 @@ func _ready() -> void:
 	snow = _make_precip(true)
 	add_child(rain)
 	add_child(snow)
+	sandstorm = _make_ambient(Color(0.86, 0.68, 0.45, 0.55), Vector2(0.9, 0.25), 500, 1.6, Vector3(14, 0.5, 0), false)
+	fireflies = _make_ambient(Color(1.0, 0.92, 0.45, 1.0), Vector2(0.07, 0.07), 70, 5.0, Vector3(0.3, 0.2, 0.3), true)
+	motes = _make_ambient(Color(1.0, 0.97, 0.85, 0.65), Vector2(0.04, 0.04), 60, 7.0, Vector3(0.4, 0.05, 0.2), true)
+	veil_sparks = _make_ambient(Color(0.55, 1.0, 0.9, 1.0), Vector2(0.08, 0.08), 90, 4.0, Vector3(0.0, 0.8, 0.0), true)
+	for p in [sandstorm, fireflies, motes, veil_sparks]:
+		add_child(p)
 	_flash = OmniLight3D.new()
 	_flash.light_color = Color(0.85, 0.9, 1.0)
 	_flash.omni_range = 120.0
@@ -27,6 +38,48 @@ func _ready() -> void:
 	EventBus.quality_changed.connect(func(_l: int) -> void:
 		rain.amount = Quality.particle_amount(1600)
 		snow.amount = Quality.particle_amount(900))
+
+
+## Camera-following ambient layer (budget scaled by Quality).
+func _make_ambient(col: Color, size: Vector2, amount: int, life: float, vel: Vector3, glow: bool) -> GPUParticles3D:
+	var p := GPUParticles3D.new()
+	p.amount = Quality.particle_amount(amount)
+	p.lifetime = life
+	p.emitting = false
+	p.visibility_aabb = AABB(Vector3(-30, -15, -30), Vector3(60, 30, 60))
+	var pm := ParticleProcessMaterial.new()
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	pm.emission_box_extents = Vector3(24, 5, 24)
+	pm.direction = vel.normalized() if vel.length() > 0.0 else Vector3.UP
+	pm.spread = 60.0
+	pm.initial_velocity_min = vel.length() * 0.5
+	pm.initial_velocity_max = vel.length() * 1.2
+	pm.gravity = Vector3.ZERO
+	pm.turbulence_enabled = true
+	pm.turbulence_noise_strength = 0.6
+	pm.turbulence_noise_scale = 3.0
+	var fade := Gradient.new()
+	fade.set_color(0, Color(col, 0.0))
+	fade.add_point(0.2, col)
+	fade.add_point(0.8, col)
+	fade.set_color(fade.get_point_count() - 1, Color(col, 0.0))
+	var gt := GradientTexture1D.new()
+	gt.gradient = fade
+	pm.color_ramp = gt
+	p.process_material = pm
+	var quad := QuadMesh.new()
+	quad.size = size
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	m.vertex_color_use_as_albedo = true
+	if glow:
+		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		m.albedo_color = Color(2.0, 2.0, 2.0)
+	quad.material = m
+	p.draw_pass_1 = quad
+	return p
 
 
 func _make_precip(is_snow: bool) -> GPUParticles3D:
@@ -68,6 +121,17 @@ func _process(delta: float) -> void:
 	var cold := c.y > _gen.snow_line() - 30.0 or Weather.snow > 0.3
 	rain.global_position = above
 	snow.global_position = above
+	var ground := c + Vector3(0, -2, 0)
+	for p in [sandstorm, fireflies, motes, veil_sparks]:
+		p.global_position = ground
+	var region: StringName = (Game.player as Player).region if Game.player else &"valley"
+	var dry := Weather.rain < 0.1
+	sandstorm.emitting = Weather.sand > 0.2
+	sandstorm.amount_ratio = clampf(Weather.sand, 0.05, 1.0)
+	(sandstorm.process_material as ParticleProcessMaterial).direction = Vector3(Weather.wind.x, 0.05, Weather.wind.z)
+	fireflies.emitting = Clock.is_night() and dry and region != &"desert" and region != &"highlands"
+	motes.emitting = not Clock.is_night() and dry and Weather.sand < 0.1
+	veil_sparks.emitting = region == &"veil"
 	rain.emitting = Weather.rain > 0.08 and not cold
 	snow.emitting = Weather.rain > 0.08 and cold
 	rain.amount_ratio = clampf(Weather.rain, 0.05, 1.0)

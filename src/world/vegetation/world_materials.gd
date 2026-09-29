@@ -39,6 +39,10 @@ static func get_mat(key: StringName) -> Material:
 			m = _shader_mat("res://assets/shaders/foliage.gdshader")
 			(m as ShaderMaterial).set_shader_parameter("is_rock", true)
 			(m as ShaderMaterial).set_shader_parameter("hue_shift", Color(0.95, 0.9, 0.85))
+		&"crystal":
+			m = _shader_mat("res://assets/shaders/foliage.gdshader")
+			(m as ShaderMaterial).set_shader_parameter("emissive", true)
+			(m as ShaderMaterial).set_shader_parameter("sway", 0.0)
 		&"grass":
 			m = _shader_mat("res://assets/shaders/grass.gdshader")
 		&"water":

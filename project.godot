@@ -120,3 +120,11 @@ wind_vec={
 "type": "vec4",
 "value": Vector4(1, 0, 0, 0.3)
 }
+mist_color={
+"type": "vec3",
+"value": Vector3(0.8, 0.86, 0.9)
+}
+night_glow={
+"type": "float",
+"value": 0.0
+}

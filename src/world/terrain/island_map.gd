@@ -6,10 +6,10 @@ extends RefCounted
 ## then shared by: HorizonTiles (far LOD tier), the water shader
 ## (shoreline / depth tint) and the map screen.
 
-const RES := 257
+const RES := 385
 const HEIGHT_OFFSET := -40.0
 const HEIGHT_SCALE := 340.0
-const CACHE_VERSION := 4
+const CACHE_VERSION := 5
 
 var heights := PackedFloat32Array()
 var texture: ImageTexture
