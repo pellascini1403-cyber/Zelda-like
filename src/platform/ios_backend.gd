@@ -10,6 +10,7 @@ var _thermal: Object
 
 
 func init() -> void:
+	super.init()
 	if Engine.has_singleton("InAppStore"):
 		_store = Engine.get_singleton("InAppStore")
 	if Engine.has_singleton("VelaThermal"):
@@ -26,4 +27,14 @@ func purchase(product_id: String) -> void:
 	if _store == null:
 		super.purchase(product_id)
 		return
-	_store.purchase({"product_id": "com.vela.game." + product_id})
+	_store.purchase({"product_id": store_id(product_id, "ios")})
+
+
+func store_available() -> bool:
+	return _store != null or super.store_available()
+
+
+func restore() -> void:
+	if _store and _store.has_method("restore_purchases"):
+		_store.restore_purchases()   # results arrive through the plugin event queue
+	super.restore()

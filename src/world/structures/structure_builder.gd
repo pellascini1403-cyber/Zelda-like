@@ -100,6 +100,7 @@ func _build_type(poi: Dictionary, root: Node3D) -> Array:
 		"cave": return _cave(poi, root)
 		"post": return _post(poi, root)
 		"quarry": return _quarry(poi, root)
+		"depot": return _depot(poi, root)
 		"village": return _village(poi, root)
 		"maze": return _maze(poi, root)
 		"camp": return _camp(poi, root)
@@ -1119,6 +1120,53 @@ func _post(poi: Dictionary, root: Node3D) -> Array:
 	var fp := basis * Vector3(3.0, 0, 3.5)
 	fire.position = fp + Vector3(0, _ground(root, fp), 0)
 	return _npc_spawns(poi, root)
+
+
+# --- Vantrel Depot: the vehicle maker's desert garage ------------------------------------------------------
+## A long low hangar of weathered silver panels on a stone apron, three bays
+## (two hold dead hulks: a promise of what can be restored), and the
+## restoration bench that opens the Garage.
+func _depot(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var yaw: float = poi.get("yaw", 0.0)
+	var basis := Basis(Vector3.UP, yaw)
+	var g := _ground(root, Vector3.ZERO)
+	var silver := Color(0.62, 0.63, 0.64)
+	var silver_dark := Color(0.42, 0.43, 0.45)
+	var soot := Color(0.12, 0.12, 0.13)
+	k.block(Vector3(0, g - 0.6, 0), Vector3(24.0, 1.4, 14.0), StructureKit.COOL_STONE * 0.95, yaw)
+	# Hangar: back wall, bay dividers, and a shallow ribbed roof.
+	var back := basis * Vector3(0, 0, 5.5)
+	k.block(back + Vector3(0, g + 2.6, 0), Vector3(20.0, 5.2, 0.5), silver_dark, yaw)
+	for i in 4:
+		var x := -10.0 + i * 6.66
+		var pc := basis * Vector3(x, 0, 1.5)
+		k.block(pc + Vector3(0, g + 2.6, 0), Vector3(0.45, 5.2, 8.5), silver, yaw)
+	for i in 9:
+		var z := -2.8 + i * 1.05
+		var rp := basis * Vector3(0, 0, z)
+		k.block(rp + Vector3(0, g + 5.35 + i * 0.07, 0), Vector3(20.8, 0.22, 1.0), silver if i % 2 == 0 else silver_dark, yaw, true, 0.02)
+	# Brand badge over the middle bay: a disc cut by a chevron, in soot iron.
+	var bc := basis * Vector3(0, 0, -2.9)
+	k.drum(bc + Vector3(0, g + 5.9, 0), 0.25, 1.1, 1.1, 10, soot)
+	k.block(bc + Vector3(-0.4, g + 6.05, 0), Vector3(0.35, 0.3, 1.6), silver, yaw + 0.7, false)
+	k.block(bc + Vector3(0.4, g + 6.05, 0), Vector3(0.35, 0.3, 1.6), silver, yaw - 0.7, false)
+	# Dead hulks under tarps in the side bays.
+	for sx in [-1.0, 1.0]:
+		var hp := basis * Vector3(sx * 6.6, 0, 2.0)
+		k.block(hp + Vector3(0, g + 0.7, 0), Vector3(1.4, 1.2, 3.0), Color(0.36, 0.33, 0.28), yaw + sx * 0.06)
+		k.block(hp + Vector3(0, g + 0.35, -1.3), Vector3(0.4, 0.7, 0.7), soot, yaw)
+		k.block(hp + Vector3(0, g + 0.35, 1.3), Vector3(0.4, 0.7, 0.7), soot, yaw)
+	for sx in [-1.0, 1.0]:
+		k.lantern_post(basis * Vector3(sx * 11.0, 0, -4.5) + Vector3(0, g, 0), yaw)
+	k.build(root, "Depot", 1200.0)
+	_night_lights(root, k.lamps, 1)
+	var bench := VehicleBench.new()
+	root.add_child(bench)
+	var bp := basis * Vector3(0, 0, 3.8)
+	bench.position = bp + Vector3(0, g, 0)
+	bench.rotation.y = yaw + PI
+	return []
 
 
 # --- Old quarry: cut blocks, a scarred rock face, a timber crane -------------------------------------

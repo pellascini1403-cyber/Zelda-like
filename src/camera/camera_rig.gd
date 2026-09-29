@@ -84,7 +84,16 @@ func _process(delta: float) -> void:
 			want_dist = 5.0
 		&"swim":
 			want_dist = 5.2
-	if target.sprinting:
+		&"drive":
+			var v: Vehicle = target.vehicle
+			if v:
+				var cam: Dictionary = v.def.get("camera", {})
+				var sp := clampf(absf(v.speed) / maxf(float(v.h.get("max_speed", 10.0)), 0.1), 0.0, 1.3)
+				want_dist = float(cam.get("distance", 7.0)) + sp * 1.5
+				want_fov = BASE_FOV + float(cam.get("fov_boost", 6.0)) * sp
+				if v.mode == &"water_mode":
+					want_dist += float(cam.get("water_height", 0.5))
+	if target.sprinting and st != &"drive":
 		want_dist = 6.2
 		want_fov = BASE_FOV + 6.0
 	if Game.in_combat or locked:
@@ -96,6 +105,13 @@ func _process(delta: float) -> void:
 		var target_yaw := rad_to_deg(atan2(-to.x, -to.z))
 		yaw = rad_to_deg(lerp_angle(deg_to_rad(yaw), deg_to_rad(target_yaw), minf(delta * 5.0, 1.0)))
 		pitch = lerpf(pitch, -14.0, delta * 3.0)
+	elif st == &"drive" and _idle_look_time > 0.6:
+		# Chase camera: swing in behind the machine's heading.
+		var v2: Vehicle = target.vehicle
+		if v2 and absf(v2.speed) > 1.5:
+			var diff2 := wrapf(rad_to_deg(v2.heading) - yaw, -180.0, 180.0)
+			yaw += diff2 * minf(delta * 2.2, 1.0)
+			pitch = lerpf(pitch, -12.0, delta * 1.2)
 	elif Settings.get_value("auto_camera") and _idle_look_time > 1.2 and st in [&"ground", &"glide", &"swim"]:
 		# Recenter behind the direction of travel, only when moving forward-ish.
 		var hv := Vector3(target.velocity.x, 0, target.velocity.z)

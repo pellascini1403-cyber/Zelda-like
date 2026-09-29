@@ -193,6 +193,9 @@ func _run() -> void:
 	# --- Quest world content -----------------------------------------------------------------------
 	await _quest_content(w, p)
 
+	# --- Premium vehicles ---------------------------------------------------------------------------
+	await _vehicles(w, p)
+
 	# --- World event -----------------------------------------------------------------------------------
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
 	var bp: Variant = w.events.beacon_position()
@@ -233,6 +236,13 @@ func _run() -> void:
 		print("before: ", JSON.stringify(quests_before))
 		print("after:  ", after)
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
+	check(PlayerData.owns_vehicle(&"longwake") and PlayerData.owns_vehicle(&"sparrow") and PlayerData.owns_vehicle(&"bellhull"), "vehicles restored from the save")
+	# Store entitlements belong to the account: a brand-new game gets them back.
+	PlayerData.reset_new_game()
+	Platform.apply_entitlements()
+	check(PlayerData.owns_vehicle(&"bellhull") and not PlayerData.owns_vehicle(&"longwake"), "store purchase re-applies to a new game, earned ones do not")
+	Platform.backend.clear_owned()
+	Platform.backend.sandbox = false
 	_finish()
 
 
@@ -387,6 +397,153 @@ func _quest_content(w: GameWorld, p: Player) -> void:
 			if ev.is_active():
 				_kill_near(ev.center, 40.0)
 		check(PlayerData.glimmer > g, "saving the traveller pays a reward")
+
+
+## Steers the driven vehicle toward `target` through the real input path.
+func _steer_to(target: Vector3, v: Vehicle) -> void:
+	var basis: Basis = Game.camera_rig.yaw_basis()
+	var d := target - v.global_position
+	d.y = 0.0
+	d = d.normalized()
+	var fwd := -basis.z
+	fwd.y = 0.0
+	var right := basis.x
+	right.y = 0.0
+	InputRouter.touch_move = Vector2(d.dot(right.normalized()), d.dot(fwd.normalized()))
+
+
+## Drives toward `target` for `secs`; returns the top speed reached.
+func _drive(v: Vehicle, target: Vector3, secs: float) -> float:
+	var top := 0.0
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < secs * 1000.0 and is_instance_valid(v):
+		_steer_to(target, v)
+		top = maxf(top, absf(v.speed))
+		await frames(1)
+	InputRouter.touch_move = Vector2.ZERO
+	return top
+
+
+func _summon_and_enter(p: Player, id: StringName) -> Vehicle:
+	PlayerData.equip_vehicle(id)
+	var mgr := VehicleManager.instance
+	if not mgr.summon(p):
+		return null
+	await seconds(0.6)
+	var v := mgr.active
+	p.enter_vehicle(v)
+	await frames(3)
+	return v
+
+
+func _vehicles(w: GameWorld, p: Player) -> void:
+	var mgr := VehicleManager.instance
+	check(mgr != null, "vehicle manager in the world")
+	check(not mgr.summon(p), "no vehicle, no summon")
+	# Restoration at the bench: parts + materials + glimmer.
+	check(not VehicleManager.restore_status(&"longwake")["ok"], "restoring needs the parts")
+	for vid in [&"longwake", &"sparrow"]:
+		for it in DB.vehicles[vid]["acquire"]["items"]:
+			PlayerData.inventory.add(StringName(it["id"]), int(it["count"]))
+	PlayerData.glimmer = 1300
+	check(VehicleManager.restore(&"longwake") and PlayerData.owns_vehicle(&"longwake"), "Longwake restored at the bench")
+	check(PlayerData.glimmer == 600 and PlayerData.inventory.count_of(&"longwake_core") == 0, "restoring spends glimmer and consumes the parts")
+	check(PlayerData.has_ability(&"vehicle_call"), "first vehicle teaches Vantrel Call")
+	check(VehicleManager.restore(&"sparrow"), "Sparrow restored at the bench")
+	# Store (sandboxed): optional purchase grants the capsule.
+	Platform.backend.clear_owned()
+	Platform.backend.sandbox = true
+	Platform.purchase("vehicle_bellhull")
+	await frames(2)
+	check(PlayerData.owns_vehicle(&"bellhull") and String(PlayerData.vehicles.get("bellhull", "")) == "store", "store purchase grants the Bellhull")
+	check(Platform.owns("vehicle_bellhull"), "entitlement recorded for restore")
+	mgr._unveil_pending = &""
+
+	# Heavy on the desert flats: fastest, boost goes beyond.
+	await teleport(1100.0, 250.0)
+	p.facing_yaw = -PI * 0.5
+	Game.camera_rig.yaw = -90.0
+	var far := Vector3(1400, 0, 250)
+	var heavy := await _summon_and_enter(p, &"longwake")
+	check(heavy != null and p.state_name() == &"drive", "Longwake summoned beside the player and driven")
+	var top_heavy := 0.0
+	if heavy:
+		var start := heavy.global_position
+		check(start.distance_to(p.global_position) < 8.0, "summon spot is next to the player")
+		top_heavy = await _drive(heavy, far, 6.0)
+		check(heavy.global_position.distance_to(start) > 60.0, "Longwake covers ground (%.0f m in 6 s)" % heavy.global_position.distance_to(start))
+		InputRouter.touch_sprint = true
+		var top_boost := await _drive(heavy, far, 1.5)
+		InputRouter.touch_sprint = false
+		check(top_boost > float(heavy.h["max_speed"]) * 0.98, "boost pushes past cruising speed (%.1f)" % top_boost)
+		p.exit_vehicle(false)
+		await frames(3)
+		check(p.vehicle == null and p.state_name() != &"drive", "getting out leaves the driver on foot")
+	# Light: slower top speed, but it jumps.
+	await teleport(1100.0, 250.0)
+	p.facing_yaw = -PI * 0.5
+	var light := await _summon_and_enter(p, &"sparrow")
+	check(light != null, "Sparrow summoned (previous machine put away)")
+	var top_light := 0.0
+	if light:
+		check(get_tree().get_nodes_in_group(&"vehicles").size() == 1, "only one vehicle out at a time")
+		top_light = await _drive(light, far, 4.0)
+		var y0 := light.global_position.y
+		Input.action_press("jump")
+		await seconds(0.5)
+		Input.action_release("jump")
+		var peak := y0
+		for i in 40:
+			await frames(1)
+			peak = maxf(peak, light.global_position.y)
+		check(peak - y0 > 1.5, "charged jump leaves the ground (%.1f m)" % (peak - y0))
+		p.exit_vehicle(false)
+	check(top_heavy > top_light, "heavy is faster than light (%.1f > %.1f)" % [top_heavy, top_light])
+	# Capsule: slowest, amphibious, armed.
+	await teleport(1100.0, 250.0)
+	p.facing_yaw = -PI * 0.5
+	var cap := await _summon_and_enter(p, &"bellhull")
+	if cap:
+		check(not p.visual.visible, "the capsule encloses its driver")
+		var top_cap := await _drive(cap, far, 4.0)
+		check(top_cap < top_light, "capsule is the slowest (%.1f)" % top_cap)
+		InputRouter.touch_move = Vector2.ZERO
+		var e := w.spawner.spawn_creature(&"ENEMY_THORNLING", cap.global_position + cap.facing_dir() * 9.0 + Vector3.UP, "", "test")
+		await frames(10)
+		var hp0: float = e.health.health if e else 0.0
+		Input.action_press("attack")
+		await seconds(2.2)
+		Input.action_release("attack")
+		check(e == null or not is_instance_valid(e) or e.health.health < hp0, "chin barrels hit the enemy in front")
+		check(cap.heat_ratio() > 0.3, "firing builds heat (%.2f)" % cap.heat_ratio())
+		mgr.boss_active = true
+		check(mgr.summon_block_reason(p) != "", "no summoning during a boss fight")
+		mgr.boss_active = false
+		p.exit_vehicle(false)
+	# Water: swim out, call the capsule, it floats; drive back to shore, it rolls out.
+	await teleport(-330.0, 60.0, 0.0)
+	p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+	p.change_state(&"swim")
+	await frames(10)
+	var boat := await _summon_and_enter(p, &"bellhull")
+	check(boat != null, "the capsule can be called while swimming")
+	if boat:
+		for i in 90:
+			await frames(1)
+		check(boat.mode == &"water_mode" and boat.transform_t > 0.9, "water under the hull: water_mode, wheels folded")
+		check(absf(boat.global_position.y - (WorldGen.SEA_LEVEL - float(boat.h["draft"]))) < 0.4, "the capsule floats at its waterline")
+		var shore := Vector3(-250, 0, 100)
+		var t0 := Time.get_ticks_msec()
+		while boat.mode == &"water_mode" and Time.get_ticks_msec() - t0 < 30000:
+			_steer_to(shore, boat)
+			await frames(1)
+		InputRouter.touch_move = Vector2.ZERO
+		check(boat.mode == &"land_mode", "reaching the shore: land_mode, wheels down")
+		p.exit_vehicle(false)
+	var gy := w.gen.height(-250, 100)
+	check(not VehicleManager.spot_is_free(p.get_world_3d(), Vector3(-250, gy, 100), Vector3(2, 2, 2)), "summon spots cutting into the ground are rejected")
+	check(VehicleManager.spot_is_free(p.get_world_3d(), Vector3(-250, gy + 40.0, 100), Vector3(2, 2, 2)), "open air counts as free")
+	mgr.put_away()
 
 
 func _finish() -> void:

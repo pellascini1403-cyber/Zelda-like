@@ -28,7 +28,8 @@ from loc_common import COMMON  # noqa: E402
 # line first (journal order, and who speaks first when an NPC has several).
 MODULES = [("q_main", "00_main"), ("q_valley", "10_valley"), ("q_forest", "20_forest"),
            ("q_highlands", "30_highlands"), ("q_water", "40_water"), ("q_desert", "50_desert"),
-           ("q_veil", "60_veil"), ("q_misc", "70_misc"), ("q_bounty", "80_bounty")]
+           ("q_veil", "60_veil"), ("q_misc", "70_misc"), ("q_bounty", "80_bounty"),
+           ("q_vehicles", "90_vehicles")]
 
 
 def data(p):

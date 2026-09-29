@@ -17,6 +17,7 @@ from loc_content import CONTENT  # noqa: E402
 from loc_items import ITEMS  # noqa: E402
 from loc_world2 import WORLD2  # noqa: E402
 from loc_quests import QUESTS  # noqa: E402
+from loc_vehicles import VEHICLES  # noqa: E402
 try:
     from loc_generated import GENERATED  # noqa: E402  (tools/gen_content.py)
 except ImportError:
@@ -27,7 +28,7 @@ LANGS = ["en", "es", "pt", "fr", "de", "ja", "ko", "zh"]
 
 def main() -> None:
     rows = {}
-    for table in (UI, CONTENT, WORLD2, QUESTS, GENERATED):
+    for table in (UI, CONTENT, WORLD2, QUESTS, VEHICLES, GENERATED):
         for key, values in table.items():
             rows[key] = values
     for item_id, (names, descs) in ITEMS.items():

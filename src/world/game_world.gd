@@ -14,6 +14,7 @@ var spawner: SpawnDirector
 var pois: PoiManager
 var bosses: BossManager
 var mounts: MountManager
+var vehicles: VehicleManager
 var events: WorldEventDirector
 var quest_content: QuestSpawner
 var ai: AIManager
@@ -109,6 +110,10 @@ func _start() -> void:
 	mounts.gen = gen
 	mounts.spawner = spawner
 	add_child(mounts)
+	vehicles = VehicleManager.new()
+	vehicles.name = "Vehicles"
+	vehicles.gen = gen
+	add_child(vehicles)
 	events = WorldEventDirector.new()
 	events.name = "WorldEvents"
 	events.gen = gen

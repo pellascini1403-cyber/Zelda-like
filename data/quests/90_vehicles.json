@@ -1,0 +1,405 @@
+[
+ {
+  "id": "vq_sparrow",
+  "type": "side",
+  "category": "exploration",
+  "region": "valley",
+  "difficulty": 4,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "climb",
+      "target": "needles",
+      "text_key": "QO_T_CLIMB",
+      "text_args": [
+       "POI_NEEDLES"
+      ],
+      "min_y": 76.0,
+      "radius": 80.0
+     }
+    ],
+    "talk_lines": [
+     "Q_VQ_SPARROW_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "course",
+      "target": "sparrow_line",
+      "text_key": "QO_T_COURSE_PAR",
+      "text_args": [
+       "Q_VQ_SPARROW_S1_O0_A0",
+       "26"
+      ],
+      "par": 26.0
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "course",
+      "id": "sparrow_line",
+      "mode": "glide",
+      "absolute": true,
+      "ring_radius": 4.2,
+      "range": 400,
+      "par": 26.0,
+      "title_key": "Q_VQ_SPARROW_S1_P0_BANNER",
+      "rings": [
+       [
+        420,
+        -212,
+        90.0
+       ],
+       [
+        445,
+        -192,
+        83.0
+       ],
+       [
+        470,
+        -172,
+        76.0
+       ],
+       [
+        495,
+        -152,
+        69.0
+       ],
+       [
+        520,
+        -132,
+        61.0
+       ],
+       [
+        545,
+        -112,
+        51.0
+       ],
+       [
+        570,
+        -94,
+        41.0
+       ],
+       [
+        592,
+        -78,
+        31.0
+       ]
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_VQ_SPARROW_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CLIMBER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_CLIMBER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_VQ_SPARROW_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_VQ_SPARROW",
+  "desc_key": "Q_VQ_SPARROW_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "vantrel_plan_sparrow",
+     "count": 1
+    },
+    {
+     "id": "sparrow_core",
+     "count": 1
+    }
+   ],
+   "jade": 2
+  },
+  "start": "talk:NPC_CLIMBER",
+  "requires": [
+   "mq_heights_beacon"
+  ],
+  "offer_lines": [
+   "Q_VQ_SPARROW_OF0"
+  ]
+ },
+ {
+  "id": "vq_longwake",
+  "type": "side",
+  "category": "combat",
+  "region": "desert",
+  "difficulty": 5,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "vantrel_depot",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_VANTREL_DEPOT"
+      ],
+      "marker": [
+       1060,
+       460
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "survive",
+      "target": "vq_depot_hold",
+      "text_key": "QO_T_SURVIVE",
+      "text_args": [
+       "POI_VANTREL_DEPOT"
+      ],
+      "marker": [
+       1060,
+       460
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "vq_depot_hold",
+      "mode": "survive",
+      "pos": [
+       1060,
+       460
+      ],
+      "radius": 20,
+      "duration": 80,
+      "interval": 7,
+      "max_alive": 5,
+      "trigger_radius": 18,
+      "element": "sand",
+      "title_key": "Q_VQ_LONGWAKE_S1_P0_BANNER",
+      "waves": [
+       {
+        "entity": "ENEMY_SCUTTLER",
+        "count": 3,
+        "dist": 16
+       },
+       {
+        "entity": "ENEMY_BULWARK",
+        "count": 1,
+        "dist": 18
+       },
+       {
+        "entity": "ENEMY_SPITTER",
+        "count": 2,
+        "dist": 18
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "longwake_bay",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "Q_VQ_LONGWAKE_S2_O0_A0"
+      ],
+      "marker": [
+       1060,
+       460
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "longwake_bay",
+      "look": "relic",
+      "pos": [
+       1066,
+       468
+      ],
+      "prompt": "PROMPT_TAKE",
+      "element": "sand"
+     }
+    ],
+    "talk_lines": [
+     "Q_VQ_LONGWAKE_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_VQ_LONGWAKE",
+  "desc_key": "Q_VQ_LONGWAKE_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "vantrel_plan_longwake",
+     "count": 1
+    },
+    {
+     "id": "longwake_core",
+     "count": 1
+    }
+   ],
+   "jade": 3,
+   "glimmer": 60
+  },
+  "start": "talk:NPC_CARAVAN",
+  "requires": [
+   "mq_glass_matriarch"
+  ],
+  "offer_lines": [
+   "Q_VQ_LONGWAKE_OF0"
+  ]
+ },
+ {
+  "id": "vq_bellhull",
+  "type": "side",
+  "category": "exploration",
+  "region": "lakeshore",
+  "difficulty": 5,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "swim",
+      "text_key": "QO_T_SWIM",
+      "text_args": [
+       "Q_VQ_BELLHULL_S0_O0_A0"
+      ],
+      "marker": [
+       -380,
+       30
+      ],
+      "pos": [
+       -380,
+       30
+      ],
+      "radius": 9.0
+     }
+    ],
+    "talk_lines": [
+     "Q_VQ_BELLHULL_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "kill",
+      "target": "ENEMY_SHADE",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_SHADE"
+      ],
+      "count": 5,
+      "hint": "area",
+      "area_radius": 260.0,
+      "marker": [
+       800,
+       -760
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "survive",
+      "target": "vq_bell_vigil",
+      "text_key": "QO_T_SURVIVE",
+      "text_args": [
+       "POI_HOLLOW_RING"
+      ],
+      "marker": [
+       1000,
+       -790
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "vq_bell_vigil",
+      "mode": "survive",
+      "pos": [
+       1000,
+       -790
+      ],
+      "radius": 18,
+      "duration": 75,
+      "interval": 7,
+      "max_alive": 5,
+      "trigger_radius": 16,
+      "element": "still",
+      "title_key": "Q_VQ_BELLHULL_S2_P0_BANNER",
+      "waves": [
+       {
+        "entity": "ENEMY_SHADE",
+        "count": 2,
+        "dist": 15
+       },
+       {
+        "entity": "ENEMY_WISP",
+        "count": 2,
+        "dist": 15
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_FISHER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_FISHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_VQ_BELLHULL_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_VQ_BELLHULL",
+  "desc_key": "Q_VQ_BELLHULL_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "vantrel_plan_bellhull",
+     "count": 1
+    },
+    {
+     "id": "bellhull_core",
+     "count": 1
+    }
+   ],
+   "jade": 3,
+   "glimmer": 60
+  },
+  "start": "talk:NPC_FISHER",
+  "requires": [
+   "mq_veil_edge"
+  ],
+  "offer_lines": [
+   "Q_VQ_BELLHULL_OF0"
+  ]
+ }
+]

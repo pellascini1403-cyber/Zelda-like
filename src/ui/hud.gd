@@ -149,6 +149,8 @@ func _ready() -> void:
 	EventBus.panel_requested.connect(func(panel: StringName, arg: String) -> void:
 		if panel == &"board":
 			board.open_board(arg)
+		elif panel == &"garage":
+			menu.open_garage(arg == "bench")
 		elif panel == &"altar":
 			altar.open_panel(tr("ALTAR_TITLE")))
 	EventBus.jade_changed.connect(func(total: int) -> void:

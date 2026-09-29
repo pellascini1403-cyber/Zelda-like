@@ -175,6 +175,18 @@ func _update_context() -> void:
 	var has_ab := p.abilities != null and p.abilities.selected != &""
 	ab.visible = ab.visible and has_ab and st != &"dead"
 	buttons["cycle_ability"].visible = ab.visible and p.abilities.unlocked().size() > 1
+	if st == &"drive" and p.vehicle:
+		for key in ["dodge", "block", "cycle_weapon", "drop", "use_item"]:
+			buttons[key].visible = false
+		var armed := p.vehicle.def.has("weapon")
+		b_attack.visible = armed
+		b_attack.label_key = "BTN_FIRE"
+		buttons["lock_on"].visible = armed and enemies_near
+		b_jump.visible = float(p.vehicle.h.get("jump", 0.0)) > 0.0 and p.vehicle.mode == &"land_mode"
+		inter.visible = true
+		inter.label_key = "PROMPT_EXIT_VEHICLE"
+	else:
+		b_attack.label_key = "BTN_ATTACK"
 	if st == &"ride":
 		for key in ["attack", "dodge", "block", "lock_on", "cycle_weapon", "drop", "use_item"]:
 			buttons[key].visible = false

@@ -31,6 +31,9 @@ var upgrades: Dictionary = {}
 ## Owned cosmetic ids and the ones in use per slot (trail, ribbon...).
 var cosmetics: Dictionary = {}
 var cosmetic_slots: Dictionary = {}
+## Premium vehicles: id -> "earned" | "store"; the one the summon calls.
+var vehicles: Dictionary = {}
+var vehicle_equipped: StringName = &""
 
 
 func _ready() -> void:
@@ -53,6 +56,8 @@ func reset_new_game() -> void:
 	upgrades.clear()
 	cosmetics.clear()
 	cosmetic_slots.clear()
+	vehicles.clear()
+	vehicle_equipped = &""
 	for entry in DB.world.get("starting_items", []):
 		inventory.add(StringName(entry["id"]), int(entry.get("count", 1)))
 	var club := inventory.find_first(&"bough_club")
@@ -108,6 +113,27 @@ func own_cosmetic(id: StringName) -> void:
 	var slot := String(c.get("slot", "trail"))
 	if not cosmetic_slots.has(slot):
 		cosmetic_slots[slot] = String(id)
+
+
+func owns_vehicle(id: StringName) -> bool:
+	return vehicles.has(String(id))
+
+
+## Idempotent. The first vehicle also teaches the summon (Vantrel Call).
+func own_vehicle(id: StringName, source: String) -> void:
+	if not DB.vehicles.has(id) or vehicles.has(String(id)):
+		return
+	vehicles[String(id)] = source
+	if vehicle_equipped == &"":
+		vehicle_equipped = id
+	if not has_ability(&"vehicle_call"):
+		unlock_ability(&"vehicle_call")
+	EventBus.vehicle_acquired.emit(id, source)
+
+
+func equip_vehicle(id: StringName) -> void:
+	if owns_vehicle(id):
+		vehicle_equipped = id
 
 
 ## Active cosmetic definition for a slot, or {} for the default look.
@@ -380,6 +406,7 @@ func save_state() -> Dictionary:
 		"health": health, "max_health": max_health, "stamina": stamina, "max_stamina": max_stamina,
 		"buffs": bf, "cookbook": cookbook, "abilities": abilities, "glimmer": glimmer,
 		"jade": jade, "upgrades": upgrades, "cosmetics": cosmetics, "cosmetic_slots": cosmetic_slots,
+		"vehicles": vehicles, "vehicle_equipped": String(vehicle_equipped),
 	}
 
 
@@ -407,5 +434,7 @@ func load_state(d: Dictionary) -> void:
 	upgrades = d.get("upgrades", {})
 	cosmetics = d.get("cosmetics", {})
 	cosmetic_slots = d.get("cosmetic_slots", {})
+	vehicles = d.get("vehicles", {})
+	vehicle_equipped = StringName(d.get("vehicle_equipped", ""))
 	for slot in EQUIP_SLOTS:
 		EventBus.equipment_changed.emit(slot)

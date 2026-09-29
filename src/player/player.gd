@@ -36,6 +36,7 @@ var combat: PlayerCombat
 var interactor: Interactor
 var abilities: PlayerAbilities
 var mount: Mount = null
+var vehicle: Vehicle = null
 var health: Health
 
 var state: PlayerState
@@ -113,7 +114,7 @@ func _ready() -> void:
 
 	for s: PlayerState in [GroundState.new(self), AirState.new(self), ClimbState.new(self), GlideState.new(self),
 			SwimState.new(self), DodgeState.new(self), BusyState.new(self), DeadState.new(self),
-			GustState.new(self), RideState.new(self)]:
+			GustState.new(self), RideState.new(self), DriveState.new(self)]:
 		states[s.state_name()] = s
 	state = states[&"ground"]
 	_world_gen = WorldGen.from_world_data(DB.world)
@@ -169,7 +170,7 @@ func state_name() -> StringName:
 
 # --- Mounts ---------------------------------------------------------------------------------------
 func ride(m: Mount) -> void:
-	if mount != null or state_name() in [&"dead", &"climb", &"swim", &"glide"]:
+	if mount != null or vehicle != null or state_name() in [&"dead", &"climb", &"swim", &"glide"]:
 		return
 	mount = m
 	m.start_ride(self)
@@ -188,6 +189,41 @@ func dismount(thrown: bool) -> void:
 	velocity = side * (6.0 if thrown else 2.0) + Vector3.UP * (5.0 if thrown else 2.5)
 	if state_name() == &"ride":
 		change_state(&"air")
+
+
+# --- Vehicles ------------------------------------------------------------------------------------
+func enter_vehicle(v: Vehicle) -> void:
+	if vehicle != null or mount != null or v.driver != null:
+		return
+	if state_name() in [&"dead", &"climb", &"glide", &"busy"]:
+		return
+	if state_name() == &"swim" and not v.is_capsule():
+		return
+	vehicle = v
+	v.start_drive(self)
+	change_state(&"drive")
+
+
+## Steps out at the side with the most room (never inside a rock or an NPC).
+## `thrown`: knocked off by a big hit or a wrecked hull.
+func exit_vehicle(thrown: bool) -> void:
+	var v := vehicle
+	if v == null:
+		return
+	vehicle = null
+	v.end_drive()
+	var side := v.facing_dir().cross(Vector3.UP).normalized()
+	var dist := float(v.def.get("exit_side", 1.4))
+	var spot := v.global_position + side * dist
+	for cand in [v.global_position + side * dist, v.global_position - side * dist, v.global_position - v.facing_dir() * (dist + 1.0)]:
+		if VehicleManager.spot_is_free(get_world_3d(), cand + Vector3.UP * 0.9, Vector3(0.7, 1.6, 0.7), [v.get_rid()]):
+			spot = cand
+			break
+	spot.y = maxf(spot.y, _world_gen.height(spot.x, spot.z)) + 0.3
+	global_position = spot
+	velocity = side * (5.0 if thrown else 1.0) + Vector3.UP * (5.0 if thrown else 2.0)
+	if state_name() == &"drive":
+		change_state(&"swim" if water_depth() > SWIM_DEPTH else &"air")
 
 
 ## Levity fields (Veil) lighten gravity. Cheap: a handful of zones at most.
@@ -388,7 +424,12 @@ func track_safe_ground(delta: float) -> void:
 
 # --- Damage / death --------------------------------------------------------------------------------
 func take_damage(info: DamageInfo) -> void:
-	if mount and not invulnerable and info.damage >= 18.0:
+	if vehicle and vehicle.rider_hidden():
+		vehicle.take_damage(info)   # the hull shields the driver
+		return
+	if vehicle and not invulnerable and info.amount >= 18.0:
+		exit_vehicle(true)
+	if mount and not invulnerable and info.amount >= 18.0:
 		dismount(true)
 	combat.receive(info)
 
@@ -428,7 +469,7 @@ func respawn() -> void:
 
 
 func is_in_critical_state() -> bool:
-	return state.state_name() in [&"climb", &"glide", &"swim", &"air", &"dead"]
+	return state.state_name() in [&"climb", &"glide", &"swim", &"air", &"dead", &"drive"]
 
 
 # --- Lightning (storm + metal) ------------------------------------------------------------------------

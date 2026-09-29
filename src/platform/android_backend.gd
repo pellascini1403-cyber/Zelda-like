@@ -10,6 +10,7 @@ var _thermal: Object
 
 
 func init() -> void:
+	super.init()
 	if Engine.has_singleton("GodotGooglePlayBilling"):
 		_billing = Engine.get_singleton("GodotGooglePlayBilling")
 	if Engine.has_singleton("VelaThermal"):
@@ -27,4 +28,14 @@ func purchase(product_id: String) -> void:
 	if _billing == null:
 		super.purchase(product_id)
 		return
-	_billing.purchase(product_id)
+	_billing.purchase(store_id(product_id, "android"))
+
+
+func store_available() -> bool:
+	return _billing != null or super.store_available()
+
+
+func restore() -> void:
+	if _billing and _billing.has_method("queryPurchases"):
+		_billing.queryPurchases("inapp")   # results arrive through the plugin signals
+	super.restore()

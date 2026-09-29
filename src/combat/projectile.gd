@@ -12,6 +12,8 @@ var gravity := 0.0
 var explode_radius := 0.0
 var life := 5.0
 var reflected := false
+## Damage multiplier against bosses (vehicle guns: never a boss shortcut).
+var vs_boss := 1.0
 
 var _mesh: MeshInstance3D
 
@@ -85,7 +87,8 @@ func reflect(new_owner: Node3D) -> void:
 
 
 func _impact(pos: Vector3, collider: Object) -> void:
-	var info := DamageInfo.make(damage, owner_body, velocity.normalized() * 4.0, element)
+	var dmg := damage * (vs_boss if collider is Boss else 1.0)
+	var info := DamageInfo.make(dmg, owner_body, velocity.normalized() * 4.0, element)
 	info.kind = &"projectile"
 	if collider is Player and not reflected:
 		var pl: Player = collider

@@ -138,6 +138,24 @@ ITEMS = [
          L("Paper and a stub of candle. Set it on moving water at night.", "Papel y un cabo de vela. Ponlo en agua corriente de noche.", "Papel e um toco de vela. Ponha em água corrente à noite.", "Papier et bout de bougie. À poser sur l'eau vive, la nuit.", "Papier und ein Kerzenstummel. Nachts aufs fließende Wasser setzen.", "紙と短い蝋燭。夜、流れる水に置く。", "종이와 짧은 초. 밤에 흐르는 물에 띄운다.", "纸与半截蜡烛，夜里放在流水上。"), max_stack=3),
 ]
 
+
+# --- Vantrel Works: premium vehicle parts (docs/VEHICLES.md) ------------------------------------------
+VANTREL_ITEMS = [
+    item("vantrel_plan_longwake", "key", L("Longwake schematic", "Esquema del Longwake", "Esquema do Longwake", "Schéma du Longwake", "Longwake-Bauplan", "ロングウェイクの設計図", "롱웨이크 설계도", "长航号图纸"),
+         L("Vantrel Works blueprint. Stamped: heavy class, not for novices.", "Plano de Vantrel Works. Sello: clase pesada, no apto para novatos.", "Planta da Vantrel Works. Carimbo: classe pesada, não para novatos.", "Plan de Vantrel Works. Tampon : classe lourde, pas pour débutants.", "Bauplan von Vantrel Works. Stempel: schwere Klasse, nichts für Anfänger.", "ヴァントレル工房の設計図。刻印：重量級、初心者不可。", "반트렐 공방 설계도. 도장: 중량급, 초보자 불가.", "凡特雷尔工坊图纸，盖章：重型，新手勿用。"), max_stack=1, rarity=3),
+    item("longwake_core", "key", L("Longwake drive core", "Núcleo motor del Longwake", "Núcleo motor do Longwake", "Cœur moteur du Longwake", "Longwake-Antriebskern", "ロングウェイクの駆動核", "롱웨이크 구동 핵", "长航号驱动核"),
+         L("Heavy, warm, humming in a slow, patient rhythm.", "Pesado, tibio, vibrando con un ritmo lento y paciente.", "Pesado, morno, vibrando num ritmo lento e paciente.", "Lourd, tiède, bourdonnant d'un rythme lent et patient.", "Schwer, warm, summt in langsamem, geduldigem Takt.", "重く温かく、ゆっくりと辛抱強く唸る。", "무겁고 따뜻하며 느리고 끈기 있게 웅웅거린다.", "沉重温热，以缓慢而耐心的节奏嗡鸣。"), max_stack=1, rarity=3),
+    item("vantrel_plan_sparrow", "key", L("Sparrow schematic", "Esquema del Sparrow", "Esquema do Sparrow", "Schéma du Sparrow", "Sparrow-Bauplan", "スパロウの設計図", "스패로 설계도", "雀号图纸"),
+         L("Margins full of notes: \"lighter\", \"springier\", \"again\".", "Márgenes llenos de notas: \"más ligera\", \"más elástica\", \"otra vez\".", "Margens cheias de notas: \"mais leve\", \"mais elástica\", \"de novo\".", "Marges pleines de notes : « plus légère », « plus souple », « encore ».", "Ränder voller Notizen: „leichter“, „federnder“, „nochmal“.", "余白に書き込み：「軽く」「弾ませろ」「もう一度」。", "여백 가득한 메모: \"더 가볍게\", \"더 탄력 있게\", \"다시\".", "页边写满批注：“再轻点”“再弹点”“重来”。"), max_stack=1, rarity=3),
+    item("sparrow_core", "key", L("Sparrow spring core", "Núcleo resorte del Sparrow", "Núcleo-mola do Sparrow", "Cœur-ressort du Sparrow", "Sparrow-Federkern", "スパロウのばね核", "스패로 스프링 핵", "雀号弹簧核"),
+         L("Squeeze it and it pushes back, eager to leap.", "Apriétalo y empuja de vuelta, con ganas de saltar.", "Aperte e ele empurra de volta, ansioso por saltar.", "Pressez-le : il repousse, impatient de bondir.", "Drück ihn, und er drückt zurück, sprungbereit.", "握ると押し返してくる。跳びたがっている。", "쥐면 되밀어낸다, 뛰고 싶어 안달이다.", "一捏就往回顶，跃跃欲跳。"), max_stack=1, rarity=3),
+    item("vantrel_plan_bellhull", "key", L("Bellhull schematic", "Esquema del Bellhull", "Esquema do Bellhull", "Schéma du Bellhull", "Bellhull-Bauplan", "ベルハルの設計図", "벨헐 설계도", "钟壳号图纸"),
+         L("Two drawings on one sheet: wheels down, wheels up. Water line marked in ink.", "Dos dibujos en una hoja: ruedas abajo, ruedas arriba. La línea de agua, en tinta.", "Dois desenhos numa folha: rodas abaixo, rodas acima. Linha d'água a tinta.", "Deux dessins sur une feuille : roues sorties, roues rentrées. Ligne de flottaison à l'encre.", "Zwei Zeichnungen auf einem Blatt: Räder unten, Räder oben. Wasserlinie in Tinte.", "一枚に二つの図。車輪を出した姿と収めた姿。喫水線は墨で。", "한 장에 두 그림: 바퀴를 내린 모습, 올린 모습. 흘수선은 먹으로.", "一张纸两幅图：轮子放下，轮子收起。吃水线用墨标出。"), max_stack=1, rarity=3),
+    item("bellhull_core", "key", L("Bellhull ballast core", "Núcleo lastre del Bellhull", "Núcleo-lastro do Bellhull", "Cœur-lest du Bellhull", "Bellhull-Ballastkern", "ベルハルのバラスト核", "벨헐 밸러스트 핵", "钟壳号压载核"),
+         L("It floats in a bowl of water, perfectly level, whatever you do.", "Flota en un cuenco de agua, perfectamente nivelado, hagas lo que hagas.", "Flutua numa tigela d'água, perfeitamente nivelado, faça o que fizer.", "Il flotte dans un bol d'eau, parfaitement à niveau, quoi qu'on fasse.", "Er schwimmt in einer Schale Wasser, immer genau waagrecht.", "水を張った椀に浮かべると、何をしても水平を保つ。", "물그릇에 띄우면 무엇을 해도 완벽히 수평을 유지한다.", "放进一碗水里，不管怎么晃都保持水平。"), max_stack=1, rarity=3),
+]
+ITEMS += VANTREL_ITEMS
+
 LOOT = {
     "drop_chief": [{"id": "thorn_fang", "chance": 1.0, "count": [4, 6]}, {"id": "fang_pepper", "chance": 1.0, "count": [2, 3]}, {"id": "glimmer_shard", "chance": 1.0, "count": [6, 10]}],
     "drop_harrier": [{"id": "wisp_filament", "chance": 1.0, "count": [2, 3]}, {"id": "glimmer_shard", "chance": 1.0, "count": [8, 12]}],
@@ -196,6 +214,8 @@ NEW_POIS = [
         yaw=2.8, flatten=6, pad_height=11.0, clear_radius=8, discover_radius=18, beacon="beacon_coast"),
     poi("hollow_ring", "arena", [1000, -790], L("Hollow Ring", "Anillo hueco", "Anel oco", "Cercle creux", "Hohler Ring", "虚ろの環", "텅 빈 고리", "空洞之环"),
         style="veil", radius=14, flatten=18, pad_height=15.0, clear_radius=20, discover_radius=40),
+    poi("vantrel_depot", "depot", [1060, 460], L("Vantrel Depot", "Depósito Vantrel", "Depósito Vantrel", "Dépôt Vantrel", "Vantrel-Depot", "ヴァントレル車庫", "반트렐 차고", "凡特雷尔车库"),
+        yaw=0.6, flatten=16, pad_height=15.8, clear_radius=22, discover_radius=36, lore="LORE_VANTREL"),
     poi("frost_shrine", "shrine", [-150, -500], L("Frost Shrine", "Santuario de escarcha", "Santuário de geada", "Sanctuaire du givre", "Frostschrein", "霜の祠", "서리 사당", "霜之神祠"),
         yaw=0.5, flatten=9, pad_height=207.5, clear_radius=10, discover_radius=24, lore="LORE_SHRINE"),
 ]
@@ -297,6 +317,7 @@ EVENT_LOC = {
 
 # --- Extra names ---------------------------------------------------------------------------------------------
 EXTRA_LOC = {
+    "LORE_VANTREL": L("Vantrel Works built machines that outlived their makers. The silver still remembers the road.", "Vantrel Works construyó máquinas que sobrevivieron a sus creadores. La plata aún recuerda el camino.", "A Vantrel Works construiu máquinas que sobreviveram aos criadores. A prata ainda lembra a estrada.", "Vantrel Works a bâti des machines qui ont survécu à leurs créateurs. L'argent se souvient encore de la route.", "Vantrel Works baute Maschinen, die ihre Erbauer überlebten. Das Silber erinnert sich noch an die Straße.", "ヴァントレル工房の機械は作り手より長く生きた。銀はまだ道を覚えている。", "반트렐 공방은 만든 이보다 오래 사는 기계를 지었다. 은빛은 아직 길을 기억한다.", "凡特雷尔工坊造的机器比造它们的人活得更久，银色的车身仍记得道路。"),
     "NAME_VILLAGER": L("Pell, goatherd", "Pell, cabrero", "Pell, cabreiro", "Pell, chevrier", "Pell, Ziegenhirt", "山羊飼いペル", "염소치기 펠", "牧羊人佩尔"),
     "PROMPT_BEACON_LIT": L("A Warden beacon", "Una baliza del Guardián", "Um farol do Guardião", "Un fanal du Gardien", "Ein Hüterfeuer", "守り人の灯台", "지기의 봉화", "守风者烽火"),
     "TOAST_BEACON_LIT": L("The beacon burns. The wind stirs.", "La baliza arde. El viento se agita.", "O farol arde. O vento se agita.", "Le fanal brûle. Le vent s'éveille.", "Das Leuchtfeuer brennt. Der Wind regt sich.", "灯台が燃える。風が動き出す。", "봉화가 타오른다. 바람이 일렁인다.", "烽火燃起，风开始流动。"),

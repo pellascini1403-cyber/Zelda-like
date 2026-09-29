@@ -86,6 +86,9 @@ signal boss_defeated(boss_id: StringName)
 signal boss_disengaged(boss_id: StringName)
 signal mount_tamed(mount_id: StringName)
 signal mount_changed(mounted: bool)
+signal vehicle_acquired(vehicle_id: StringName, source: String)
+signal vehicle_changed(driving: bool)
+signal vehicle_mode_changed(mode: StringName)   # land_mode | water_mode
 signal world_event_started(event_id: StringName, position: Vector3)
 signal world_event_ended(event_id: StringName)
 ## Big centred title card (discoveries, quests, bosses): title, subtitle.
