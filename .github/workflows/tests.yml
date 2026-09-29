@@ -30,3 +30,5 @@ jobs:
         run: ./godot --headless -- --unit
       - name: Gameplay smoke test (first-build checklist)
         run: ./godot --headless -- --smoke
+      - name: Progression systems test (quests, bosses, mount, puzzles, shop, events, regions)
+        run: ./godot --headless -- --systems

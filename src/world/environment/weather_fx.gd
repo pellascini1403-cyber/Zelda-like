@@ -22,7 +22,7 @@ func _ready() -> void:
 	snow = _make_precip(true)
 	add_child(rain)
 	add_child(snow)
-	sandstorm = _make_ambient(Color(0.86, 0.68, 0.45, 0.55), Vector2(0.9, 0.25), 500, 1.6, Vector3(14, 0.5, 0), false)
+	sandstorm = _make_ambient(Color(0.9, 0.72, 0.48, 0.4), Vector2(1.8, 0.45), 700, 1.6, Vector3(14, 0.5, 0), false)
 	fireflies = _make_ambient(Color(1.0, 0.92, 0.45, 1.0), Vector2(0.07, 0.07), 70, 5.0, Vector3(0.3, 0.2, 0.3), true)
 	motes = _make_ambient(Color(1.0, 0.97, 0.85, 0.65), Vector2(0.04, 0.04), 60, 7.0, Vector3(0.4, 0.05, 0.2), true)
 	veil_sparks = _make_ambient(Color(0.55, 1.0, 0.9, 1.0), Vector2(0.08, 0.08), 90, 4.0, Vector3(0.0, 0.8, 0.0), true)
@@ -74,6 +74,7 @@ func _make_ambient(col: Color, size: Vector2, amount: int, life: float, vel: Vec
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	m.vertex_color_use_as_albedo = true
+	m.albedo_texture = _soft_dot()
 	if glow:
 		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		m.albedo_color = Color(2.0, 2.0, 2.0)
@@ -136,6 +137,17 @@ func _process(delta: float) -> void:
 	snow.emitting = Weather.rain > 0.08 and cold
 	rain.amount_ratio = clampf(Weather.rain, 0.05, 1.0)
 	snow.amount_ratio = clampf(Weather.rain, 0.05, 1.0)
+	# Idle layers stop drawing once their last particles have faded
+	# (an invisible GPUParticles3D still costs a draw call per pass).
+	for p: GPUParticles3D in [rain, snow, sandstorm, fireflies, motes, veil_sparks]:
+		if p.emitting:
+			p.visible = true
+			p.set_meta(&"idle_t", 0.0)
+		elif p.visible:
+			var t: float = p.get_meta(&"idle_t", 0.0) + get_process_delta_time()
+			p.set_meta(&"idle_t", t)
+			if t > p.lifetime:
+				p.visible = false
 	var wind := Weather.wind * Weather.wind_strength
 	(rain.process_material as ParticleProcessMaterial).gravity = Vector3(wind.x * 6.0, -9.8, wind.z * 6.0)
 	(snow.process_material as ParticleProcessMaterial).gravity = Vector3(wind.x * 3.0, -1.0, wind.z * 3.0)
@@ -203,3 +215,23 @@ func _bolt(bottom: Vector3) -> void:
 	var t := mi.create_tween()
 	t.tween_interval(0.12)
 	t.tween_callback(mi.queue_free)
+
+
+static var _dot: Texture2D
+
+
+## Soft round sprite shared by every ambient particle layer (no hard quads).
+static func _soft_dot() -> Texture2D:
+	if _dot == null:
+		var g := Gradient.new()
+		g.set_color(0, Color(1, 1, 1, 1))
+		g.set_color(1, Color(1, 1, 1, 0))
+		var t := GradientTexture2D.new()
+		t.gradient = g
+		t.fill = GradientTexture2D.FILL_RADIAL
+		t.fill_from = Vector2(0.5, 0.5)
+		t.fill_to = Vector2(0.5, 0.0)
+		t.width = 32
+		t.height = 32
+		_dot = t
+	return _dot

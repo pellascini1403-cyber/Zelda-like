@@ -40,6 +40,8 @@ func _ready() -> void:
 
 func _start() -> void:
 	gen = WorldGen.from_world_data(DB.world)
+	# Vegetation arrays for sector/tile batching (read by worker threads).
+	MeshKit.warm_arrays()
 	# 1. Island height field on a worker thread.
 	var task := WorkerThreadPool.add_task(island.build.bind(DB.world), true, "island_map")
 	while not WorkerThreadPool.is_task_completed(task):

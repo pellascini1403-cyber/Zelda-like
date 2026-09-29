@@ -83,7 +83,20 @@ static func build_data(island: IslandMap, world: Dictionary) -> Array:
 						if species == &"":
 							species = &"broadleaf"
 						trees.append([species, Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s), Vector3(lx, h - 0.4, lz))])
-			out.append({"tile": Vector2i(tx, tz), "origin": Vector3(ox, 0, oz), "verts": verts, "norms": norms, "cols": cols, "idx": idx, "trees": trees, "land": land})
+			# Impostor trees of every species baked into one mesh per tile
+			# (crystals keep their own emissive material).
+			var by_species := {}
+			for t in trees:
+				if t[0] == &"crystal":
+					continue
+				if not by_species.has(t[0]):
+					by_species[t[0]] = []
+				by_species[t[0]].append(t[1])
+			var entries: Array = []
+			for sp in by_species:
+				entries.append([MeshKit.TREES[sp][1], by_species[sp]])
+			var batch := ChunkBuilder.bake_batch(entries, ox, oz)
+			out.append({"tile": Vector2i(tx, tz), "origin": Vector3(ox, 0, oz), "verts": verts, "norms": norms, "cols": cols, "idx": idx, "trees": trees, "tree_batch": batch, "land": land})
 	return out
 
 
@@ -107,13 +120,29 @@ func apply(data: Array) -> void:
 		mi.material_override = WorldMaterials.get_mat(&"terrain")
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		root.add_child(mi)
-		var by_species := {}
+		var crystals: Array = []
 		for t in d["trees"]:
-			if not by_species.has(t[0]):
-				by_species[t[0]] = []
-			by_species[t[0]].append(t[1])
-		for species in by_species:
-			_add_trees(root, by_species[species], MeshKit.TREES[species][1], &"crystal" if species == &"crystal" else &"foliage")
+			if t[0] == &"crystal":
+				crystals.append(t[1])
+		_add_trees(root, crystals, MeshKit.TREES[&"crystal"][1], &"crystal")
+		var b: Dictionary = d.get("tree_batch", {})
+		var bv: PackedVector3Array = b.get("verts", PackedVector3Array())
+		if not bv.is_empty():
+			var ba := []
+			ba.resize(Mesh.ARRAY_MAX)
+			ba[Mesh.ARRAY_VERTEX] = bv
+			ba[Mesh.ARRAY_NORMAL] = b["norms"]
+			ba[Mesh.ARRAY_COLOR] = b["cols"]
+			ba[Mesh.ARRAY_TEX_UV] = b["uv"]
+			ba[Mesh.ARRAY_TEX_UV2] = b["uv2"]
+			var tm := ArrayMesh.new()
+			tm.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, ba)
+			var tmi := MeshInstance3D.new()
+			tmi.mesh = tm
+			tmi.material_override = WorldMaterials.get_mat(&"foliage_baked")
+			tmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			tmi.visibility_range_end = 1300.0
+			root.add_child(tmi)
 		_tiles[d["tile"]] = root
 
 

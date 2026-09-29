@@ -13,13 +13,20 @@ const SHOTS := [
 	["06_night_camp", 285.0, -10.0, 60.0, -10.0, 23.0, "clear", ""],
 	["07_glide", 0.0, -250.0, 170.0, -18.0, 12.0, "windy", "glide"],
 	["08_maze", 205.0, 435.0, -60.0, -25.0, 10.0, "clear", ""],
-	["08b_temple", -8.0, -250.0, -8.0, 9.0, 16.8, "clear", ""],
+	["08b_temple", 6.0, -266.0, -6.0, 10.0, 16.8, "clear", ""],
 	["08c_bridge", -282.0, 445.0, 66.0, -4.0, 8.8, "clear", ""],
-	["08d_temple_night", -5.0, -262.0, -5.0, 6.0, 22.5, "clear", ""],
+	["08d_temple_night", 6.0, -266.0, -6.0, 10.0, 22.5, "clear", ""],
+	["08e_natural_falls", -40.0, -205.0, 8.0, 9.0, 15.8, "clear", ""],
+	["08f_desert_oasis", 985.0, 330.0, -40.0, -6.0, 10.5, "clear", ""],
+	["08g_sandstorm", 1180.0, 220.0, 60.0, -2.0, 13.0, "sandstorm", ""],
+	["08h_veil_night", 872.0, -890.0, 36.0, 6.0, 21.5, "clear", ""],
+	["08i_boss", 0.0, -285.0, 0.0, -9.0, 16.0, "clear", "boss"],
 	["09_combat", 62.0, 180.0, 20.0, -12.0, 12.5, "clear", "combat"],
 	["10_ui_touch", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "touch"],
 	["11_inventory", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "inventory"],
 	["12_map", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "map"],
+	["12b_journal", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "journal"],
+	["12c_title_card", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "title"],
 	["13_cooking", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "cook"],
 	["14_settings", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "settings"],
 ]
@@ -55,7 +62,13 @@ func _run() -> void:
 	var hud := (Game.world as GameWorld).hud
 	hud.dialogue.visible = false
 	Clock.paused = true
+	var only := ""
+	var oi := OS.get_cmdline_user_args().find("--only")
+	if oi >= 0:
+		only = OS.get_cmdline_user_args()[oi + 1]
 	for shot in SHOTS:
+		if only != "" and not String(shot[0]) in only.split(","):
+			continue
 		await _shot(shot)
 	print("tour done: ", _out)
 	get_tree().quit()
@@ -66,7 +79,7 @@ func _shot(s: Array) -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	Debug.force_touch_ui = s[7] == "touch"
-	w.hud.visible = s[7] == "touch" or s[7] == "combat"
+	w.hud.visible = s[7] in ["touch", "combat", "boss", "title"]
 	var pos := Vector3(s[1], 0, s[2])
 	pos.y = w.gen.height(pos.x, pos.z) + 1.0
 	p.global_position = pos
@@ -99,8 +112,26 @@ func _shot(s: Array) -> void:
 		await get_tree().create_timer(0.12).timeout
 		Input.action_release("attack")
 		await get_tree().create_timer(0.15).timeout
+	if s[7] == "boss":
+		var boss: Boss = null
+		for i in 120:
+			await get_tree().process_frame
+			for b in get_tree().get_nodes_in_group(&"bosses"):
+				boss = b
+			if boss and boss.engaged:
+				break
+		await get_tree().create_timer(3.2).timeout
+		if boss:
+			var info := DamageInfo.make(boss.health.max_health * 0.3, p, Vector3.ZERO)
+			boss.take_damage(info)
+			(boss.brain as BossBrain).change(&"chase")
+			await get_tree().create_timer(1.6).timeout
+		rig.yaw = s[3]
+	if s[7] == "title":
+		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
+		await get_tree().create_timer(1.2).timeout
 	match s[7]:
-		"inventory", "map", "settings":
+		"inventory", "map", "settings", "journal":
 			w.hud.visible = true
 			for id in [&"quarry_saber", &"tide_spear", &"emberroot", &"cap_mushroom", &"flint", &"iron_ore"]:
 				PlayerData.inventory.add(id, 3)
@@ -109,7 +140,11 @@ func _shot(s: Array) -> void:
 			for x in range(20, 44):
 				for z in range(20, 40):
 					WorldState.explored[z * WorldState.MAP_CELLS + x] = 1
-			w.hud.menu.open({"inventory": PauseMenu.TAB_INVENTORY, "map": PauseMenu.TAB_MAP, "settings": PauseMenu.TAB_SETTINGS}[s[7]])
+			if not Quests.is_active(&"sq_thorn_cull"):
+				Quests.start(&"sq_thorn_cull", true)
+				EventBus.entity_killed.emit(&"ENEMY_THORNLING", Vector3.ZERO)
+				EventBus.entity_killed.emit(&"ENEMY_THORNLING", Vector3.ZERO)
+			w.hud.menu.open({"inventory": PauseMenu.TAB_INVENTORY, "map": PauseMenu.TAB_MAP, "settings": PauseMenu.TAB_SETTINGS, "journal": PauseMenu.TAB_JOURNAL}[s[7]])
 			await get_tree().create_timer(0.4, true, false, true).timeout
 		"cook":
 			w.hud.visible = true

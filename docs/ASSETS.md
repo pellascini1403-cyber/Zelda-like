@@ -15,6 +15,12 @@
 | Tamsin (NPC de misión) | humanoide | celeste `#8ec1f0` |
 | Brask (mercader) | humanoide | ámbar `#e0a84a` |
 | Aldeano | humanoide | gris `#9a9a9a` |
+| Centinela Espinazo (jefe 1) | cuadrúpedo | bronce `#7a5c1e` |
+| Matriarca de Vidrio (jefe 2) | masa | cian `#46d6e8` |
+| Correplaya (enemigo del desierto) | cuadrúpedo | ocre `#b8860b` |
+| Sombra Callada (enemigo del Velo) | humanoide | carbón `#263238` |
+| Saffa (caravanera) | humanoide | siena `#a0522d` |
+| Zancaviento (montura) | cuadrúpedo | índigo `#5d4ea8` |
 
 Material uniforme de color sólido, sin texturas, patrones, caras ni accesorios (`assets/shaders/placeholder.gdshader`). El único efecto es `flash`, que es feedback de gameplay (golpe recibido, aviso de ataque), no decoración. Un test comprueba que el jugador es blanco y que cada tipo tiene un color único.
 
@@ -36,7 +42,11 @@ Qué hace `EntityVisual` con tu modelo:
 - **Sockets:** los nodos cuyo nombre empieza por `socket_` se registran (`socket_hand_r`, `socket_back`, `socket_head`, `socket_center`). Si el modelo no los trae, se crean posiciones por defecto a partir del collider. Las armas se enganchan en `hand_r` y la Vela en `back`.
 - Los *flashes* de golpe usan `set_instance_shader_parameter("flash")`. Si tu material no declara ese parámetro de instancia, simplemente no se verá el flash; opcionalmente añade `instance uniform float flash;` a tu shader.
 
-Estados lógicos que el gameplay reproduce: `idle, walk, run, sprint, jump, fall, climb, climb_idle, glide, swim, block, attack, attack_1, attack_2, attack_3, windup, lunge, slam, spin, thrust, charge, throw, dodge, hit, die, interact, gather, eat`.
+Estados lógicos que el gameplay reproduce (`EntityVisual.LOGICAL`): `idle, walk, run, sprint, move, jump, fall, land, climb, climb_idle, ledge_climb, glide, swim, dodge, attack_1, attack_2, attack_3, attack, charge, spin, thrust, slam, lunge, windup, block, parry, hit, die, interact, gather, throw, eat, ride, roar`. No hace falta tenerlos todos: si falta un clip se usa el de `FALLBACK` (p. ej. `sprint → run → move → idle`, `parry → block`, `ledge_climb → climb`).
+
+**AnimationTree:** si tu modelo trae un `AnimationTree` con una máquina de estados en la raíz, se usa en lugar del `AnimationPlayer`: cada estado lógico viaja (`travel`) al nodo con ese nombre (o el mapeado en `anim_map`), y si existe el parámetro `parameters/speed` recibe la velocidad normalizada (0–1+) para blend spaces de locomoción.
+
+**Monturas:** mismo proceso en `MOUNT_WINDSTRIDER`. La altura del asiento se ajusta en `mount.seat_height`; no cambies el collider.
 
 ### Protagonista
 Igual que arriba, en la entidad `PLAYER`. Collider del gameplay: radio 0,35 y altura 1,75 (origen en los pies). Si tu modelo tiene otras proporciones, ajusta `model_scale`, no el collider.
@@ -46,9 +56,12 @@ Igual que arriba, en la entidad `PLAYER`. Collider del gameplay: radio 0,35 y al
 - Vela de Brisa: crea `res://assets/models/vela.tscn` y se usa automáticamente.
 - Recursos recolectables: campo `"model"` en `data/resource_nodes.json`.
 
+### Arquitectura
+Las estructuras procedurales (`StructureKit`) son placeholders de *layout*: sus colisiones, escaleras-rampa, cofres, NPCs y puzzles son gameplay. Para sustituir un edificio por tu modelo: instancia tu escena en el mismo `root` del POI dentro del builder correspondiente de `StructureBuilder` y elimina la llamada del kit equivalente (p. ej. `k.hall(...)`), conservando `k.terrace(...)`/colisiones si tu modelo no trae las suyas. Paleta y gramática de referencia en ART_DIRECTION.md.
+
 ### Iconos, UI, audio
 - Iconos: sustituye cualquier `assets/icons/<nombre>.svg` (o apunta `icon` a tu PNG) sin cambiar código.
-- Tema de UI: si existe `res://assets/ui/theme.tres`, reemplaza el tema generado.
+- Tema de UI: si existe `res://assets/ui/theme.tres`, reemplaza el tema generado. Fuentes: `assets/fonts/` (Marcellus para títulos, Philosopher para texto; ambas OFL, licencias incluidas). Los glifos de botones son dibujos procedurales en `src/ui/ui_art.gd` (`UIArt.glyph`).
 - Fondo del título: `res://assets/ui/title_background.png`.
 - Audio: deja `assets/audio/<id>.ogg` con el mismo id (el `.ogg` tiene prioridad sobre el `.wav` generado). Los ids están en `tools/gen_audio.py`.
 

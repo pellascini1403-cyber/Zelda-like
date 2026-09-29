@@ -148,16 +148,20 @@ func _process(delta: float) -> void:
 
 	sun.light_color = light_col
 	sun.light_energy = light_energy
+	# Moonlight shadows are soft and translucent: night stays readable.
+	sun.shadow_opacity = lerpf(0.55, 1.0, smoothstep(0.1, 0.4, daylight))
 	sun.shadow_enabled = light_energy > 0.2
 	env.ambient_light_color = ambient.lerp(grey * 0.75, overcast * 0.5)
-	env.ambient_light_energy = 1.0
+	# Night keeps a readable moonlit fill (mobile screens are viewed in
+	# bright rooms): ambient rises as daylight falls.
+	env.ambient_light_energy = 1.0 + (1.0 - Clock.daylight()) * 0.9
 	env.fog_light_color = fog_col
 	env.fog_density = 0.0009 + Weather.fog * 0.018 + Weather.rain * 0.004 + overcast * 0.0012 + Weather.sand * 0.02 + veil * 0.002
 	env.fog_height_density = 0.01 + Weather.fog * 0.03 + Weather.rain * 0.01
 	# Dawn mist settles in the valleys.
 	var dawn := smoothstep(4.5, 6.5, h) * (1.0 - smoothstep(7.5, 10.0, h))
 	env.fog_height = 30.0 + dawn * 25.0
-	env.fog_height_density += dawn * 0.02
+	env.fog_height_density += dawn * 0.008
 
 	sky_mat.set_shader_parameter("top_color", sky_top)
 	sky_mat.set_shader_parameter("horizon_color", horizon)

@@ -68,7 +68,7 @@ void sky() {
 		if (veil > 0.01) {
 			float w = sin(d.x * 7.0 + TIME * 0.15 + texture(noise_tex, d.xz * 0.6 + TIME * 0.004).r * 5.0);
 			float rib = smoothstep(0.75, 1.0, w) * smoothstep(0.05, 0.3, h) * (1.0 - smoothstep(0.5, 0.9, h));
-			col += mix(vec3(0.35, 0.95, 0.85), vec3(0.75, 0.45, 1.0), d.z * 0.5 + 0.5) * rib * veil * 0.7;
+			col += mix(vec3(0.35, 0.95, 0.85), vec3(0.75, 0.45, 1.0), d.z * 0.5 + 0.5) * rib * veil * 0.14;
 		}
 	}
 

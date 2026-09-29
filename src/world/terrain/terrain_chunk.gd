@@ -97,19 +97,29 @@ func _apply_vegetation(data: Dictionary, veg_distance: float) -> void:
 			continue
 		var def: Array = MeshKit.TREES[species]
 		var mat := &"crystal" if species == &"crystal" else &"foliage"
-		if lod == 0 and def[0] != def[1]:
-			# HLOD: full tree near, simplified tree further out, same sector.
+		var batched: bool = species != &"crystal" and data.has("veg_batch_far")
+		if lod == 0 and (def[0] != def[1] or batched):
+			# HLOD: full tree near, simplified tree further out, same sector
+			# (the far part comes from the sector batch when there is one).
 			_add_mm(t, def[0], mat, true, near)
-			_add_mm(t, def[1], mat, false, far, near)
-		else:
+			if not batched:
+				_add_mm(t, def[1], mat, false, far, near)
+		elif not batched:
 			_add_mm(t, def[1] if lod > 0 else def[0], mat, lod == 0, far)
+	# Simplified trees of every species: one baked mesh (one draw call).
+	if data.has("veg_batch_far"):
+		_add_batch(data["veg_batch_far"], far, near if lod == 0 else 0.0)
 	_add_mm(veg[&"rock"], &"rock" if lod == 0 else &"rock_lod", &"rock", lod == 0, far if lod == 0 else far * 0.6)
 	if lod == 0:
 		# Visibility ranges are measured to the sector's centre, so pad them by
 		# the sector half-diagonal; the grass shader fades each blade itself.
 		var pad := ChunkBuilder.CHUNK_SIZE * 0.72
-		for kind in [&"bush", &"fern", &"reeds", &"cactus", &"rock_moss"]:
-			_add_mm(veg[kind], kind, &"rock" if kind == &"rock_moss" else &"foliage", false, veg_distance * 1.5 + pad)
+		if data.has("veg_batch_shrubs"):
+			_add_batch(data["veg_batch_shrubs"], veg_distance * 1.5 + pad, 0.0)
+		else:
+			for kind in MeshKit.BATCH_SHRUBS:
+				_add_mm(veg[kind], kind, &"foliage", false, veg_distance * 1.5 + pad)
+		_add_mm(veg[&"rock_moss"], &"rock_moss", &"rock", false, veg_distance * 1.5 + pad)
 		_add_mm(veg[&"grass"], &"grass", &"grass", false, veg_distance + pad)
 		_add_mm(veg[&"flower"], &"flower", &"vertex_color", false, veg_distance * 0.8 + pad)
 		_add_tree_colliders(veg)
@@ -137,6 +147,29 @@ func _add_mm(transforms: Array, mesh_key: StringName, mat_key: StringName, shado
 	mmi.visibility_range_end_margin = 10.0
 	mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 	_veg_root.add_child(mmi)
+
+
+func _add_batch(b: Dictionary, vis_range: float, vis_begin: float) -> void:
+	var verts: PackedVector3Array = b.get("verts", PackedVector3Array())
+	if verts.is_empty():
+		return
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = b["norms"]
+	arrays[Mesh.ARRAY_COLOR] = b["cols"]
+	arrays[Mesh.ARRAY_TEX_UV] = b["uv"]
+	arrays[Mesh.ARRAY_TEX_UV2] = b["uv2"]
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = WorldMaterials.get_mat(&"foliage_baked")
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.visibility_range_begin = vis_begin
+	mi.visibility_range_end = vis_range
+	mi.visibility_range_end_margin = 10.0
+	_veg_root.add_child(mi)
 
 
 ## Trees and boulders get cheap primitive colliders (trunks are climbable).

@@ -199,6 +199,39 @@ const TREES := {
 const SHRUBS := [&"bush", &"fern", &"reeds", &"cactus", &"flower", &"grass", &"rock_moss"]
 
 
+## Raw arrays of vegetation meshes, cached on the main thread so worker
+## threads can bake sector batches without touching the RenderingServer.
+static var _arrays: Dictionary = {}
+const BATCH_SHRUBS := [&"bush", &"fern", &"reeds", &"cactus"]
+
+
+static func warm_arrays() -> void:
+	for sp in TREES:
+		if sp == &"crystal":
+			continue
+		_cache_arrays(TREES[sp][1])
+	for k in BATCH_SHRUBS:
+		_cache_arrays(k)
+
+
+static func _cache_arrays(key: StringName) -> void:
+	if _arrays.has(key):
+		return
+	var m := get_mesh(key) as ArrayMesh
+	if m == null or m.get_surface_count() == 0:
+		return
+	var a := m.surface_get_arrays(0)
+	var verts: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+	var norms: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
+	var cols: PackedColorArray = a[Mesh.ARRAY_COLOR]
+	var idx: PackedInt32Array = a[Mesh.ARRAY_INDEX] if a[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+	_arrays[key] = [verts, norms, cols, idx]
+
+
+static func arrays(key: StringName) -> Array:
+	return _arrays.get(key, [])
+
+
 static func get_mesh(key: StringName) -> Mesh:
 	if _cache.has(key):
 		return _cache[key]

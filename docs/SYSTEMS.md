@@ -64,5 +64,42 @@ Autosave cada 90 s fuera de combate, al pasar a segundo plano o cerrar. Guardado
 ## Audio — `Audio`
 La música la elige `GameWorld` (combate > noche > altura > día) con crossfade de 3,5 s. Hay 4 capas de ambiente mezcladas por clima y hora, y SFX 3D con un pool de 16 voces. Todo se resuelve por id → `assets/audio/<id>.ogg|wav`.
 
+## Misiones — `Quests` (autoload), `data/quests.json`
+Una misión es una lista de **etapas**; una etapa termina cuando todos sus **objetivos** se cumplen. Estados: bloqueada (faltan `requires`) → disponible → activa → completada. `start`: `auto`, `talk:<NPC>` (ofrece la misión al hablar) o `event` (empieza sola al cumplirse su primer objetivo, p. ej. descubrir un lugar).
+Tipos de objetivo: `talk, discover, kill, collect, open_chest, boss, flag, ability, region, reach, cook, mount`. Todos escuchan `EventBus` (nadie más conoce las misiones) salvo `reach`, que sondea la posición cada 0,5 s. Al entrar en una etapa se re-evalúa el estado actual (objetos ya en la mochila, lugares ya descubiertos, jefes ya vencidos).
+Recompensas: objetos, destellos (moneda), habilidad, flag, +aguante, +vida. Diálogos por etapa (`talk_lines`, `hint_lines`, `offer_lines`). UI: rastreador en el HUD, diamante dorado en brújula y mapa (`tracked_target()`), pestaña **Diario** (activas/completadas, objetivos, recompensas, "Seguir") y tarjetas de título al empezar/terminar. Guardado: sección `quests` (versión de guardado 2, migración desde la 1).
+
+## Jefes — `Boss`, `BossBrain`, `BossManager`, `data/bosses.json`
+El cuerpo del jefe es una entidad normal (`entities.json`: stats, collider, ataques); `bosses.json` añade arena (centro, radio, casa), fases (umbral de vida, ataques permitidos, velocidad, onda de choque, invocaciones, clima), elemento y recompensas. Flujo: **latente** hasta que el jugador entra en la arena → **intro** (rugido, tarjeta de título, placa de vida, música de jefe) → combate → cambio de fase (invulnerable 1,8 s, onda que aparta, invocaciones) → derrota (flag `boss_<ID>`, cofre en el centro, tarjeta). Salir de la arena (1,7× radio) reinicia el combate. `BossManager` crea el jefe solo a <180 m y lo libera a >260 m si no está en combate (streaming).
+Tres jefes: **Centinela Espinazo** (Templo de las Terrazas de Nube; 2 fases), **Matriarca de Vidrio** (Hondonada de Vidrio, desierto; 3 fases, tormenta de arena), **Guardián de la Quietud** (Corazón Quieto, isla en el lago del Velo; 3 fases).
+Ataques nuevos disponibles para cualquier criatura: `charge` (embestida en línea), `volley` (abanico de proyectiles), `eruption` (círculos bajo el jugador que estallan tras un retardo), `summon`. Los ataques pesados muestran **telegrafías** en el suelo (`Telegraph`: disco, línea o cono que se llena hasta el impacto; pool de 12 quads aditivos).
+
+## Habilidades — `PlayerAbilities`, `data/abilities.json`
+Se obtienen por misiones y se usan con la acción `ability` (V / gatillo derecho / botón táctil con glifo y barrido de enfriamiento); `cycle_ability` cambia. **Paso de Ráfaga** (dash aéreo con invulnerabilidad breve; recupera el salto aéreo), **Peldaño de Jade** (losa temporal bajo los pies en el aire o un escalón delante; máx. 2), **Vista del Viento** (revela cofres, recursos y lugares no descubiertos con glifos a través de paredes), **Quietud** (`Game.enemy_time_scale` ralentiza IA y proyectiles hostiles; el jugador no), **Llamada del Zancaviento** (silbato de montura). Coste de aguante y enfriamiento por datos.
+
+## Montura — `Mount`, `RideState`, `MountManager`
+El Zancaviento salvaje pace en manada (`world.json → mounts`) y huye si lo asustas. Monta sin que te vea: corcovea 3 s y consume tu aguante; si aguantas, queda domado (flag `mount_windstrider`, misión, tarjeta). Montado: caminar/trote/galope, espuelas limitadas que se regeneran (sprint), salto, bajar con interactuar; un golpe fuerte te derriba. La montura domada persiste (posición guardada), no la libera el streaming y acude al silbato (si está lejos aparece fuera de cámara). Los números de juego están en `entities.json → mount`.
+
+## Puzzles — `src/puzzles/`
+`PuzzleGroup` coordina elementos (`Brazier`, `PressurePlate`, `VeilAnchor`) por `puzzle_id`; cuando todos están activos se guarda `puzzle_<id>` y los `WindSeal` (barreras de viento alrededor de la recompensa) se deshacen. Braseros: se encienden con cualquier fuego (armas de fuego, hierba ardiendo, explosiones) o con pedernal. Placas: se pulsan con jugador, criaturas o cajas pesadas. Los laberintos declaran su puzzle en datos (`"puzzle": {"type": "braziers"|"plates", "count": n}`). Las anclas del Velo exigen expulsar antes a sus guardianes.
+
+## Comercio — `ShopPanel`, `data/shops.json`
+Los fragmentos de destello son la moneda (van a la bolsa, no al inventario). Cada tienda tiene NPC, stock limitado persistente, precios y tasa de venta; algunos objetos aparecen tras hitos (`requires_flag`). Se abre con el botón **Comerciar** del diálogo.
+
+## Eventos dinámicos — `WorldEventDirector`, `data/world_events.json`
+Cada hora de juego se tira por evento si el jugador está en sus regiones y el periodo coincide. *Recompensa*: grieta de viento / estrella caída (baliza visible a distancia, marcador en brújula y mapa; alcanzarla paga). *Aparición*: emboscada nocturna, enjambre de arena, oleada del Velo. Todo se libera al terminar o al alejarse.
+
+## Regiones nuevas
+**Confín Solquemado (desierto):** dunas, mesetas escalonadas, oasis; 38 °C de día (calor: ropa y platos frescos), tormentas de arena (niebla cálida, partículas, visibilidad), correplayas, cactus y afloramientos de vidrio; Oasis Solquemado (caravana, tienda), Cripta del Sol (laberinto de arenisca con 4 braseros), Hondonada de Vidrio (jefe). **Confines del Velo (sobrenatural):** cráter con lago inmóvil que brilla de noche, vetas de jade en el suelo, cintas en el cielo, sombras calladas y fuegos fatuos, cristales, **Islas a la Deriva** (espiral flotante con **campo de levedad** que reduce la gravedad), tres anclas y el Corazón Quieto. Istmos de tierra los unen a la isla principal: se llega caminando.
+
+## Arquitectura — `StructureKit`, `assets/shaders/architecture.gdshader`
+Gramática original de los "Guardianes del Viento" (ver ART_DIRECTION): tejados a cuatro aguas con perfil cóncavo y esquinas alzadas, remates en forma de vela, costillas de teja vidriada, aleros claros, columnas bermellón sobre tambores de piedra con capiteles de jade, ménsulas, paneles con celosía, terrazas con balaustrada y escalinatas (colisión en rampa), pagodas, pabellones hexagonales, puertas del viento, puentes en arco, farolillos hexagonales y cintas de tela que ondean con el viento (shader). Cada estructura son **2 draw calls** (malla cercana + malla lejana simplificada = HLOD de estructura) y un único cuerpo estático. El alfa del color de vértice codifica el material (mate, vidriado, dorado, tela, farol), así un solo material cubre todo.
+
+## Feedback de combate
+Estela del arma (cinta aditiva), anillos de impacto por elemento, onda de parada, *afterimages* al esquivar a tiempo y con Paso de Ráfaga, disolución de las criaturas al morir, telegrafías, sacudida de cámara y hit-stop existentes. Todo en pools.
+
+## Animación
+`EntityVisual.LOGICAL` enumera todos los estados lógicos (incluye `land`, `ledge_climb`, `parry`, `ride`, `roar`); `FALLBACK` define a qué clip recurrir si el modelo no tiene uno. Soporta `AnimationPlayer` o un `AnimationTree` con máquina de estados (`travel`) y parámetro `speed`. Los maniquíes tienen inclinación en giros, respiración, aplastamiento al aterrizar y poses de trepar cornisa, parada, montar y rugido.
+
 ## Localización
-`tools/loc_ui.py`, `loc_content.py` y `loc_items.py` → `gen_localization.py` → `localization/strings.csv` (en, es, pt, fr, de, ja, ko, zh). CJK usa `SystemFont` como fallback. Ningún texto está escrito en el código: un test verifica que toda clave usada existe en los 8 idiomas.
+`tools/loc_ui.py`, `loc_content.py`, `loc_items.py`, `loc_world2.py` y `loc_quests.py` → `gen_localization.py` → `localization/strings.csv` (en, es, pt, fr, de, ja, ko, zh). CJK usa `SystemFont` como fallback. Ningún texto está escrito en el código: un test verifica que toda clave usada existe en los 8 idiomas.

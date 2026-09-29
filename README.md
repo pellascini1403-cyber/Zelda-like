@@ -5,7 +5,7 @@
 
 VELA es un juego de exploración en una isla continua: ves una montaña, una aguja de roca o una ruina en el horizonte y **puedes llegar**. Para eso escalas cualquier pared, planeas con la *Vela de Brisa* y usas el fuego, el viento y el clima a tu favor.
 
-Estado: **vertical slice jugable** (primer build). Todos los personajes y enemigos son *placeholders* intencionales: el jugador es blanco y cada especie tiene un color sólido único. Están listos para reemplazarse por los modelos finales sin tocar el gameplay.
+Estado: **segunda etapa**: slice ampliado con dirección de arte propia (fantasía de inspiración china original: jade, bermellón y niebla de tinta), misiones, jefes, montura, desierto y zona sobrenatural. Todos los personajes y enemigos son *placeholders* intencionales: el jugador es blanco y cada especie tiene un color sólido único. Están listos para reemplazarse por los modelos finales sin tocar el gameplay.
 
 ![Aldea al amanecer: el macizo de Cendal en el horizonte](docs/images/village.png)
 
@@ -30,6 +30,10 @@ Estado: **vertical slice jugable** (primer build). Todos los personajes y enemig
 | Clima / hora | Despejado, nublado, lluvia, tormenta, niebla, viento y nieve; ciclo día/noche completo que afecta a la IA, las luces y la música |
 | UI | Controles táctiles contextuales multi-touch, brújula sin GPS, mapa con niebla de exploración, inventario, fabricación, cocina y ajustes completos |
 | Guardado | Autosave (nunca en combate), guardado al pasar a segundo plano, escritura atómica y backup |
+| Dirección de arte | Etalonaje por LUT (sombras frías, luces cálidas), cielo pintado con dos capas de nubes, bancos de niebla entre planos de profundidad, cascadas, terreno jade con senderos y humedad, 9 especies de árbol, arquitectura original de los "Guardianes del Viento" con HLOD por estructura. Ver [docs/ART_DIRECTION.md](docs/ART_DIRECTION.md) |
+| Progresión | 10 misiones (3 actos principales + 7 secundarias) con diario y rastreador; 3 jefes con arenas, fases y telegrafías; 5 habilidades; montura domable; puzzles (braseros, placas, anclas); comercio con moneda; eventos dinámicos |
+| Regiones nuevas | Desierto (calor, tormentas de arena, oasis, cripta de arenisca) y los Confines del Velo (lago inmóvil, islas flotantes con levedad, anclas) |
+| UI | Estilo "laca y oro": fuentes Marcellus/Philosopher, paneles achaflanados con filetes dorados, glifos propios, brújula-pergamino, tarjetas de título, placa de jefe, barras de pincel |
 | Plataforma | 8 idiomas, calidad adaptativa (LOW–ULTRA), resolución dinámica, gobernador térmico, capa iOS/Android para IAP, anuncios con recompensa y analítica opcional |
 
 ## Empezar
@@ -47,12 +51,13 @@ Controles de escritorio para probar: WASD / ratón · Espacio saltar / planear �
 ## Tests
 
 ```bash
-godot --headless --path . -- --unit     # 51 tests unitarios y de datos
+godot --headless --path . -- --unit     # 80 tests unitarios y de datos
+godot --headless --path . -- --systems  # 46 comprobaciones de misiones, jefes, montura, puzzles, tienda, eventos y regiones
 godot --headless --path . -- --smoke    # 36 comprobaciones de gameplay de principio a fin
 godot --path . -- --tour /tmp/shots     # capturas de referencia (necesita GPU)
 ```
 
-El *smoke test* recorre la checklist del primer build: carga del mundo, caminar, sprint, saltar, escalar un muro y trepar al borde, planear, combatir, durabilidad, recolectar, comer, equipar, explosión por fuego, clima y hora, **guardar → cerrar → continuar → progreso recuperado**. La CI (`.github/workflows/tests.yml`) ejecuta ambos en cada push.
+El *smoke test* recorre la checklist del primer build: carga del mundo, caminar, sprint, saltar, escalar un muro y trepar al borde, planear, combatir, durabilidad, recolectar, comer, equipar, explosión por fuego, clima y hora, **guardar → cerrar → continuar → progreso recuperado**. La CI (`.github/workflows/tests.yml`) ejecuta los tres en cada push.
 
 ## Documentación
 
@@ -75,6 +80,6 @@ src/player/      cuerpo, estados de movimiento, combate, vitales
 src/ai/          criaturas, percepción, cerebro y estados, gestor por distancia
 src/entities/    EntityVisual: placeholder o modelo final (única capa visual)
 src/combat/ src/physics/ src/interaction/ src/items/ src/crafting/ src/ui/ src/fx/ src/platform/
-tests/           unit_tests, smoke_test, screenshot_tour
+tests/           unit_tests, smoke_test, systems_test, screenshot_tour
 tools/           generadores (localización, iconos, audio) y utilidades de terreno
 ```

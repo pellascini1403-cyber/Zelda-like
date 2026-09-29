@@ -48,7 +48,7 @@ func _draw() -> void:
 	if _t < 0.0:
 		return
 	var a := clampf(_t / IN, 0.0, 1.0) * (1.0 - clampf((_t - IN - HOLD) / OUT, 0.0, 1.0))
-	var vs := size
+	var vs := get_viewport_rect().size
 	var cy := vs.y * 0.3
 	var tsz := UITheme.fs(52)
 	var ssz := UITheme.fs(24)

@@ -70,3 +70,12 @@ Paneles de laca tinta con filete dorado, esquinas cortadas en chaflán, ornament
 
 ## 4. Regla de coste
 Cada efecto se justifica en `docs/PERFORMANCE.md`. Sin buffers de pantalla ni volumétricos reales. Todo sale de ecuaciones de shader, geometría compartida, MultiMesh y partículas con presupuesto por calidad.
+
+## 5. Validación por capturas (`-- --tour`)
+Cada fase se revisó con capturas renderizadas y se corrigió lo detectado:
+- **1.ª pasada:** cielo sepia, sendero demasiado marrón y ancho, niebla con bordes duros, copas facetadas, sotobosque oscuro → nuevo LUT, cielo más azul, sendero estrecho con adoquines, niebla suave, copas con sombreado suave.
+- **2.ª pasada (arquitectura):** remates que parecían cuernos → más bajos y curvados hacia la cumbrera; muros del laberinto demasiado fríos → piedra clara con albardilla vidriada; la plataforma del templo inundaba el pozo de una cascada → los pozos se tallan después de las plataformas y el templo se movió al hombro de la montaña.
+- **3.ª pasada (atmósfera):** noche demasiado azul y negra → luna menos saturada, ambiente nocturno más alto y sombras de luna translúcidas; atardecer demasiado magenta → dorado con sombras frías; bruma del alba excesiva → reducida; vetas del Velo y cintas del cielo demasiado intensas → más finas y solo en algunos campos; partículas de tormenta de arena con forma de rectángulo → sprite radial suave; cristales sobreexpuestos → emisión reducida.
+- **UI:** tarjeta de título y placa de jefe se dibujaban con tamaño 0 → usan el rectángulo del viewport.
+
+Capturas de referencia de esta etapa: aldea, templo (día y noche), puente, cascada, montaña, bosque con lluvia, desierto y tormenta de arena, el Velo de noche, combate contra jefe, HUD táctil, inventario, mapa, diario y tarjeta de título.

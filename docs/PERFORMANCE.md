@@ -21,6 +21,13 @@
 | Una sola luz direccional (sol ↔ luna), sombras PSSM de 2 cortes con distancia por calidad | `EnvironmentController` |
 | Cielo con radiancia incremental de 64 px; sin reflejos de cielo en LOW | `EnvironmentController` |
 | LOD visual de placeholders (extremidades ocultas a > 40 m) | `EntityVisual` |
+| **Lotes por sector**: todos los árboles simplificados (9 especies) en 1 malla, arbustos pequeños en 1 malla, horneados en el hilo de streaming; el shader `baked` conserva el balanceo y el tono por planta | `ChunkBuilder.bake_batch`, `foliage.gdshader` |
+| Árboles impostores de cada baldosa lejana en 1 malla | `HorizonTiles` |
+| **HLOD de estructuras**: malla cercana detallada + malla lejana simplificada (sin costillas, ménsulas, celosías, balaustres ni cintas), 1 material para toda la arquitectura (alfa del vértice = tipo de superficie) | `StructureKit`, `architecture.gdshader` |
+| Bancos de niebla: todas las tarjetas en 1 malla con billboard por vértice | `MistBanks`, `mist.gdshader` |
+| Capas de partículas de clima invisibles cuando no emiten | `WeatherFX` |
+| Jefes, monturas y eventos solo existen cerca del jugador (streaming propio) | `BossManager`, `MountManager`, `WorldEventDirector` |
+| Telegrafías y anillos de impacto en pool (quads aditivos) | `Telegraph`, `ElementFX` |
 
 ## Calidad adaptativa (`Quality`)
 
@@ -42,16 +49,19 @@
 
 Renderer Mobile por software (llvmpipe). Los conteos son del frame completo, **sombras incluidas**. Sirven para comparar, no son tiempos de dispositivo.
 
-| Escena | HIGH draw calls / primitivas | LOW draw calls / primitivas |
-|---|---|---|
-| Aldea, mañana | 275 / 292k | 201 / 209k |
-| Vista a la montaña | 229 / 277k | 157 / 165k |
-| Agujas de roca | 217 / 222k | 129 / 158k |
-| Bosque con lluvia | 288 / 330k | 153 / 172k |
-| Lago al atardecer | 116 / 226k | 75 / 117k |
-| Campamento de noche | 177 / 219k | 138 / 157k |
-| Planeando sobre el macizo | 140 / 155k | 90 / 113k |
-| Combate con 4 criaturas placeholder | 336 / 297k | 263 / 218k |
+| Escena | HIGH etapa 1 | HIGH etapa 2 | LOW etapa 1 | LOW etapa 2 |
+|---|---|---|---|---|
+| Aldea, mañana | 275 / 292k | 323 / 497k | 201 / 209k | 242 / 341k |
+| Vista a la montaña | 229 / 277k | 276 / 410k | 157 / 165k | 201 / 258k |
+| Agujas de roca | 217 / 222k | 277 / 360k | 129 / 158k | 166 / 220k |
+| Bosque con lluvia | 288 / 330k | 355 / 510k | 153 / 172k | 184 / 232k |
+| Lago al atardecer | 116 / 226k | 164 / 299k | 75 / 117k | 104 / 191k |
+| Campamento de noche | 177 / 219k | 314 / 444k | 138 / 157k | 213 / 262k |
+| Planeando sobre el macizo | 140 / 155k | 207 / 305k | 90 / 113k | 140 / 241k |
+| Puente (nuevo) | — | 180 / 311k | — | 116 / 205k |
+| Jefe en su arena (nuevo, con HUD) | — | 366 / 376k | — | 294 / 269k |
+
+Formato: draw calls / primitivas. La etapa 2 añade arquitectura con aleros, 9 especies de árbol, bancos de niebla, cascadas, partículas de ambiente y jefes. El sobrecoste frente a la etapa 1 (+15–25 % en draw calls en la mayoría de escenas) se contuvo sin quitar detalle: lotes de vegetación por sector y por baldosa (−10 %), niebla en una malla y capas de partículas ociosas ocultas (−5 %). Los *objects* mayores que los draw calls en escenas con HUD corresponden a elementos 2D.
 
 Antes de las optimizaciones de HLOD y baldosas, la escena del bosque costaba 768 draw calls y 598k primitivas.
 

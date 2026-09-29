@@ -111,8 +111,10 @@ void fragment() {
 	vec3 emit = vec3(0.0);
 	if (veil > 0.01) {
 		col = mix(col, veil_ground * (0.8 + mid * 0.4), veil * 0.85);
-		float vein = smoothstep(0.47, 0.5, n2(wpos.xz * 0.03)) * (1.0 - smoothstep(0.5, 0.53, n2(wpos.xz * 0.03)));
-		emit = veil_glow * vein * veil * (0.25 + night_glow * 0.9);
+		float vn = n2(wpos.xz * 0.021);
+		float vein = smoothstep(0.485, 0.5, vn) * (1.0 - smoothstep(0.5, 0.515, vn));
+		vein *= smoothstep(0.45, 0.7, n2(wpos.xz * 0.004 + 7.0));   // only some fields glow
+		emit = veil_glow * vein * veil * (0.15 + night_glow * 0.55);
 	}
 
 	// Rain wetness: darker albedo, glossier

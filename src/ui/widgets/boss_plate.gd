@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if _alpha <= 0.01 or boss == null or not is_instance_valid(boss):
 		return
-	var vs := size
+	var vs := get_viewport_rect().size
 	var m := UITheme.safe_margins(get_viewport())
 	var w := minf(vs.x * 0.56, 820.0)
 	var x0 := vs.x * 0.5 - w * 0.5

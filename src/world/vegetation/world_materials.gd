@@ -35,6 +35,9 @@ static func get_mat(key: StringName) -> Material:
 			m = _shader_mat("res://assets/shaders/terrain.gdshader")
 		&"foliage":
 			m = _shader_mat("res://assets/shaders/foliage.gdshader")
+		&"foliage_baked":
+			m = _shader_mat("res://assets/shaders/foliage.gdshader")
+			(m as ShaderMaterial).set_shader_parameter("baked", true)
 		&"rock":
 			m = _shader_mat("res://assets/shaders/foliage.gdshader")
 			(m as ShaderMaterial).set_shader_parameter("is_rock", true)

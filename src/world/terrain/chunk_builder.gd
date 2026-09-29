@@ -107,7 +107,21 @@ static func build(gen: WorldGen, cx: int, cz: int, lod: int, veg_density: float)
 	}
 	if lod <= 1:
 		var grid := Grid.new(hs, n + 2, step, ox - step, oz - step)
-		result["veg"] = _place_vegetation(gen, grid, cx, cz, lod, veg_density)
+		var veg := _place_vegetation(gen, grid, cx, cz, lod, veg_density)
+		result["veg"] = veg
+		# Draw-call batching (same instances, same detail): every simplified
+		# tree of the sector in ONE mesh, every small foliage shrub in ONE mesh.
+		var far_entries: Array = []
+		for sp in MeshKit.TREES:
+			if sp != &"crystal" and not (veg[sp] as Array).is_empty():
+				far_entries.append([MeshKit.TREES[sp][1], veg[sp]])
+		result["veg_batch_far"] = bake_batch(far_entries, ox, oz)
+		if lod == 0:
+			var shrub_entries: Array = []
+			for k in MeshKit.BATCH_SHRUBS:
+				if not (veg[k] as Array).is_empty():
+					shrub_entries.append([k, veg[k]])
+			result["veg_batch_shrubs"] = bake_batch(shrub_entries, ox, oz)
 	if lod == 0:
 		result["nodes"] = _place_gameplay(gen, cx, cz)
 	return result
@@ -299,3 +313,42 @@ static func _place_gameplay(gen: WorldGen, cx: int, cz: int) -> Array:
 			"region": gen.region_at(x, z),
 		})
 	return out
+
+
+## Bakes instances of several meshes into one vertex-coloured array set.
+## UV.x = per-instance tint, UV2 = (height above the instance base in metres,
+## wind phase from the world position) so the foliage shader's "baked" mode
+## sways each plant exactly like the instanced version.
+static func bake_batch(entries: Array, ox: float, oz: float) -> Dictionary:
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var uvs := PackedVector2Array()
+	var uv2s := PackedVector2Array()
+	for e in entries:
+		var src: Array = MeshKit.arrays(e[0])
+		if src.is_empty():
+			continue
+		var sv: PackedVector3Array = src[0]
+		var sn: PackedVector3Array = src[1]
+		var sc: PackedColorArray = src[2]
+		var si: PackedInt32Array = src[3]
+		var order: PackedInt32Array = si
+		if order.is_empty():
+			order.resize(sv.size())
+			for i in sv.size():
+				order[i] = i
+		for xf: Transform3D in e[1]:
+			var o := xf.origin
+			var tint := fposmod(sin((o.x + ox) * 12.9898 + (o.z + oz) * 78.233) * 43758.5453, 1.0)
+			var phase := (o.x + ox) * 0.13 + (o.z + oz) * 0.11
+			var nb := xf.basis.inverse().transposed()
+			for i in order:
+				var v: Vector3 = sv[i]
+				var wv := xf * v
+				verts.append(wv)
+				norms.append((nb * sn[i]).normalized())
+				cols.append(sc[i] if i < sc.size() else Color.WHITE)
+				uvs.append(Vector2(tint, 0.0))
+				uv2s.append(Vector2(wv.y - o.y, phase))
+	return {"verts": verts, "norms": norms, "cols": cols, "uv": uvs, "uv2": uv2s}
