@@ -1,0 +1,330 @@
+keys,en,es,pt,fr,de,ja,ko,zh
+ACT_COOK,Cook,Cocinar,Cozinhar,Cuisiner,Kochen,料理する,요리,烹饪
+ACT_CRAFT,Craft,Fabricar,Criar,Fabriquer,Herstellen,作る,제작,制作
+ACT_EQUIP,Equip,Equipar,Equipar,Équiper,Ausrüsten,装備,장착,装备
+ACT_QUICK,Quick slot,Acceso rápido,Atalho,Raccourci,Schnellplatz,ショートカット,빠른 슬롯,快捷栏
+ACT_QUIT_TO_MENU,Title screen,Menú principal,Menu principal,Écran titre,Titelbild,タイトルへ,타이틀로,返回标题
+ACT_SAVE,Save,Guardar,Salvar,Sauvegarder,Speichern,セーブ,저장,保存
+ACT_UNEQUIP,Remove,Quitar,Remover,Retirer,Ablegen,外す,해제,卸下
+ACT_USE,Use,Usar,Usar,Utiliser,Benutzen,使う,사용,使用
+ARMOR_CLIMB_SPEED,Faster climbing,Escalada más rápida,Escalada mais rápida,Escalade plus rapide,Schneller klettern,登る速度アップ,등반 속도 증가,攀爬加速
+ARMOR_COLD_RESIST,Keeps you warm,Abriga del frío,Protege do frio,Protège du froid,Hält warm,寒さに強くなる,추위에 강해짐,御寒
+ARMOR_HEAT_RESIST,Keeps you cool,Protege del calor,Protege do calor,Protège de la chaleur,Hält kühl,暑さに強くなる,더위에 강해짐,防暑
+ARMOR_LIGHTNING_IMMUNE,Grounds lightning,Desvía los rayos,Desvia raios,Détourne la foudre,Leitet Blitze ab,雷を逃がす,번개를 흘려보냄,引开雷电
+ARMOR_SPEED,Faster movement,Movimiento más rápido,Movimento mais rápido,Déplacement plus rapide,Schnellere Bewegung,移動速度アップ,이동 속도 증가,移动加速
+ARMOR_STAMINA_REGEN,Faster stamina recovery,Aguante se recupera antes,Vigor recupera mais rápido,Endurance plus rapide,Schnellere Ausdauer,がんばり回復アップ,기력 회복 증가,耐力恢复加快
+BTN_ATTACK,Attack,Atacar,Atacar,Attaque,Angriff,攻撃,공격,攻击
+BTN_BAG,Bag,Bolsa,Bolsa,Sac,Tasche,持ち物,가방,背包
+BTN_BLOCK,Guard,Bloquear,Bloquear,Garde,Blocken,ガード,방어,格挡
+BTN_CLOSE,Fold,Plegar,Recolher,Replier,Einklappen,たたむ,접기,收起
+BTN_CLOSE_MENU,Close,Cerrar,Fechar,Fermer,Schließen,閉じる,닫기,关闭
+BTN_DODGE,Dodge,Esquivar,Esquivar,Esquive,Ausweichen,回避,회피,闪避
+BTN_DROP,Let go,Soltar,Soltar,Lâcher,Loslassen,手を離す,놓기,松手
+BTN_GLIDE,Vela,Vela,Vela,Vela,Vela,ベラ,벨라,风帆
+BTN_INTERACT,Use,Usar,Usar,Utiliser,Benutzen,使う,사용,使用
+BTN_ITEM,Item,Objeto,Item,Objet,Item,アイテム,아이템,道具
+BTN_JUMP,Jump,Saltar,Pular,Saut,Sprung,ジャンプ,점프,跳跃
+BTN_LEAP,Leap,Impulso,Impulso,Bond,Satz,跳ぶ,도약,跃起
+BTN_LOCK,Lock,Fijar,Mirar,Cibler,Fixieren,注目,고정,锁定
+BTN_MAP,Map,Mapa,Mapa,Carte,Karte,地図,지도,地图
+BTN_RESUME,Resume,Continuar,Continuar,Reprendre,Weiter,再開,계속,继续
+BTN_WEAPON,Swap,Cambiar,Trocar,Changer,Wechseln,持替,교체,切换
+BUFF_ATTACK_UP,Fierce,Fiereza,Fúria,Férocité,Wildheit,攻撃アップ,공격 강화,攻击提升
+BUFF_COLD_RESIST,Warm,Abrigo,Aquecido,Chaleur,Wärme,暖か,온기,保暖
+BUFF_DEFENSE_UP,Stout,Robustez,Robustez,Robustesse,Zähigkeit,防御アップ,방어 강화,防御提升
+BUFF_HEAT_RESIST,Cool,Frescor,Refresco,Fraîcheur,Kühle,ひんやり,냉기 보호,清凉
+BUFF_REGEN,Mending,Regeneración,Regeneração,Régénération,Heilung,回復,재생,再生
+BUFF_SPEED_UP,Swift,Presteza,Ligeireza,Célérité,Flinkheit,移動アップ,신속,迅捷
+BUFF_STAMINA_REGEN,Vigor,Vigor,Vigor,Vigueur,Elan,活力,활력,活力
+CAMP_HINT,Pick up to 5 ingredients. Unknown combinations show ???,Elige hasta 5 ingredientes. Las combinaciones nuevas muestran ???,Escolha até 5 ingredientes. Combinações novas mostram ???,Choisissez jusqu'à 5 ingrédients. Les combinaisons inconnues affichent ???,Bis zu 5 Zutaten wählen. Unbekannte Kombinationen: ???,材料を5つまで選ぶ。未知の組み合わせは ???,재료를 최대 5개 선택. 새 조합은 ???,最多选择5种食材。未知组合显示 ???
+CAMP_REST_MORNING,Rest till morning,Descansar hasta la mañana,Descansar até de manhã,Dormir jusqu'au matin,Bis morgens ruhen,朝まで休む,아침까지 휴식,休息到早晨
+CAMP_REST_NIGHT,Rest till night,Descansar hasta la noche,Descansar até a noite,Dormir jusqu'au soir,Bis nachts ruhen,夜まで休む,밤까지 휴식,休息到夜晚
+CAMP_REST_NOON,Rest till noon,Descansar hasta mediodía,Descansar até meio-dia,Dormir jusqu'à midi,Bis mittags ruhen,昼まで休む,정오까지 휴식,休息到中午
+CAMP_TITLE,Campfire,Fogata,Fogueira,Feu de camp,Lagerfeuer,焚き火,모닥불,篝火
+CAT_ARMOR,Gear,Equipo,Equipamento,Tenue,Ausrüstung,防具,장비,装备
+CAT_FOOD,Food,Comida,Comida,Nourriture,Essen,食べ物,음식,食物
+CAT_KEY,Special,Especiales,Especiais,Spécial,Besonderes,大切なもの,특별,特殊
+CAT_MATERIAL,Materials,Materiales,Materiais,Matériaux,Material,素材,재료,材料
+CAT_TOOL,Tools,Herramientas,Ferramentas,Outils,Werkzeug,道具,도구,工具
+CAT_WEAPON,Weapons,Armas,Armas,Armes,Waffen,武器,무기,武器
+CHARGED_BOLT,Hold: fire bolt,Mantener: proyectil de fuego,Segurar: projétil de fogo,Maintenir : trait de feu,Halten: Feuerbolzen,長押し：火炎弾,길게: 화염탄,长按：火焰弹
+CHARGED_SLAM,Hold: ground slam (breaks rock),Mantener: golpe al suelo (rompe rocas),Segurar: golpe no chão (quebra rochas),Maintenir : frappe au sol (brise la roche),Halten: Bodenstoß (bricht Fels),長押し：叩きつけ（岩も砕く）,길게: 내려찍기 (바위 파괴),长按：砸地（可击碎岩石）
+CHARGED_SPIN,Hold: spin attack,Mantener: ataque giratorio,Segurar: giro,Maintenir : attaque tournoyante,Halten: Wirbelangriff,長押し：回転斬り,길게: 회전 공격,长按：回旋攻击
+CHARGED_THRUST,Hold: lunging thrust,Mantener: estocada,Segurar: estocada,Maintenir : estoc,Halten: Sturmstoß,長押し：突進突き,길게: 돌진 찌르기,长按：突刺
+CRAFT_NEEDS_CAMPFIRE,Needs a campfire,Requiere fogata,Requer fogueira,Feu de camp requis,Braucht Lagerfeuer,焚き火が必要,모닥불 필요,需要篝火
+DIALOGUE_TAP,Tap to continue,Toca para continuar,Toque para continuar,Touchez pour continuer,Tippen zum Fortfahren,タップで次へ,탭하여 계속,点击继续
+DLG_CARTO_1,You're Oren's apprentice? Then this belongs to you.,¿Eres aprendiz de Oren? Entonces esto es tuyo.,Você é aprendiz de Oren? Então isto é seu.,Vous êtes l'apprenti·e d'Oren ? Alors ceci vous revient.,Du bist Orens Lehrling? Dann gehört das dir.,オレンの弟子かい？ならこれはあなたのものだ。,오렌의 제자라고? 그럼 이건 네 것이야.,你是奥伦的学徒？那这个归你了。
+DLG_CARTO_2,"Oren built this sail: the Vela. Jump from a height, jump again, and the wind will carry you.","Oren construyó esta vela: la Vela. Salta desde lo alto, vuelve a saltar y el viento te llevará.","Oren construiu esta vela: a Vela. Salte do alto, pule de novo e o vento levará você.","Oren a construit cette voile : la Vela. Sautez d'en haut, sautez encore, et le vent vous portera.","Oren hat dieses Segel gebaut: die Vela. Spring von oben, spring erneut, und der Wind trägt dich.",オレンが作った帆、ベラだ。高所から跳んで、もう一度跳べば風が運んでくれる。,"오렌이 만든 돛, 벨라야. 높은 곳에서 뛰고 한 번 더 뛰면 바람이 데려다 줄 거야.",这是奥伦做的帆——风帆。从高处跳下，再跳一次，风就会带着你走。
+DLG_CARTO_3,"Oren's last letter spoke of the summit of Cendal, the tall peak to the north.","La última carta de Oren hablaba de la cumbre de Cendal, el pico alto del norte.","A última carta de Oren falava do cume de Cendal, o pico alto ao norte.","La dernière lettre d'Oren parlait du sommet de Cendal, le haut pic au nord.","Orens letzter Brief sprach vom Gipfel des Cendal, dem hohen Berg im Norden.",オレンの最後の手紙には、北の高峰センダルの頂のことが書かれていた。,"오렌의 마지막 편지에는 북쪽 높은 봉우리, 센달 정상 이야기가 있었어.",奥伦的最后一封信提到了北方高峰——森达尔峰顶。
+DLG_CARTO_4,It's freezing up there. Cook something warming with emberroot before you climb.,Allí arriba hace un frío terrible. Cocina algo que abrigue con raíz de brasa antes de subir.,Lá em cima é gelado. Cozinhe algo quente com raiz-brasa antes de subir.,Il gèle là-haut. Cuisinez un plat réchauffant à la racine-braise avant de grimper.,"Dort oben ist es eisig. Koche etwas Wärmendes mit Glutwurzel, bevor du kletterst.",頂上は凍える寒さだ。登る前に熾火根で温まる料理を作っておきなさい。,위는 얼어붙을 만큼 추워. 오르기 전에 불씨뿌리로 따뜻한 요리를 해 둬.,山上冷得要命。上山前用余烬根做点暖身的菜。
+DLG_CARTO_AFTER_1,The wind weakens every week. Keep your eyes on the horizon: every ruin hides something.,El viento se debilita cada semana. Mira al horizonte: cada ruina esconde algo.,O vento enfraquece a cada semana. Olhe o horizonte: cada ruína esconde algo.,Le vent faiblit chaque semaine. Gardez l'œil sur l'horizon : chaque ruine cache quelque chose.,Der Wind wird jede Woche schwächer. Behalte den Horizont im Blick: Jede Ruine verbirgt etwas.,風は週ごとに弱まる。地平線を見ていなさい。どの遺跡にも何かが隠れている。,바람이 매주 약해지고 있어. 지평선을 살펴. 모든 폐허엔 뭔가 숨어 있어.,风一周比一周弱。留意地平线：每座废墟都藏着东西。
+DLG_CARTO_AFTER_2,The stone rings on the mountain slopes breathe upward. Ride them with the Vela.,Los anillos de piedra de las laderas exhalan hacia arriba. Súbete a ellos con la Vela.,Os anéis de pedra nas encostas sopram para cima. Suba neles com a Vela.,Les cercles de pierre des pentes soufflent vers le haut. Montez dessus avec la Vela.,Die Steinkreise an den Hängen atmen nach oben. Reite sie mit der Vela.,山腹の石の輪は上へ息を吐く。ベラで乗るといい。,산비탈의 돌 고리는 위로 숨을 내쉬어. 벨라로 타고 올라가.,山坡上的石环会向上吐息。用风帆乘上去吧。
+DLG_MERCHANT_1,"Flint makes whetstones, and whetstones keep blades alive. Take one, on the house.","El pedernal hace piedras de afilar, y ellas mantienen vivas las hojas. Llévate una, invita la casa.","Sílex faz pedras de amolar, e elas mantêm as lâminas vivas. Leve uma, por conta da casa.","Le silex fait des pierres à aiguiser, qui gardent les lames en vie. Prenez-en une, c'est offert.","Aus Feuerstein werden Wetzsteine, und die halten Klingen am Leben. Nimm einen, geht aufs Haus.",火打石で砥石ができ、砥石が刃を生かす。ひとつ持っていきな、おごりだ。,"부싯돌로 숫돌을 만들고, 숫돌이 칼날을 살리지. 하나 가져가, 공짜야.",燧石做磨刀石，磨刀石让刀刃长存。拿一块吧，送你的。
+DLG_MERCHANT_2,"Lightning loves metal. In a storm, put your iron away, or wear a lodestone charm.","Los rayos adoran el metal. En tormenta, guarda el hierro o lleva un amuleto de magnetita.","Raios adoram metal. Na tempestade, guarde o ferro ou use um amuleto de magnetita.","La foudre adore le métal. Par orage, rangez votre fer ou portez un talisman de magnétite.","Blitze lieben Metall. Bei Gewitter weg mit dem Eisen, oder trag ein Magnetit-Amulett.",雷は金属が好きだ。嵐の時は鉄をしまうか、磁石のお守りを着けな。,번개는 금속을 좋아해. 폭풍 땐 쇠붙이를 치우거나 자철석 부적을 차.,雷电偏爱金属。暴风雨时收起铁器，或者戴上磁石护符。
+DLG_MERCHANT_NIGHT,Closed for the night. Wisps drift out after dark: mind the yellow lights.,Cerrado por la noche. Los fatuos salen al oscurecer: cuidado con las luces amarillas.,Fechado à noite. Os fátuos saem no escuro: cuidado com as luzes amarelas.,Fermé pour la nuit. Les feux follets sortent à la tombée : méfiez-vous des lumières jaunes.,Nachts geschlossen. Nach Einbruch der Dunkelheit treiben Irrlichter umher: Vorsicht vor gelben Lichtern.,今夜は店じまいだ。暗くなるとヒトダマが漂う。黄色い光に気をつけな。,밤엔 문 닫아. 어두워지면 도깨비불이 떠다니니 노란 불빛을 조심해.,晚上打烊了。天黑后鬼火会飘出来，小心黄色的光。
+DLG_VILLAGER_1,Thornlings sleep at night. A careful traveler can slip past them... or strike first.,Los espinosos duermen de noche. Un viajero cuidadoso puede pasar de largo... o atacar primero.,Espinhentos dormem à noite. Um viajante cuidadoso passa despercebido... ou ataca primeiro.,Les épineux dorment la nuit. Un voyageur prudent peut passer... ou frapper le premier.,"Dornlinge schlafen nachts. Wer vorsichtig ist, schleicht vorbei … oder schlägt zuerst zu.",イバラモノは夜眠る。慎重な旅人ならすり抜けられる…先に仕掛けることも。,가시짐승은 밤에 잠들어. 조심스러운 여행자는 몰래 지나가거나… 먼저 친다.,棘兽夜里会睡觉。谨慎的旅人可以悄悄绕过……或者先下手为强。
+DLG_VILLAGER_2,"Rain makes the cliffs slick. Wait it out by the fire, or climb and hope.","La lluvia vuelve resbaladizos los acantilados. Espera junto al fuego, o escala y reza.","A chuva deixa os penhascos escorregadios. Espere junto ao fogo, ou escale e torça.","La pluie rend les falaises glissantes. Attendez au coin du feu, ou grimpez en priant.","Regen macht die Klippen glatt. Warte am Feuer, oder klettere und hoffe.",雨で崖は滑る。火のそばで待つか、祈りながら登るかだ。,"비가 오면 절벽이 미끄러워. 불가에서 기다리거나, 기도하며 올라.",下雨时悬崖很滑。要么在火边等雨停，要么边爬边祈祷。
+DLG_VILLAGER_NIGHT,Can't sleep. The stones are humming again.,No puedo dormir. Las piedras vuelven a zumbar.,Não consigo dormir. As pedras zumbem de novo.,Impossible de dormir. Les pierres bourdonnent encore.,Kann nicht schlafen. Die Steine summen wieder.,眠れない。また石が唸っている。,잠이 안 와. 돌들이 또 울리고 있어.,睡不着。石头又在低鸣了。
+HUD_DAY,Day %d,Día %d,Dia %d,Jour %d,Tag %d,%d日目,%d일째,第%d天
+INTRO_1,"The winds of Veloria have begun to falter. Kites fall from the sky, and the old stones hum at night.",Los vientos de Veloria han empezado a fallar. Las cometas caen del cielo y las piedras antiguas zumban de noche.,Os ventos de Veloria começaram a falhar. Pipas caem do céu e as pedras antigas zumbem à noite.,Les vents de Veloria faiblissent. Les cerfs-volants tombent du ciel et les vieilles pierres bourdonnent la nuit.,"Die Winde Velorias werden schwächer. Drachen fallen vom Himmel, und nachts summen die alten Steine.",ヴェロリアの風が弱まり始めた。凧は空から落ち、夜には古い石が唸る。,"벨로리아의 바람이 약해지기 시작했다. 연이 하늘에서 떨어지고, 밤이면 오래된 돌들이 울린다.",维洛利亚的风开始衰弱。风筝从天上坠落，古老的石头在夜里低鸣。
+INTRO_2,"Your mentor, the cartographer Oren, climbed toward the peaks of Cendal to chart them, and never returned.","Tu mentor, el cartógrafo Oren, subió a cartografiar las cumbres de Cendal y nunca regresó.","Seu mentor, o cartógrafo Oren, subiu para mapear os picos de Cendal e nunca voltou.","Votre mentor, le cartographe Oren, est parti cartographier les sommets de Cendal et n'est jamais revenu.","Dein Mentor, der Kartograf Oren, stieg zu den Gipfeln von Cendal auf, um sie zu kartieren, und kehrte nie zurück.",師である地図職人オレンはセンダルの峰を測りに登り、戻らなかった。,스승인 지도제작자 오렌은 센달의 봉우리를 그리러 올라갔다가 돌아오지 않았다.,你的导师、制图师奥伦前往测绘森达尔群峰，却再也没有回来。
+INTRO_3,"Find Tamsin in Heath Hamlet. After that, every horizon is yours to reach.","Busca a Tamsin en la Aldea del Brezo. Después, cada horizonte será tuyo.","Encontre Tamsin na Aldeia da Urze. Depois disso, todo horizonte é seu.","Trouvez Tamsin au Hameau de la Lande. Ensuite, chaque horizon vous appartient.",Finde Tamsin im Heideweiler. Danach gehört dir jeder Horizont.,ヒースの村でタムシンを探そう。その先は、すべての地平線があなたのものだ。,히스 마을에서 탐신을 찾아라. 그 뒤로는 모든 지평선이 너의 것이다.,去石楠村找塔姆辛。之后，每一道地平线都任你抵达。
+INV_EMPTY_HINT,Nothing here yet. Explore!,Aún no hay nada. ¡Explora!,Nada aqui ainda. Explore!,Rien pour l'instant. Explorez !,Noch nichts hier. Erkunde!,まだ何もない。探検しよう！,아직 아무것도 없어요. 탐험하세요!,这里还空着。去探索吧！
+INV_SELECT_HINT,Tap an item to see details.,Toca un objeto para ver detalles.,Toque um item para ver detalhes.,Touchez un objet pour les détails.,Tippe auf einen Gegenstand.,アイテムをタップで詳細。,아이템을 탭하면 상세 정보.,点击物品查看详情。
+ITEM_AMBER_SAP,Amber Sap,Savia Ámbar,Seiva Âmbar,Sève d'Ambre,Bernsteinharz,琥珀の樹液,호박 수액,琥珀树液
+ITEM_AMBER_SAP_DESC,Sticky and very flammable.,Pegajosa y muy inflamable.,Grudenta e muito inflamável.,Collante et très inflammable.,Klebrig und leicht entzündlich.,粘って燃えやすい。,끈적하고 불이 잘 붙는다.,黏稠且极易燃。
+ITEM_ANVIL_MAUL,Anvil Maul,Mazo Yunque,Marreta Bigorna,Masse Enclume,Ambosshammer,金床の大槌,모루 망치,铁砧大锤
+ITEM_ANVIL_MAUL_DESC,Slow and crushing. Breaks rock and guard alike.,Lento y demoledor. Rompe rocas y guardias.,Lenta e esmagadora. Quebra rochas e defesas.,Lente et écrasante. Brise roche et garde.,Langsam und zermalmend. Bricht Fels und Deckung.,重く遅いが、岩も守りも砕く。,느리지만 파괴적. 바위도 방어도 부순다.,缓慢而沉重，岩石与防御皆可粉碎。
+ITEM_BEAST_HIDE,Beast Hide,Piel de Bestia,Pele de Fera,Peau de Bête,Tierhaut,獣の皮,짐승 가죽,兽皮
+ITEM_BEAST_HIDE_DESC,Warm hide for cold-weather gear.,Piel cálida para ropa de abrigo.,Pele quente para roupas de frio.,Peau chaude pour tenues d'hiver.,Warme Haut für Kälteschutz.,防寒具の材料になる。,방한구 재료가 되는 따뜻한 가죽.,保暖兽皮，可做御寒装备。
+ITEM_BOUGH_CLUB,Bough Club,Garrote de Rama,Porrete de Galho,Gourdin de Branche,Astknüppel,枝の棍棒,나뭇가지 곤봉,树枝棍
+ITEM_BOUGH_CLUB_DESC,A sturdy branch. Better than bare hands.,Una rama robusta. Mejor que las manos.,Um galho firme. Melhor que as mãos.,Une branche solide. Mieux que les poings.,Ein kräftiger Ast. Besser als nichts.,丈夫な枝。素手よりまし。,튼튼한 가지. 맨손보다 낫다.,结实的树枝，总比空手强。
+ITEM_BULWARK_PLATE,Bulwark Plate,Placa de Baluarte,Placa de Baluarte,Plaque de Rempart,Bollwerkplatte,ブルワークの装甲片,성벽거인의 판,壁垒甲片
+ITEM_BULWARK_PLATE_DESC,Dense metal shell. Heavy and valuable.,Caparazón metálico denso. Pesado y valioso.,Casca metálica densa. Pesada e valiosa.,Carapace de métal dense. Lourde et précieuse.,Dichte Metallschale. Schwer und wertvoll.,重く価値ある金属殻。,무겁고 값진 금속 껍질.,致密的金属外壳，沉重而珍贵。
+ITEM_CAP_MUSHROOM,Capmushroom,Seta Sombrero,Cogumelo Chapéu,Champi-chapeau,Hutpilz,カサキノコ,갓버섯,帽菇
+ITEM_CAP_MUSHROOM_DESC,Restores stamina.,Recupera aguante.,Recupera vigor.,Rend de l'endurance.,Stellt Ausdauer her.,がんばりを回復。,기력을 회복한다.,恢复耐力。
+ITEM_CLIMBER_GLOVES,Climber's Gloves,Guantes de Escalador,Luvas de Escalador,Gants de Grimpeur,Klettererhandschuhe,登攀手袋,등반가의 장갑,攀岩手套
+ITEM_CLIMBER_GLOVES_DESC,Sure grip. Climb noticeably faster.,Agarre firme. Escalas mucho más rápido.,Pegada firme. Escala bem mais rápido.,Prise sûre. Grimpez bien plus vite.,Sicherer Griff. Deutlich schneller klettern.,しっかり掴める。登るのが速くなる。,단단한 그립. 훨씬 빨리 오른다.,抓握牢靠，攀爬明显更快。
+ITEM_COOLING_SALAD,Cooling Salad,Ensalada Fresca,Salada Fresca,Salade Rafraîchissante,Kühler Salat,ひんやりサラダ,시원한 샐러드,清凉沙拉
+ITEM_COOLING_SALAD_DESC,Resist the heat for a long time.,Resiste el calor durante mucho tiempo.,Resista ao calor por muito tempo.,Résiste longtemps à la chaleur.,Lange Hitzeschutz.,長く暑さに耐えられる。,오랫동안 더위를 견딘다.,长时间抵御炎热。
+ITEM_CURRENT_THREAD,Current Thread,Hilo de Corriente,Fio de Corrente,Fil de Courant,Strömungsfaden,気流の糸,기류의 실,气流之线
+ITEM_CURRENT_THREAD_DESC,Woven into the Vela: gliding costs much less stamina.,Tejido en la Vela: planear gasta mucho menos aguante.,Tecido na Vela: planar gasta muito menos vigor.,Tissé dans la Vela : planer coûte bien moins d'endurance.,In die Vela gewebt: Gleiten kostet viel weniger Ausdauer.,ベラに編み込む。滑空のがんばり消費が大幅に減る。,벨라에 짜 넣으면 활공 기력 소모가 크게 준다.,织入风帆后，滑翔消耗的耐力大幅减少。
+ITEM_EMBERROOT,Emberroot,Raíz de Brasa,Raiz-brasa,Racine-braise,Glutwurzel,熾火根,불씨뿌리,余烬根
+ITEM_EMBERROOT_DESC,Spicy. Warms you from the inside.,Picante. Te calienta por dentro.,Picante. Aquece por dentro.,Épicée. Réchauffe de l'intérieur.,Scharf. Wärmt von innen.,辛い。体の中から温まる。,맵다. 속부터 따뜻해진다.,辛辣，由内而外地温暖。
+ITEM_EMBER_ROD,Ember Rod,Vara de Brasa,Vara de Brasa,Bâton de Braise,Glutstab,熾火の杖,불씨 지팡이,余烬杖
+ITEM_EMBER_ROD_DESC,Every strike sets things alight. Hold to hurl a fire bolt.,Cada golpe prende fuego. Mantén para lanzar un proyectil ígneo.,Cada golpe incendeia. Segure para lançar fogo.,Chaque coup embrase. Maintenez pour lancer un trait de feu.,Jeder Schlag entzündet. Halten für einen Feuerbolzen.,打つたびに火がつく。長押しで火炎弾。,때릴 때마다 불이 붙는다. 길게 눌러 화염탄.,每次攻击都会点燃目标。长按发射火焰弹。
+ITEM_FANG_PEPPER,Fang Pepper,Ají Colmillo,Pimenta Presa,Piment Croc,Reißzahnpfeffer,キバトウガラシ,송곳니 고추,獠牙辣椒
+ITEM_FANG_PEPPER_DESC,Fiery. Raises attack for a while.,Ardiente. Sube el ataque un rato.,Ardente. Aumenta o ataque por um tempo.,Brûlant. Augmente l'attaque un moment.,Feurig. Stärkt eine Weile den Angriff.,激辛。しばらく攻撃アップ。,화끈하다. 잠시 공격력 상승.,火辣，短时间提升攻击。
+ITEM_FIBER,Fiber,Fibra,Fibra,Fibre,Faser,繊維,섬유,纤维
+ITEM_FIBER_DESC,Tough grass fibers for binding.,Fibras resistentes para atar.,Fibras resistentes para amarrar.,Fibres solides pour lier.,Zähe Grasfasern zum Binden.,縛るための丈夫な草の繊維。,묶는 데 쓰는 질긴 풀 섬유.,坚韧的草纤维，用于捆绑。
+ITEM_FIERCE_SKEWER,Fierce Skewer,Brocheta Fiera,Espeto Feroz,Brochette Féroce,Wilder Spieß,激辛串焼き,화끈 꼬치,猛火串
+ITEM_FIERCE_SKEWER_DESC,Raises attack.,Aumenta el ataque.,Aumenta o ataque.,Augmente l'attaque.,Erhöht den Angriff.,攻撃アップ。,공격력 상승.,提升攻击。
+ITEM_FLINT,Flint,Pedernal,Sílex,Silex,Feuerstein,火打石,부싯돌,燧石
+ITEM_FLINT_DESC,Sharp stone. Makes whetstones.,Piedra afilada. Sirve para piedras de afilar.,Pedra afiada. Faz pedras de amolar.,Pierre tranchante. Sert aux pierres à aiguiser.,Scharfer Stein. Ergibt Wetzsteine.,鋭い石。砥石の材料。,날카로운 돌. 숫돌 재료.,锋利的石头，可做磨刀石。
+ITEM_FORGE_STONE,Forge Stone,Piedra de Forja,Pedra de Forja,Pierre de Forge,Schmiedestein,鍛冶石,대장간 돌,锻造石
+ITEM_FORGE_STONE_DESC,"Fully restores any weapon, even heirlooms.","Restaura por completo cualquier arma, incluso reliquias.","Restaura totalmente qualquer arma, até relíquias.","Restaure entièrement toute arme, même héritée.","Stellt jede Waffe vollständig her, auch Erbstücke.",どんな武器も完全修復。形見も可。,모든 무기를 완전히 수리. 유물도 가능.,完全修复任何武器，包括传家宝。
+ITEM_FROSTMINT,Frostmint,Menta Helada,Menta Gelada,Menthe Givrée,Frostminze,フロストミント,서리박하,霜薄荷
+ITEM_FROSTMINT_DESC,Cooling. Helps in the heat.,Refrescante. Ayuda con el calor.,Refrescante. Ajuda no calor.,Rafraîchissante. Aide par forte chaleur.,Kühlend. Hilft bei Hitze.,ひんやり。暑さに効く。,시원하다. 더위에 좋다.,清凉，有助于抵御炎热。
+ITEM_FUR_CAP,Fur Cap,Gorro de Piel,Gorro de Pele,Bonnet de Fourrure,Fellmütze,毛皮の帽子,털모자,毛皮帽
+ITEM_FUR_CAP_DESC,Keeps your ears from freezing.,Evita que se te congelen las orejas.,Evita que as orelhas congelem.,Évite de geler des oreilles.,Schützt die Ohren vor Frost.,耳が凍らない。,귀가 얼지 않게 해준다.,防止耳朵冻僵。
+ITEM_GLIMMER_SHARD,Glimmer Shard,Esquirla Brillante,Fragmento Cintilante,Éclat Scintillant,Schimmerscherbe,きらめく欠片,반짝이 조각,微光碎片
+ITEM_GLIMMER_SHARD_DESC,Traders value these highly.,Los mercaderes las valoran mucho.,Mercadores valorizam muito.,Très prisé des marchands.,Händler schätzen sie sehr.,商人が高く評価する。,상인들이 높이 쳐준다.,商人们很看重这个。
+ITEM_GLOWMOSS,Glowmoss,Musgo Brillante,Musgo Brilhante,Mousse Luisante,Leuchtmoos,ヒカリゴケ,빛이끼,荧光苔
+ITEM_GLOWMOSS_DESC,Slowly mends wounds.,Cura heridas poco a poco.,Cura feridas aos poucos.,Soigne lentement les blessures.,Heilt Wunden langsam.,じわじわと傷を癒す。,상처를 천천히 치유한다.,缓慢愈合伤口。
+ITEM_HEARTY_STEW,Hearty Stew,Guiso Contundente,Ensopado Reforçado,Ragoût Copieux,Kräftiger Eintopf,たっぷり煮込み,든든한 스튜,丰盛炖菜
+ITEM_HEARTY_STEW_DESC,Restores health.,Recupera vida.,Recupera vida.,Rend de la vie.,Stellt Leben her.,体力を回復。,체력을 회복한다.,恢复生命。
+ITEM_HONEYCOMB,Honeycomb,Panal,Favo de Mel,Rayon de Miel,Honigwabe,ハチの巣,벌집,蜂巢
+ITEM_HONEYCOMB_DESC,Rich and energizing.,Rico y energizante.,Rico e energizante.,Riche et énergisant.,Reichhaltig und belebend.,濃厚で元気が出る。,진하고 활력을 준다.,浓郁且提神。
+ITEM_HONEY_PEAR_TART,Honey-Pear Tart,Tarta de Miel y Pera,Torta de Mel e Pera,Tarte Miel-Poire,Honig-Birnen-Tarte,ハチミツ梨のタルト,꿀배 타르트,蜜梨挞
+ITEM_HONEY_PEAR_TART_DESC,A secret recipe. Heals greatly and overfills stamina.,Receta secreta. Cura mucho y rebasa el aguante.,Receita secreta. Cura muito e excede o vigor.,Recette secrète. Soigne beaucoup et dépasse l'endurance.,Geheimrezept. Heilt stark und überfüllt die Ausdauer.,秘伝のレシピ。大回復＋がんばり上限超え。,비밀 레시피. 크게 회복하고 기력을 초과 충전.,秘方。大量恢复并使耐力超出上限。
+ITEM_IRON_INGOT,Iron Ingot,Lingote de Hierro,Lingote de Ferro,Lingot de Fer,Eisenbarren,鉄の延べ棒,철 주괴,铁锭
+ITEM_IRON_INGOT_DESC,Refined iron for charms and forge stones.,Hierro refinado para amuletos y piedras de forja.,Ferro refinado para amuletos e pedras de forja.,Fer affiné pour talismans et pierres de forge.,Veredeltes Eisen für Amulette und Schmiedesteine.,お守りや鍛冶石に使う精錬鉄。,부적과 대장간 돌에 쓰는 정련된 철.,精炼铁，用于护符和锻造石。
+ITEM_IRON_ORE,Iron Ore,Mineral de Hierro,Minério de Ferro,Minerai de Fer,Eisenerz,鉄鉱石,철광석,铁矿石
+ITEM_IRON_ORE_DESC,Smelt at a campfire into ingots.,Fúndelo en una fogata para hacer lingotes.,Funda na fogueira em lingotes.,À fondre au feu de camp en lingots.,Am Lagerfeuer zu Barren schmelzen.,焚き火で延べ棒にできる。,모닥불에서 주괴로 제련.,可在篝火旁熔炼成锭。
+ITEM_LODESTONE_CHARM,Lodestone Charm,Amuleto de Magnetita,Amuleto de Magnetita,Talisman de Magnétite,Magnetit-Amulett,磁石のお守り,자철석 부적,磁石护符
+ITEM_LODESTONE_CHARM_DESC,"Draws lightning into the ground, away from you.","Desvía los rayos al suelo, lejos de ti.","Leva os raios ao chão, longe de você.","Détourne la foudre vers le sol, loin de vous.","Leitet Blitze in den Boden, weg von dir.",雷を地面へ逃がす。,번개를 땅으로 흘려보낸다.,将雷电引入地下，远离你。
+ITEM_MENDING_TEA,Mending Tea,Té Reparador,Chá Restaurador,Thé Réparateur,Heiltee,癒やしの茶,치유의 차,疗愈茶
+ITEM_MENDING_TEA_DESC,Health regenerates for a while.,La vida se regenera un tiempo.,A vida regenera por um tempo.,La vie se régénère un moment.,Leben regeneriert eine Weile.,しばらく体力が回復し続ける。,잠시 체력이 재생된다.,一段时间内持续恢复生命。
+ITEM_MENTOR_JOURNAL,Oren's Journal,Diario de Oren,Diário de Oren,Journal d'Oren,Orens Tagebuch,オレンの日誌,오렌의 일지,奥伦的日志
+ITEM_MENTOR_JOURNAL_DESC,"""The wind does not die. Something below is holding its breath.""",«El viento no muere. Algo bajo tierra contiene el aliento».,"""O vento não morre. Algo lá embaixo prende a respiração.""","« Le vent ne meurt pas. Quelque chose, dessous, retient son souffle. »",„Der Wind stirbt nicht. Etwas darunter hält den Atem an.“,「風は死なない。地の底で何かが息を止めているのだ」,"""바람은 죽지 않는다. 저 아래 무언가가 숨을 참고 있다.""",「风并未消亡。地下有什么东西屏住了呼吸。」
+ITEM_MURKY_STEW,Murky Stew,Guiso Turbio,Ensopado Turvo,Ragoût Trouble,Trüber Eintopf,にごり煮,탁한 스튜,浑浊炖菜
+ITEM_MURKY_STEW_DESC,Something went wrong. Still edible… barely.,Algo salió mal. Aún se come… apenas.,Algo deu errado. Ainda comestível… mal.,Quelque chose a raté. Encore mangeable… à peine.,Etwas lief schief. Noch essbar … gerade so.,何かを間違えた。かろうじて食べられる。,뭔가 잘못됐다. 겨우 먹을 만하다.,哪里出错了。勉强能吃……
+ITEM_QUARRY_SABER,Quarry Saber,Sable de Cantera,Sabre da Pedreira,Sabre de Carrière,Steinbruchsäbel,石切りの刀,채석장 세이버,采石军刀
+ITEM_QUARRY_SABER_DESC,A quarry worker's blade. Balanced and dependable.,La hoja de un cantero. Equilibrada y fiable.,Lâmina de um pedreiro. Equilibrada e confiável.,La lame d'un carrier. Équilibrée et fiable.,Die Klinge eines Steinbrechers. Ausgewogen und verlässlich.,石工の刃。均整が取れて頼もしい。,석공의 칼날. 균형 잡히고 믿음직하다.,采石工人的刀，平衡可靠。
+ITEM_RAW_MEAT,Raw Meat,Carne Cruda,Carne Crua,Viande Crue,Rohes Fleisch,生肉,생고기,生肉
+ITEM_RAW_MEAT_DESC,Much better cooked.,Mucho mejor cocinada.,Muito melhor cozida.,Bien meilleure cuite.,Gekocht viel besser.,焼いた方がずっといい。,익히면 훨씬 낫다.,煮熟了好吃得多。
+ITEM_RESIN_BOMB,Resin Bomb,Bomba de Resina,Bomba de Resina,Bombe de Résine,Harzbombe,樹脂爆弾,송진 폭탄,树脂炸弹
+ITEM_RESIN_BOMB_DESC,Throw it. It bursts into flames.,Lánzala. Estalla en llamas.,Arremesse. Explode em chamas.,Lancez-la. Elle s'embrase.,Wirf sie. Sie geht in Flammen auf.,投げると炎を上げて弾ける。,던지면 불꽃으로 터진다.,投掷后会爆燃。
+ITEM_SPITTER_GLAND,Spitter Gland,Glándula de Escupidor,Glândula de Cuspidor,Glande de Cracheur,Speierdrüse,ツバハキの腺,침뱉개 분비샘,喷吐怪腺体
+ITEM_SPITTER_GLAND_DESC,Burns on contact. A reactive ingredient.,Quema al contacto. Ingrediente reactivo.,Queima ao toque. Ingrediente reativo.,Brûle au contact. Ingrédient réactif.,Ätzt bei Berührung. Reaktive Zutat.,触れると焼ける。反応性の素材。,닿으면 탄다. 반응성 재료.,触之灼伤，活性材料。
+ITEM_STAMINA_BLOOM,Stamina Bloom,Flor de Aguante,Flor de Vigor,Fleur d'Endurance,Ausdauerblüte,がんばりの花,기력의 꽃,耐力之花
+ITEM_STAMINA_BLOOM_DESC,Eat to permanently raise your maximum stamina.,Cómela para aumentar tu aguante máximo para siempre.,Coma para aumentar o vigor máximo para sempre.,Mangez-la pour augmenter définitivement l'endurance max.,Essen erhöht dauerhaft deine maximale Ausdauer.,食べるとがんばりの上限が永久に増える。,먹으면 최대 기력이 영구히 증가.,食用后永久提升耐力上限。
+ITEM_STONELEAF,Stoneleaf,Hoja Pétrea,Folha-pedra,Feuille-pierre,Steinblatt,イシノハ,돌잎,石叶
+ITEM_STONELEAF_DESC,Bitter. Raises defense for a while.,Amarga. Sube la defensa un rato.,Amarga. Aumenta a defesa por um tempo.,Amère. Augmente la défense un moment.,Bitter. Stärkt eine Weile die Abwehr.,苦い。しばらく防御アップ。,쓰다. 잠시 방어력 상승.,苦涩，短时间提升防御。
+ITEM_STOUT_ROAST,Stout Roast,Asado Robusto,Assado Robusto,Rôti Robuste,Deftiger Braten,がっしり焼き,든든 구이,坚实烤肉
+ITEM_STOUT_ROAST_DESC,Raises defense.,Aumenta la defensa.,Aumenta a defesa.,Augmente la défense.,Erhöht die Abwehr.,防御アップ。,방어력 상승.,提升防御。
+ITEM_SUNPEAR,Sunpear,Perasol,Pera-sol,Poire-soleil,Sonnenbirne,サンペア,태양배,日梨
+ITEM_SUNPEAR_DESC,Sweet and juicy. Restores a little health.,Dulce y jugosa. Recupera algo de vida.,Doce e suculenta. Recupera um pouco de vida.,Sucrée et juteuse. Rend un peu de vie.,Süß und saftig. Heilt etwas.,甘くてみずみずしい。少し回復。,달고 즙이 많다. 체력을 조금 회복.,香甜多汁，恢复少量生命。
+ITEM_SWIFTLEAF,Swiftleaf,Hoja Veloz,Folha-veloz,Feuille-vive,Flinkblatt,ハヤノハ,날쌘잎,疾叶
+ITEM_SWIFTLEAF_DESC,Light-headed. Move faster for a while.,Te aligera. Te mueves más rápido un rato.,Deixa leve. Move-se mais rápido por um tempo.,Rend léger. Plus rapide un moment.,Macht leicht. Eine Weile schneller.,体が軽くなる。しばらく速く動ける。,몸이 가벼워진다. 잠시 빨라진다.,身轻如燕，短时间移动加快。
+ITEM_SWIFT_SOUP,Swift Soup,Sopa Veloz,Sopa Veloz,Soupe Véloce,Flinke Suppe,はやてスープ,날쌘 수프,疾风汤
+ITEM_SWIFT_SOUP_DESC,Move faster.,Te mueves más rápido.,Move-se mais rápido.,Déplacement plus rapide.,Schneller bewegen.,移動が速くなる。,더 빠르게 움직인다.,移动更快。
+ITEM_THORN_FANG,Thorn Fang,Colmillo Espinoso,Presa Espinhosa,Croc Épineux,Dornzahn,イバラの牙,가시 송곳니,棘牙
+ITEM_THORN_FANG_DESC,Taken from a thornling.,Arrancado a un espinoso.,Tirada de um espinhento.,Pris à un épineux.,Von einem Dornling.,イバラモノの牙。,가시짐승에게서 얻었다.,取自棘兽。
+ITEM_TIDE_SPEAR,Tide Spear,Lanza de Marea,Lança da Maré,Lance des Marées,Gezeitenspeer,潮の槍,조류의 창,潮汐长枪
+ITEM_TIDE_SPEAR_DESC,"Long reach, quick jabs. Hold to lunge.",Gran alcance y estocadas rápidas. Mantén para embestir.,"Grande alcance, golpes rápidos. Segure para investir.","Grande allonge, estocs rapides. Maintenez pour charger.","Große Reichweite, schnelle Stiche. Halten für Sturmangriff.",長い間合いと素早い突き。長押しで突進。,"긴 사거리, 빠른 찌르기. 길게 눌러 돌진.",攻击距离长，出手快。长按可突刺。
+ITEM_TRAVELER_BOOTS,Traveler's Boots,Botas de Viajero,Botas de Viajante,Bottes du Voyageur,Reisestiefel,旅人の靴,여행자의 장화,旅人靴
+ITEM_TRAVELER_BOOTS_DESC,Good for long roads.,Buenas para caminos largos.,Boas para longas estradas.,Idéales pour les longues routes.,Gut für lange Wege.,長旅向き。,먼 길에 좋다.,适合长途跋涉。
+ITEM_TRAVELER_COAT,Traveler's Coat,Abrigo de Viajero,Casaco de Viajante,Manteau du Voyageur,Reisemantel,旅人の外套,여행자의 외투,旅人外套
+ITEM_TRAVELER_COAT_DESC,"Worn, patched, reliable.","Gastado, remendado, fiable.","Gasto, remendado, confiável.","Usé, rapiécé, fiable.","Abgetragen, geflickt, verlässlich.",使い古しだが頼れる。,낡고 기웠지만 믿음직하다.,旧而补丁累累，却很可靠。
+ITEM_TRAVELER_HOOD,Traveler's Hood,Capucha de Viajero,Capuz de Viajante,Capuche du Voyageur,Reisekapuze,旅人の頭巾,여행자의 두건,旅人兜帽
+ITEM_TRAVELER_HOOD_DESC,Keeps the drizzle off.,Protege de la llovizna.,Protege da garoa.,Protège de la bruine.,Hält den Niesel ab.,小雨をしのぐ。,이슬비를 막아준다.,挡住细雨。
+ITEM_VELA_GLIDER,Vela,Vela,Vela,Vela,Vela,ベラ,벨라,风帆
+ITEM_VELA_GLIDER_DESC,Oren's kite-sail. Jump in mid-air to open it and ride the wind.,La vela-cometa de Oren. Salta en el aire para abrirla y montar el viento.,A vela-pipa de Oren. Pule no ar para abri-la e surfar o vento.,La voile-cerf-volant d'Oren. Sautez en l'air pour la déployer.,"Orens Drachensegel. In der Luft springen, um es zu öffnen.",オレンの凧帆。空中でジャンプして開き、風に乗る。,오렌의 연 돛. 공중에서 점프해 펼치고 바람을 탄다.,奥伦的风筝帆。空中跳跃即可展开，乘风而行。
+ITEM_VIGOR_BROTH,Vigor Broth,Caldo Vigoroso,Caldo Vigoroso,Bouillon Vigueur,Kraftbrühe,活力スープ,활력 수프,活力肉汤
+ITEM_VIGOR_BROTH_DESC,Restores stamina and speeds its recovery.,Recupera aguante y acelera su recuperación.,Recupera vigor e acelera a recuperação.,Rend de l'endurance et accélère sa récupération.,Stellt Ausdauer her und beschleunigt die Erholung.,がんばり回復＋回復速度アップ。,기력 회복 + 회복 속도 증가.,恢复耐力并加快恢复速度。
+ITEM_VITAL_SEED,Vital Seed,Semilla Vital,Semente Vital,Graine Vitale,Lebenssamen,命の種,생명의 씨앗,生命之种
+ITEM_VITAL_SEED_DESC,Eat to permanently raise your maximum health.,Cómela para aumentar tu vida máxima para siempre.,Coma para aumentar a vida máxima para sempre.,Mangez-la pour augmenter définitivement la vie max.,Essen erhöht dauerhaft dein maximales Leben.,食べると体力の上限が永久に増える。,먹으면 최대 체력이 영구히 증가.,食用后永久提升生命上限。
+ITEM_WARMING_CURRY,Warming Curry,Curry Caliente,Curry Quente,Curry Réchauffant,Wärmendes Curry,ぽかぽかカレー,따끈한 카레,暖身咖喱
+ITEM_WARMING_CURRY_DESC,Resist the cold for a long time.,Resiste el frío durante mucho tiempo.,Resista ao frio por muito tempo.,Résiste longtemps au froid.,Lange Kälteschutz.,長く寒さに耐えられる。,오랫동안 추위를 견딘다.,长时间抵御寒冷。
+ITEM_WAYFARER_EDGE,Wayfarer's Edge,Filo del Caminante,Fio do Andarilho,Lame du Voyageur,Klinge des Wanderers,旅人の刃,나그네의 칼날,旅者之刃
+ITEM_WAYFARER_EDGE_DESC,An heirloom blade. It never breaks; it only loses its edge.,Una hoja de reliquia. Nunca se rompe; solo pierde el filo.,Uma lâmina relíquia. Nunca quebra; só perde o fio.,"Une lame héritée. Elle ne casse jamais, elle s'émousse.","Eine Erbklinge. Sie bricht nie, sie wird nur stumpf.",受け継がれた刃。決して折れず、鈍るだけ。,대대로 내려온 칼. 부러지지 않고 무뎌질 뿐.,传承之刃，永不折断，只会变钝。
+ITEM_WHETSTONE,Whetstone,Piedra de Afilar,Pedra de Amolar,Pierre à Aiguiser,Wetzstein,砥石,숫돌,磨刀石
+ITEM_WHETSTONE_DESC,Restores half of a weapon's durability.,Recupera la mitad de la durabilidad de un arma.,Recupera metade da durabilidade da arma.,Rend la moitié de la solidité d'une arme.,Stellt die halbe Haltbarkeit einer Waffe her.,武器の耐久を半分回復。,무기 내구도를 절반 회복.,恢复武器一半耐久。
+ITEM_WINDRUNNER_BAND,Windrunner Band,Brazal Correvientos,Bracelete Corre-vento,Bracelet Coursevent,Windläuferreif,風走りの腕輪,바람달리기 팔찌,逐风手环
+ITEM_WINDRUNNER_BAND_DESC,"Lighter steps, quicker breath.","Pasos ligeros, aliento rápido.","Passos leves, fôlego rápido.","Pas légers, souffle vif.","Leichtere Schritte, schnellerer Atem.",足取り軽く、息も早く戻る。,"가벼운 발걸음, 빠른 숨.",步伐轻快，呼吸顺畅。
+ITEM_WISP_FILAMENT,Wisp Filament,Filamento de Fatuo,Filamento de Fátuo,Filament de Feu follet,Irrlichtfaden,ヒトダマの糸,도깨비불 필라멘트,鬼火丝
+ITEM_WISP_FILAMENT_DESC,Still buzzing with charge.,Aún zumba con carga.,Ainda zumbe de carga.,Grésille encore d'énergie.,Summt noch vor Ladung.,まだ電気を帯びている。,아직도 전기가 웅웅댄다.,仍带着电荷嗡嗡作响。
+ITEM_WOOD_BUNDLE,Wood,Madera,Madeira,Bois,Holz,木材,나무,木材
+ITEM_WOOD_BUNDLE_DESC,Burns well. Useful for crafting.,Arde bien. Útil para fabricar.,Queima bem. Útil para criar.,Brûle bien. Utile en artisanat.,Brennt gut. Nützlich zum Herstellen.,よく燃える。クラフトに使う。,잘 탄다. 제작에 쓰인다.,易燃，可用于制作。
+ITEM_WOOLEN_WRAP,Woolen Wrap,Manto de Lana,Manta de Lã,Châle de Laine,Wollumhang,羊毛の外衣,양모 망토,羊毛披肩
+ITEM_WOOLEN_WRAP_DESC,Thick woolhorn fleece. Warm in the highlands.,Vellón grueso de cuernolana. Abriga en las alturas.,Lã grossa de chifrelã. Aquece nas alturas.,Épaisse toison de cornelaine. Chaude en altitude.,Dickes Wollhornvlies. Warm im Hochland.,ウールホーンの厚い毛。高地で暖かい。,두툼한 양털뿔 털. 고원에서 따뜻하다.,厚实的绒角兽毛，在高地很暖和。
+LANG_DE,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch
+LANG_EN,English,English,English,English,English,English,English,English
+LANG_ES,Español,Español,Español,Español,Español,Español,Español,Español
+LANG_FR,Français,Français,Français,Français,Français,Français,Français,Français
+LANG_JA,日本語,日本語,日本語,日本語,日本語,日本語,日本語,日本語
+LANG_KO,한국어,한국어,한국어,한국어,한국어,한국어,한국어,한국어
+LANG_PT,Português,Português,Português,Português,Português,Português,Português,Português
+LANG_ZH,中文,中文,中文,中文,中文,中文,中文,中文
+LOADING_READY,Ready,Listo,Pronto,Prêt,Bereit,準備完了,준비 완료,准备就绪
+LOADING_TERRAIN,Raising the land…,Levantando la tierra…,Erguendo a terra…,Le relief se dessine…,Das Land erhebt sich …,大地を形作っています…,대지를 빚는 중…,大地正在成形……
+LOADING_WORLD,Unfolding the map…,Desplegando el mapa…,Abrindo o mapa…,Dépliage de la carte…,Karte wird entfaltet …,地図を広げています…,지도를 펼치는 중…,正在展开地图……
+LORE_ECHO_CHAMBER,"The walls answer every footstep twice. At the heart, the builders left what they could not carry.","Los muros responden dos veces a cada paso. En el corazón, los constructores dejaron lo que no pudieron llevarse.","As paredes respondem duas vezes a cada passo. No centro, os construtores deixaram o que não puderam levar.","Les murs répondent deux fois à chaque pas. Au cœur, les bâtisseurs ont laissé ce qu'ils ne pouvaient emporter.","Die Mauern antworten jedem Schritt zweimal. Im Herzen ließen die Erbauer zurück, was sie nicht tragen konnten.",壁はどの足音にも二度応える。中心には、建てた者たちが運べなかったものが残されている。,벽은 모든 발소리에 두 번 대답한다. 중심에는 건축가들이 가져가지 못한 것이 남아 있다.,墙壁对每一步都回应两次。在中心，建造者留下了他们带不走的东西。
+LORE_MAZE,An old labyrinth. Something valuable waits at its heart.,Un viejo laberinto. Algo valioso espera en su centro.,Um velho labirinto. Algo valioso espera no centro.,Un vieux labyrinthe. Un trésor attend en son cœur.,Ein altes Labyrinth. In seinem Herzen wartet etwas Wertvolles.,古い迷宮。その中心に価値あるものが待つ。,오래된 미궁. 그 중심에 귀한 것이 기다린다.,古老的迷宫。它的中心藏着珍贵之物。
+LORE_MOSS_CRYPT,Here rest the sail-weavers. Their last thread still pulls toward the sky.,Aquí descansan los tejedores de velas. Su último hilo aún tira hacia el cielo.,Aqui descansam os tecelões de velas. O último fio ainda puxa para o céu.,Ici reposent les tisseurs de voiles. Leur dernier fil tire encore vers le ciel.,Hier ruhen die Segelweber. Ihr letzter Faden zieht noch immer zum Himmel.,帆織りたちここに眠る。最後の糸は今も空へと引かれている。,돛을 짜던 이들이 여기 잠들다. 그들의 마지막 실은 아직도 하늘을 향한다.,织帆人长眠于此。他们最后的丝线仍向着天空牵引。
+LORE_OVERLOOK,Stand in the ring and face the valley. The mountain exhales: step off and let it lift you.,Ponte en el anillo mirando al valle. La montaña exhala: da un paso y deja que te eleve.,Fique no anel de frente para o vale. A montanha expira: dê um passo e deixe-a erguer você.,Tenez-vous dans le cercle face à la vallée. La montagne expire : avancez et laissez-la vous porter.,"Stell dich in den Ring, mit Blick ins Tal. Der Berg atmet aus: Tritt hinaus und lass dich tragen.",輪の中に立ち、谷を向け。山は息を吐く。踏み出して、持ち上げられよ。,고리 안에 서서 계곡을 바라보라. 산이 숨을 내쉰다. 한 걸음 내딛고 몸을 맡겨라.,站在石环中，面向山谷。山在呼气：迈出一步，让它托起你。
+LORE_TITLE_VILLAGE,Heath Stone,Piedra del Brezo,Pedra da Urze,Pierre de la Lande,Heidestein,ヒースの石碑,히스의 비석,石楠碑
+LORE_TOWER,A watch post of the wind-keepers. Scratched on the floor: a map of lights on the mountain.,Un puesto de los guardianes del viento. Rayado en el suelo: un mapa de luces en la montaña.,Um posto dos guardiões do vento. Riscado no chão: um mapa de luzes na montanha.,Un poste des gardiens du vent. Gravée au sol : une carte de lumières sur la montagne.,Ein Wachposten der Windhüter. In den Boden geritzt: eine Karte von Lichtern am Berg.,風守りの見張り台。床には山の灯りを記した地図が刻まれている。,바람지기의 감시탑. 바닥에 긁힌 자국: 산 위 불빛들의 지도.,守风人的哨所。地上刻着一幅山间灯火的地图。
+LORE_VILLAGE_STONE,"Carved long ago: ""When the Stillwake stirs, the wind forgets its way. Sing to the stones and it will remember.""","Tallado hace mucho: «Cuando la Quietud despierta, el viento olvida su camino. Canta a las piedras y lo recordará».","Entalhado há muito: ""Quando a Quietude desperta, o vento esquece o caminho. Cante às pedras e ele lembrará.""","Gravé jadis : « Quand le Calme s'éveille, le vent oublie sa route. Chantez aux pierres et il s'en souviendra. »","Vor langer Zeit gemeißelt: „Wenn die Stille erwacht, vergisst der Wind seinen Weg. Sing zu den Steinen, und er erinnert sich.“",古い刻文：「静寂が目覚めるとき、風は道を忘れる。石に歌えば、風は思い出す」,"오래전 새겨진 글: ""고요가 깨어나면 바람은 길을 잊는다. 돌에게 노래하면 기억하리라.""",古老的刻文：「寂静苏醒之时，风将迷失其路。向石头歌唱，它便会想起。」
+MAP_HINT,Tap to place a pin,Toca para poner un marcador,Toque para marcar,Touchez pour placer un repère,Tippen für Markierung,タップでピンを置く,탭하여 핀 놓기,点击放置标记
+MENU_CONTINUE,Continue,Continuar,Continuar,Continuer,Fortsetzen,つづきから,이어하기,继续游戏
+MENU_NEW_GAME,New journey,Nuevo viaje,Nova jornada,Nouveau voyage,Neue Reise,はじめから,새 여정,新的旅程
+MENU_NO,No,No,Não,Non,Nein,いいえ,아니요,否
+MENU_OVERWRITE,Start a new journey? Your current progress will be lost.,¿Empezar un nuevo viaje? Se perderá el progreso actual.,Começar uma nova jornada? O progresso atual será perdido.,Commencer un nouveau voyage ? La progression actuelle sera perdue.,Neue Reise beginnen? Der aktuelle Fortschritt geht verloren.,新しく始めますか？現在の進行状況は失われます。,새 여정을 시작할까요? 현재 진행 상황이 사라집니다.,开始新的旅程？当前进度将会丢失。
+MENU_QUIT,Quit,Salir,Sair,Quitter,Beenden,終了,종료,退出
+MENU_SUBTITLE,Every horizon is reachable.,Todo horizonte es alcanzable.,Todo horizonte é alcançável.,Chaque horizon est à portée.,Jeder Horizont ist erreichbar.,すべての地平線へ。,모든 지평선에 닿을 수 있다.,每一道地平线都触手可及。
+MENU_YES,Yes,Sí,Sim,Oui,Ja,はい,예,是
+NAME_BULWARK,Bulwark,Baluarte,Baluarte,Rempart,Bollwerk,ブルワーク,성벽거인,壁垒巨人
+NAME_BURROWHOP,Burrowhop,Saltamadrigueras,Saltatoca,Sautrou,Bauhüpfer,アナピョン,굴토끼,穴跳兽
+NAME_CARTOGRAPHER,"Tamsin, cartographer","Tamsin, cartógrafa","Tamsin, cartógrafa","Tamsin, cartographe","Tamsin, Kartografin",地図職人タムシン,지도제작자 탐신,制图师塔姆辛
+NAME_MERCHANT,"Brask, trader","Brask, mercader","Brask, mercador","Brask, marchand","Brask, Händler",商人ブラスク,상인 브라스크,商人布拉斯克
+NAME_NARRATOR,,,,,,,,
+NAME_PLAYER,Apprentice,Aprendiz,Aprendiz,Apprenti·e,Lehrling,見習い,견습생,学徒
+NAME_SPITTER,Spitter,Escupidor,Cuspidor,Cracheur,Speier,ツバハキ,침뱉개,喷吐怪
+NAME_THORNLING,Thornling,Espinoso,Espinhento,Épineux,Dornling,イバラモノ,가시짐승,棘兽
+NAME_VILLAGER,Villager,Aldeano,Aldeão,Villageois,Dorfbewohner,村人,마을 사람,村民
+NAME_WARDEN,Stillwake Warden,Guardián de la Quietud,Guardião da Quietude,Gardien du Calme,Wächter der Stille,静寂の番人,고요의 수호자,寂静守卫
+NAME_WISP,Wisp,Fatuo,Fátuo,Feu follet,Irrlicht,ヒトダマ,도깨비불,鬼火
+NAME_WOOLHORN,Woolhorn,Cuernolana,Chifrelã,Cornelaine,Wollhorn,ウールホーン,양털뿔,绒角兽
+POI_BROKEN_TOWER,Broken Tower,Torre Rota,Torre Quebrada,Tour Brisée,Zerbrochener Turm,崩れた塔,부서진 탑,断塔
+POI_CENDAL_SUMMIT,Cendal Summit,Cumbre de Cendal,Cume de Cendal,Sommet de Cendal,Cendal-Gipfel,センダル山頂,센달 정상,森达尔峰顶
+POI_DAWN_WRECK,Dawn Wreck,Naufragio del Alba,Naufrágio da Aurora,Épave de l'Aube,Morgenwrack,暁の難破船,새벽 난파선,黎明残骸
+POI_ECHO_CHAMBER,Echo Chamber,Cámara del Eco,Câmara do Eco,Chambre de l'Écho,Echokammer,木霊の間,메아리의 방,回声之室
+POI_ELDER_TREE,Elder Tree,Árbol Anciano,Árvore Anciã,Arbre Ancien,Uralter Baum,古老の樹,원로 나무,长老之树
+POI_FANG_CAMP,Fang Camp,Campamento Colmillo,Acampamento Presa,Camp du Croc,Reißzahnlager,牙の野営地,송곳니 야영지,獠牙营地
+POI_HEATH_HAMLET,Heath Hamlet,Aldea del Brezo,Aldeia da Urze,Hameau de la Lande,Heideweiler,ヒースの村,히스 마을,石楠村
+POI_MOSS_CRYPT,Moss Crypt,Cripta del Musgo,Cripta do Musgo,Crypte Moussue,Moosgruft,苔の地下墓所,이끼 묘실,苔藓地穴
+POI_NEEDLES,The Needles,Las Agujas,As Agulhas,Les Aiguilles,Die Nadeln,針の岩山,바늘 바위,针岩林
+POI_THORN_DEN,Thorn Den,Guarida Espinosa,Covil Espinhoso,Tanière Épineuse,Dornenbau,茨の巣穴,가시 굴,荆棘巢穴
+POI_WIND_OVERLOOK,Wind Overlook,Mirador del Viento,Mirante do Vento,Belvédère du Vent,Windwarte,風の見晴台,바람 전망대,风之观景台
+PROMPT_CAMP,Camp,Acampar,Acampar,Camp,Lager,野営,야영,扎营
+PROMPT_GATHER,Gather,Recoger,Colher,Cueillir,Sammeln,採る,채집,采集
+PROMPT_OPEN,Open,Abrir,Abrir,Ouvrir,Öffnen,開ける,열기,打开
+PROMPT_READ,Read,Leer,Ler,Lire,Lesen,読む,읽기,阅读
+PROMPT_TALK,Talk,Hablar,Falar,Parler,Reden,話す,대화,交谈
+PROMPT_USE,Use,Usar,Usar,Utiliser,Benutzen,使う,사용,使用
+REGION_COAST,Dawn Coast,Costa del Alba,Costa da Aurora,Côte de l'Aube,Morgenküste,暁の海岸,새벽 해안,黎明海岸
+REGION_FOREST,Threshold Wood,Bosque Umbral,Bosque Limiar,Bois du Seuil,Schwellenwald,境の森,문턱의 숲,门槛森林
+REGION_HIGHLANDS,Cendal Highlands,Altos de Cendal,Altos de Cendal,Hauts de Cendal,Cendal-Hochland,センダル高地,센달 고원,森达尔高地
+REGION_LAKESHORE,Mirror Lake,Lago Espejo,Lago Espelho,Lac Miroir,Spiegelsee,鏡の湖,거울 호수,镜湖
+REGION_VALLEY,Heath Valley,Valle del Brezo,Vale da Urze,Val de la Lande,Heidetal,ヒースの谷,히스 계곡,石楠谷
+SET_ACCESSIBILITY,Accessibility & language,Accesibilidad e idioma,Acessibilidade e idioma,Accessibilité et langue,Barrierefreiheit & Sprache,アクセシビリティと言語,접근성 및 언어,辅助功能与语言
+SET_AMBIENCE,Ambience,Ambiente,Ambiente,Ambiance,Umgebung,環境音,환경음,环境音
+SET_ANALYTICS,Share anonymous usage data,Compartir datos de uso anónimos,Compartilhar dados anônimos,Partager des données anonymes,Anonyme Nutzungsdaten teilen,匿名の利用データを送信,익명 사용 데이터 공유,共享匿名使用数据
+SET_AUDIO,Audio,Audio,Áudio,Audio,Audio,サウンド,오디오,音频
+SET_AUTO_CAMERA,Auto camera,Cámara automática,Câmera automática,Caméra auto,Auto-Kamera,オートカメラ,자동 카메라,自动镜头
+SET_BATTERY,Battery saver (30 FPS),Ahorro de batería (30 FPS),Economia de bateria (30 FPS),Économie de batterie (30 i/s),Akkusparmodus (30 FPS),省電力（30FPS）,배터리 절약 (30FPS),省电模式（30帧）
+SET_CAMERA_SENS,Camera sensitivity,Sensibilidad de cámara,Sensibilidade da câmera,Sensibilité caméra,Kameraempfindlichkeit,カメラ感度,카메라 감도,镜头灵敏度
+SET_CONTROLS,Controls & camera,Controles y cámara,Controles e câmera,Commandes et caméra,Steuerung & Kamera,操作とカメラ,조작 및 카메라,操作与镜头
+SET_CONTROLS_OPACITY,Button opacity,Opacidad de botones,Opacidade dos botões,Opacité des boutons,Tastendeckkraft,ボタンの不透明度,버튼 불투명도,按钮透明度
+SET_CONTROLS_SIZE,Button size,Tamaño de botones,Tamanho dos botões,Taille des boutons,Tastengröße,ボタンの大きさ,버튼 크기,按钮大小
+SET_DYNAMIC_RES,Dynamic resolution,Resolución dinámica,Resolução dinâmica,Résolution dynamique,Dynamische Auflösung,動的解像度,동적 해상도,动态分辨率
+SET_FPS,Frame rate,FPS,FPS,Images/s,Bildrate,フレームレート,프레임,帧率
+SET_GAME,Game,Partida,Jogo,Partie,Spiel,ゲーム,게임,游戏
+SET_GRAPHICS,Graphics & performance,Gráficos y rendimiento,Gráficos e desempenho,Graphismes et performances,Grafik & Leistung,グラフィックと性能,그래픽 및 성능,画面与性能
+SET_INVERT_Y,Invert vertical,Invertir vertical,Inverter vertical,Inverser l'axe vertical,Vertikal invertieren,上下反転,상하 반전,垂直反转
+SET_LANGUAGE,Language,Idioma,Idioma,Langue,Sprache,言語,언어,语言
+SET_LANG_AUTO,Device language,Idioma del dispositivo,Idioma do dispositivo,Langue de l'appareil,Gerätesprache,端末の言語,기기 언어,设备语言
+SET_LEFT_HANDED,Left-handed layout,Diseño para zurdos,Layout canhoto,Disposition gaucher,Linkshänder-Layout,左利き配置,왼손잡이 배치,左手布局
+SET_MUSIC,Music,Música,Música,Musique,Musik,音楽,음악,音乐
+SET_PRIVACY,Privacy,Privacidad,Privacidade,Confidentialité,Datenschutz,プライバシー,개인정보,隐私
+SET_QUALITY,Quality,Calidad,Qualidade,Qualité,Qualität,画質,품질,画质
+SET_Q_AUTO,Auto,Automática,Automática,Auto,Auto,自動,자동,自动
+SET_Q_HIGH,High,Alta,Alta,Haute,Hoch,高,높음,高
+SET_Q_LOW,Low,Baja,Baixa,Basse,Niedrig,低,낮음,低
+SET_Q_MEDIUM,Medium,Media,Média,Moyenne,Mittel,中,중간,中
+SET_Q_ULTRA,Ultra,Ultra,Ultra,Ultra,Ultra,最高,최상,极高
+SET_SFX,Effects,Efectos,Efeitos,Effets,Effekte,効果音,효과음,音效
+SET_SHOW_FPS,Show FPS,Mostrar FPS,Mostrar FPS,Afficher les i/s,FPS anzeigen,FPS表示,FPS 표시,显示帧率
+SET_SUBTITLES,Subtitles,Subtítulos,Legendas,Sous-titres,Untertitel,字幕,자막,字幕
+SET_TEXT_SIZE,Text size,Tamaño de texto,Tamanho do texto,Taille du texte,Textgröße,文字サイズ,글자 크기,文字大小
+SET_TRAVELER,Traveler set (3): faster stamina recovery,Conjunto viajero (3): recuperas aguante antes,Conjunto viajante (3): vigor recupera mais rápido,Tenue du voyageur (3) : endurance plus rapide,Reiseset (3): schnellere Ausdauer,旅人セット(3)：がんばり回復アップ,여행자 세트(3): 기력 회복 증가,旅人套装(3)：耐力恢复加快
+SET_VIBRATION,Vibration,Vibración,Vibração,Vibration,Vibration,振動,진동,振动
+SLOT_ACCESSORY,Charm,Accesorio,Acessório,Accessoire,Zubehör,装飾,장신구,饰品
+SLOT_BODY,Body,Cuerpo,Corpo,Corps,Körper,胴,몸,身体
+SLOT_HEAD,Head,Cabeza,Cabeça,Tête,Kopf,頭,머리,头部
+SLOT_LEGS,Legs,Piernas,Pernas,Jambes,Beine,脚,다리,腿部
+SLOT_WEAPON,Weapon,Arma,Arma,Arme,Waffe,武器,무기,武器
+STATUS_BURNING,Burning,Ardiendo,Queimando,En feu,Brennt,炎上,화상,燃烧
+STATUS_CHILLED,Chilled,Helado,Gelado,Transi,Unterkühlt,冷え,냉기,冰冷
+STATUS_FREEZING,Freezing!,¡Congelándote!,Congelando!,Gelé !,Frierst!,凍えている！,얼어붙는 중!,寒冷！
+STATUS_HOT,Overheating!,¡Demasiado calor!,Superaquecendo!,Surchauffe !,Überhitzt!,暑すぎる！,과열!,过热！
+STATUS_METAL_STORM,Metal in a storm!,¡Metal en la tormenta!,Metal na tempestade!,Métal sous l'orage !,Metall im Gewitter!,嵐に金属！,폭풍 속 금속!,雷雨中携带金属！
+STATUS_SHOCKED,Shocked,Electrocutado,Eletrocutado,Électrocuté,Geschockt,感電,감전,触电
+STATUS_WET,Wet,Mojado,Molhado,Mouillé,Nass,濡れ,젖음,潮湿
+STAT_ATTACK,Attack,Ataque,Ataque,Attaque,Angriff,攻撃,공격,攻击
+STAT_DAMAGE,Damage,Daño,Dano,Dégâts,Schaden,威力,피해,伤害
+STAT_DEFENSE,Defense,Defensa,Defesa,Défense,Abwehr,防御,방어,防御
+STAT_DURABILITY,Durability,Durabilidad,Durabilidade,Solidité,Haltbarkeit,耐久,내구도,耐久
+STAT_HEALTH,Health,Vida,Vida,Vie,Leben,体力,체력,生命
+STAT_HEIRLOOM,"Heirloom: never breaks, only blunts. Repair with a forge stone.","Reliquia: nunca se rompe, solo se mella. Repárala con piedra de forja.","Relíquia: nunca quebra, só perde o fio. Repare com pedra de forja.","Relique : ne casse jamais, s'émousse. Se répare à la pierre de forge.","Erbstück: bricht nie, wird nur stumpf. Mit Schmiedestein reparieren.",形見：壊れず鈍るだけ。鍛冶石で修理。,유물: 부서지지 않고 무뎌질 뿐. 대장간 돌로 수리.,传家宝：不会损坏，只会变钝。用锻造石修复。
+STAT_METAL,Metal: attracts lightning in storms.,Metal: atrae rayos en tormentas.,Metal: atrai raios em tempestades.,Métal : attire la foudre par orage.,Metall: zieht bei Gewitter Blitze an.,金属：嵐で雷を呼ぶ。,금속: 폭풍 때 번개를 끌어들임.,金属：暴风雨中会引雷。
+STAT_POTENCY,Potency,Potencia,Potência,Puissance,Stärke,効力,효력,效力
+STAT_REACH,Reach,Alcance,Alcance,Portée,Reichweite,間合い,사거리,攻击范围
+STAT_SPEED,Speed,Velocidad,Velocidade,Vitesse,Tempo,速さ,속도,速度
+STAT_STAMINA,Stamina,Aguante,Vigor,Endurance,Ausdauer,がんばり,기력,耐力
+TAB_CRAFTING,Crafting,Fabricar,Criar,Artisanat,Herstellen,クラフト,제작,制作
+TAB_INVENTORY,Inventory,Inventario,Inventário,Inventaire,Inventar,持ち物,소지품,物品
+TAB_MAP,Map,Mapa,Mapa,Carte,Karte,地図,지도,地图
+TAB_SETTINGS,Settings,Ajustes,Ajustes,Options,Optionen,設定,설정,设置
+TIP_1,"If you can see it, you can probably reach it. Climbing drains stamina: rest on ledges.","Si lo ves, probablemente puedas llegar. Escalar gasta aguante: descansa en salientes.","Se você vê, provavelmente pode chegar. Escalar gasta vigor: descanse nas saliências.","Si vous le voyez, vous pouvez sans doute l'atteindre. Grimper use l'endurance : reposez-vous sur les corniches.","Was du siehst, kannst du meist erreichen. Klettern kostet Ausdauer: Ruhe auf Vorsprüngen.",見えるなら、たぶん行ける。登るとがんばりを使う。岩棚で休もう。,보이면 대개 갈 수 있다. 등반은 기력을 소모한다. 턱에서 쉬자.,看得见的地方，大多到得了。攀爬消耗耐力，记得在岩架上休息。
+TIP_2,"Jump, then jump again in mid-air to open the Vela.",Salta y vuelve a saltar en el aire para abrir la Vela.,Pule e pule de novo no ar para abrir a Vela.,"Sautez, puis sautez à nouveau en l'air pour déployer la Vela.","Spring und springe in der Luft erneut, um die Vela zu öffnen.",ジャンプ中にもう一度ジャンプでベラを開く。,점프 중 다시 점프하면 벨라가 펼쳐진다.,跳起后在空中再跳一次即可展开风帆。
+TIP_3,Heat rises: glide over a fire to gain height.,El calor sube: planea sobre un fuego para ganar altura.,O calor sobe: plane sobre o fogo para ganhar altura.,La chaleur monte : planez au-dessus d'un feu pour prendre de la hauteur.,"Hitze steigt: Gleite über ein Feuer, um Höhe zu gewinnen.",熱は上へ。火の上を滑空すると高度が上がる。,열은 위로 오른다. 불 위를 활공하면 고도가 오른다.,热气上升：在火焰上方滑翔可以升高。
+TIP_4,Wet rock is slippery. Sprinting and fighting are loud: enemies hear them.,La roca mojada resbala. Correr y luchar hace ruido: los enemigos lo oyen.,Rocha molhada escorrega. Correr e lutar faz barulho: inimigos ouvem.,La roche mouillée glisse. Courir et se battre fait du bruit : l'ennemi entend.,Nasser Fels ist rutschig. Sprinten und Kämpfen ist laut: Gegner hören es.,濡れた岩は滑る。走ると戦いの音は敵に聞こえる。,젖은 바위는 미끄럽다. 달리기와 전투 소리는 적이 듣는다.,湿滑的岩石会打滑。奔跑和战斗会发出声响，敌人听得到。
+TIP_5,Unaware or sleeping enemies take double damage.,Los enemigos desprevenidos o dormidos reciben el doble de daño.,Inimigos distraídos ou dormindo recebem dano em dobro.,Les ennemis surpris ou endormis subissent le double de dégâts.,Ahnungslose oder schlafende Gegner erleiden doppelten Schaden.,油断や眠っている敵には2倍のダメージ。,방심하거나 잠든 적은 두 배의 피해를 받는다.,毫无防备或熟睡的敌人受到双倍伤害。
+TIP_6,Cook at any campfire. Mix ingredients to discover new dishes.,Cocina en cualquier fogata. Mezcla ingredientes para descubrir platos.,Cozinhe em qualquer fogueira. Misture ingredientes para descobrir pratos.,Cuisinez à n'importe quel feu. Mélangez pour découvrir des plats.,"Koche an jedem Lagerfeuer. Mische Zutaten, um Gerichte zu entdecken.",焚き火で料理。組み合わせて新しい料理を見つけよう。,모닥불에서 요리하자. 재료를 섞어 새 요리를 발견하자.,在任何篝火旁都能烹饪。混合食材发现新菜肴。
+TOAST_COOKED,Cooked: %s,Cocinado: %s,Cozido: %s,Cuisiné : %s,Gekocht: %s,完成：%s,완성: %s,做好了：%s
+TOAST_DISCOVERED,Discovered: %s,Descubierto: %s,Descoberto: %s,Découvert : %s,Entdeckt: %s,発見：%s,발견: %s,发现：%s
+TOAST_EXHAUSTED_WATER,Too tired to swim…,Demasiado cansado para nadar…,Cansado demais para nadar…,Trop épuisé pour nager…,Zu erschöpft zum Schwimmen …,泳ぐ力が尽きた…,헤엄칠 힘이 없다…,累得游不动了……
+TOAST_GUARD_BROKEN,Guard broken!,¡Guardia rota!,Guarda quebrada!,Garde brisée !,Deckung gebrochen!,ガードが崩れた！,방어가 무너졌다!,防御被破！
+TOAST_INVENTORY_FULL,No room for that,No hay espacio,Sem espaço,Plus de place,Kein Platz,持ちきれない,공간이 부족함,背包已满
+TOAST_LIGHTNING_WARNING,Your metal gear is crackling… lightning is coming!,Tu equipo de metal chisporrotea… ¡viene un rayo!,Seu equipamento de metal estala… um raio vem aí!,Votre métal crépite… la foudre arrive !,Dein Metall knistert … ein Blitz kommt!,金属がパチパチ…雷が来る！,금속 장비가 지직거린다… 번개가 온다!,金属装备噼啪作响……雷要来了！
+TOAST_MAX_HEALTH,Your heart grows stronger,Tu corazón se fortalece,Seu coração se fortalece,Votre cœur se renforce,Dein Herz wird stärker,体力の上限が増えた,최대 체력 증가,生命上限提升
+TOAST_MAX_STAMINA,Your breath runs deeper,Tu aliento es más profundo,Seu fôlego se aprofunda,Votre souffle s'allonge,Dein Atem wird tiefer,がんばりの上限が増えた,최대 기력 증가,耐力上限提升
+TOAST_NEEDS_INGOT,Heirlooms need a forge stone,Las reliquias requieren piedra de forja,Relíquias exigem pedra de forja,Les reliques exigent une pierre de forge,Erbstücke brauchen einen Schmiedestein,形見には鍛冶石が必要,유물은 대장간 돌이 필요함,传家宝需要锻造石
+TOAST_NONE_LEFT,No %s left,No te queda %s,Sem %s,Plus de %s,Kein %s mehr,%sがない,%s 없음,没有%s了
+TOAST_NOTHING_TO_REPAIR,Your weapon doesn't need repair,Tu arma no necesita reparación,Sua arma não precisa de reparo,Votre arme n'a pas besoin de réparation,Deine Waffe braucht keine Reparatur,修理の必要はない,수리가 필요 없음,武器无需修理
+TOAST_REPAIRED,Weapon repaired,Arma reparada,Arma reparada,Arme réparée,Waffe repariert,修理した,무기 수리 완료,武器已修复
+TOAST_RESTED,You feel rested,Te sientes descansado,Você se sente descansado,Vous êtes reposé,Du bist ausgeruht,よく休んだ,푹 쉬었다,休息好了
+TOAST_SAVED,Progress saved,Progreso guardado,Progresso salvo,Progression sauvegardée,Fortschritt gespeichert,セーブしました,저장됨,进度已保存
+TOAST_WEAPON_BROKE,%s broke!,¡%s se rompió!,%s quebrou!,%s s'est brisé !,%s ist zerbrochen!,%sが壊れた！,%s이(가) 부서졌다!,%s损坏了！
+TOAST_WEAPON_WORN,%s is about to break,%s está a punto de romperse,%s está prestes a quebrar,%s va bientôt casser,%s zerbricht bald,%sが壊れそう,%s이(가) 곧 부서짐,%s快要损坏了
+TOAST_WELCOME,Heath Hamlet,Aldea del Brezo,Aldeia da Urze,Hameau de la Lande,Heideweiler,ヒースの村,히스 마을,石楠村
+WEATHER_CLEAR,Clear,Despejado,Limpo,Dégagé,Klar,晴れ,맑음,晴
+WEATHER_CLOUDY,Cloudy,Nublado,Nublado,Nuageux,Bewölkt,くもり,흐림,多云
+WEATHER_FOG,Fog,Niebla,Neblina,Brouillard,Nebel,霧,안개,雾
+WEATHER_RAIN,Rain,Lluvia,Chuva,Pluie,Regen,雨,비,雨
+WEATHER_SNOW,Snow,Nieve,Neve,Neige,Schnee,雪,눈,雪
+WEATHER_STORM,Storm,Tormenta,Tempestade,Orage,Gewitter,嵐,폭풍,雷雨
+WEATHER_WINDY,Windy,Ventoso,Ventania,Venteux,Windig,強風,강풍,大风

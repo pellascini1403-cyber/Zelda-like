@@ -1,0 +1,16 @@
+[
+  {"id": "sunpear_bush", "mode": "gather", "loot": "res_sunpear", "respawn_hours": 48, "visual": {"shape": "bush", "color": "#f2c14e"}},
+  {"id": "cap_mushroom", "mode": "gather", "loot": "res_mushroom", "respawn_hours": 36, "radius": 0.7, "visual": {"shape": "mushroom", "color": "#c9543c"}},
+  {"id": "emberroot", "mode": "gather", "loot": "res_emberroot", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "plant", "color": "#e8612c"}},
+  {"id": "frostmint", "mode": "gather", "loot": "res_frostmint", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "plant", "color": "#8fe3e8"}},
+  {"id": "fang_pepper", "mode": "gather", "loot": "res_pepper", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "pepper", "color": "#d8262b"}},
+  {"id": "stoneleaf", "mode": "gather", "loot": "res_stoneleaf", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "plant", "color": "#7b8c86"}},
+  {"id": "swiftleaf", "mode": "gather", "loot": "res_swiftleaf", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "flower", "color": "#b3f05a"}},
+  {"id": "glowmoss", "mode": "gather", "loot": "res_glowmoss", "respawn_hours": 48, "radius": 0.7, "visual": {"shape": "crystal", "color": "#6ef0b8"}},
+  {"id": "fiber_grass", "mode": "gather", "loot": "res_fiber", "respawn_hours": 24, "radius": 0.7, "visual": {"shape": "grass", "color": "#a9b85a"}},
+  {"id": "flint_rock", "mode": "strike", "hits": 3, "loot": "res_flint", "respawn_hours": 72, "radius": 0.8, "visual": {"shape": "ore", "color": "#d9d2c3"}},
+  {"id": "iron_vein", "mode": "strike", "hits": 4, "loot": "res_iron", "respawn_hours": 96, "radius": 1.0, "visual": {"shape": "ore", "color": "#b8703c"}},
+  {"id": "amber_tree", "mode": "gather", "loot": "res_amber", "respawn_hours": 48, "radius": 0.9, "visual": {"shape": "hive", "color": "#f0a030"}},
+  {"id": "deadfall", "mode": "gather", "loot": "res_wood", "respawn_hours": 48, "radius": 1.1, "visual": {"shape": "log", "color": "#6b4a2e"}},
+  {"id": "honeycomb", "mode": "gather", "loot": "res_honey", "respawn_hours": 96, "radius": 0.9, "visual": {"shape": "hive", "color": "#f4c542"}}
+]

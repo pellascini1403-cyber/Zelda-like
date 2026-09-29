@@ -1,0 +1,24 @@
+{
+  "_doc": "Systemic interaction rules. Implemented in src/physics and src/combat; this table is the design reference and is validated by tests.",
+  "materials": {
+    "wood": {"flammable": true, "breakable": true, "conductive": false},
+    "metal": {"flammable": false, "breakable": false, "conductive": true, "attracts_lightning": true},
+    "stone": {"flammable": false, "breakable": false, "conductive": false},
+    "grass": {"flammable": true, "spreads_fire": true},
+    "explosive": {"flammable": true, "explodes": true}
+  },
+  "reactions": [
+    {"a": "fire", "b": "wood", "result": "burn_then_break"},
+    {"a": "fire", "b": "grass", "result": "spread (not while wet / raining)"},
+    {"a": "fire", "b": "explosive", "result": "explode"},
+    {"a": "fire", "b": "air", "result": "thermal updraft (glider lift)"},
+    {"a": "water", "b": "fire", "result": "extinguish"},
+    {"a": "rain", "b": "surfaces", "result": "wet: slippery climbing, fire-proof"},
+    {"a": "electric", "b": "wet", "result": "double damage"},
+    {"a": "electric", "b": "metal", "result": "conduct to nearby creatures"},
+    {"a": "storm", "b": "metal", "result": "lightning strike warning, then strike"},
+    {"a": "wind", "b": "glider", "result": "drift / extra distance"},
+    {"a": "wind", "b": "projectile", "result": "lobbed projectiles drift"},
+    {"a": "cold", "b": "player", "result": "freezing damage unless warm"}
+  ]
+}

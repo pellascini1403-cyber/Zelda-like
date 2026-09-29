@@ -1,0 +1,99 @@
+[
+  {"id": "PLAYER", "kind": "PLAYER", "name_key": "NAME_PLAYER",
+   "placeholder_color": "#ffffff", "placeholder_shape": "humanoid", "model": "",
+   "collider": {"radius": 0.35, "height": 1.75}},
+
+  {"id": "ENEMY_THORNLING", "kind": "ENEMY", "name_key": "NAME_THORNLING",
+   "placeholder_color": "#d63a2f", "placeholder_shape": "quadruped", "model": "",
+   "collider": {"radius": 0.45, "height": 1.0},
+   "stats": {"max_health": 30, "defense": 0, "poise": 8, "walk_speed": 2.2, "run_speed": 6.6, "turn_speed": 9, "mass": 35},
+   "element_mult": {"fire": 1.3},
+   "ai": {"sight_range": 20, "fov": 140, "hearing": 1.3, "flee_hp": 0.25, "flees": true, "sleeps_at_night": true, "wander_radius": 8, "leash": 50, "respawn_hours": 72},
+   "attacks": [
+     {"id": "bite", "type": "melee", "range_min": 0, "range_max": 1.9, "windup": 0.35, "active": 0.1, "recovery": 0.5, "cooldown": 0.9, "damage": 8, "knockback": 3, "reach": 1.4, "arc": 55, "weight": 2},
+     {"id": "pounce", "type": "lunge", "range_min": 3, "range_max": 7, "windup": 0.55, "active": 0.35, "recovery": 0.8, "cooldown": 3.5, "damage": 12, "knockback": 5, "reach": 1.4, "arc": 60, "lunge_speed": 13, "weight": 1}
+   ],
+   "loot_table": "drop_thornling"},
+
+  {"id": "ENEMY_BULWARK", "kind": "ENEMY", "name_key": "NAME_BULWARK",
+   "placeholder_color": "#2f5fd6", "placeholder_shape": "giant", "model": "",
+   "collider": {"radius": 0.6, "height": 2.5},
+   "stats": {"max_health": 110, "defense": 3, "poise": 40, "walk_speed": 1.6, "run_speed": 3.6, "turn_speed": 4, "mass": 160},
+   "element_mult": {"electric": 1.4},
+   "ai": {"sight_range": 18, "fov": 100, "hearing": 0.8, "leash": 35, "wander_radius": 5, "respawn_hours": 96},
+   "attacks": [
+     {"id": "swing", "type": "melee", "range_min": 0, "range_max": 2.8, "windup": 0.8, "active": 0.15, "recovery": 0.9, "cooldown": 1.6, "damage": 18, "knockback": 7, "reach": 2.3, "arc": 80, "poise_damage": 25, "weight": 3},
+     {"id": "slam", "type": "slam", "range_min": 0, "range_max": 3.5, "windup": 1.3, "active": 0.15, "recovery": 1.4, "cooldown": 5, "damage": 26, "knockback": 9, "reach": 2.0, "radius": 3.5, "poise_damage": 40, "blockable": false, "weight": 1}
+   ],
+   "loot_table": "drop_bulwark"},
+
+  {"id": "ENEMY_SPITTER", "kind": "ENEMY", "name_key": "NAME_SPITTER",
+   "placeholder_color": "#2fa84f", "placeholder_shape": "blob", "model": "",
+   "collider": {"radius": 0.55, "height": 1.2},
+   "stats": {"max_health": 40, "defense": 0, "poise": 12, "walk_speed": 1.4, "run_speed": 3.0, "turn_speed": 6, "mass": 60},
+   "element_mult": {"fire": 1.6},
+   "ai": {"sight_range": 26, "fov": 160, "hearing": 1.0, "preferred_range": 11, "leash": 40, "wander_radius": 6, "respawn_hours": 72},
+   "attacks": [
+     {"id": "spit", "type": "projectile", "range_min": 4, "range_max": 22, "windup": 0.7, "active": 0.1, "recovery": 0.9, "cooldown": 2.2, "damage": 10, "element": "acid", "projectile_speed": 16, "weight": 1}
+   ],
+   "loot_table": "drop_spitter"},
+
+  {"id": "ENEMY_WISP", "kind": "ENEMY", "name_key": "NAME_WISP",
+   "placeholder_color": "#f2d22e", "placeholder_shape": "orb", "model": "", "flying": true,
+   "collider": {"radius": 0.4, "height": 0.8},
+   "stats": {"max_health": 22, "defense": 0, "poise": 5, "walk_speed": 3, "run_speed": 6.5, "turn_speed": 10, "mass": 10},
+   "element_mult": {"electric": 0.0},
+   "active_period": "night",
+   "ai": {"sight_range": 22, "fov": 360, "hearing": 1.0, "leash": 60, "wander_radius": 12, "respawn_hours": 24},
+   "attacks": [
+     {"id": "zap", "type": "pulse", "range_min": 0, "range_max": 3.2, "windup": 0.9, "active": 0.1, "recovery": 0.8, "cooldown": 2.5, "damage": 12, "element": "electric", "radius": 3.2, "knockback": 3, "blockable": false}
+   ],
+   "loot_table": "drop_wisp"},
+
+  {"id": "BOSS_STILLWAKE_WARDEN", "kind": "BOSS", "name_key": "NAME_WARDEN",
+   "placeholder_color": "#d62fb4", "placeholder_shape": "giant", "model": "",
+   "collider": {"radius": 1.6, "height": 6.0},
+   "stats": {"max_health": 900, "defense": 5, "poise": 150, "walk_speed": 2.0, "run_speed": 4.5, "turn_speed": 3, "mass": 900},
+   "ai": {"sight_range": 40, "fov": 360, "hearing": 2.0, "leash": 80, "respawn_hours": 99999},
+   "attacks": [
+     {"id": "sweep", "type": "melee", "range_min": 0, "range_max": 6, "windup": 1.1, "active": 0.2, "recovery": 1.0, "cooldown": 2.5, "damage": 30, "knockback": 10, "reach": 5.5, "arc": 110, "poise_damage": 40},
+     {"id": "quake", "type": "slam", "range_min": 0, "range_max": 7, "windup": 1.6, "active": 0.2, "recovery": 1.6, "cooldown": 7, "damage": 38, "knockback": 12, "radius": 7, "blockable": false},
+     {"id": "hush_pulse", "type": "pulse", "range_min": 0, "range_max": 9, "windup": 2.0, "active": 0.2, "recovery": 1.2, "cooldown": 12, "damage": 22, "element": "electric", "radius": 9, "blockable": false}
+   ],
+   "loot_table": "chest_grand"},
+
+  {"id": "ANIMAL_WOOLHORN", "kind": "ANIMAL", "name_key": "NAME_WOOLHORN",
+   "placeholder_color": "#e8892e", "placeholder_shape": "quadruped", "model": "",
+   "collider": {"radius": 0.6, "height": 1.5},
+   "stats": {"max_health": 25, "poise": 6, "walk_speed": 1.3, "run_speed": 7.5, "turn_speed": 6, "mass": 90},
+   "ai": {"sight_range": 24, "fov": 300, "hearing": 1.2, "skittish": 0.3, "wander_radius": 14, "sleeps_at_night": true, "respawn_hours": 48},
+   "loot_table": "drop_woolhorn"},
+
+  {"id": "ANIMAL_BURROWHOP", "kind": "ANIMAL", "name_key": "NAME_BURROWHOP",
+   "placeholder_color": "#3fc1b0", "placeholder_shape": "quadruped", "model": "",
+   "collider": {"radius": 0.25, "height": 0.5},
+   "stats": {"max_health": 8, "poise": 2, "walk_speed": 1.5, "run_speed": 8.5, "turn_speed": 12, "mass": 6},
+   "ai": {"sight_range": 16, "fov": 320, "hearing": 1.6, "skittish": 0.15, "wander_radius": 6, "respawn_hours": 24},
+   "loot_table": "drop_burrowhop"},
+
+  {"id": "NPC_CARTOGRAPHER", "kind": "NPC", "name_key": "NAME_CARTOGRAPHER",
+   "placeholder_color": "#8ec1f0", "placeholder_shape": "humanoid", "model": "",
+   "collider": {"radius": 0.35, "height": 1.7},
+   "stats": {"walk_speed": 1.4, "run_speed": 3, "turn_speed": 5},
+   "ai": {"schedule": [[0, [2, -3]], [7, [0, 6]], [12, [-6, 2]], [19, [0, 6]], [22, [2, -3]]]},
+   "dialogue": {"default": ["DLG_CARTO_1", "DLG_CARTO_2", "DLG_CARTO_3", "DLG_CARTO_4"], "flag:gift_NPC_CARTOGRAPHER": ["DLG_CARTO_AFTER_1", "DLG_CARTO_AFTER_2"], "gift": "vela_glider"}},
+
+  {"id": "NPC_MERCHANT", "kind": "NPC", "name_key": "NAME_MERCHANT",
+   "placeholder_color": "#e0a84a", "placeholder_shape": "humanoid", "model": "",
+   "collider": {"radius": 0.38, "height": 1.65},
+   "stats": {"walk_speed": 1.2, "run_speed": 3, "turn_speed": 5},
+   "ai": {"schedule": [[0, [9, -6]], [8, [3, 0]], [18, [8, -4]], [21, [9, -6]]]},
+   "dialogue": {"default": ["DLG_MERCHANT_1", "DLG_MERCHANT_2"], "night": ["DLG_MERCHANT_NIGHT"], "gift": "whetstone"}},
+
+  {"id": "NPC_VILLAGER", "kind": "NPC", "name_key": "NAME_VILLAGER",
+   "placeholder_color": "#9a9a9a", "placeholder_shape": "humanoid", "model": "",
+   "collider": {"radius": 0.35, "height": 1.72},
+   "stats": {"walk_speed": 1.3, "run_speed": 3, "turn_speed": 5},
+   "ai": {"schedule": [[0, [-11, -7]], [6, [-4, 10]], [11, [6, 12]], [17, [-2, 4]], [21, [-11, -7]]]},
+   "dialogue": {"default": ["DLG_VILLAGER_1", "DLG_VILLAGER_2"], "night": ["DLG_VILLAGER_NIGHT"]}}
+]

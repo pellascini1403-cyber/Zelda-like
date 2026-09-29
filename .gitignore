@@ -1,0 +1,21 @@
+# Godot 4 cache / imported data (regenerated on import)
+.godot/
+# Build outputs & platform tooling
+build/
+android/build/
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+# Signing material and secrets — never commit
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+export_credentials.cfg
+.env
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.tmp
+__pycache__/

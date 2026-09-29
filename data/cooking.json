@@ -1,0 +1,27 @@
+{
+  "failure_item": "murky_stew",
+  "conflict_ratio": 0.75,
+  "max_potency": 3.0,
+  "dish_for_tag": {
+    "heal": "hearty_stew",
+    "vigor": "vigor_broth",
+    "warm": "warming_curry",
+    "cool": "cooling_salad",
+    "fierce": "fierce_skewer",
+    "stout": "stout_roast",
+    "swift": "swift_soup",
+    "mending": "mending_tea"
+  },
+  "specials": [
+    {
+      "id": "honey_pear",
+      "ingredients": [
+        "honeycomb",
+        "sunpear",
+        "sunpear"
+      ],
+      "item": "honey_pear_tart",
+      "potency": 1.0
+    }
+  ]
+}

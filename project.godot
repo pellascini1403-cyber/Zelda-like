@@ -1,0 +1,122 @@
+; Engine configuration file.
+; Godot 4.4 — VELA (working title)
+
+config_version=5
+
+[application]
+
+config/name="VELA"
+config/description="Open world 3D adventure for iOS and Android."
+config/version="0.1.0"
+run/main_scene="res://scenes/boot.tscn"
+config/features=PackedStringArray("4.4", "Mobile")
+config/icon="res://icon.svg"
+run/low_processor_mode=false
+boot_splash/bg_color=Color(0.051, 0.063, 0.086, 1)
+boot_splash/show_image=false
+
+[audio]
+
+driver/enable_input=false
+
+[autoload]
+
+EventBus="*res://src/autoload/event_bus.gd"
+DB="*res://src/autoload/database.gd"
+Settings="*res://src/autoload/settings.gd"
+Quality="*res://src/autoload/quality_manager.gd"
+InputRouter="*res://src/autoload/input_router.gd"
+Game="*res://src/autoload/game_state.gd"
+Clock="*res://src/autoload/clock.gd"
+Weather="*res://src/autoload/weather.gd"
+PlayerData="*res://src/autoload/player_data.gd"
+WorldState="*res://src/autoload/world_state.gd"
+SaveSystem="*res://src/autoload/save_system.gd"
+Audio="*res://src/autoload/audio_manager.gd"
+Platform="*res://src/autoload/platform_services.gd"
+Debug="*res://src/autoload/debug_tools.gd"
+
+[debug]
+
+gdscript/warnings/unused_parameter=0
+gdscript/warnings/unused_signal=0
+gdscript/warnings/integer_division=0
+gdscript/warnings/narrowing_conversion=0
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=4
+window/vsync/vsync_mode=1
+
+[gui]
+
+common/snap_controls_to_pixels=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=false
+pointing/emulate_mouse_from_touch=true
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://localization/strings.en.translation", "res://localization/strings.es.translation", "res://localization/strings.pt.translation", "res://localization/strings.fr.translation", "res://localization/strings.de.translation", "res://localization/strings.ja.translation", "res://localization/strings.ko.translation", "res://localization/strings.zh.translation")
+locale/fallback="en"
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="creatures"
+3d_physics/layer_4="props"
+3d_physics/layer_5="hurtbox"
+3d_physics/layer_6="interactable"
+3d_physics/layer_7="zones"
+3d_physics/layer_8="projectiles"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+common/physics_ticks_per_second=60
+common/max_physics_steps_per_frame=4
+3d/sleep_threshold_linear=0.15
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
+rendering_device/fallback_to_opengl3=true
+textures/vram_compression/import_etc2_astc=true
+textures/canvas_textures/default_texture_filter=1
+lights_and_shadows/directional_shadow/size=2048
+lights_and_shadows/directional_shadow/size.mobile=1024
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=1
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality.mobile=0
+lights_and_shadows/positional_shadow/atlas_size=1024
+lights_and_shadows/positional_shadow/atlas_size.mobile=512
+environment/defaults/default_clear_color=Color(0.52, 0.66, 0.82, 1)
+anti_aliasing/quality/msaa_3d=0
+occlusion_culling/use_occlusion_culling=true
+limits/opengl/max_renderable_lights=16
+
+[shader_globals]
+
+wetness={
+"type": "float",
+"value": 0.0
+}
+snow_amount={
+"type": "float",
+"value": 0.0
+}
+player_pos={
+"type": "vec3",
+"value": Vector3(0, 0, 0)
+}
+wind_vec={
+"type": "vec4",
+"value": Vector4(1, 0, 0, 0.3)
+}

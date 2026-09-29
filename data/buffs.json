@@ -1,0 +1,9 @@
+{
+  "cold_resist": {"name_key": "BUFF_COLD_RESIST"},
+  "heat_resist": {"name_key": "BUFF_HEAT_RESIST"},
+  "attack_up": {"name_key": "BUFF_ATTACK_UP"},
+  "defense_up": {"name_key": "BUFF_DEFENSE_UP"},
+  "speed_up": {"name_key": "BUFF_SPEED_UP"},
+  "regen": {"name_key": "BUFF_REGEN"},
+  "stamina_regen": {"name_key": "BUFF_STAMINA_REGEN"}
+}

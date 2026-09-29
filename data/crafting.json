@@ -1,0 +1,11 @@
+[
+  {"id": "craft_resin_bomb", "result": "resin_bomb", "count": 2, "ingredients": ["amber_sap", "amber_sap", "fiber"]},
+  {"id": "craft_whetstone", "result": "whetstone", "count": 1, "ingredients": ["flint", "flint", "flint"]},
+  {"id": "craft_iron_ingot", "result": "iron_ingot", "count": 1, "ingredients": ["iron_ore", "iron_ore", "wood_bundle"], "station": "campfire"},
+  {"id": "craft_forge_stone", "result": "forge_stone", "count": 1, "ingredients": ["iron_ingot", "flint", "glimmer_shard", "glimmer_shard"], "station": "campfire"},
+  {"id": "craft_tide_spear", "result": "tide_spear", "count": 1, "ingredients": ["wood_bundle", "wood_bundle", "flint", "flint", "fiber"]},
+  {"id": "craft_fur_cap", "result": "fur_cap", "count": 1, "ingredients": ["beast_hide", "beast_hide", "fiber"]},
+  {"id": "craft_woolen_wrap", "result": "woolen_wrap", "count": 1, "ingredients": ["beast_hide", "beast_hide", "beast_hide", "fiber", "fiber"]},
+  {"id": "craft_lodestone_charm", "result": "lodestone_charm", "count": 1, "ingredients": ["iron_ingot", "iron_ingot", "wisp_filament", "wisp_filament"], "station": "campfire"},
+  {"id": "craft_ember_rod", "result": "ember_rod", "count": 1, "ingredients": ["wood_bundle", "amber_sap", "amber_sap", "spitter_gland", "glimmer_shard"], "station": "campfire"}
+]
