@@ -1,0 +1,148 @@
+{
+ "_doc": "Character art direction as data. Presentation only: gameplay never reads this file. See docs/CHARACTER_STYLE_GUIDE.md.",
+ "palette": {
+  "_provisional": "VIOLET TOKENS ARE PROVISIONAL until the colour references arrive: replace the hex values here, nothing else changes.",
+  "enemy_body": "#141119",
+  "enemy_body_hi": "#2b2633",
+  "violet_deep": "#3b1170",
+  "violet_glow": "#8a3cff",
+  "violet_core": "#b77cff",
+  "violet_hot": "#eadbff",
+  "human_eye": "#1d1a22",
+  "wildlife_eye": "#231c14"
+ },
+ "chibi": {
+  "_doc": "Fractions of the gameplay collider height. About 2.6 heads tall: big head, compact body, short limbs, big hands and feet.",
+  "head_radius": 0.2,
+  "child_head_radius": 0.225,
+  "leg_length": 0.27,
+  "torso_length": 0.28,
+  "arm_length": 0.27,
+  "hand_scale": 1.35,
+  "foot_scale": 1.4
+ },
+ "builds": {
+  "slim": 0.82,
+  "average": 1.0,
+  "stout": 1.22,
+  "broad": 1.3
+ },
+ "enemy": {
+  "species_tint": 0.1,
+  "rim": 0.4,
+  "roughness": 0.4
+ },
+ "ranks": {
+  "common": {
+   "energy": 0.25,
+   "spikes": 1.0,
+   "aura": 0,
+   "eye": 1.0,
+   "scale": 1.0,
+   "horn_fire": false
+  },
+  "elite": {
+   "energy": 0.5,
+   "spikes": 1.4,
+   "aura": 8,
+   "eye": 1.2,
+   "scale": 1.0,
+   "horn_fire": false
+  },
+  "miniboss": {
+   "energy": 0.75,
+   "spikes": 1.8,
+   "aura": 16,
+   "eye": 1.35,
+   "scale": 1.0,
+   "horn_fire": true
+  },
+  "boss": {
+   "energy": 1.0,
+   "spikes": 2.2,
+   "aura": 30,
+   "eye": 1.5,
+   "scale": 1.0,
+   "horn_fire": true
+  }
+ },
+ "families": [
+  "human",
+  "enemy",
+  "wildlife"
+ ],
+ "species": [
+  "beast",
+  "boar",
+  "spider",
+  "scorpion",
+  "crab",
+  "toad",
+  "wisp",
+  "raptor",
+  "dragon",
+  "serpent",
+  "brute",
+  "golem",
+  "wraith",
+  "goblin",
+  "demon"
+ ],
+ "hair": [
+  "short",
+  "swept",
+  "spiky",
+  "long",
+  "ponytail",
+  "bun",
+  "pigtails",
+  "topknot",
+  "wild",
+  "bald"
+ ],
+ "headwear": [
+  "none",
+  "hood",
+  "cap",
+  "hat_wide",
+  "hat_cone",
+  "helmet",
+  "turban",
+  "bandana"
+ ],
+ "outfits": [
+  "tunic",
+  "robe",
+  "coat",
+  "apron",
+  "armor",
+  "vest",
+  "cloak"
+ ],
+ "accessories": [
+  "scarf",
+  "cape",
+  "backpack",
+  "big_pack",
+  "satchel",
+  "staff",
+  "hammer",
+  "rod",
+  "bow",
+  "quiver",
+  "book",
+  "scroll",
+  "lantern",
+  "spear",
+  "shield",
+  "basket",
+  "rope",
+  "pick",
+  "gourd",
+  "bell",
+  "glasses",
+  "beard",
+  "long_beard",
+  "goggles"
+ ]
+}

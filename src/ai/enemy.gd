@@ -20,7 +20,7 @@ func _on_period(_period: StringName) -> void:
 	var wrong := (type.active_period == &"night" and not Clock.is_night()) or (type.active_period == &"day" and Clock.is_night())
 	if wrong:
 		dead = true
-		Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, type.placeholder_color, 0.5)
+		Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, ArtStyle.vfx_color(type), 0.5)
 		queue_free()
 
 

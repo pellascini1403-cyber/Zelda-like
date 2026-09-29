@@ -287,7 +287,7 @@ func _on_died(_info: DamageInfo) -> void:
 		return
 	var t := create_tween()
 	t.tween_property(visual, "scale", Vector3(1.15, 0.05, 1.15), 0.7).set_ease(Tween.EASE_IN)
-	Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, type.placeholder_color, 0.6)
+	Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, ArtStyle.vfx_color(type), 0.6)
 	await t.finished
 	if is_instance_valid(self):
 		Effects.dust(self, global_position, 1.0)

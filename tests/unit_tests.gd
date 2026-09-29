@@ -30,6 +30,7 @@ func _run() -> void:
 	test_quality_presets()
 	test_ai_attack_pick()
 	test_placeholder_colors()
+	test_art_direction()
 	test_quests()
 	test_quest_objective_types()
 	test_quest_rewards()
@@ -281,6 +282,39 @@ func test_ai_attack_pick() -> void:
 
 
 ## Placeholder identity: player white, each species a distinct solid color.
+## Character art direction: every entity has a visual profile in the right
+## family, and every placeholder (plus the example species) builds.
+func test_art_direction() -> void:
+	ok(ArtStyle.validate(DB).is_empty(), "visual profiles valid")
+	for e: EntityType in DB.entities.values():
+		var fam := ArtStyle.family(e)
+		if e.kind in [EntityType.Kind.ENEMY, EntityType.Kind.BOSS]:
+			ok(fam == "enemy", "%s is in the enemy family" % e.id)
+		elif e.kind in [EntityType.Kind.PLAYER, EntityType.Kind.NPC]:
+			ok(fam == "human", "%s is chibi human" % e.id)
+		var v := EntityVisual.new()
+		v.setup(e)
+		ok(v.part(&"torso") != null and v.get_socket(&"hand_r") != null, "%s placeholder builds" % e.id)
+		if fam == "enemy":
+			var body := (v.part(&"torso").get_child(0) as MeshInstance3D).material_override as ShaderMaterial
+			ok(body != null and body.shader.resource_path.ends_with("enemy_body.gdshader"), "%s body is the enemy material" % e.id)
+		v.free()
+	# Example species with no gameplay data yet still build (for future models).
+	for sp in ["spider", "dragon", "serpent", "goblin"]:
+		var t := EntityType.new()
+		t.id = StringName("EXAMPLE_" + sp)
+		t.kind = EntityType.Kind.ENEMY
+		t.collider_height = 1.4
+		t.collider_radius = 0.7
+		t.visual = {"family": "enemy", "rank": "elite", "species": sp, "features": ["horns", "claws"]}
+		var v := EntityVisual.new()
+		v.setup(t)
+		ok(v.part(&"head") != null, "example %s builds" % sp)
+		v.free()
+	ok(ArtStyle.attack_color(DB.entity(&"ENEMY_THORNLING"), &"") == ArtStyle.palette("violet_core"), "enemy attacks are violet")
+	ok(ArtStyle.attack_color(DB.entity(&"ENEMY_THORNLING"), &"fire") == ElementFX.color(&"fire"), "elements keep their colour")
+
+
 func test_placeholder_colors() -> void:
 	ok(DB.entity(&"PLAYER").placeholder_color == Color.WHITE, "player placeholder is white")
 	var seen := {}

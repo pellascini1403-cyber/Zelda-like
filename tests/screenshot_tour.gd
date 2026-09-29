@@ -43,7 +43,30 @@ const SHOTS := [
 	["24_warden_altar", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "altar"],
 	["25_journal_v2", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "journal2"],
 	["26_reward_popup", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "reward"],
+	# Character art direction lineups, seen through the gameplay camera.
+	["27_lineup_people_a", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:people_a"],
+	["27b_lineup_people_b", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:people_b"],
+	["28_lineup_enemies", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:enemies"],
+	["29_lineup_minibosses", 154.0, 94.0, -47.0, -8.0, 16.5, "clear", "lineup:minibosses"],
+	["30_lineup_bosses", 154.0, 94.0, -47.0, -2.0, 16.5, "clear", "lineup:bosses"],
+	["31_lineup_species", 154.0, 94.0, -47.0, -10.0, 19.5, "clear", "lineup:species"],
+	["32_lineup_enemies_night", 154.0, 94.0, -47.0, -10.0, 22.5, "clear", "lineup:enemies"],
+	["34_lineup_enemies_close", 154.0, 94.0, -47.0, -14.0, 10.5, "clear", "lineup:enemies_close"],
+	["35_lineup_warden", 154.0, 94.0, -47.0, 4.0, 17.5, "clear", "lineup:warden"],
+	["33_lineup_wildlife", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:wildlife"],
 ]
+
+const LINEUPS := {
+	"people_a": [["PLAYER", "NPC_MERCHANT", "NPC_SMITH", "NPC_CHILD", "NPC_KEEPER", "NPC_GUARD", "NPC_FISHER", "NPC_SCHOLAR", "NPC_HUNTER", "NPC_CARAVAN"], 7.0],
+	"people_b": [["NPC_CARTOGRAPHER", "NPC_VILLAGER", "NPC_NOMAD", "NPC_COURIER", "NPC_CLIMBER", "NPC_HERMIT", "NPC_PILGRIM", "NPC_TRAVELER", "NPC_MENTOR"], 7.0],
+	"enemies": [["ENEMY_THORNLING", "ENEMY_SCUTTLER", "ENEMY_SPITTER", "ENEMY_WISP", "ENEMY_SHADE", "ENEMY_BULWARK"], 8.0],
+	"enemies_close": [["ENEMY_THORNLING", "ENEMY_SCUTTLER", "ENEMY_SPITTER", "ENEMY_SHADE"], 4.5],
+	"warden": [["BOSS_STILLWAKE_WARDEN"], 12.0],
+	"minibosses": [["BOSS_THORN_CHIEF", "BOSS_GLASS_STALKER", "BOSS_HOLLOW_SHADE", "BOSS_STONEWARD", "BOSS_CRAG_HARRIER"], 11.0],
+	"bosses": [["BOSS_THORNBACK", "BOSS_GLASS_MATRIARCH", "BOSS_STILLWAKE_WARDEN"], 22.0],
+	"species": [["spider", "dragon", "serpent", "goblin", "ENEMY_THORNLING"], 8.0],
+	"wildlife": [["ANIMAL_WOOLHORN", "ANIMAL_BURROWHOP", "ANIMAL_GILDED_HOP", "MOUNT_WINDSTRIDER", "ENEMY_THORNLING"], 8.0],
+}
 
 var _out := ""
 var _quality := 2
@@ -143,6 +166,9 @@ func _shot(s: Array) -> void:
 		rig.yaw = s[3]
 	if s[7] in ["protect", "nest", "beacon", "course", "captive", "board", "altar", "journal2", "reward", "smoke"]:
 		await _quest_setup(s[7], p, w)
+	if String(s[7]).begins_with("lineup:"):
+		_lineup(String(s[7]).trim_prefix("lineup:"), p, w)
+		await get_tree().create_timer(0.8).timeout
 	if s[7] == "title":
 		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
 		await get_tree().create_timer(1.2).timeout
@@ -204,6 +230,43 @@ func _shot(s: Array) -> void:
 	for c in get_tree().get_nodes_in_group(&"creatures"):
 		if (c as Creature).group_id == "tour":
 			c.queue_free()
+	for n in get_tree().get_nodes_in_group(&"tour_lineup"):
+		n.queue_free()
+
+
+## Visual-only lineup (no AI) in front of the player, turned 3/4 to camera.
+## Plain ids come from the database; bare species names are example
+## profiles with no gameplay data (spider, dragon...).
+func _lineup(which: String, p: Player, w: GameWorld) -> void:
+	var ids: Array = LINEUPS[which][0]
+	var dist: float = LINEUPS[which][1]
+	var fwd := p.facing_dir()
+	var right := fwd.cross(Vector3.UP).normalized()
+	var spacing := dist * 0.32 if which != "bosses" else 12.0
+	for i in ids.size():
+		var id: String = ids[i]
+		var t: EntityType
+		if DB.entities.has(StringName(id)):
+			t = DB.entity(StringName(id))
+		else:
+			t = EntityType.new()
+			t.id = StringName(id)
+			t.kind = EntityType.Kind.ENEMY
+			t.collider_height = 1.3 if id != "goblin" else 1.2
+			t.collider_radius = 0.7 if id != "goblin" else 0.4
+			t.placeholder_color = Color(0.3, 0.3, 0.3)
+			var feats := {"spider": ["claws"], "dragon": ["horns", "claws", "spine_spikes", "wings", "long_neck"], "serpent": [], "goblin": ["horns", "ears"]}
+			t.visual = {"family": "enemy", "rank": "elite" if id != "goblin" else "common", "species": id, "features": feats.get(id, [])}
+		var holder := Node3D.new()
+		holder.add_to_group(&"tour_lineup")
+		w.add_child(holder)
+		var pos := p.global_position + fwd * dist + right * (i - (ids.size() - 1) * 0.5) * spacing
+		pos.y = w.gen.height(pos.x, pos.z) + (1.6 if t.flying else 0.0)
+		holder.global_position = pos
+		holder.rotation.y = p.facing_yaw + PI + 0.45
+		var v := EntityVisual.new()
+		holder.add_child(v)
+		v.setup(t)
 
 
 func _complete(id: StringName) -> void:

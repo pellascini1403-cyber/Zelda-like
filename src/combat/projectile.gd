@@ -39,6 +39,9 @@ func _ready() -> void:
 	_mesh.mesh = s
 	var m := StandardMaterial3D.new()
 	var c := Color(1.0, 0.55, 0.15) if element == &"fire" else (Color(0.55, 0.95, 0.3) if element == &"acid" else Color(0.9, 0.9, 0.95))
+	# Corrupted creatures shoot violet (art direction); elements keep theirs.
+	if element == &"" and owner_body is Creature and ArtStyle.is_corrupted((owner_body as Creature).type):
+		c = ArtStyle.palette("violet_core")
 	m.albedo_color = c
 	m.emission_enabled = true
 	m.emission = c

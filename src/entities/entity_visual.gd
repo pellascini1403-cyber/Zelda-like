@@ -50,6 +50,15 @@ var _action: StringName = &""
 var _action_t := 0.0
 var _action_len := 0.0
 var _flash := 0.0
+## Placeholder rig description, filled by the builders (ChibiBuilder,
+## CreatureBuilder): how the procedural animation should move it.
+var rig_kind: StringName = &"biped"   # biped | legged | float | serpent
+var legs: Array[Node3D] = []
+var wings: Array[Node3D] = []
+var sway_parts: Array[Node3D] = []   # tails, capes, scarves, serpent segments
+var spin_parts: Array[Node3D] = []
+var torso_pitch := 0.0               # hunch (elders, brutes)
+var rest_scale := Vector3.ONE
 
 static var _materials: Dictionary = {}
 
@@ -61,6 +70,12 @@ func setup(entity_type: EntityType) -> void:
 	_parts.clear()
 	_sockets.clear()
 	_geoms.clear()
+	legs.clear()
+	wings.clear()
+	sway_parts.clear()
+	spin_parts.clear()
+	torso_pitch = 0.0
+	rest_scale = Vector3.ONE
 	if type.model != "" and ResourceLoader.exists(type.model):
 		_build_model()
 	else:
@@ -105,11 +120,29 @@ static func placeholder_material(c: Color) -> ShaderMaterial:
 	return m
 
 
+## Placeholders follow the character art direction (docs/CHARACTER_STYLE_GUIDE.md):
+## the family in data/visuals.json picks the builder, the gameplay collider
+## gives the size. Entities without a profile keep the plain mannequins.
 func _build_placeholder() -> void:
 	is_placeholder = true
-	var mat := placeholder_material(type.placeholder_color)
 	var h := type.collider_height
 	var r := type.collider_radius
+	match String(type.visual.get("family", "")):
+		"human":
+			rig_kind = &"biped"
+			ChibiBuilder.build(self, h, r)
+			_ensure_default_sockets()
+			return
+		"enemy":
+			CreatureBuilder.build_enemy(self, h, r)
+			_ensure_default_sockets()
+			return
+		"wildlife":
+			CreatureBuilder.build_wildlife(self, h, r)
+			_ensure_default_sockets()
+			return
+	var mat := placeholder_material(type.placeholder_color)
+	rig_kind = &"legged" if type.placeholder_shape == &"quadruped" else (&"float" if type.placeholder_shape in [&"blob", &"orb"] else &"biped")
 	match type.placeholder_shape:
 		&"humanoid", &"giant":
 			_humanoid(mat, h, r)
@@ -139,13 +172,61 @@ func _part(part_name: String, mesh: Mesh, mat: Material, parent: Node3D, pos: Ve
 	mi.position = pivot_offset
 	# Placeholder LOD: limbs vanish at distance, the body stays (cheap reads).
 	var is_body := part_name in ["torso", "head"]
-	mi.visibility_range_end = BODY_VISIBLE_RANGE if is_body else LIMB_VISIBLE_RANGE
+	mi.visibility_range_end = BODY_VISIBLE_RANGE if is_body else limb_range()
 	if not is_body:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if type.kind != EntityType.Kind.PLAYER else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	pivot.add_child(mi)
 	_parts[StringName(part_name)] = pivot
 	_geoms.append(mi)
 	return pivot
+
+
+## Limb/detail LOD grows with the creature: a boss's horns stay visible.
+func limb_range() -> float:
+	return LIMB_VISIBLE_RANGE * maxf(1.0, type.collider_height / 2.0)
+
+
+func add_rig() -> Node3D:
+	var root := Node3D.new()
+	root.name = "Rig"
+	add_child(root)
+	_parts[&"rig"] = root
+	return root
+
+
+func part(part_name: StringName) -> Node3D:
+	return _parts.get(part_name)
+
+
+func set_socket(socket_name: StringName, n: Node3D) -> void:
+	_sockets[socket_name] = n
+
+
+## Static detail mesh (hair, hats, spikes, eyes...). Joins the flash list;
+## `glow` details skip shadows and stay visible as far as the body.
+func deco(parent: Node3D, mesh: Mesh, mat: Material, pos: Vector3, rot_deg: Vector3 = Vector3.ZERO, scl: Vector3 = Vector3.ONE, glow: bool = false) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = mat
+	mi.position = pos
+	mi.rotation_degrees = rot_deg
+	mi.scale = scl
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.visibility_range_end = BODY_VISIBLE_RANGE * 0.5 if glow else limb_range()
+	parent.add_child(mi)
+	_geoms.append(mi)
+	return mi
+
+
+## Pivot that swings with motion (tails, capes, scarves, segments).
+func sway_part(parent: Node3D, part_name: String, pos: Vector3) -> Node3D:
+	var p := Node3D.new()
+	p.name = part_name
+	p.position = pos
+	parent.add_child(p)
+	_parts[StringName(part_name)] = p
+	sway_parts.append(p)
+	return p
 
 
 func _capsule(radius: float, height: float) -> CapsuleMesh:
@@ -360,9 +441,9 @@ func _animate_placeholder(delta: float) -> void:
 	var torso: Node3D = _parts.get(&"torso")
 	rig.rotation = Vector3.ZERO
 	rig.position = Vector3.ZERO
-	rig.scale = Vector3.ONE
+	rig.scale = rest_scale
 	if torso:
-		torso.rotation = Vector3.ZERO
+		torso.rotation = Vector3(torso_pitch, 0, 0)
 		# Breathing (idle life) and forward lean with speed.
 		torso.scale = Vector3(1.0, 1.0 + sin(Time.get_ticks_msec() * 0.0025) * 0.012, 1.0)
 	# Lean into turns: yaw rate of the whole visual, smoothed.
@@ -371,22 +452,34 @@ func _animate_placeholder(delta: float) -> void:
 	_prev_yaw = yaw
 	_lean = lerpf(_lean, clampf(-yaw_rate * 0.05 * speed_ratio, -0.3, 0.3), minf(delta * 8.0, 1.0))
 
-	if type.placeholder_shape == &"quadruped":
-		for i in 4:
-			var leg: Node3D = _parts.get(StringName("leg_%d" % i))
-			if leg:
-				leg.rotation.x = sin(_phase + (PI if i % 3 == 0 else 0.0)) * 0.7 * clampf(speed_ratio, 0.0, 1.0)
+	_animate_extras(delta, t)
+	if rig_kind == &"legged" or rig_kind == &"serpent":
+		if legs.is_empty():
+			for i in 4:
+				var lg: Node3D = _parts.get(StringName("leg_%d" % i))
+				if lg:
+					legs.append(lg)
+		for i in legs.size():
+			# Diagonal pairs move together (trot); crawlers ripple front to back.
+			var ph := _phase + (PI if (i % 2 == 0) != ((i / 2) % 2 == 0) else 0.0) + (i / 2) * 0.6 * float(legs.size() > 4)
+			legs[i].rotation.x = sin(ph) * 0.7 * clampf(speed_ratio, 0.0, 1.0)
 		rig.position.y = absf(sin(_phase)) * 0.06 * speed_ratio
-		if _action in [&"attack", &"attack_1", &"attack_2", &"lunge"]:
+		if _action in [&"attack", &"attack_1", &"attack_2", &"lunge", &"slam", &"thrust"]:
 			rig.rotation.x = -sin(t * PI) * 0.35
-	elif type.placeholder_shape == &"blob" or type.placeholder_shape == &"orb":
+			for s in [&"arm_l", &"arm_r"]:
+				var pincer: Node3D = _parts.get(s)
+				if pincer:
+					pincer.rotation.y = (0.6 if s == &"arm_l" else -0.6) * sin(t * PI)
+		elif _action in [&"windup", &"charge", &"roar"]:
+			rig.rotation.x = 0.18 * sin(minf(t, 1.0) * PI * 0.5)
+	elif rig_kind == &"float":
 		var k := 1.0 + sin(_phase * 0.7) * 0.04
-		rig.scale = Vector3(1.0 / k, k, 1.0 / k)
+		rig.scale = Vector3(rest_scale.x / k, rest_scale.y * k, rest_scale.z / k)
 		if type.flying:
 			rig.position.y = sin(_phase * 0.4) * 0.15
 		if _action != &"":
 			var s := 1.0 + sin(t * PI) * 0.25
-			rig.scale = Vector3(s, 1.0 / s, s)
+			rig.scale = Vector3(s, 1.0 / s, s) * rest_scale
 	else:
 		# Humanoid
 		if leg_l and leg_r:
@@ -496,6 +589,28 @@ func _animate_placeholder(delta: float) -> void:
 				arm_r.rotation = Vector3(-2.0 * sin(t * PI), 0, -0.6)
 	if _action == &"die":
 		rig.rotation.x = lerpf(0.0, PI * 0.5, minf(t * 1.6, 1.0))
+
+
+## Secondary motion shared by every rig: tails/capes swing, wings flap,
+## orbiting shards spin. Cheap (a few rotations), makes placeholders alive.
+func _animate_extras(delta: float, t: float) -> void:
+	var now := Time.get_ticks_msec() * 0.001
+	for i in sway_parts.size():
+		var p := sway_parts[i]
+		var amp := 0.12 + clampf(speed_ratio, 0.0, 1.2) * 0.25
+		if rig_kind == &"serpent":
+			p.rotation.y = sin(now * 3.0 + _phase * 0.5 - i * 0.7) * (0.25 + speed_ratio * 0.2)
+		else:
+			p.rotation.x = 0.15 * clampf(speed_ratio, 0.0, 1.0) + sin(now * 2.2 + i) * amp * 0.5
+			p.rotation.z = sin(now * 1.7 + i * 1.3) * amp * 0.4
+	for w in wings:
+		var side := -1.0 if w.name.ends_with("l") else 1.0
+		var flap := sin(now * (7.0 if type.flying else 2.0)) * (0.5 if type.flying else 0.12)
+		if _action != &"":
+			flap += sin(t * PI) * 0.6
+		w.rotation.z = side * flap
+	for sp in spin_parts:
+		sp.rotation.y += delta * (1.4 + (4.0 if _action != &"" else 0.0))
 
 
 func _ease_strike(t: float) -> float:

@@ -24,6 +24,9 @@ enum Kind { PLAYER, ENEMY, ANIMAL, NPC, BOSS }
 ## Maps logical animation states (idle, move, run, attack, hit, die...) to
 ## clip names inside the final model's AnimationPlayer.
 @export var anim_map: Dictionary = {}
+## Visual profile from data/visuals.json (family, rank, species, chibi
+## variation...). Filled by DB; presentation only, gameplay never reads it.
+@export var visual: Dictionary = {}
 
 # --- Gameplay body (never derived from the visual) ------------------------
 @export var collider_radius: float = 0.4

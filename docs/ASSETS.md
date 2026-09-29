@@ -22,7 +22,12 @@
 | Saffa (caravanera) | humanoide | siena `#a0522d` |
 | Zancaviento (montura) | cuadrúpedo | índigo `#5d4ea8` |
 
-Material uniforme de color sólido, sin texturas, patrones, caras ni accesorios (`assets/shaders/placeholder.gdshader`). El único efecto es `flash`, que es feedback de gameplay (golpe recibido, aviso de ataque), no decoración. Un test comprueba que el jugador es blanco y que cada tipo tiene un color único.
+Los placeholders siguen la dirección artística de personajes (`docs/CHARACTER_STYLE_GUIDE.md`), elegida por el perfil visual de cada entidad en `data/visuals.json`:
+- **Humanos (jugador y NPCs):** chibi (`ChibiBuilder`), color sólido propio en todas sus piezas (más claro para piel, más oscuro para pelo/cuero). El jugador sigue siendo blanco.
+- **Enemigos:** familia corrupta negro + violeta (`CreatureBuilder`, `assets/shaders/enemy_body.gdshader`); el color único de la especie queda como un matiz sutil del cuerpo negro.
+- **Fauna:** formas redondas, color sólido, sin violeta.
+
+`flash` sigue siendo solo feedback de gameplay. Un test comprueba que el jugador es blanco, que cada tipo tiene un color único y que cada entidad tiene perfil visual de su familia. Tus modelos finales **nunca** se recolorean ni se modifican: el perfil visual solo afecta a los placeholders.
 
 ## Reemplazar un placeholder por tu modelo final
 

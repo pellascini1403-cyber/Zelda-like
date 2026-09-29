@@ -44,7 +44,7 @@ func _windup() -> float:
 
 
 func _show_telegraph() -> void:
-	var col: Color = Color(1.0, 0.42, 0.18) if attack.element == &"" else ElementFX.color(attack.element)
+	var col: Color = ArtStyle.attack_color(c.type, attack.element)
 	match attack.type:
 		&"slam", &"pulse":
 			var radius := attack.radius if attack.radius > 0.0 else attack.reach
@@ -68,7 +68,7 @@ func tick(delta: float) -> StringName:
 				to.y = 0.0
 				_dir = to.normalized()
 			c.face_towards(_dir, delta * 2.0)
-			c.visual.set_flash(clampf(t / _windup(), 0.0, 1.0) * 0.55, Color(1.0, 0.85, 0.4))
+			c.visual.set_flash(clampf(t / _windup(), 0.0, 1.0) * 0.55, ArtStyle.palette("violet_hot") if ArtStyle.is_corrupted(c.type) else Color(1.0, 0.85, 0.4))
 			if _tele and attack.type == &"melee" and t < _windup() * 0.7:
 				_tele.global_position = Telegraph._ground(c, c.global_position + _dir * (attack.reach + c.type.collider_radius) * 0.5)
 				_tele.global_basis = Basis(Vector3.UP, atan2(_dir.x, _dir.z)) * Basis().scaled(Vector3(attack.reach + c.type.collider_radius, 1, (attack.reach + c.type.collider_radius) * 0.5))
@@ -211,7 +211,7 @@ func _eruptions() -> void:
 		return
 	var n := maxi(attack.count, 1)
 	var radius := attack.radius if attack.radius > 0.0 else 2.2
-	var col: Color = Color(1.0, 0.42, 0.18) if attack.element == &"" else ElementFX.color(attack.element)
+	var col: Color = ArtStyle.attack_color(c.type, attack.element)
 	var world := c.get_world_3d()
 	var parent := c.get_parent()
 	for i in n:

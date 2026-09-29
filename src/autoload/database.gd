@@ -27,6 +27,8 @@ var shops: Dictionary = {}          # StringName -> shop definition
 var world_events: Array = []        # dynamic world event definitions
 var upgrades: Dictionary = {}       # StringName -> Warden altar upgrade track
 var cosmetics: Dictionary = {}      # StringName -> cosmetic (trail colours...)
+var art_style: Dictionary = {}      # character art direction tokens (presentation only)
+var visuals: Dictionary = {}        # StringName -> visual profile (presentation only)
 
 
 func _ready() -> void:
@@ -43,6 +45,12 @@ func reload() -> void:
 	for d in _load_array("entities.json"):
 		var e := EntityType.from_dict(d)
 		entities[e.id] = e
+	art_style = _load_dict("art_style.json")
+	visuals = {}
+	for v in _load_array("visuals.json"):
+		visuals[StringName(v["id"])] = v
+	for e: EntityType in entities.values():
+		e.visual = visuals.get(e.id, {})
 	for d in _load_array("regions.json"):
 		var r := RegionData.from_dict(d)
 		regions[r.id] = r
@@ -173,6 +181,7 @@ func validate() -> PackedStringArray:
 			if not items.has(StringName(ing)):
 				errors.append("cooking special '%s' unknown item '%s'" % [sp["id"], ing])
 	errors.append_array(_validate_progression())
+	errors.append_array(ArtStyle.validate(self))
 	return errors
 
 
