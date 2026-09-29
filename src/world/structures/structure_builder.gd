@@ -1060,8 +1060,8 @@ func _cave(poi: Dictionary, root: Node3D) -> Array:
 	k.build(root, "Grotto", 700.0)
 	var light := OmniLight3D.new()
 	light.light_color = Color(0.45, 0.9, 0.8)
-	light.light_energy = 0.9
-	light.omni_range = r * 1.1
+	light.light_energy = 1.8
+	light.omni_range = r * 1.4
 	light.shadow_enabled = false
 	light.distance_fade_enabled = true
 	light.distance_fade_begin = 50.0

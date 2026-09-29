@@ -36,7 +36,7 @@
       "text_args": [
        "POI_HAMLET_LOOKOUT"
       ],
-      "min_y": 30.0,
+      "min_y": 29.0,
       "radius": 9.0
      }
     ]
@@ -44,41 +44,10 @@
    {
     "objectives": [
      {
-      "type": "course",
-      "target": "first_flight",
-      "text_key": "Q_MQ_VELA_S2_O0_TEXT"
-     }
-    ],
-    "spawns": [
-     {
-      "kind": "course",
-      "id": "first_flight",
-      "mode": "glide",
-      "absolute": true,
-      "ring_radius": 4.5,
-      "range": 200,
-      "rings": [
-       [
-        -9,
-        206,
-        29.5
-       ],
-       [
-        0,
-        199,
-        28.2
-       ],
-       [
-        9,
-        192,
-        27.0
-       ],
-       [
-        18,
-        185,
-        26.1
-       ]
-      ]
+      "type": "glide",
+      "text_key": "Q_MQ_VELA_S2_O0_TEXT",
+      "count": 15,
+      "metric": "distance"
      }
     ]
    },

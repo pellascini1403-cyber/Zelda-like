@@ -66,3 +66,13 @@ Q(quest("sq_sunken_hall", "discovery", "exploration", "lakeshore", 2, "short", "
      stage(obj("open_chest", "sunken_hall:cache", "QO_SUNKEN_CACHE", marker=[-466, -165]))],
     {"glimmer": 35, "items": [{"id": "forge_stone", "count": 1}]},
     start="event"))
+
+PLATES = L("the crypt's weighted seal", "el sello de pesos de la cripta", "o selo de pesos da cripta", "le sceau à poids de la crypte", "das Gewichtssiegel der Gruft", "墓所の重りの封印", "묘소의 무게 봉인", "墓室的压重封印")
+Q(quest("dq_moss_crypt", "discovery", "puzzle", "valley", 2, "medium",
+    L("The Weighted Seal", "El sello de pesos", "O selo de pesos", "Le sceau à poids", "Das Gewichtssiegel", "重りの封印", "무게의 봉인", "压重封印"),
+    L("Two worn plates in the Moss Crypt's far corners hold its heart shut. Something heavy must stay on each.", "Dos placas gastadas en los rincones de la Cripta del Musgo mantienen cerrado su corazón. Algo pesado debe quedarse sobre cada una.", "Duas placas gastas nos cantos da Cripta do Musgo mantêm o coração fechado. Algo pesado deve ficar sobre cada uma.", "Deux dalles usées aux coins de la Crypte moussue tiennent son cœur fermé. Il faut un poids sur chacune.", "Zwei abgenutzte Platten in den Ecken der Moosgruft halten ihr Herz verschlossen. Auf jeder muss etwas Schweres liegen.", "苔の墓所の奥の二枚の石板が中心を閉ざす。どちらにも重いものを載せねば。", "이끼 묘소 구석의 닳은 판 두 개가 중심을 잠근다. 각각 무거운 것을 올려야 한다.", "苔墓角落的两块旧石板锁着墓心，每块上都得压着重物。"),
+    [stage(obj("puzzle", "moss_crypt", T("QO_T_SOLVE", "POI_MOSS_CRYPT"), marker=[-220, -260]),
+           hint=[L("A crate near each plate. Push it on — a Gust Step shoves hard.", "Hay una caja junto a cada placa. Empújala encima; un Paso de Ráfaga empuja fuerte.", "Há uma caixa perto de cada placa. Empurre-a; um Passo de Rajada empurra forte.", "Une caisse près de chaque dalle. Poussez-la dessus — un Pas de Rafale pousse fort.", "Neben jeder Platte steht eine Kiste. Schieb sie drauf — ein Böenschritt schiebt kräftig.", "石板のそばに木箱。押して載せろ。疾風歩なら強く押せる。", "판 옆마다 상자가 있다. 밀어 올려라. 돌풍 걸음이면 세게 민다.", "每块石板旁都有木箱，推上去——疾风步推得更猛。")]),
+     stage(obj("open_chest", "moss_crypt:grand", T("QO_T_OPEN", L("the crypt's heart", "el corazón de la cripta", "o coração da cripta", "le cœur de la crypte", "das Herz der Gruft", "墓所の中心", "묘소의 중심", "墓心")), marker=[-220, -260]))],
+    {"jade": 2, "glimmer": 30},
+    start="poi:moss_crypt"))

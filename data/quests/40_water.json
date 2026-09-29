@@ -490,5 +490,57 @@
    ]
   },
   "start": "event"
+ },
+ {
+  "id": "dq_moss_crypt",
+  "type": "discovery",
+  "category": "puzzle",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "moss_crypt",
+      "text_key": "QO_T_SOLVE",
+      "text_args": [
+       "POI_MOSS_CRYPT"
+      ],
+      "marker": [
+       -220,
+       -260
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_DQ_MOSS_CRYPT_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "moss_crypt:grand",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_MOSS_CRYPT_S1_O0_A0"
+      ],
+      "marker": [
+       -220,
+       -260
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_MOSS_CRYPT",
+  "desc_key": "Q_DQ_MOSS_CRYPT_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 30
+  },
+  "start": "poi:moss_crypt"
  }
 ]

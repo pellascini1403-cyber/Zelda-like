@@ -284,6 +284,14 @@ def sfx2():
     write("coin", shaped(mix(tone(1568, 0.12, "sine", 0.35), [0.0] * n(0.05) + tone(2093, 0.18, "sine", 0.3)), 0.001, 0.6))
 
 
+def sfx3():
+    """Quest layer: wind-ring pass, chimes, an encounter sting."""
+    n = lambda d: int(d * RATE)
+    write("ring", shaped(mix(tone(988, 0.35, "sine", 0.35, 0.15), tone(1480, 0.35, "sine", 0.18, 0.1), highpass(lowpass(noise(n(0.35)), 0.3), 0.05)), 0.004, 0.7))
+    write("chime", mix(*[[0.0] * int(i * 0.07 * RATE) + pluck(f, 2.2, 0.28, 0.9993) for i, f in enumerate([1318.5, 1567.98, 1975.5, 2349.3])]))
+    write("encounter", shaped(mix(tone(98, 0.9, "saw", 0.35, -0.2), lowpass(noise(n(0.9)), 0.05), [0.0] * n(0.12) + tone(146.8, 0.7, "tri", 0.3, -0.1)), 0.01, 0.6))
+
+
 def music2():
     D = lambda *m: [440.0 * 2 ** ((x - 69) / 12) for x in m]
     # Boss: taiko-like drums, low fifths, urgent pentatonic plucks.
@@ -326,4 +334,5 @@ if __name__ == "__main__":
     sfx2()
     ambience2()
     music2()
+    sfx3()   # last: earlier sounds keep their random streams
     print("audio written to", os.path.normpath(OUT))

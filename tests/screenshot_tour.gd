@@ -29,6 +29,20 @@ const SHOTS := [
 	["12c_title_card", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "title"],
 	["13_cooking", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "cook"],
 	["14_settings", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "settings"],
+	# Quest layer (content-first pass)
+	["15_quest_help_call", 154.0, 94.0, -47.0, -12.0, 10.5, "clear", "protect"],
+	["15b_quest_protect_fight", 163.0, 87.0, -47.0, -14.0, 10.5, "clear", "protect"],
+	["16_quest_nest_fire", 182.0, 74.0, -41.0, -16.0, 15.0, "clear", "nest"],
+	["17_beacon_pillar", -40.0, -150.0, -14.0, 12.0, 19.2, "clear", "beacon"],
+	["18_hunters_lodge", 360.0, 172.0, -40.0, -8.0, 9.5, "clear", ""],
+	["19_glow_grotto_night", 614.0, 320.0, 126.0, -4.0, 22.5, "clear", "grotto"],
+	["20_smoke_on_horizon", 30.0, 250.0, 132.0, 2.0, 14.0, "clear", "smoke"],
+	["21_ring_course", 62.0, 178.0, -133.0, -6.0, 11.0, "clear", "course"],
+	["22_captive_fang_camp", 282.0, -37.0, -128.0, -12.0, 12.0, "clear", "captive"],
+	["23_bounty_board", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "board"],
+	["24_warden_altar", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "altar"],
+	["25_journal_v2", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "journal2"],
+	["26_reward_popup", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "reward"],
 ]
 
 var _out := ""
@@ -79,7 +93,7 @@ func _shot(s: Array) -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	Debug.force_touch_ui = s[7] == "touch"
-	w.hud.visible = s[7] in ["touch", "combat", "boss", "title"]
+	w.hud.visible = s[7] in ["touch", "combat", "boss", "title", "protect", "nest", "course", "captive", "reward"]
 	var pos := Vector3(s[1], 0, s[2])
 	pos.y = w.gen.height(pos.x, pos.z) + 1.0
 	p.global_position = pos
@@ -127,10 +141,24 @@ func _shot(s: Array) -> void:
 			(boss.brain as BossBrain).change(&"chase")
 			await get_tree().create_timer(1.6).timeout
 		rig.yaw = s[3]
+	if s[7] in ["protect", "nest", "beacon", "course", "captive", "board", "altar", "journal2", "reward", "smoke"]:
+		await _quest_setup(s[7], p, w)
 	if s[7] == "title":
 		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
 		await get_tree().create_timer(1.2).timeout
 	match s[7]:
+		"board":
+			w.hud.visible = true
+			EventBus.panel_requested.emit(&"board", "hamlet")
+			await get_tree().create_timer(0.4, true, false, true).timeout
+		"altar":
+			w.hud.visible = true
+			EventBus.panel_requested.emit(&"altar", "")
+			await get_tree().create_timer(0.4, true, false, true).timeout
+		"journal2":
+			w.hud.visible = true
+			w.hud.menu.open(PauseMenu.TAB_JOURNAL)
+			await get_tree().create_timer(0.4, true, false, true).timeout
 		"inventory", "map", "settings", "journal":
 			w.hud.visible = true
 			for id in [&"quarry_saber", &"tide_spear", &"emberroot", &"cap_mushroom", &"flint", &"iron_ore"]:
@@ -154,6 +182,9 @@ func _shot(s: Array) -> void:
 			await get_tree().create_timer(0.4, true, false, true).timeout
 	rig.yaw = s[3]
 	rig.pitch = s[4]
+	if not s[7] in ["reward"]:
+		w.hud.dialogue.visible = false
+		w.hud.title_card.visible = false
 	await RenderingServer.frame_post_draw
 	var img := get_viewport().get_texture().get_image()
 	var path := _out.path_join(s[0] + ".png")
@@ -166,6 +197,77 @@ func _shot(s: Array) -> void:
 		w.hud.menu.close_menu()
 	if w.hud.cooking.visible:
 		w.hud.cooking.close_panel()
+	if w.hud.board.visible:
+		w.hud.board.close_panel()
+	if w.hud.altar.visible:
+		w.hud.altar.close_panel()
 	for c in get_tree().get_nodes_in_group(&"creatures"):
 		if (c as Creature).group_id == "tour":
 			c.queue_free()
+
+
+func _complete(id: StringName) -> void:
+	if Quests.is_completed(id):
+		return
+	Quests.state[id]["state"] = Quests.State.COMPLETED
+	Quests.state[id]["completions"] = 1
+	Quests._refresh_availability()
+
+
+## Puts the quest layer in the state each capture needs.
+func _quest_setup(kind: String, p: Player, w: GameWorld) -> void:
+	_complete(&"mq_vela")
+	match kind:
+		"protect", "nest":
+			if not Quests.is_active(&"mq_thorn_road") and not Quests.is_completed(&"mq_thorn_road"):
+				Quests.start(&"mq_thorn_road", true)
+			if kind == "nest":
+				# Finish the ambush from the previous capture: the stage advances.
+				for e in get_tree().get_nodes_in_group(&"quest_encounters"):
+					if (e as QuestEncounter).is_active():
+						(e as QuestEncounter)._succeed()
+				for c in get_tree().get_nodes_in_group(&"enemies"):
+					if (c as Node3D).global_position.distance_to(p.global_position) < 80.0:
+						c.queue_free()
+			for i in 40:
+				await get_tree().process_frame
+			await get_tree().create_timer(5.0 if kind == "protect" else 2.0).timeout
+			if kind == "nest":
+				for n in get_tree().get_nodes_in_group(&"quest_nests"):
+					(n as QuestNest).ignite()
+				await get_tree().create_timer(1.2).timeout
+		"beacon":
+			for b in get_tree().get_nodes_in_group(&"warden_beacons"):
+				if not (b as WardenBeacon)._lit:
+					(b as WardenBeacon)._light(true)
+			await get_tree().create_timer(0.6).timeout
+		"smoke":
+			await get_tree().create_timer(2.0).timeout
+		"course":
+			var course: RingCourse = null
+			for c in get_tree().get_nodes_in_group(&"ring_courses"):
+				if (c as RingCourse).course_id == &"shrine_sprint":
+					course = c
+			if course:
+				p.global_position = course.points[0]
+				await get_tree().create_timer(0.3).timeout
+				p.global_position = course.points[0] + Vector3(-8, -0.5, -6)
+			await get_tree().create_timer(1.8).timeout
+		"captive":
+			_complete(&"mq_thorn_road")
+			if not Quests.is_active(&"sq_fang_rescue"):
+				Quests.start(&"sq_fang_rescue", true)
+			await get_tree().create_timer(3.0).timeout
+		"board", "altar", "journal2":
+			_complete(&"mq_thorn_road")
+			for id in [&"sq_lost_kite", &"sq_smith_ore", &"sq_courier_rounds"]:
+				if Quests.quest_state(id) == Quests.State.AVAILABLE:
+					Quests.start(id, true)
+			PlayerData.add_jade(9)
+			for c in [&"trail_ember", &"ribbon_dawn", &"echo_storm", &"trail_frost"]:
+				PlayerData.own_cosmetic(c)
+			PlayerData.buy_upgrade(&"vela")
+		"reward":
+			Rewards.grant({"jade": 3, "glimmer": 60, "items": [{"id": "stamina_bloom", "count": 1}], "cosmetic": "trail_jade"}, "quest:tour_reward:1")
+			EventBus.title_card.emit(tr("Q_MQ_CLOUD_TEMPLE"), tr("QUEST_COMPLETED"))
+			await get_tree().create_timer(0.9).timeout

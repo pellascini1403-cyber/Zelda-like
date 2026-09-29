@@ -169,6 +169,26 @@
    {
     "objectives": [
      {
+      "type": "climb",
+      "target": "broken_tower",
+      "text_key": "Q_SQ_STORM_ROD_S0_O0_TEXT",
+      "radius": 10.0,
+      "min_y": 12.0,
+      "conditions": {
+       "weather": [
+        "storm"
+       ]
+      },
+      "marker": [
+       -330,
+       -60
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
       "type": "retrieve",
       "target": "storm_rod",
       "text_key": "QO_T_TAKE",
@@ -225,7 +245,7 @@
      }
     ],
     "talk_lines": [
-     "Q_SQ_STORM_ROD_S1_TL0"
+     "Q_SQ_STORM_ROD_S2_TL0"
     ]
    }
   ],

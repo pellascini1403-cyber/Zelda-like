@@ -69,7 +69,7 @@ func _light(silent: bool) -> void:
 	fire.radius = 0.6
 	add_child(fire)
 	fire.position.y = 3.75
-	_pillar = Cue.make("pillar")
+	_pillar = Cue.make("beacon")
 	add_child(_pillar)
 	_pillar.position.y = 5.0
 	if not silent:

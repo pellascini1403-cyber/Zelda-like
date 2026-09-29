@@ -72,12 +72,12 @@ Q(bounty("bq_hush_vigil", "veil", "combat", "veil", 3,
 # --- Challenges ------------------------------------------------------------------------------------------------
 
 
-def course_challenge(qid, region, diff, title, desc, course, par, first, par_reward, course_name, **kw):
+def course_challenge(qid, region, diff, title, desc, course, par, first, par_reward, course_name, **kw):  # banner = title
     cid = course["id"]
     return quest(qid, "challenge", "challenge", region, diff, "short", title, desc,
                  [stage(obj("course", cid, T("QO_T_COURSE", course_name))),
                   stage(obj("course", cid, T("QO_T_COURSE_PAR", course_name, str(par)), par=float(par)), rewards=par_reward)],
-                 first, start="event", spawns=[dict(course, when="always", banner=course_name, par=float(par))], **kw)
+                 first, start="event", spawns=[dict(course, when="always", banner=title, par=float(par))], **kw)
 
 
 RIDGE = L("the Overlook Dive", "el Descenso del Mirador", "o Mergulho do Mirante", "le Plongeon du Belvédère", "den Aussichtssturz", "展望台の急降下", "전망대 하강", "观景台俯冲")
