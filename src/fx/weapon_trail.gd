@@ -42,7 +42,7 @@ func _process(_delta: float) -> void:
 			var tip := base + out.normalized() * float(p.combat.wstat("reach", 1.8)) * 0.85
 			_samples.append([base, tip, now])
 			var el := StringName(p.combat.wstat("element", ""))
-			_color = ElementFX.color(el) if el != &"" else Color(1.0, 0.94, 0.8)
+			_color = ElementFX.color(el) if el != &"" else PlayerData.cosmetic_color("trail", Color(1.0, 0.94, 0.8))
 	while not _samples.is_empty() and (now - float(_samples[0][2]) > LIFE or _samples.size() > MAX_SAMPLES):
 		_samples.pop_front()
 	_im.clear_surfaces()

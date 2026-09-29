@@ -56,6 +56,27 @@ signal quest_started(quest_id: StringName)
 signal quest_updated(quest_id: StringName)
 signal quest_stage_advanced(quest_id: StringName, stage: int)
 signal quest_completed(quest_id: StringName)
+signal quest_failed(quest_id: StringName, reason: String)
+## Rewards actually granted (after the duplicate guard): {items, glimmer, jade...}
+signal rewards_granted(source: String, rewards: Dictionary)
+signal jade_changed(total: int)
+# Gameplay facts quests listen to (emitted by the systems that own them)
+signal resource_gathered(node_type: StringName, position: Vector3)
+signal item_crafted(item_id: StringName)
+signal dish_cooked(item_id: StringName)
+signal creature_defeated(entity_id: StringName, group_id: String, sneak: bool)
+## Quest-world objects: clues, levers, captives, relics, nests, ring courses.
+signal quest_object_used(object_id: StringName, group: StringName)
+signal quest_object_destroyed(object_id: StringName, group: StringName)
+signal encounter_finished(encounter_id: StringName, success: bool)
+signal course_finished(course_id: StringName, seconds: float)
+## Live encounter / challenge banner (title "" hides it): "Survive · 0:42".
+signal encounter_hud(title: String, detail: String, ratio: float)
+## World objects asking the HUD for a panel: &"board" (bounties, arg = board
+## id), &"altar" (Warden altar: jade upgrades and cosmetics).
+signal panel_requested(panel: StringName, arg: String)
+## Free-form scripted beats: data can wait for any named event.
+signal quest_event(name: StringName)
 signal flag_set(flag: StringName)
 signal ability_unlocked(ability_id: StringName)
 signal ability_used(ability_id: StringName)

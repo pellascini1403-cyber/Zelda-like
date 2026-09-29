@@ -22,9 +22,84 @@ func _init(world_gen: WorldGen) -> void:
 	gen = world_gen
 
 
+## Types whose builders place the POI's "npcs" themselves.
+const HANDLES_NPCS := ["village", "oasis", "npc_camp", "cave", "post", "quarry", "temple"]
+
+
 func build(poi: Dictionary, root: Node3D) -> Array:
+	var spawns := _build_type(poi, root)
+	_extras(poi, root)
+	if not poi["type"] in HANDLES_NPCS:
+		spawns.append_array(_people(poi, root))
+	return spawns
+
+
+## "npcs": [[entity, x, z, (flag)]] — an optional flag makes someone move in
+## only once the story put them there (a rescued scholar, a returned mentor).
+func _people(poi: Dictionary, root: Node3D) -> Array:
+	var spawns: Array = []
+	var npcs: Array = poi.get("npcs", [])
+	for i in npcs.size():
+		var n: Array = npcs[i]
+		var sp := _spawn(root, n[0], Vector3(n[1], 0, n[2]), poi["id"], i, poi["id"])
+		if n.size() > 3:
+			sp["flag"] = String(n[3])   # PoiManager spawns them once the flag is set
+		spawns.append(sp)
+	return spawns
+
+
+## Warden beacon at `local` (lit if its flag is already set).
+func _beacon(poi: Dictionary, root: Node3D, local: Vector3) -> void:
+	if not poi.has("beacon"):
+		return
+	var b := WardenBeacon.new()
+	b.flag_id = String(poi["beacon"])
+	root.add_child(b)
+	b.position = local
+
+
+## Optional features any POI can carry: a smoke column seen from afar, a
+## bounty board, a Warden altar.
+func _extras(poi: Dictionary, root: Node3D) -> void:
+	if poi.get("smoke", false):
+		var at: Array = poi.get("smoke_at", [0, 0])
+		var cue := Cue.make("smoke")
+		root.add_child(cue)
+		cue.position = Vector3(at[0], _ground(root, Vector3(at[0], 0, at[1])) + 1.0, at[1])
+	if poi.has("board"):
+		var ba: Array = poi.get("board_at", [4, 4])
+		var board := BountyBoard.new()
+		board.board_id = String(poi["board"])
+		root.add_child(board)
+		board.position = Vector3(ba[0], _ground(root, Vector3(ba[0], 0, ba[1])), ba[1])
+		board.rotation.y = float(poi.get("board_yaw", 0.0))
+	if poi.has("beacon") and poi.has("beacon_at"):
+		var bt: Array = poi["beacon_at"]
+		_beacon(poi, root, Vector3(bt[0], _ground(root, Vector3(bt[0], 0, bt[1])), bt[1]))
+	if poi.get("altar", false):
+		var aa: Array = poi.get("altar_at", [-4, 4])
+		var altar := WardenAltar.new()
+		root.add_child(altar)
+		altar.position = Vector3(aa[0], _ground(root, Vector3(aa[0], 0, aa[1])), aa[1])
+		altar.rotation.y = float(poi.get("altar_yaw", 0.0))
+
+
+func _npc_spawns(poi: Dictionary, root: Node3D) -> Array:
+	var spawns := _people(poi, root)
+	var guards: Array = poi.get("guards", [])
+	for i in guards.size():
+		var a := TAU * i / guards.size() + 0.4
+		spawns.append(_spawn(root, guards[i], Vector3(cos(a), 0, sin(a)) * 4.0, poi["id"] + ":g", i, poi["id"] + ":g"))
+	return spawns
+
+
+func _build_type(poi: Dictionary, root: Node3D) -> Array:
 	var kind: String = poi["type"]
 	match kind:
+		"npc_camp": return _npc_camp(poi, root)
+		"cave": return _cave(poi, root)
+		"post": return _post(poi, root)
+		"quarry": return _quarry(poi, root)
 		"village": return _village(poi, root)
 		"maze": return _maze(poi, root)
 		"camp": return _camp(poi, root)
@@ -107,11 +182,7 @@ func _village(poi: Dictionary, root: Node3D) -> Array:
 		crate.position = Vector3(-9 + i * 1.1, _ground(root, Vector3(-9, 0, -3)) + 0.55 + (1.05 if i == 2 else 0.0), -3)
 		if i == 2:
 			crate.position.x = -8.45
-	var spawns: Array = []
-	var npcs: Array = poi.get("npcs", [])
-	for i in npcs.size():
-		spawns.append(_spawn(root, npcs[i][0], Vector3(npcs[i][1], 0, npcs[i][2]), poi["id"], i, poi["id"]))
-	return spawns
+	return _people(poi, root)
 
 
 ## Village house: stone plinth, timber-frame hall with lattice walls and a
@@ -389,6 +460,7 @@ func _spires(poi: Dictionary, root: Node3D) -> Array:
 	var chest := Chest.create(poi["id"] + ":top", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
 	root.add_child(chest)
 	chest.position = tallest + Vector3(0, 0.3, 0)
+	_beacon(poi, root, tallest + Vector3(1.4, 0.3, 0.6))
 	return []
 
 
@@ -579,11 +651,15 @@ func _temple(poi: Dictionary, root: Node3D) -> Array:
 	stone.title_key = poi["name_key"]
 	root.add_child(stone)
 	stone.position = bz + basis * Vector3(3.0, 0, 0)
+	_beacon(poi, root, basis * Vector3(-14.0, 0, -9.0) + Vector3(0, t1, 0))
 	var spawns: Array = []
 	var npcs: Array = poi.get("npcs", [])
 	for i in npcs.size():
 		var np := basis * Vector3(npcs[i][1], 0, npcs[i][2])
-		spawns.append({"entity": StringName(npcs[i][0]), "pos": root.global_position + np + Vector3(0, t1 + 0.3, 0), "group": poi["id"], "id": "%s:%d" % [poi["id"], i]})
+		var sp := {"entity": StringName(npcs[i][0]), "pos": root.global_position + np + Vector3(0, t1 + 0.3, 0), "group": poi["id"], "id": "%s:%d" % [poi["id"], i]}
+		if (npcs[i] as Array).size() > 3:
+			sp["flag"] = String(npcs[i][3])
+		spawns.append(sp)
 	return spawns
 
 
@@ -611,6 +687,7 @@ func _shrine(poi: Dictionary, root: Node3D) -> Array:
 		var chest := Chest.create(poi["id"] + ":offering", StringName(poi["loot"]), poi.get("reward", []))
 		root.add_child(chest)
 		chest.position = Vector3(0, g + top, 0) + basis * Vector3(0, 0, -1.2)
+	_beacon(poi, root, Vector3(0, g + top, 0) + basis * Vector3(2.6, 0, -2.6))
 	return []
 
 
@@ -759,11 +836,7 @@ func _oasis(poi: Dictionary, root: Node3D) -> Array:
 	stone.title_key = poi["name_key"]
 	root.add_child(stone)
 	stone.position = pv + Vector3(0, 0.45, 1.5)
-	var spawns: Array = []
-	var npcs: Array = poi.get("npcs", [])
-	for i in npcs.size():
-		spawns.append(_spawn(root, npcs[i][0], Vector3(npcs[i][1], 0, npcs[i][2]), poi["id"], i, poi["id"]))
-	return spawns
+	return _people(poi, root)
 
 
 # --- Boss arena: a ring of broken Warden pillars around a paved floor ---------------------------
@@ -875,3 +948,214 @@ func _floating_isles(poi: Dictionary, root: Node3D) -> Array:
 	lev.radius = poi.get("levity_radius", 110.0)
 	root.add_child(lev)
 	return []
+
+
+# --- NPC camp: a tent or two, a cook fire, a banner; flavour props by style --------------------
+func _npc_camp(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var yaw: float = poi.get("yaw", 0.0)
+	var basis := Basis(Vector3.UP, yaw)
+	var style: String = poi.get("style", "camp")
+	var cloths := {"fisher": Color(0.36, 0.52, 0.56), "hunter": Color(0.45, 0.5, 0.3), "climber": Color(0.8, 0.45, 0.25),
+		"pilgrim": Color(0.72, 0.62, 0.82), "scholar": Color(0.82, 0.74, 0.52), "hermit": Color(0.55, 0.5, 0.4)}
+	var cloth: Color = cloths.get(style, CLOTH)
+	for i in int(poi.get("tents", 1)):
+		var c := basis * Vector3(-4.5 + i * 7.0, 0, -3.5)
+		c.y = _ground(root, c)
+		var ty := yaw + (0.3 if i % 2 == 0 else -0.25)
+		for off in [Vector3(-1.6, 0, -2.0), Vector3(1.6, 0, -2.0), Vector3(1.6, 0, 2.0), Vector3(-1.6, 0, 2.0)]:
+			k.pillar(c + Basis(Vector3.UP, ty) * off, 1.9, 0.07, StructureKit.INK_WOOD, 4)
+		k.roof(c + Vector3(0, 1.9, 0), 3.6, 4.4, 1.3, cloth, ty)
+	var lp := basis * Vector3(3.5, 0, 2.5)
+	lp.y = _ground(root, lp)
+	k.lantern_post(lp, yaw)
+	var bp := basis * Vector3(-3.0, 0, 3.0)
+	bp.y = _ground(root, bp)
+	k.pillar(bp, 4.5, 0.08, StructureKit.INK_WOOD, 5)
+	k.ribbon(bp + Vector3(0, 4.4, 0), 2.2, 0.22, cloth.lightened(0.25), yaw)
+	var fp := basis * Vector3(4.5, 0, -2.0)
+	fp.y = _ground(root, fp)
+	match style:
+		"fisher":
+			k.pillar(fp + basis * Vector3(-1.4, 0, 0), 1.8, 0.06, StructureKit.INK_WOOD, 4)
+			k.pillar(fp + basis * Vector3(1.4, 0, 0), 1.8, 0.06, StructureKit.INK_WOOD, 4)
+			k.block_xf(Transform3D(basis, fp + Vector3(0, 1.8, 0)), Vector3(3.0, 0.08, 0.08), StructureKit.INK_WOOD, false)
+			k.block_xf(Transform3D(basis, fp + Vector3(0, 1.15, 0)), Vector3(2.6, 1.1, 0.03), Color(0.52, 0.58, 0.55), false, StructureKit.CLOTH)
+			var hull := basis * Vector3(-6.5, 0, 1.0)
+			hull.y = _ground(root, hull)
+			k.block_xf(Transform3D(basis * Basis(Vector3.FORWARD, PI), hull + Vector3(0, 0.35, 0)), Vector3(1.3, 0.6, 3.6), WOOD, true)
+		"hunter":
+			k.pillar(fp + basis * Vector3(-1.1, 0, 0), 2.2, 0.07, StructureKit.INK_WOOD, 4)
+			k.pillar(fp + basis * Vector3(1.1, 0, 0), 2.2, 0.07, StructureKit.INK_WOOD, 4)
+			k.block_xf(Transform3D(basis, fp + Vector3(0, 1.4, 0)), Vector3(1.9, 1.4, 0.05), Color(0.62, 0.45, 0.3), false, StructureKit.CLOTH)
+			k.pillar(basis * Vector3(-6.0, 0, 0) + Vector3(0, _ground(root, basis * Vector3(-6.0, 0, 0)), 0), 2.0, 0.09, StructureKit.INK_WOOD, 4)
+		"climber":
+			for i in 3:
+				var rc := fp + basis * Vector3(-0.8 + i * 0.8, 0.15, 0)
+				StructureKit.prism_into(k.b, rc, rc + Vector3(0, 0.3, 0), 0.35, 0.35, 8, StructureKit.id(Color(0.78, 0.66, 0.42), StructureKit.MATTE))
+			k.rock(basis * Vector3(-6.5, 1.4, -1.0) + Vector3(0, _ground(root, basis * Vector3(-6.5, 0, -1.0)), 0), Vector3(2.4, 2.6, 2.2), StructureKit.COOL_STONE)
+		"pilgrim":
+			var a := basis * Vector3(-6.0, 0, -1.0)
+			var b2 := basis * Vector3(6.0, 0, -1.0)
+			a.y = _ground(root, a)
+			b2.y = _ground(root, b2)
+			k.pillar(a, 3.4, 0.06, StructureKit.INK_WOOD, 4)
+			k.pillar(b2, 3.4, 0.06, StructureKit.INK_WOOD, 4)
+			for i in 9:
+				var t := (i + 0.5) / 9.0
+				var q := a.lerp(b2, t) + Vector3(0, 3.3 - sin(t * PI) * 0.6, 0)
+				k.ribbon(q, 0.55, 0.3, [StructureKit.CINNABAR_LIGHT, StructureKit.GOLD, StructureKit.JADE, StructureKit.PAPER][i % 4], yaw)
+		"scholar", "hermit":
+			k.block_xf(Transform3D(basis, fp + Vector3(0, 0.45, 0)), Vector3(1.8, 0.9, 0.9), WOOD_LIGHT, true)
+			StructureKit.prism_into(k.b, fp + basis * Vector3(-0.4, 0.95, 0), fp + basis * Vector3(0.3, 0.95, 0), 0.06, 0.06, 6, StructureKit.id(StructureKit.PAPER, StructureKit.MATTE))
+	k.build(root, "Camp", 800.0)
+	_night_lights(root, k.lamps, 1)
+	var fire := Campfire.new()
+	root.add_child(fire)
+	fire.position = basis * Vector3(0, 0, 2.5) + Vector3(0, _ground(root, basis * Vector3(0, 0, 2.5)), 0)
+	if poi.has("loot"):
+		var chest := Chest.create(poi["id"] + ":stash", StringName(poi["loot"]), poi.get("reward", []))
+		root.add_child(chest)
+		var cp := basis * Vector3(-4.5, 0, -6.0)
+		chest.position = cp + Vector3(0, _ground(root, cp), 0)
+	return _npc_spawns(poi, root)
+
+
+# --- Grotto: a ring of boulders under a slab roof, one mouth; glowmoss inside -------------------
+func _cave(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(poi["id"])
+	var yaw: float = poi.get("yaw", 0.0)
+	var r: float = poi.get("radius", 9.0)
+	var basis := Basis(Vector3.UP, yaw)
+	var rock_col := Color(String(poi.get("rock_color", "#6f6a62")))
+	var n := 14
+	for i in n:
+		var a := TAU * i / n
+		if absf(wrapf(a - PI * 0.5, -PI, PI)) < 0.42:
+			continue   # the mouth faces local +z
+		var p := basis * Vector3(cos(a) * r, 0, sin(a) * r)
+		p.y = _ground(root, p) + 1.5
+		k.rock(p, Vector3(3.2, 3.2, 2.6) * rng.randf_range(0.9, 1.15), rock_col)
+		var p2 := basis * Vector3(cos(a) * r * 0.9, 0, sin(a) * r * 0.9)
+		p2.y = _ground(root, p2) + 4.3
+		k.rock(p2, Vector3(2.8, 2.0, 2.5), rock_col * 0.9, false)
+	var g := _ground(root, Vector3.ZERO)
+	for i in 5:
+		var a := TAU * i / 5.0 + 0.3
+		k.rock(Vector3(cos(a) * r * 0.45, g + 6.1, sin(a) * r * 0.45), Vector3(r * 0.6, 1.3, r * 0.6), rock_col * 0.85, false)
+	k.block(Vector3(0, g + 6.3, 0), Vector3(r * 1.9, 1.0, r * 1.9), rock_col * 0.8, yaw, true)
+	# Mouth lintel: two stacked boulders framing the way in
+	for sx in [-1.0, 1.0]:
+		var m := basis * Vector3(sx * 2.8, 0, r + 0.6)
+		m.y = _ground(root, m) + 1.2
+		k.rock(m, Vector3(1.6, 2.4, 1.6), rock_col)
+	# Glowmoss patches (glow runes) and a dim cold light inside
+	for i in 6:
+		var a := rng.randf() * TAU
+		var q := Vector3(cos(a) * r * 0.7, 0, sin(a) * r * 0.7)
+		q.y = _ground(root, q) + rng.randf_range(0.2, 2.5)
+		k.rune(q, Vector3(0.5, 0.06, 0.4), a)
+	k.build(root, "Grotto", 700.0)
+	var light := OmniLight3D.new()
+	light.light_color = Color(0.45, 0.9, 0.8)
+	light.light_energy = 0.9
+	light.omni_range = r * 1.1
+	light.shadow_enabled = false
+	light.distance_fade_enabled = true
+	light.distance_fade_begin = 50.0
+	light.distance_fade_length = 20.0
+	root.add_child(light)
+	light.position = Vector3(0, g + 3.0, 0)
+	if poi.has("loot"):
+		var chest := Chest.create(poi["id"] + ":hoard", StringName(poi["loot"]), poi.get("reward", []))
+		root.add_child(chest)
+		var cp := basis * Vector3(0, 0, -r * 0.55)
+		chest.position = cp + Vector3(0, _ground(root, cp), 0)
+	var nodes: Array = poi.get("nodes", [])
+	for i in nodes.size():
+		var nd: Dictionary = DB.resource_nodes.get(StringName(nodes[i][0]), {})
+		var nid := "%s:node%d" % [poi["id"], i]
+		if nd.is_empty() or WorldState.is_harvested(nid):
+			continue
+		var rn := ResourceNode.create(nd, nid)
+		root.add_child(rn)
+		var np := Vector3(nodes[i][1], 0, nodes[i][2])
+		rn.position = np + Vector3(0, _ground(root, np), 0)
+	return _npc_spawns(poi, root)
+
+
+# --- Road warden post: gatehouse, watch platform, palisade, banner -----------------------------------
+func _post(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var yaw: float = poi.get("yaw", 0.0)
+	var basis := Basis(Vector3.UP, yaw)
+	var g := _ground(root, Vector3.ZERO)
+	var top := k.terrace(Vector3(0, g, 0), 8.0, 6.5, 0.5, yaw, [0], false, 2.0)
+	k.hall(Vector3(0, g + top, 0), 5.5, 4.2, 2.8, yaw, StructureKit.ROOF_LIGHT)
+	var wp := basis * Vector3(7.0, 0, -2.0)
+	wp.y = _ground(root, wp)
+	for off in [Vector3(-1.1, 0, -1.1), Vector3(1.1, 0, -1.1), Vector3(1.1, 0, 1.1), Vector3(-1.1, 0, 1.1)]:
+		k.block(wp + basis * off + Vector3(0, 3.0, 0), Vector3(0.3, 6.0, 0.3), WOOD, yaw)
+	k.block(wp + Vector3(0, 6.1, 0), Vector3(3.0, 0.25, 3.0), WOOD_LIGHT, yaw)
+	k.hip_roof(wp + Vector3(0, 8.0, 0), 3.4, 3.4, 1.0, yaw, StructureKit.ROOF)
+	for i in 7:
+		var p := basis * Vector3(-9.0 + i * 1.3, 0, 5.5)
+		p.y = _ground(root, p)
+		k.block(p + Vector3(0, 1.3, 0), Vector3(0.4, 2.6, 0.4), WOOD, yaw)
+	var bp := basis * Vector3(-5.0, 0, -4.0)
+	bp.y = _ground(root, bp)
+	k.pillar(bp, 6.0, 0.09, StructureKit.INK_WOOD, 5)
+	k.ribbon(bp + Vector3(0, 5.9, 0), 3.0, 0.4, StructureKit.CINNABAR_LIGHT, yaw)
+	for sx in [-1.0, 1.0]:
+		var lp := basis * Vector3(sx * 4.0, 0, 4.0)
+		lp.y = _ground(root, lp)
+		k.lantern_post(lp, yaw)
+	k.build(root, "Post", 900.0)
+	_night_lights(root, k.lamps, 1)
+	var fire := Campfire.new()
+	root.add_child(fire)
+	var fp := basis * Vector3(3.0, 0, 3.5)
+	fire.position = fp + Vector3(0, _ground(root, fp), 0)
+	return _npc_spawns(poi, root)
+
+
+# --- Old quarry: cut blocks, a scarred rock face, a timber crane -------------------------------------
+func _quarry(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(poi["id"])
+	var yaw: float = poi.get("yaw", 0.0)
+	var basis := Basis(Vector3.UP, yaw)
+	for i in 7:
+		var p := basis * Vector3(-12.0 + i * 4.0, 0, -12.0 + rng.randf_range(-1.5, 1.5))
+		p.y = _ground(root, p) + 3.0
+		k.rock(p, Vector3(3.4, 5.0, 2.8), STONE_DARK)
+	for i in 9:
+		var p := basis * Vector3(rng.randf_range(-10, 10), 0, rng.randf_range(-6, 8))
+		p.y = _ground(root, p)
+		var h := rng.randf_range(0.6, 1.4)
+		k.block(p + Vector3(0, h * 0.5, 0), Vector3(rng.randf_range(1.2, 2.2), h, rng.randf_range(0.9, 1.6)), STONE * rng.randf_range(0.9, 1.05), yaw + rng.randf() * 0.4)
+	var cp := basis * Vector3(8.0, 0, -6.0)
+	cp.y = _ground(root, cp)
+	k.pillar(cp, 7.0, 0.16, StructureKit.INK_WOOD, 5)
+	k.block_xf(Transform3D(basis, cp + basis * Vector3(-2.2, 7.0, 0)), Vector3(5.0, 0.25, 0.25), StructureKit.INK_WOOD, false)
+	StructureKit.prism_into(k.b, cp + basis * Vector3(-4.4, 7.0, 0), cp + basis * Vector3(-4.4, 3.2, 0), 0.03, 0.03, 4, StructureKit.id(Color(0.7, 0.62, 0.45), StructureKit.MATTE))
+	k.build(root, "Quarry", 900.0)
+	if poi.has("loot"):
+		var chest := Chest.create(poi["id"] + ":cache", StringName(poi["loot"]), poi.get("reward", []))
+		root.add_child(chest)
+		var chp := basis * Vector3(-6.0, 0, -8.0)
+		chest.position = chp + Vector3(0, _ground(root, chp), 0)
+	var nodes: Array = poi.get("nodes", [])
+	for i in nodes.size():
+		var nd: Dictionary = DB.resource_nodes.get(StringName(nodes[i][0]), {})
+		var nid := "%s:node%d" % [poi["id"], i]
+		if nd.is_empty() or WorldState.is_harvested(nid):
+			continue
+		var rn := ResourceNode.create(nd, nid)
+		root.add_child(rn)
+		var np := Vector3(nodes[i][1], 0, nodes[i][2])
+		rn.position = np + Vector3(0, _ground(root, np), 0)
+	return _npc_spawns(poi, root)

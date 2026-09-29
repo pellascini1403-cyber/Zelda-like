@@ -443,7 +443,7 @@ func _parry(info: DamageInfo) -> void:
 
 func _perfect_dodge() -> void:
 	EventBus.perfect_dodge.emit()
-	Afterimage.spawn(p.visual)
+	Afterimage.spawn(p.visual, PlayerData.cosmetic_color("afterimage", Color(0.5, 1.0, 0.85)))
 	Audio.play_ui(&"perfect_dodge", 0.0)
 	Game.slow_motion(0.35, 0.9)
 	PlayerData.restore_stamina(20.0)

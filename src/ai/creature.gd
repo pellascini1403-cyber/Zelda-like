@@ -27,6 +27,9 @@ var move_speed := 0.0
 var knockback := Vector3.ZERO
 var dead := false
 var respawn_hours := 72.0
+## Quest encounters (protect / escort / rescue) point attackers at an NPC
+## or object instead of the player. Null = the player.
+var focus: Node3D = null
 
 var _collision: CollisionShape3D
 var _stuck_time := 0.0
@@ -209,6 +212,15 @@ func stop() -> void:
 	move_speed = 0.0
 
 
+## Who this creature is fighting: its quest focus when it is alive and not
+## much further than the player, else the player.
+func threat_target() -> Node3D:
+	if focus != null and is_instance_valid(focus) and not (focus.has_method("is_dead") and focus.is_dead()):
+		if Game.player == null or focus.global_position.distance_to(global_position) < Game.player.global_position.distance_to(global_position) + 6.0:
+			return focus
+	return Game.player
+
+
 func distance_to_player() -> float:
 	return global_position.distance_to(Game.player.global_position) if Game.player else INF
 
@@ -266,6 +278,7 @@ func _on_died(_info: DamageInfo) -> void:
 	if spawn_id != "":
 		WorldState.mark_defeated(spawn_id, respawn_hours)
 	EventBus.entity_killed.emit(type.id, global_position)
+	EventBus.creature_defeated.emit(type.id, group_id, _info != null and _info.is_critical)
 	Audio.play_at(&"creature_die", global_position, -2.0)
 	died_signal.emit(self)
 	# Dissolve: the body sinks and shrinks into motes of its own colour.

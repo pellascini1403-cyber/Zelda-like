@@ -23,6 +23,17 @@ var _build_queue: Array = []
 
 func _ready() -> void:
 	_builder = StructureBuilder.new(gen)
+	# People who move in when the story says so (a rescued scholar...).
+	EventBus.flag_set.connect(func(flag: StringName) -> void:
+		for id in _built:
+			var e: Dictionary = _built[id]
+			if not e["active"]:
+				continue
+			for s in e["spawns"]:
+				if String(s.get("flag", "")) == String(flag):
+					var c := spawner.spawn_creature(s["entity"], s["pos"], s["id"], s["group"])
+					if c:
+						e["creatures"].append(c))
 
 
 func pois() -> Array:
@@ -92,6 +103,8 @@ func _activate(id: String) -> void:
 	e["active"] = true
 	for s in e["spawns"]:
 		if WorldState.is_defeated(s["id"]):
+			continue
+		if s.has("flag") and not WorldState.flags.has(String(s["flag"])):
 			continue
 		var c := spawner.spawn_creature(s["entity"], s["pos"], s["id"], s["group"])
 		if c:

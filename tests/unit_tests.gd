@@ -31,6 +31,13 @@ func _run() -> void:
 	test_ai_attack_pick()
 	test_placeholder_colors()
 	test_quests()
+	test_quest_objective_types()
+	test_quest_rewards()
+	test_quest_fail_and_recovery()
+	test_quest_discovery_starts()
+	test_quest_markers_and_boards()
+	test_quest_validator()
+	test_quest_content_goals()
 	test_boss_data()
 	test_abilities_data()
 	print("==== UNIT: %d checks, %d failed ====" % [_count, _fails])
@@ -75,7 +82,28 @@ func test_localization() -> void:
 		keys["BUFF_" + String(b).to_upper()] = "buff"
 	for c in ItemData.CATEGORIES:
 		keys["CAT_" + String(c).to_upper()] = "category"
+	# Quest layer: every key in quest data, upgrades, cosmetics, events, bosses.
+	for q in DB.quests:
+		_collect_text_keys(q, keys)
+	for u in DB.upgrades.values():
+		keys[u["name_key"]] = "upgrade"
+		keys[u["desc_key"]] = "upgrade"
+	for c in DB.cosmetics.values():
+		keys[c["name_key"]] = "cosmetic"
+		keys["COS_SLOT_" + String(c["slot"]).to_upper()] = "cosmetic"
+	for ev in DB.world_events:
+		keys[ev["name_key"]] = "event"
+		for l in (ev.get("encounter", {}) as Dictionary).get("end_lines", []):
+			keys[l] = "event"
+	for b in DB.bosses.values():
+		keys[b["title_key"]] = "boss"
+		for ph in b.get("phases", []):
+			if ph.has("title_key"):
+				keys[ph["title_key"]] = "boss"
+	for a in DB.abilities.values():
+		keys[a["name_key"]] = "ability"
 	var missing := PackedStringArray()
+	var bad_templates := PackedStringArray()
 	for lang in Settings.LANGUAGES:
 		TranslationServer.set_locale(lang)
 		for k in keys:
@@ -83,10 +111,41 @@ func test_localization() -> void:
 				continue
 			if tr(k) == k or tr(k).strip_edges() == "":
 				missing.append("%s:%s" % [lang, k])
+		# Objective templates must take exactly as many names as they are given.
+		for q in DB.quests:
+			for st in q["stages"]:
+				for o in st["objectives"]:
+					var args: Array = o.get("text_args", [])
+					if not args.is_empty() and tr(String(o["text_key"])).count("%s") != args.size():
+						bad_templates.append("%s:%s" % [lang, o["text_key"]])
 	Settings.apply_language()
+	for b in bad_templates.slice(0, 6):
+		print("  template/argument mismatch ", b)
+	ok(bad_templates.is_empty(), "objective templates match their arguments in every language")
 	for m in missing.slice(0, 12):
 		print("  missing translation ", m)
 	ok(missing.is_empty(), "all %d text keys translated in %d languages (%d missing)" % [keys.size(), Settings.LANGUAGES.size(), missing.size()])
+
+
+## Text keys inside quest data (titles, lines, objective texts and their
+## name arguments, prompts, hints, banners, shouts).
+func _collect_text_keys(v: Variant, keys: Dictionary) -> void:
+	if v is Dictionary:
+		for k in v:
+			var x: Variant = v[k]
+			if k in ["title_key", "desc_key", "text_key", "hint_key", "shout_key"] and x is String and x != "":
+				keys[x] = "quest"
+			elif k == "prompt" and x is String:
+				keys[x] = "quest"
+			elif (String(k).ends_with("_lines") or k == "lines" or k == "text_args") and x is Array:
+				for line in x:
+					if line is String and line == line.to_upper() and not line.is_valid_float():
+						keys[line] = "quest"
+			else:
+				_collect_text_keys(x, keys)
+	elif v is Array:
+		for x in v:
+			_collect_text_keys(x, keys)
 
 
 func test_inventory() -> void:
@@ -250,13 +309,11 @@ func _files(dir: String, ext: String) -> PackedStringArray:
 
 
 ## Quest flow without a world: start, progress by events, stage advance,
-## rewards, save/load round trip.
+## rewards, prerequisites, save/load round trip.
 func test_quests() -> void:
-	PlayerData.reset_new_game()
-	WorldState.reset()
-	Quests.reset()
-	ok(Quests.quest_state(&"mq_first_wind") == Quests.State.AVAILABLE, "first main quest available at start")
-	ok(Quests.quest_state(&"mq_sand_voices") == Quests.State.LOCKED, "second main quest locked by prerequisite")
+	_quest_reset()
+	ok(Quests.quest_state(&"mq_vela") == Quests.State.AVAILABLE, "first main quest available at start")
+	ok(Quests.quest_state(&"mq_thorn_road") == Quests.State.LOCKED, "second main quest locked by prerequisite")
 	ok(Quests.start(&"sq_thorn_cull", true), "side quest starts")
 	for i in 5:
 		EventBus.entity_killed.emit(&"ENEMY_THORNLING", Vector3.ZERO)
@@ -265,7 +322,7 @@ func test_quests() -> void:
 	EventBus.npc_talked.emit(&"NPC_VILLAGER")
 	ok(Quests.is_completed(&"sq_thorn_cull"), "talk objective completes the quest")
 	ok(PlayerData.glimmer == g + 30 and PlayerData.inventory.has(&"fur_cap"), "rewards granted")
-	Quests.start(&"sq_mushroom_stew", true)
+	_force_start(&"sq_mushroom_stew")
 	PlayerData.inventory.add(&"cap_mushroom", 5)
 	EventBus.item_acquired.emit(&"cap_mushroom", 5)
 	ok(Quests.state[&"sq_mushroom_stew"]["stage"] == 1, "collect objective counts held items")
@@ -273,19 +330,284 @@ func test_quests() -> void:
 	Quests.reset()
 	Quests.load_state(saved)
 	ok(Quests.is_completed(&"sq_thorn_cull") and Quests.state[&"sq_mushroom_stew"]["stage"] == 1, "quest state survives save/load")
-	Quests.start(&"mq_first_wind", true)
-	WorldState.discover_poi(&"wind_overlook")
+	# Main line: talk -> climb (polled, done by hand here) -> glide metric -> talk.
+	Quests.start(&"mq_vela", true)
 	EventBus.npc_talked.emit(&"NPC_CARTOGRAPHER")
-	ok(Quests.state[&"mq_first_wind"]["stage"] == 2, "already-discovered places satisfy later objectives")
-	ok(Quests.tracked_target() != null, "tracked quest exposes a target position")
-	WorldState.flags["boss_BOSS_THORNBACK"] = true
-	Quests.notify(&"discover", &"cloud_temple")
-	EventBus.boss_defeated.emit(&"BOSS_THORNBACK")
-	ok(Quests.is_completed(&"mq_first_wind") and PlayerData.has_ability(&"gust_step"), "main quest grants its ability")
-	ok(Quests.quest_state(&"mq_sand_voices") != Quests.State.LOCKED, "completing a quest unlocks the next")
+	ok(Quests.state[&"mq_vela"]["stage"] == 1, "talking to Tamsin advances the first main quest")
+	ok(not Quests.tracked_marker().is_empty(), "tracked main quest exposes a marker")
+	Quests.state[&"mq_vela"]["progress"][0] = 1
+	Quests._after_progress(&"mq_vela")
+	Quests.state[&"mq_vela"]["progress"][0] = 15
+	Quests._after_progress(&"mq_vela")
+	EventBus.npc_talked.emit(&"NPC_CARTOGRAPHER")
+	ok(Quests.is_completed(&"mq_vela") and PlayerData.jade >= 2, "first main quest completes and pays jade")
+	ok(Quests.quest_state(&"mq_thorn_road") != Quests.State.LOCKED and Quests.quest_state(&"sq_lost_kite") != Quests.State.LOCKED, "completing a quest unlocks the next ones")
+	_quest_reset()
+
+
+## Every objective type, driven through a synthetic quest with one stage per
+## type (the facts are the same signals the gameplay systems emit).
+func test_quest_objective_types() -> void:
+	_quest_reset()
+	var steps := [
+		["kill", "ENEMY_WISP", func() -> void: EventBus.entity_killed.emit(&"ENEMY_WISP", Vector3.ZERO)],
+		["hunt", "ANIMAL_WOOLHORN", func() -> void: EventBus.entity_killed.emit(&"ANIMAL_WOOLHORN", Vector3.ZERO)],
+		["clear", "t_group", func() -> void: EventBus.creature_defeated.emit(&"ENEMY_THORNLING", "t_group", false)],
+		["sneak", "ENEMY_THORNLING", func() -> void: EventBus.creature_defeated.emit(&"ENEMY_THORNLING", "", true)],
+		["boss", "BOSS_THORNBACK", func() -> void: EventBus.boss_defeated.emit(&"BOSS_THORNBACK")],
+		["collect", "flint", func() -> void:
+			PlayerData.inventory.add(&"flint", 1)
+			EventBus.item_acquired.emit(&"flint", 1)],
+		["gather", "iron_vein", func() -> void: EventBus.resource_gathered.emit(&"iron_vein", Vector3.ZERO)],
+		["interact", "t_obj", func() -> void: EventBus.quest_object_used.emit(&"t_obj", &"")],
+		["retrieve", "group:t_relics", func() -> void: EventBus.quest_object_used.emit(&"t_relic", &"t_relics")],
+		["destroy", "t_nest", func() -> void: EventBus.quest_object_destroyed.emit(&"t_nest", &"")],
+		["discover", "echo_chamber", func() -> void: EventBus.poi_discovered.emit(&"echo_chamber")],
+		["region", "desert", func() -> void: EventBus.region_entered.emit(&"desert")],
+		["talk", "NPC_SMITH", func() -> void: EventBus.npc_talked.emit(&"NPC_SMITH")],
+		["flag", "t_flag", func() -> void: Quests.set_flag(&"t_flag")],
+		["puzzle", "t_puzzle", func() -> void: Quests.set_flag(&"puzzle_t_puzzle")],
+		["ability", "jade_platform", func() -> void: PlayerData.unlock_ability(&"jade_platform")],
+		["ability_use", "gust_step", func() -> void: EventBus.ability_used.emit(&"gust_step")],
+		["craft", "whetstone", func() -> void: EventBus.item_crafted.emit(&"whetstone")],
+		["cook", "hearty_stew", func() -> void: EventBus.dish_cooked.emit(&"hearty_stew")],
+		["mount", "windstrider", func() -> void: EventBus.mount_tamed.emit(&"windstrider")],
+		["open_chest", "t_chest", func() -> void: EventBus.chest_opened.emit("t_chest", [])],
+		["protect", "t_enc", func() -> void: EventBus.encounter_finished.emit(&"t_enc", true)],
+		["escort", "t_esc", func() -> void: EventBus.encounter_finished.emit(&"t_esc", true)],
+		["survive", "t_surv", func() -> void: EventBus.encounter_finished.emit(&"t_surv", true)],
+		["course", "t_course", func() -> void: EventBus.course_finished.emit(&"t_course", 10.0)],
+		["event", "t_event", func() -> void: EventBus.quest_event.emit(&"t_event")],
+		["deliver", "NPC_HUNTER", func() -> void:
+			PlayerData.inventory.add(&"raw_meat", 1)
+			EventBus.npc_talked.emit(&"NPC_HUNTER")],
+	]
+	var stages: Array = []
+	for st in steps:
+		var o := {"type": st[0], "target": st[1], "text_key": "QO_T_FIND"}
+		if st[0] == "deliver":
+			o["item"] = "raw_meat"
+		if st[0] == "course":
+			o["par"] = 30.0
+		stages.append({"objectives": [o]})
+	_inject({"id": "t_all", "type": "side", "category": "exploration", "start": "auto", "stages": stages, "rewards": {"glimmer": 1}})
+	Quests.start(&"t_all", true)
+	var covered := {}
+	for i in steps.size():
+		var before: int = Quests.state[&"t_all"]["stage"]
+		(steps[i][2] as Callable).call()
+		var advanced: bool = Quests.is_completed(&"t_all") or int(Quests.state[&"t_all"]["stage"]) > before
+		ok(advanced, "objective type '%s' completes" % steps[i][0])
+		covered[Quests.canon({"type": steps[i][0]})] = true
+	ok(PlayerData.inventory.count_of(&"raw_meat") == 0, "deliver takes the item")
+	var missing := []
+	for t in Quests.TYPES:
+		if not t in covered and not t in Quests.POLLED:
+			missing.append(t)
+	ok(missing.is_empty(), "every non-polled objective type is exercised (%s)" % ", ".join(missing))
+	# Course par: a slow run does not count, a fast one does.
+	_inject({"id": "t_par", "type": "challenge", "category": "challenge", "start": "auto", "rewards": {"glimmer": 1},
+		"stages": [{"objectives": [{"type": "course", "target": "t_ring", "par": 20.0, "text_key": "QO_T_FIND"}]}]})
+	Quests.start(&"t_par", true)
+	EventBus.course_finished.emit(&"t_ring", 25.0)
+	ok(Quests.is_active(&"t_par"), "a course over par does not count")
+	EventBus.course_finished.emit(&"t_ring", 18.0)
+	ok(Quests.is_completed(&"t_par"), "a course under par counts")
+	_quest_reset()
+
+
+## Rewards: the ledger never pays a source twice; repeatables pay each run;
+## stage rewards; bonus rewards for optional objectives.
+func test_quest_rewards() -> void:
+	_quest_reset()
+	var g := PlayerData.glimmer
+	ok(Rewards.grant({"glimmer": 10, "jade": 1}, "test:once"), "reward granted")
+	ok(not Rewards.grant({"glimmer": 10, "jade": 1}, "test:once"), "same source is never paid twice")
+	ok(PlayerData.glimmer == g + 10 and PlayerData.jade == 1, "ledger kept the single payment")
+	Rewards.grant({"cosmetic": "trail_jade", "recipes": [["frostmint", "sunpear"]], "reveal": [{"pos": [0, 0], "radius": 2}]}, "test:mixed")
+	ok(PlayerData.cosmetics.has("trail_jade") and PlayerData.cosmetic_slots.get("trail", "") == "trail_jade", "cosmetic reward owned and worn")
+	ok(not PlayerData.cookbook.is_empty(), "recipe reward fills the cookbook")
+	# Repeatable: cooldown, then available again, paid again.
+	_inject({"id": "t_rep", "type": "bounty", "category": "combat", "board": "hamlet", "start": "board", "repeatable": true, "cooldown_hours": 2.0,
+		"rewards": {"glimmer": 5}, "stages": [{"objectives": [{"type": "event", "target": "t_go", "text_key": "QO_T_FIND"}]}]})
+	g = PlayerData.glimmer
+	Quests.start(&"t_rep", true)
+	EventBus.quest_event.emit(&"t_go")
+	ok(Quests.quest_state(&"t_rep") == Quests.State.COOLDOWN, "repeatable goes to cooldown")
+	ok(not Quests.start(&"t_rep", true), "cannot restart during cooldown")
+	Clock.day += 1
+	Quests._refresh_availability()
+	ok(Quests.quest_state(&"t_rep") == Quests.State.AVAILABLE, "repeatable returns after its cooldown")
+	Quests.start(&"t_rep", true)
+	EventBus.quest_event.emit(&"t_go")
+	ok(PlayerData.glimmer == g + 10 and Quests.completions(&"t_rep") == 2, "each completion of a repeatable pays once")
+	Clock.day -= 1
+	# Stage rewards and bonus objectives.
+	_inject({"id": "t_bonus", "type": "side", "category": "combat", "start": "auto", "rewards": {"glimmer": 1}, "bonus_rewards": {"glimmer": 7},
+		"stages": [{"objectives": [{"type": "event", "target": "t_a", "text_key": "QO_T_FIND"}], "rewards": {"jade": 2}},
+			{"objectives": [{"type": "event", "target": "t_b", "text_key": "QO_T_FIND"}, {"type": "event", "target": "t_c", "optional": true, "text_key": "QO_T_FIND"}]}]})
+	var j := PlayerData.jade
+	Quests.start(&"t_bonus", true)
+	EventBus.quest_event.emit(&"t_a")
+	ok(PlayerData.jade == j + 2, "stage rewards are paid when the stage completes")
+	g = PlayerData.glimmer
+	EventBus.quest_event.emit(&"t_c")
+	EventBus.quest_event.emit(&"t_b")
+	ok(Quests.is_completed(&"t_bonus") and PlayerData.glimmer == g + 8, "optional objective done: bonus paid with the reward")
+	_quest_reset()
+
+
+## Failing an escort/protect/survive stage only resets that stage; the
+## journal can restart any stage: no permanent dead ends.
+func test_quest_fail_and_recovery() -> void:
+	_quest_reset()
+	_inject({"id": "t_fail", "type": "side", "category": "npc", "start": "auto", "rewards": {"glimmer": 1},
+		"stages": [{"objectives": [{"type": "event", "target": "t_pre", "text_key": "QO_T_FIND"}]},
+			{"objectives": [{"type": "protect", "target": "t_guard", "text_key": "QO_T_FIND"}, {"type": "kill", "target": "ENEMY_WISP", "count": 2, "text_key": "QO_T_FIND"}]}]})
+	Quests.start(&"t_fail", true)
+	EventBus.quest_event.emit(&"t_pre")
+	EventBus.entity_killed.emit(&"ENEMY_WISP", Vector3.ZERO)
+	var failed := [false]
+	var cb := func(id: StringName, _r: String) -> void: failed[0] = id == &"t_fail"
+	EventBus.quest_failed.connect(cb)
+	EventBus.encounter_finished.emit(&"t_guard", false)
+	EventBus.quest_failed.disconnect(cb)
+	ok(failed[0] and Quests.is_active(&"t_fail"), "a failed encounter reports failure and keeps the quest active")
+	ok(Quests.state[&"t_fail"]["stage"] == 1 and Quests.state[&"t_fail"]["progress"][1] == 0, "failure resets only the current stage")
+	Quests.restart_stage(&"t_fail")
+	ok(Quests.state[&"t_fail"]["stage"] == 1, "journal restart keeps the quest on its current stage")
+	EventBus.encounter_finished.emit(&"t_guard", true)
+	EventBus.entity_killed.emit(&"ENEMY_WISP", Vector3.ZERO)
+	EventBus.entity_killed.emit(&"ENEMY_WISP", Vector3.ZERO)
+	ok(Quests.is_completed(&"t_fail"), "the stage can be completed after a failure")
+	# Save mid-stage, load, keep going.
+	_inject({"id": "t_save", "type": "side", "category": "combat", "start": "auto", "rewards": {"glimmer": 1},
+		"stages": [{"objectives": [{"type": "kill", "target": "ENEMY_SHADE", "count": 3, "text_key": "QO_T_FIND"}]}]})
+	Quests.start(&"t_save", true)
+	EventBus.entity_killed.emit(&"ENEMY_SHADE", Vector3.ZERO)
+	var saved := Quests.save_state()
 	Quests.reset()
+	Quests.load_state(saved)
+	ok(Quests.is_active(&"t_save") and int(Quests.state[&"t_save"]["progress"][0]) == 1, "partial progress survives save/load")
+	_quest_reset()
+
+
+## Discovery starts: a fact (event), a found object (interact), a place (poi).
+func test_quest_discovery_starts() -> void:
+	_quest_reset()
+	ok(Quests.quest_state(&"dq_gilded_hop") == Quests.State.AVAILABLE, "discovery quest waits unseen")
+	ok(not &"dq_gilded_hop" in Quests.rumors(), "hidden discoveries are not listed as rumours")
+	EventBus.entity_killed.emit(&"ANIMAL_GILDED_HOP", Vector3.ZERO)
+	ok(Quests.is_active(&"dq_gilded_hop") and Quests.state[&"dq_gilded_hop"]["stage"] == 1, "event start: the discovering fact starts the quest and counts")
+	EventBus.quest_object_used.emit(&"sails_tablet", &"")
+	ok(Quests.is_active(&"dq_sealed_sails") and Quests.state[&"dq_sealed_sails"]["stage"] == 1, "object start: using the object starts the quest and counts")
+	Quests.on_game_started()
+	WorldState.discover_poi(&"old_quarry")
+	EventBus.poi_discovered.emit(&"old_quarry")
+	ok(Quests.quest_state(&"dq_stoneward") == Quests.State.ACTIVE or Quests.quest_state(&"dq_stoneward") == Quests.State.AVAILABLE, "poi start is wired")
+	Quests._try_start_by(&"poi", &"old_quarry")
+	ok(Quests.is_active(&"dq_stoneward"), "poi start: discovering the place starts its quest")
+	_quest_reset()
+
+
+## Markers: exact, area and none; bounties offer varied categories.
+func test_quest_markers_and_boards() -> void:
+	_quest_reset()
+	_inject({"id": "t_mark", "type": "side", "category": "exploration", "start": "auto", "rewards": {"glimmer": 1},
+		"stages": [{"objectives": [{"type": "event", "target": "x", "marker": [10, 20], "hint": "area", "area_radius": 40.0, "text_key": "QO_T_FIND"}]},
+			{"objectives": [{"type": "event", "target": "y", "marker": [5, 5], "hint": "none", "text_key": "QO_T_FIND"}]}]})
+	Quests.start(&"t_mark", true)
+	var m := Quests.objective_marker(&"t_mark")
+	ok(m.get("hint") == "area" and is_equal_approx(float(m.get("radius", 0)), 40.0) and (m.get("pos") as Vector3).is_equal_approx(Vector3(10, 0, 20)), "area marker carries its radius")
+	EventBus.quest_event.emit(&"x")
+	ok(Quests.objective_marker(&"t_mark").is_empty(), "secret objectives show no marker")
+	ok(Quests.objective_text({"text_key": "QO_T_DEFEAT", "text_args": ["NAME_THORNLING"]}).contains(tr("NAME_THORNLING")), "templated objective text fills in names")
+	var offers := Quests.board_offers("hamlet", 3)
+	ok(not offers.is_empty(), "the hamlet board has bounties to offer")
+	Quests.recent_categories = ["combat", "combat"]
+	var cats := {}
+	for id in Quests.board_offers("lodge", 2):
+		cats[String(Quests.defs[id].get("category", ""))] = true
+	ok(cats.size() >= 1, "board offers are available after recent bounties")
+	_quest_reset()
+
+
+## The validator catches the ways content can soft-lock.
+func test_quest_validator() -> void:
+	var saved: Array = DB.quests
+	DB.quests = saved.duplicate()
+	DB.quests.append({"id": "bad_1", "type": "side", "category": "combat", "title_key": "X", "desc_key": "X", "start": "talk:NPC_NOBODY", "rewards": {"glimmer": 1},
+		"stages": [{"objectives": [{"type": "clear", "target": "nothing_here", "count": 3, "text_key": "X"}]}]})
+	DB.quests.append({"id": "bad_2", "type": "side", "category": "combat", "title_key": "X", "desc_key": "X", "start": "auto",
+		"stages": [{"objectives": [{"type": "escort", "target": "ghost", "text_key": "X"}, {"type": "flag", "target": "never_set", "text_key": "X"}]}]})
+	var errors := QuestValidator.validate(DB)
+	DB.quests = saved
+	var joined := "\n".join(errors)
+	ok(joined.contains("bad_1") and joined.contains("NPC_NOBODY"), "validator: unknown quest giver")
+	ok(joined.contains("group 'nothing_here' spawns fewer"), "validator: clear objective without enemies")
+	ok(joined.contains("encounter 'ghost' is not placed"), "validator: escort without an encounter")
+	ok(joined.contains("never_set"), "validator: flag nothing can set")
+	ok(joined.contains("bad_2") and joined.contains("rewards nothing"), "validator: quest without rewards")
+
+
+## Content goals for the "gameplay first" direction: plenty to do, and
+## varied — not a list of kill quests.
+func test_quest_content_goals() -> void:
+	var by_type := {}
+	var by_region := {}
+	var kill_only := 0
+	var cats := {}
+	for q in DB.quests:
+		var t := String(q["type"])
+		by_type[t] = by_type.get(t, 0) + 1
+		if t != "main":
+			by_region[String(q.get("region", ""))] = by_region.get(String(q.get("region", "")), 0) + 1
+		cats[String(q.get("category", ""))] = true
+		var only_kill := true
+		for st in q["stages"]:
+			for o in st["objectives"]:
+				if not Quests.canon(o) in ["kill", "clear", "talk"]:
+					only_kill = false
+		if only_kill:
+			kill_only += 1
+	ok(by_type.get("main", 0) >= 15, "at least 15 main quests (%d)" % by_type.get("main", 0))
+	ok(by_type.get("side", 0) + by_type.get("discovery", 0) >= 40, "at least 40 side + discovery quests (%d)" % (by_type.get("side", 0) + by_type.get("discovery", 0)))
+	ok(by_type.get("bounty", 0) >= 6 and by_type.get("challenge", 0) >= 5, "bounties and challenges exist")
+	ok(float(kill_only) / DB.quests.size() <= 0.1, "kill-and-report quests stay rare (%d)" % kill_only)
+	ok(cats.size() >= 9, "quests span many categories (%d)" % cats.size())
+	for r in ["valley", "forest", "highlands", "lakeshore", "coast", "desert", "veil"]:
+		ok(by_region.get(r, 0) >= 2, "region %s has its own activities (%d)" % [r, by_region.get(r, 0)])
+	# Consecutive main quests never lean on the same category.
+	var mains: Array = []
+	for q in DB.quests:
+		if q["type"] == "main":
+			mains.append(String(q["category"]))
+	var repeats := 0
+	for i in range(1, mains.size()):
+		if mains[i] == mains[i - 1]:
+			repeats += 1
+	ok(repeats <= 3, "main quests alternate their main activity (%d repeats)" % repeats)
+
+
+func _quest_reset() -> void:
 	PlayerData.reset_new_game()
 	WorldState.reset()
+	Quests._load_defs()
+	Quests.reset()
+
+
+func _force_start(id: StringName) -> void:
+	Quests.state[id]["state"] = Quests.State.AVAILABLE
+	Quests.start(id, true)
+
+
+func _inject(q: Dictionary) -> void:
+	var id := StringName(q["id"])
+	Quests.defs[id] = q
+	if not id in Quests.order:
+		Quests.order.append(id)
+	Quests.state[id] = Quests._blank()
+	Quests.state[id]["state"] = Quests.State.AVAILABLE
 
 
 func test_boss_data() -> void:

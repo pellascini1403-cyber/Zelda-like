@@ -1,0 +1,494 @@
+[
+ {
+  "id": "sq_fisher_net",
+  "type": "side",
+  "category": "traversal",
+  "region": "lakeshore",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "lake_net",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_FISHING_NET"
+      ],
+      "hint": "area",
+      "area_radius": 60.0,
+      "marker": [
+       -480,
+       40
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "lake_net",
+      "look": "crate",
+      "pos": [
+       -482,
+       42
+      ],
+      "float": true,
+      "lift": -0.2,
+      "item": "fishing_net",
+      "prompt": "PROMPT_TAKE",
+      "radius": 2.2
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_FISHER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_FISHING_NET",
+       "NAME_FISHER"
+      ],
+      "item": "fishing_net"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_FISHER_NET_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_FISHER_NET",
+  "desc_key": "Q_SQ_FISHER_NET_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "frostmint",
+     "count": 3
+    },
+    {
+     "id": "hearty_stew",
+     "count": 1
+    }
+   ],
+   "glimmer": 25,
+   "jade": 1
+  },
+  "start": "talk:NPC_FISHER",
+  "offer_lines": [
+   "Q_SQ_FISHER_NET_OF0"
+  ]
+ },
+ {
+  "id": "sq_river_lanterns",
+  "type": "side",
+  "category": "exploration",
+  "region": "lakeshore",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_FISHER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_FISHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_RIVER_LANTERNS_S0_TL0"
+    ],
+    "rewards": {
+     "items": [
+      {
+       "id": "river_lantern",
+       "count": 3
+      }
+     ]
+    }
+   },
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:river_lights",
+      "text_key": "QO_T_NIGHT",
+      "text_args": [
+       "Q_SQ_RIVER_LANTERNS_S1_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 250.0,
+      "marker": [
+       -300,
+       560
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "lantern_spot_0",
+      "group": "river_lights",
+      "look": "offering",
+      "pos": [
+       -332,
+       380
+      ],
+      "float": true,
+      "lift": 0.1,
+      "needs_item": "river_lantern",
+      "needs_count": 1,
+      "conditions": {
+       "period": "night"
+      },
+      "hint_key": "HINT_WRONG_TIME",
+      "prompt": "PROMPT_PLACE",
+      "hide_used": false,
+      "element": "fire",
+      "sound": "ignite"
+     },
+     {
+      "kind": "object",
+      "id": "lantern_spot_1",
+      "group": "river_lights",
+      "look": "offering",
+      "pos": [
+       -282,
+       590
+      ],
+      "float": true,
+      "lift": 0.1,
+      "needs_item": "river_lantern",
+      "needs_count": 1,
+      "conditions": {
+       "period": "night"
+      },
+      "hint_key": "HINT_WRONG_TIME",
+      "prompt": "PROMPT_PLACE",
+      "hide_used": false,
+      "element": "fire",
+      "sound": "ignite"
+     },
+     {
+      "kind": "object",
+      "id": "lantern_spot_2",
+      "group": "river_lights",
+      "look": "offering",
+      "pos": [
+       -248,
+       760
+      ],
+      "float": true,
+      "lift": 0.1,
+      "needs_item": "river_lantern",
+      "needs_count": 1,
+      "conditions": {
+       "period": "night"
+      },
+      "hint_key": "HINT_WRONG_TIME",
+      "prompt": "PROMPT_PLACE",
+      "hide_used": false,
+      "element": "fire",
+      "sound": "ignite"
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_RIVER_LANTERNS",
+  "desc_key": "Q_SQ_RIVER_LANTERNS_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 30,
+   "items": [
+    {
+     "id": "stamina_bloom",
+     "count": 1
+    }
+   ]
+  },
+  "start": "talk:NPC_FISHER",
+  "requires": [
+   "sq_fisher_net"
+  ],
+  "offer_lines": [
+   "Q_SQ_RIVER_LANTERNS_OF0"
+  ]
+ },
+ {
+  "id": "dq_wreck_salvage",
+  "type": "discovery",
+  "category": "traversal",
+  "region": "coast",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "group:wreck_crates",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "Q_DQ_WRECK_SALVAGE_S0_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 60.0,
+      "marker": [
+       130,
+       828
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "wreck_crate_0",
+      "group": "wreck_crates",
+      "look": "crate",
+      "pos": [
+       140,
+       832
+      ],
+      "float": true,
+      "lift": -0.2,
+      "prompt": "PROMPT_TAKE",
+      "radius": 2.2,
+      "reward": {
+       "glimmer": 25
+      }
+     },
+     {
+      "kind": "object",
+      "id": "wreck_crate_1",
+      "group": "wreck_crates",
+      "look": "crate",
+      "pos": [
+       102,
+       842
+      ],
+      "float": true,
+      "lift": -0.2,
+      "prompt": "PROMPT_TAKE",
+      "radius": 2.2,
+      "reward": {
+       "glimmer": 25
+      }
+     },
+     {
+      "kind": "object",
+      "id": "wreck_crate_2",
+      "group": "wreck_crates",
+      "look": "crate",
+      "pos": [
+       162,
+       818
+      ],
+      "float": true,
+      "lift": -0.2,
+      "prompt": "PROMPT_TAKE",
+      "radius": 2.2,
+      "reward": {
+       "glimmer": 25
+      }
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_WRECK_SALVAGE",
+  "desc_key": "Q_DQ_WRECK_SALVAGE_DESC",
+  "rewards": {
+   "jade": 1,
+   "items": [
+    {
+     "id": "iron_ingot",
+     "count": 2
+    },
+    {
+     "id": "resin_bomb",
+     "count": 2
+    }
+   ]
+  },
+  "start": "poi:dawn_wreck"
+ },
+ {
+  "id": "dq_tower_bell",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "lakeshore",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "tower_bell",
+      "text_key": "QO_T_RING",
+      "text_args": [
+       "Q_DQ_TOWER_BELL_S0_O0_A0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_TOWER_BELL",
+  "desc_key": "Q_DQ_TOWER_BELL_DESC",
+  "rewards": {
+   "jade": 1,
+   "reveal": [
+    {
+     "pos": [
+      -400,
+      70
+     ],
+     "radius": 6
+    },
+    {
+     "pos": [
+      -330,
+      420
+     ],
+     "radius": 5
+    }
+   ]
+  },
+  "start": "interact:tower_bell",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "tower_bell",
+    "look": "bell",
+    "poi": "broken_tower",
+    "pos": [
+     -1.2,
+     -0.8
+    ],
+    "snap": "top",
+    "min_y": 9.0,
+    "when": "always",
+    "hide_used": false,
+    "prompt": "PROMPT_RING",
+    "sound": "discovery",
+    "element": "wind",
+    "range": 220,
+    "lines": [
+     "Q_DQ_TOWER_BELL_P0_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dq_smugglers_cove",
+  "type": "discovery",
+  "category": "combat",
+  "region": "coast",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "clear",
+      "target": "cove_squatters",
+      "text_key": "QO_T_CLEAR",
+      "text_args": [
+       "NAME_THORNLING"
+      ],
+      "count": 4,
+      "marker": [
+       -600,
+       520
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "creature",
+      "entity": "ENEMY_THORNLING",
+      "group": "cove_squatters",
+      "pos": [
+       -600,
+       522
+      ],
+      "count": 4,
+      "spread": 5
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "smugglers_cove:hoard",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_SMUGGLERS_COVE_S1_O0_A0"
+      ],
+      "marker": [
+       -600,
+       520
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_SMUGGLERS_COVE",
+  "desc_key": "Q_DQ_SMUGGLERS_COVE_DESC",
+  "rewards": {
+   "jade": 1,
+   "glimmer": 30
+  },
+  "start": "poi:smugglers_cove"
+ },
+ {
+  "id": "sq_sunken_hall",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "lakeshore",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "sunken_hall",
+      "text_key": "QO_FIND_SUNKEN"
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "sunken_hall:cache",
+      "text_key": "QO_SUNKEN_CACHE",
+      "marker": [
+       -466,
+       -165
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "QUEST_SUNKEN",
+  "desc_key": "QUEST_SUNKEN_DESC",
+  "rewards": {
+   "glimmer": 35,
+   "items": [
+    {
+     "id": "forge_stone",
+     "count": 1
+    }
+   ]
+  },
+  "start": "event"
+ }
+]

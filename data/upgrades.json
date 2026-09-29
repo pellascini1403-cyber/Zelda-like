@@ -1,0 +1,7 @@
+[
+  {"id": "vela", "name_key": "UPG_VELA", "desc_key": "UPG_VELA_DESC", "glyph": "gust", "effect": "glide_cost", "per_level": [0.12, 0.12, 0.12], "costs": [2, 4, 6]},
+  {"id": "breath", "name_key": "UPG_BREATH", "desc_key": "UPG_BREATH_DESC", "glyph": "leaf", "effect": "max_stamina", "per_level": [20, 20, 20], "costs": [2, 4, 6]},
+  {"id": "heart", "name_key": "UPG_HEART", "desc_key": "UPG_HEART_DESC", "glyph": "heart", "effect": "max_health", "per_level": [20, 20, 20], "costs": [2, 4, 6]},
+  {"id": "winds", "name_key": "UPG_WINDS", "desc_key": "UPG_WINDS_DESC", "glyph": "eye", "effect": "cooldown", "per_level": [0.12, 0.12, 0.12], "costs": [3, 5, 7]},
+  {"id": "edge", "name_key": "UPG_EDGE", "desc_key": "UPG_EDGE_DESC", "glyph": "sword", "effect": "durability", "per_level": [0.15, 0.15, 0.15], "costs": [2, 3, 5]}
+]

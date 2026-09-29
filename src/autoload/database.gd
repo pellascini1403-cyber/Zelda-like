@@ -7,7 +7,7 @@ extends Node
 const DATA_DIR := "res://data/"
 ## POI types StructureBuilder knows how to build.
 const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
-	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles"]
+	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry"]
 
 var items: Dictionary = {}          # StringName -> ItemData
 var entities: Dictionary = {}       # StringName -> EntityType
@@ -25,6 +25,8 @@ var bosses: Dictionary = {}         # StringName -> boss definition
 var abilities: Dictionary = {}      # StringName -> ability definition
 var shops: Dictionary = {}          # StringName -> shop definition
 var world_events: Array = []        # dynamic world event definitions
+var upgrades: Dictionary = {}       # StringName -> Warden altar upgrade track
+var cosmetics: Dictionary = {}      # StringName -> cosmetic (trail colours...)
 
 
 func _ready() -> void:
@@ -58,7 +60,24 @@ func reload() -> void:
 	buffs = _keyed(_load_dict("buffs.json"))
 	world = _load_dict("world.json")
 	element_rules = _load_dict("elements.json")
-	quests = _load_array("quests.json")
+	# Quests live in data/quests/*.json (any number of files, merged in name
+	# order); a legacy data/quests.json is still read if present.
+	quests = []
+	if FileAccess.file_exists(DATA_DIR + "quests.json"):
+		quests.append_array(_load_array("quests.json"))
+	var qdir := DirAccess.open(DATA_DIR + "quests")
+	if qdir:
+		var files := Array(qdir.get_files())
+		files.sort()
+		for f in files:
+			if String(f).ends_with(".json"):
+				quests.append_array(_load_array("quests/" + f))
+	upgrades = {}
+	for u in _load_array("upgrades.json"):
+		upgrades[StringName(u["id"])] = u
+	cosmetics = {}
+	for c in _load_array("cosmetics.json"):
+		cosmetics[StringName(c["id"])] = c
 	bosses = {}
 	for b in _load_array("bosses.json"):
 		bosses[StringName(b["id"])] = b
@@ -171,47 +190,13 @@ func _validate_progression() -> PackedStringArray:
 		for r in poi.get("reward", []):
 			if not items.has(StringName(r["id"])):
 				errors.append("poi '%s' unknown reward '%s'" % [poi["id"], r["id"]])
-	var quest_ids := {}
-	for q in quests:
-		quest_ids[q["id"]] = true
-	for q in quests:
-		for pre in q.get("requires", []):
-			if not quest_ids.has(pre):
-				errors.append("quest '%s' requires unknown quest '%s'" % [q["id"], pre])
-		var st := String(q.get("start", "auto"))
-		if st.begins_with("talk:") and not entities.has(StringName(st.trim_prefix("talk:"))):
-			errors.append("quest '%s' starts at unknown NPC '%s'" % [q["id"], st])
-		if (q.get("stages", []) as Array).is_empty():
-			errors.append("quest '%s' has no stages" % q["id"])
-		for stage in q.get("stages", []):
-			for o in stage.get("objectives", []):
-				var t := String(o.get("target", ""))
-				match String(o.get("type", "")):
-					"kill", "boss", "talk":
-						if not entities.has(StringName(t)):
-							errors.append("quest '%s' objective targets unknown entity '%s'" % [q["id"], t])
-					"collect":
-						if not items.has(StringName(t)):
-							errors.append("quest '%s' collects unknown item '%s'" % [q["id"], t])
-					"discover":
-						if not poi_ids.has(t):
-							errors.append("quest '%s' discovers unknown poi '%s'" % [q["id"], t])
-					"region":
-						if not regions.has(StringName(t)):
-							errors.append("quest '%s' unknown region '%s'" % [q["id"], t])
-					"ability":
-						if not abilities.has(StringName(t)):
-							errors.append("quest '%s' unknown ability '%s'" % [q["id"], t])
-					"flag", "open_chest", "reach", "cook", "mount":
-						pass
-					_:
-						errors.append("quest '%s' unknown objective type '%s'" % [q["id"], o.get("type", "")])
-		var r: Dictionary = q.get("rewards", {})
-		for it in r.get("items", []):
-			if not items.has(StringName(it["id"])):
-				errors.append("quest '%s' rewards unknown item '%s'" % [q["id"], it["id"]])
-		if r.has("ability") and not abilities.has(StringName(r["ability"])):
-			errors.append("quest '%s' rewards unknown ability '%s'" % [q["id"], r["ability"]])
+	errors.append_array(QuestValidator.validate(self))
+	for u in upgrades.values():
+		if (u.get("costs", []) as Array).is_empty() or not u.has("per_level"):
+			errors.append("upgrade '%s' needs costs and per_level" % u.get("id", ""))
+	for c in cosmetics.values():
+		if not String(c.get("slot", "")) in ["trail", "glider_trail", "afterimage"]:
+			errors.append("cosmetic '%s' bad slot '%s'" % [c.get("id", ""), c.get("slot", "")])
 	for b in bosses.values():
 		var e: EntityType = entities.get(StringName(b["entity"]))
 		if e == null or e.kind != EntityType.Kind.BOSS:

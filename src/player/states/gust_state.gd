@@ -23,8 +23,15 @@ func enter(_prev: StringName) -> void:
 	p.invulnerable = true
 	p.visual.play_action(&"dodge", duration)
 	ElementFX.ring(p, p.chest_position(), &"wind", 1.4, 0.25)
-	Afterimage.spawn(p.visual, Color(0.6, 1.0, 0.85), 0.35)
+	Afterimage.spawn(p.visual, PlayerData.cosmetic_color("afterimage", Color(0.6, 1.0, 0.85)), 0.35)
 	Audio.play_at(&"gust", p.global_position, -2.0)
+	# The gust carries ahead: vanes spin, light props are shoved along.
+	for body in CombatUtils.sphere_query(p.get_world_3d(), p.global_position + dir * 2.5 + Vector3.UP, 2.8, CombatUtils.PROP_MASK):
+		if body.has_method("on_gust"):
+			body.on_gust(dir)
+		elif body is RigidBody3D:
+			var rb := body as RigidBody3D
+			rb.apply_central_impulse((dir + Vector3.UP * 0.3) * 5.0 * minf(rb.mass, 30.0))
 
 
 func physics(delta: float) -> StringName:

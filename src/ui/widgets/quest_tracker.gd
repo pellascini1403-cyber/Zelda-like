@@ -27,7 +27,8 @@ func _ready() -> void:
 			_glow = 1.0
 			refresh())
 	EventBus.quest_started.connect(func(id: StringName) -> void:
-		EventBus.title_card.emit(tr(Quests.defs[id].get("title_key", "")), tr("QUEST_STARTED")))
+		var disc := String(Quests.defs[id].get("type", "")) == "discovery"
+		EventBus.title_card.emit(tr(Quests.defs[id].get("title_key", "")), tr("QUEST_DISCOVERY" if disc else "QUEST_STARTED")))
 	EventBus.quest_completed.connect(func(id: StringName) -> void:
 		EventBus.title_card.emit(tr(Quests.defs[id].get("title_key", "")), tr("QUEST_COMPLETED")))
 	refresh()
@@ -42,7 +43,9 @@ func refresh() -> void:
 	for c in _lines.get_children():
 		c.queue_free()
 	for o in Quests.objective_lines(id):
-		var t: String = ("◆ " if not o["done"] else "◇ ") + o["text"]
+		if o["optional"] and o["done"]:
+			continue
+		var t: String = ("◆ " if not o["done"] else "◇ ") + (tr("JOURNAL_BONUS") + " " if o["optional"] else "") + o["text"]
 		if int(o["need"]) > 1:
 			t += "  %d/%d" % [o["count"], o["need"]]
 		var l := UITheme.label(t, 18, UITheme.TEXT if not o["done"] else UITheme.TEXT_DIM)

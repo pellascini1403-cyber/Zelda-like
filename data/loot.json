@@ -542,5 +542,147 @@
     1
    ]
   }
+ ],
+ "drop_chief": [
+  {
+   "id": "thorn_fang",
+   "chance": 1.0,
+   "count": [
+    4,
+    6
+   ]
+  },
+  {
+   "id": "fang_pepper",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    6,
+    10
+   ]
+  }
+ ],
+ "drop_harrier": [
+  {
+   "id": "wisp_filament",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    8,
+    12
+   ]
+  }
+ ],
+ "drop_stoneward": [
+  {
+   "id": "iron_ore",
+   "chance": 1.0,
+   "count": [
+    4,
+    6
+   ]
+  },
+  {
+   "id": "iron_ingot",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    6,
+    9
+   ]
+  }
+ ],
+ "drop_stalker": [
+  {
+   "id": "glass_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    4
+   ]
+  },
+  {
+   "id": "scuttler_chitin",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "drop_hollow": [
+  {
+   "id": "shade_essence",
+   "chance": 1.0,
+   "count": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    8,
+    12
+   ]
+  }
+ ],
+ "drop_gilded": [
+  {
+   "id": "gilded_fur",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_hidden": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    10,
+    16
+   ]
+  },
+  {
+   "id": "vital_seed",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "stamina_bloom",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  }
  ]
 }

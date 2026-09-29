@@ -23,6 +23,14 @@ var buffs: Dictionary = {}
 var cookbook: Dictionary = {}
 var abilities: Dictionary = {}
 var glimmer := 0
+## Jade: the rare currency earned only by exploring, challenges and bosses
+## (never sold). Spent at Warden altars on upgrades and cosmetics.
+var jade := 0
+## upgrade id -> level (data/upgrades.json)
+var upgrades: Dictionary = {}
+## Owned cosmetic ids and the ones in use per slot (trail, ribbon...).
+var cosmetics: Dictionary = {}
+var cosmetic_slots: Dictionary = {}
 
 
 func _ready() -> void:
@@ -41,6 +49,10 @@ func reset_new_game() -> void:
 	max_stamina = BASE_STAMINA
 	stamina = BASE_STAMINA
 	glimmer = 0
+	jade = 0
+	upgrades.clear()
+	cosmetics.clear()
+	cosmetic_slots.clear()
 	for entry in DB.world.get("starting_items", []):
 		inventory.add(StringName(entry["id"]), int(entry.get("count", 1)))
 	var club := inventory.find_first(&"bough_club")
@@ -68,6 +80,84 @@ func _process(delta: float) -> void:
 
 
 # --- Vitals ---------------------------------------------------------------------------
+func add_jade(n: int) -> void:
+	jade = maxi(jade + n, 0)
+	EventBus.jade_changed.emit(jade)
+
+
+func upgrade_level(id: StringName) -> int:
+	return int(upgrades.get(String(id), 0))
+
+
+## Sum of an upgrade effect over its bought levels (data/upgrades.json).
+func upgrade_bonus(id: StringName) -> float:
+	var d: Dictionary = DB.upgrades.get(id, {})
+	var lvl := upgrade_level(id)
+	var per: Array = d.get("per_level", [])
+	var total := 0.0
+	for i in mini(lvl, per.size()):
+		total += float(per[i])
+	return total
+
+
+func own_cosmetic(id: StringName) -> void:
+	if cosmetics.has(String(id)):
+		return
+	cosmetics[String(id)] = true
+	var c: Dictionary = DB.cosmetics.get(id, {})
+	var slot := String(c.get("slot", "trail"))
+	if not cosmetic_slots.has(slot):
+		cosmetic_slots[slot] = String(id)
+
+
+## Active cosmetic definition for a slot, or {} for the default look.
+func cosmetic_in(slot: String) -> Dictionary:
+	var id := StringName(cosmetic_slots.get(slot, ""))
+	return DB.cosmetics.get(id, {})
+
+
+## Colour of the cosmetic in `slot` (trail, glider_trail, afterimage).
+## Cosmetics are effects only: the character model is never recoloured.
+func cosmetic_color(slot: String, fallback: Color) -> Color:
+	var c := cosmetic_in(slot)
+	return Color.from_string(String(c.get("color", "")), fallback) if not c.is_empty() else fallback
+
+
+## Wear an owned cosmetic ("" = default look).
+func use_cosmetic(slot: String, id: String) -> void:
+	if id == "":
+		cosmetic_slots.erase(slot)
+	elif cosmetics.has(id):
+		cosmetic_slots[slot] = id
+
+
+## Jade cost of the next level, or -1 when maxed.
+func upgrade_cost(id: StringName) -> int:
+	var costs: Array = DB.upgrades.get(id, {}).get("costs", [])
+	var lvl := upgrade_level(id)
+	return int(costs[lvl]) if lvl < costs.size() else -1
+
+
+func buy_upgrade(id: StringName) -> bool:
+	var cost := upgrade_cost(id)
+	if cost < 0 or jade < cost:
+		return false
+	add_jade(-cost)
+	var lvl := upgrade_level(id)
+	upgrades[String(id)] = lvl + 1
+	var d: Dictionary = DB.upgrades.get(id, {})
+	var gain := float((d.get("per_level", []) as Array)[lvl])
+	match String(d.get("effect", "")):
+		"max_stamina":
+			max_stamina += gain
+			restore_stamina(gain)
+		"max_health":
+			max_health += gain
+			heal(max_health, true)
+	EventBus.quest_event.emit(&"upgrade_bought")
+	return true
+
+
 func has_ability(id: StringName) -> bool:
 	return abilities.has(String(id))
 
@@ -134,6 +224,7 @@ func wear_weapon(amount: float = 1.0) -> void:
 	if s == null:
 		return
 	var before := s.durability_ratio()
+	amount *= 1.0 - upgrade_bonus(&"edge")
 	s.data["durability"] = maxf(s.durability() - amount, 0.0)
 	if before > 0.25 and s.durability_ratio() <= 0.25 and not s.is_heirloom():
 		EventBus.weapon_durability_warning.emit(s.id)
@@ -227,7 +318,8 @@ func has_glider() -> bool:
 
 
 func glide_efficiency() -> float:
-	return 0.6 if inventory.has(&"current_thread") else 1.0
+	var base := 0.6 if inventory.has(&"current_thread") else 1.0
+	return base * (1.0 - upgrade_bonus(&"vela"))
 
 
 func buff_potency(id: StringName) -> float:
@@ -287,6 +379,7 @@ func save_state() -> Dictionary:
 		"inventory": inventory.to_array(), "equipped": eq, "quick_item": String(quick_item),
 		"health": health, "max_health": max_health, "stamina": stamina, "max_stamina": max_stamina,
 		"buffs": bf, "cookbook": cookbook, "abilities": abilities, "glimmer": glimmer,
+		"jade": jade, "upgrades": upgrades, "cosmetics": cosmetics, "cosmetic_slots": cosmetic_slots,
 	}
 
 
@@ -310,5 +403,9 @@ func load_state(d: Dictionary) -> void:
 	cookbook = d.get("cookbook", {})
 	abilities = d.get("abilities", {})
 	glimmer = d.get("glimmer", 0)
+	jade = int(d.get("jade", 0))
+	upgrades = d.get("upgrades", {})
+	cosmetics = d.get("cosmetics", {})
+	cosmetic_slots = d.get("cosmetic_slots", {})
 	for slot in EQUIP_SLOTS:
 		EventBus.equipment_changed.emit(slot)

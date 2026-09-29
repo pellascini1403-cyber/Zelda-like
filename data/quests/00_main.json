@@ -1,0 +1,1626 @@
+[
+ {
+  "id": "mq_vela",
+  "type": "main",
+  "category": "traversal",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CARTOGRAPHER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_CARTOGRAPHER"
+      ],
+      "marker": [
+       60,
+       156
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_VELA_S0_TL0",
+     "Q_MQ_VELA_S0_TL1"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "climb",
+      "target": "hamlet_lookout",
+      "text_key": "QO_T_CLIMB",
+      "text_args": [
+       "POI_HAMLET_LOOKOUT"
+      ],
+      "min_y": 30.0,
+      "radius": 9.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "course",
+      "target": "first_flight",
+      "text_key": "Q_MQ_VELA_S2_O0_TEXT"
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "course",
+      "id": "first_flight",
+      "mode": "glide",
+      "absolute": true,
+      "ring_radius": 4.5,
+      "range": 200,
+      "rings": [
+       [
+        -9,
+        206,
+        29.5
+       ],
+       [
+        0,
+        199,
+        28.2
+       ],
+       [
+        9,
+        192,
+        27.0
+       ],
+       [
+        18,
+        185,
+        26.1
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CARTOGRAPHER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_CARTOGRAPHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_VELA_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_VELA",
+  "desc_key": "Q_MQ_VELA_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 20,
+   "reveal": {
+    "pos": [
+     60,
+     150
+    ],
+    "radius": 6
+   }
+  },
+  "start": "auto"
+ },
+ {
+  "id": "mq_thorn_road",
+  "type": "main",
+  "category": "combat",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "protect",
+      "target": "cart_ambush",
+      "text_key": "QO_T_PROTECT",
+      "text_args": [
+       "NAME_TRAVELER"
+      ],
+      "marker": [
+       172,
+       78
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "cart_ambush",
+      "mode": "protect",
+      "pos": [
+       172,
+       78
+      ],
+      "actor": "NPC_TRAVELER",
+      "actor_hp": 140,
+      "shout_key": "SHOUT_HELP",
+      "trigger_radius": 24,
+      "element": "thorn",
+      "waves": [
+       {
+        "entity": "ENEMY_THORNLING",
+        "count": 2,
+        "dist": 14
+       },
+       {
+        "entity": "ENEMY_THORNLING",
+        "count": 3,
+        "dist": 16,
+        "delay": 3
+       }
+      ],
+      "end_lines": [
+       "Q_MQ_THORN_ROAD_S0_P0_EL0"
+      ]
+     },
+     {
+      "kind": "object",
+      "id": "brask_cart",
+      "look": "crate",
+      "pos": [
+       175,
+       81
+      ],
+      "once": false,
+      "hide_used": false,
+      "prompt": "PROMPT_EXAMINE",
+      "lines": [
+       "Q_MQ_THORN_ROAD_S0_P1_L0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "destroy",
+      "target": "road_nest",
+      "text_key": "QO_T_DESTROY",
+      "text_args": [
+       "Q_MQ_THORN_ROAD_S1_O0_A0"
+      ],
+      "marker": [
+       196,
+       58
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "nest",
+      "id": "road_nest",
+      "nest": "thorn",
+      "pos": [
+       196,
+       58
+      ],
+      "hp": 60,
+      "melee": 0.3,
+      "spawn": "ENEMY_THORNLING",
+      "spawn_every": 12,
+      "spawn_max": 2,
+      "element": "thorn",
+      "drops": [
+       {
+        "id": "thorn_fang",
+        "count": 2
+       }
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_MQ_THORN_ROAD_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_MERCHANT",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_MERCHANT"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_THORN_ROAD_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_THORN_ROAD",
+  "desc_key": "Q_MQ_THORN_ROAD_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "resin_bomb",
+     "count": 3
+    }
+   ],
+   "glimmer": 40,
+   "jade": 1
+  },
+  "start": "talk:NPC_MERCHANT",
+  "requires": [
+   "mq_vela"
+  ],
+  "offer_lines": [
+   "Q_MQ_THORN_ROAD_OF0"
+  ]
+ },
+ {
+  "id": "mq_echoes",
+  "type": "main",
+  "category": "puzzle",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "echo_chamber",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_ECHO_CHAMBER"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "echo_chamber",
+      "text_key": "QO_T_SOLVE",
+      "text_args": [
+       "POI_ECHO_CHAMBER"
+      ],
+      "marker": [
+       230,
+       420
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_MQ_ECHOES_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "oren_mark",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_OREN_LETTER"
+      ],
+      "marker": [
+       233,
+       420
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "oren_mark",
+      "look": "scroll",
+      "poi": "echo_chamber",
+      "pos": [
+       3.2,
+       0.6
+      ],
+      "item": "oren_letter",
+      "prompt": "PROMPT_TAKE",
+      "lines": [
+       "Q_MQ_ECHOES_S2_P0_L0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_ECHOES",
+  "desc_key": "Q_MQ_ECHOES_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 30
+  },
+  "start": "auto",
+  "requires": [
+   "mq_thorn_road"
+  ]
+ },
+ {
+  "id": "mq_cloud_temple",
+  "type": "main",
+  "category": "boss",
+  "region": "highlands",
+  "difficulty": 3,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "wind_overlook",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "POI_WIND_OVERLOOK"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "target": "cloud_temple",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "POI_CLOUD_TEMPLE"
+      ],
+      "radius": 26.0
+     },
+     {
+      "type": "glide",
+      "target": "cloud_temple",
+      "text_key": "Q_MQ_CLOUD_TEMPLE_S1_O1_TEXT",
+      "radius": 70.0,
+      "optional": true
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_THORNBACK",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_THORNBACK"
+      ],
+      "marker": [
+       0,
+       -298
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "beacon_valley",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_CLOUD_TEMPLE_S3_O0_A0"
+      ],
+      "marker": [
+       -14,
+       -315
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_CLOUD_TEMPLE",
+  "desc_key": "Q_MQ_CLOUD_TEMPLE_DESC",
+  "rewards": {
+   "ability": "gust_step",
+   "max_stamina": 20,
+   "jade": 3
+  },
+  "start": "auto",
+  "requires": [
+   "mq_echoes"
+  ],
+  "bonus_rewards": {
+   "cosmetic": "ribbon_cinnabar",
+   "glimmer": 30
+  }
+ },
+ {
+  "id": "mq_three_winds",
+  "type": "main",
+  "category": "story",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CARTOGRAPHER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_CARTOGRAPHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_THREE_WINDS_S0_TL0",
+     "Q_MQ_THREE_WINDS_S0_TL1"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_KEEPER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_KEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_THREE_WINDS_S1_TL0"
+    ],
+    "rewards": {
+     "jade": 2
+    }
+   },
+   {
+    "objectives": [
+     {
+      "type": "event",
+      "target": "upgrade_bought",
+      "text_key": "QO_T_ALTAR",
+      "text_args": [
+       "POI_HEATH_SHRINE"
+      ],
+      "marker": [
+       -120,
+       124
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_THREE_WINDS",
+  "desc_key": "Q_MQ_THREE_WINDS_DESC",
+  "rewards": {
+   "jade": 1,
+   "reveal": [
+    {
+     "pos": [
+      -400,
+      70
+     ],
+     "radius": 5
+    },
+    {
+     "pos": [
+      320,
+      760
+     ],
+     "radius": 4
+    },
+    {
+     "pos": [
+      390,
+      -230
+     ],
+     "radius": 4
+    }
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_cloud_temple"
+  ]
+ },
+ {
+  "id": "mq_lake_beacon",
+  "type": "main",
+  "category": "puzzle",
+  "region": "lakeshore",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_FISHER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_FISHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_LAKE_BEACON_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "lake_braziers",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_LAKE_BEACON_S1_O0_A0"
+      ],
+      "hint": "area",
+      "area_radius": 170.0,
+      "marker": [
+       -400,
+       70
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "puzzle",
+      "id": "lake_braziers",
+      "pos": [
+       -400,
+       70
+      ],
+      "range": 260,
+      "elements": [
+       {
+        "type": "brazier",
+        "at": [
+         150,
+         -10
+        ]
+       },
+       {
+        "type": "brazier",
+        "at": [
+         -5,
+         -155
+        ]
+       },
+       {
+        "type": "brazier",
+        "at": [
+         -150,
+         30
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "target": "lake_isle",
+      "text_key": "Q_MQ_LAKE_BEACON_S2_O0_TEXT",
+      "radius": 11.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "beacon_lake",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_LAKE_BEACON_S3_O0_A0"
+      ],
+      "marker": [
+       -440,
+       60
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_LAKE_BEACON",
+  "desc_key": "Q_MQ_LAKE_BEACON_DESC",
+  "rewards": {
+   "jade": 3,
+   "items": [
+    {
+     "id": "frostmint",
+     "count": 3
+    }
+   ],
+   "cosmetic": "trail_frost"
+  },
+  "start": "auto",
+  "requires": [
+   "mq_three_winds"
+  ]
+ },
+ {
+  "id": "mq_coast_beacon",
+  "type": "main",
+  "category": "combat",
+  "region": "coast",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "sea_bluff",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "POI_SEA_BLUFF"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "destroy",
+      "target": "group:bluff_nests",
+      "text_key": "QO_T_DESTROY",
+      "text_args": [
+       "Q_MQ_COAST_BEACON_S1_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 45.0,
+      "marker": [
+       300,
+       700
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "nest",
+      "id": "bluff_nest_a",
+      "group": "bluff_nests",
+      "nest": "spitter",
+      "poi": "sea_bluff",
+      "pos": [
+       24,
+       12
+      ],
+      "hp": 70,
+      "spawn": "ENEMY_SPITTER",
+      "spawn_every": 14,
+      "spawn_max": 1,
+      "element": "fire"
+     },
+     {
+      "kind": "nest",
+      "id": "bluff_nest_b",
+      "group": "bluff_nests",
+      "nest": "spitter",
+      "poi": "sea_bluff",
+      "pos": [
+       -22,
+       22
+      ],
+      "hp": 70,
+      "spawn": "ENEMY_SPITTER",
+      "spawn_every": 14,
+      "spawn_max": 1,
+      "element": "fire"
+     },
+     {
+      "kind": "nest",
+      "id": "bluff_nest_c",
+      "group": "bluff_nests",
+      "nest": "spitter",
+      "poi": "sea_bluff",
+      "pos": [
+       8,
+       -26
+      ],
+      "hp": 70,
+      "spawn": "ENEMY_SPITTER",
+      "spawn_every": 14,
+      "spawn_max": 1,
+      "element": "fire"
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "target": "sea_stack",
+      "text_key": "Q_MQ_COAST_BEACON_S2_O0_TEXT",
+      "radius": 9.0,
+      "min_y": 9.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "beacon_coast",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_COAST_BEACON_S3_O0_A0"
+      ],
+      "marker": [
+       330,
+       792
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_COAST_BEACON",
+  "desc_key": "Q_MQ_COAST_BEACON_DESC",
+  "rewards": {
+   "jade": 3,
+   "glimmer": 60,
+   "items": [
+    {
+     "id": "spitter_gland",
+     "count": 3
+    }
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_three_winds"
+  ]
+ },
+ {
+  "id": "mq_heights_beacon",
+  "type": "main",
+  "category": "boss",
+  "region": "valley",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CLIMBER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_CLIMBER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_HEIGHTS_BEACON_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "climb",
+      "target": "needles",
+      "text_key": "Q_MQ_HEIGHTS_BEACON_S1_O0_TEXT",
+      "radius": 75.0,
+      "min_y": 70.0,
+      "hint": "area",
+      "area_radius": 75.0
+     }
+    ],
+    "on_complete_flag": "harrier_roused"
+   },
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_CRAG_HARRIER",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_CRAG_HARRIER"
+      ],
+      "marker": [
+       390,
+       -205
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "beacon_heights",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_HEIGHTS_BEACON_S3_O0_A0"
+      ],
+      "hint": "area",
+      "area_radius": 70.0,
+      "marker": [
+       390,
+       -230
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_HEIGHTS_BEACON",
+  "desc_key": "Q_MQ_HEIGHTS_BEACON_DESC",
+  "rewards": {
+   "jade": 3,
+   "glimmer": 50,
+   "items": [
+    {
+     "id": "stamina_bloom",
+     "count": 1
+    }
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_three_winds"
+  ]
+ },
+ {
+  "id": "mq_sand_road",
+  "type": "main",
+  "category": "exploration",
+  "region": "desert",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CARTOGRAPHER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_CARTOGRAPHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_SAND_ROAD_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_GUARD",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_GUARD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_SAND_ROAD_S1_TL0"
+    ],
+    "rewards": {
+     "items": [
+      {
+       "id": "nomad_veil",
+       "count": 1
+      }
+     ]
+    }
+   },
+   {
+    "objectives": [
+     {
+      "type": "region",
+      "target": "desert",
+      "text_key": "QO_T_ENTER",
+      "text_args": [
+       "REGION_DESERT"
+      ],
+      "marker": [
+       780,
+       260
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "sunscar_oasis",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_SUNSCAR_OASIS"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_NOMAD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_SAND_ROAD_S4_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_SAND_ROAD",
+  "desc_key": "Q_MQ_SAND_ROAD_DESC",
+  "rewards": {
+   "jade": 1,
+   "items": [
+    {
+     "id": "cooling_salad",
+     "count": 2
+    }
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_lake_beacon",
+   "mq_coast_beacon",
+   "mq_heights_beacon"
+  ]
+ },
+ {
+  "id": "mq_caravan",
+  "type": "main",
+  "category": "combat",
+  "region": "desert",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "escort",
+      "target": "tobb_caravan",
+      "text_key": "QO_T_ESCORT",
+      "text_args": [
+       "NAME_CARAVAN"
+      ],
+      "marker": [
+       1000,
+       322
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "tobb_caravan",
+      "mode": "escort",
+      "pos": [
+       1000,
+       322
+      ],
+      "actor": "NPC_CARAVAN",
+      "actor_hp": 160,
+      "element": "sand",
+      "path": [
+       [
+        985,
+        350
+       ],
+       [
+        968,
+        385
+       ],
+       [
+        950,
+        418
+       ],
+       [
+        928,
+        448
+       ],
+       [
+        908,
+        472
+       ]
+      ],
+      "wait_distance": 22,
+      "vanish": true,
+      "ambushes": [
+       {
+        "at": 2,
+        "entity": "ENEMY_SCUTTLER",
+        "count": 3,
+        "dist": 12
+       },
+       {
+        "at": 4,
+        "entity": "ENEMY_SCUTTLER",
+        "count": 2,
+        "dist": 12
+       }
+      ],
+      "start_lines": [
+       "Q_MQ_CARAVAN_S0_P0_SL0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "survive",
+      "target": "ruins_stand",
+      "text_key": "QO_T_SURVIVE",
+      "text_args": [
+       "POI_DUNE_RUINS"
+      ],
+      "marker": [
+       900,
+       480
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "ruins_stand",
+      "mode": "survive",
+      "pos": [
+       900,
+       480
+      ],
+      "radius": 20,
+      "duration": 60,
+      "interval": 7,
+      "max_alive": 5,
+      "trigger_radius": 18,
+      "element": "sand",
+      "waves": [
+       {
+        "entity": "ENEMY_SCUTTLER",
+        "count": 2,
+        "dist": 16
+       },
+       {
+        "entity": "ENEMY_SPITTER",
+        "count": 1,
+        "dist": 18
+       },
+       {
+        "entity": "ENEMY_SCUTTLER",
+        "count": 3,
+        "dist": 16
+       }
+      ]
+     }
+    ],
+    "on_complete_flag": "tobb_arrived"
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_NOMAD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_CARAVAN_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_CARAVAN",
+  "desc_key": "Q_MQ_CARAVAN_DESC",
+  "rewards": {
+   "jade": 3,
+   "glimmer": 80
+  },
+  "start": "auto",
+  "requires": [
+   "mq_sand_road"
+  ]
+ },
+ {
+  "id": "mq_sun_vault",
+  "type": "main",
+  "category": "puzzle",
+  "region": "desert",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "sun_vault",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_SUN_VAULT"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "sun_vault",
+      "text_key": "QO_T_SOLVE",
+      "text_args": [
+       "POI_SUN_VAULT"
+      ],
+      "marker": [
+       1250,
+       380
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "vault_disc",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_SUN_DISC"
+      ],
+      "marker": [
+       1253,
+       380
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "vault_disc",
+      "look": "relic",
+      "poi": "sun_vault",
+      "pos": [
+       3.2,
+       0.6
+      ],
+      "item": "sun_disc",
+      "prompt": "PROMPT_TAKE",
+      "element": "sand"
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_SUN_DISC",
+       "NAME_NOMAD"
+      ],
+      "item": "sun_disc"
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_SUN_VAULT_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_SUN_VAULT",
+  "desc_key": "Q_MQ_SUN_VAULT_DESC",
+  "rewards": {
+   "jade": 2,
+   "items": [
+    {
+     "id": "cooling_salad",
+     "count": 3
+    }
+   ],
+   "recipes": [
+    [
+     "frostmint",
+     "sunpear"
+    ]
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_caravan"
+  ]
+ },
+ {
+  "id": "mq_glass_matriarch",
+  "type": "main",
+  "category": "boss",
+  "region": "desert",
+  "difficulty": 4,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "glass_arena",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "POI_GLASS_ARENA"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_GLASS_MATRIARCH",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_MATRIARCH"
+      ],
+      "marker": [
+       1300,
+       120
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "beacon_desert",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "Q_MQ_GLASS_MATRIARCH_S2_O0_A0"
+      ],
+      "marker": [
+       1319,
+       139
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_GLASS_MATRIARCH",
+  "desc_key": "Q_MQ_GLASS_MATRIARCH_DESC",
+  "rewards": {
+   "ability": "jade_platform",
+   "max_health": 20,
+   "jade": 4
+  },
+  "start": "auto",
+  "requires": [
+   "mq_sun_vault"
+  ]
+ },
+ {
+  "id": "mq_veil_edge",
+  "type": "main",
+  "category": "combat",
+  "region": "veil",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "pilgrim_camp",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_PILGRIM_CAMP"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_PILGRIM",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_PILGRIM"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_MQ_VEIL_EDGE_S1_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "survive",
+      "target": "hush_surge",
+      "text_key": "QO_T_SURVIVE",
+      "text_args": [
+       "POI_VEIL_SHRINE"
+      ],
+      "marker": [
+       700,
+       -720
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "hush_surge",
+      "mode": "survive",
+      "pos": [
+       700,
+       -720
+      ],
+      "radius": 16,
+      "duration": 50,
+      "interval": 8,
+      "max_alive": 4,
+      "trigger_radius": 14,
+      "element": "still",
+      "waves": [
+       {
+        "entity": "ENEMY_SHADE",
+        "count": 1,
+        "dist": 14
+       },
+       {
+        "entity": "ENEMY_WISP",
+        "count": 2,
+        "dist": 14
+       },
+       {
+        "entity": "ENEMY_SHADE",
+        "count": 2,
+        "dist": 15
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_VEIL_EDGE",
+  "desc_key": "Q_MQ_VEIL_EDGE_DESC",
+  "rewards": {
+   "jade": 2,
+   "items": [
+    {
+     "id": "mending_tea",
+     "count": 2
+    }
+   ]
+  },
+  "start": "auto",
+  "requires": [
+   "mq_glass_matriarch"
+  ]
+ },
+ {
+  "id": "mq_anchors",
+  "type": "main",
+  "category": "combat",
+  "region": "veil",
+  "difficulty": 4,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "anchor_north",
+      "text_key": "QO_ANCHOR_NORTH",
+      "marker": [
+       880,
+       -1085
+      ]
+     },
+     {
+      "type": "flag",
+      "target": "anchor_east",
+      "text_key": "QO_ANCHOR_EAST",
+      "marker": [
+       1085,
+       -880
+      ]
+     },
+     {
+      "type": "flag",
+      "target": "anchor_west",
+      "text_key": "QO_ANCHOR_WEST",
+      "marker": [
+       675,
+       -880
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_ANCHORS",
+  "desc_key": "Q_MQ_ANCHORS_DESC",
+  "rewards": {
+   "jade": 3,
+   "max_stamina": 20
+  },
+  "start": "auto",
+  "requires": [
+   "mq_veil_edge"
+  ]
+ },
+ {
+  "id": "mq_drifting_isles",
+  "type": "main",
+  "category": "traversal",
+  "region": "veil",
+  "difficulty": 4,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "drifting_isles",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_DRIFTING_ISLES"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "target": "drifting_isles",
+      "text_key": "Q_MQ_DRIFTING_ISLES_S1_O0_TEXT",
+      "radius": 60.0,
+      "min_y": 64.0,
+      "hint": "area",
+      "area_radius": 60.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "warden_breath",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_WARDEN_BREATH"
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "warden_breath",
+      "look": "relic",
+      "pos": [
+       806.6,
+       -972.0
+      ],
+      "snap": "top",
+      "min_y": 60.0,
+      "item": "warden_breath",
+      "prompt": "PROMPT_TAKE",
+      "element": "wind",
+      "range": 140,
+      "lines": [
+       "Q_MQ_DRIFTING_ISLES_S2_P0_L0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_MQ_DRIFTING_ISLES",
+  "desc_key": "Q_MQ_DRIFTING_ISLES_DESC",
+  "rewards": {
+   "jade": 3,
+   "glimmer": 60
+  },
+  "start": "auto",
+  "requires": [
+   "mq_anchors"
+  ]
+ },
+ {
+  "id": "mq_stillwake",
+  "type": "main",
+  "category": "boss",
+  "region": "veil",
+  "difficulty": 5,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "still_heart",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "POI_STILL_HEART"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_STILLWAKE_WARDEN",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_WARDEN"
+      ],
+      "marker": [
+       880,
+       -880
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "oren_found",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_MENTOR"
+      ],
+      "marker": [
+       884,
+       -872
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "actor",
+      "entity": "NPC_MENTOR",
+      "pos": [
+       884,
+       -872
+      ],
+      "yaw": 200,
+      "talk": {
+       "id": "oren_found",
+       "prompt": "PROMPT_TALK",
+       "vanish": false,
+       "lines": [
+        "Q_MQ_STILLWAKE_S2_P0_K_L0",
+        "Q_MQ_STILLWAKE_S2_P0_K_L1"
+       ]
+      }
+     }
+    ],
+    "on_complete_flag": "ending_reached"
+   }
+  ],
+  "title_key": "Q_MQ_STILLWAKE",
+  "desc_key": "Q_MQ_STILLWAKE_DESC",
+  "rewards": {
+   "ability": "stillness",
+   "glimmer": 300,
+   "jade": 5,
+   "cosmetic": "trail_gilt"
+  },
+  "start": "auto",
+  "requires": [
+   "mq_drifting_isles"
+  ]
+ }
+]

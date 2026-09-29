@@ -19,8 +19,9 @@ func id() -> StringName:
 func enter() -> void:
 	_phase = 0
 	c.stop()
-	if Game.player:
-		_dir = (Game.player.global_position - c.global_position)
+	var aim := c.threat_target()
+	if aim:
+		_dir = (aim.global_position - c.global_position)
 		_dir.y = 0.0
 		_dir = _dir.normalized()
 	c.visual.play_action(&"windup", attack.windup)
@@ -61,8 +62,9 @@ func tick(delta: float) -> StringName:
 	match _phase:
 		0:
 			# Track the player during most of the windup, then commit.
-			if t < _windup() * 0.7 and Game.player and attack.type != &"charge":
-				var to := Game.player.global_position - c.global_position
+			var aim := c.threat_target()
+			if t < _windup() * 0.7 and aim and attack.type != &"charge":
+				var to := aim.global_position - c.global_position
 				to.y = 0.0
 				_dir = to.normalized()
 			c.face_towards(_dir, delta * 2.0)
@@ -106,7 +108,8 @@ func _strike() -> void:
 		&"projectile":
 			anim_name = &"attack"
 			var origin := c.global_position + Vector3.UP * c.type.collider_height * 0.75 + _dir * (c.type.collider_radius + 0.3)
-			var tgt := Game.player.global_position + Vector3.UP * 1.0
+			var aim_node := c.threat_target()
+			var tgt := (aim_node.global_position if aim_node else c.global_position + _dir * 8.0) + Vector3.UP * 1.0
 			var vel := _ballistic(origin, tgt, attack.projectile_speed)
 			Projectile.spawn(c.get_parent(), origin, vel, attack.damage, attack.element, c, true)
 			Audio.play_at(&"spit", origin, -2.0)

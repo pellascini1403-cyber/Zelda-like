@@ -49,5 +49,6 @@ static func craft(recipe: Dictionary) -> bool:
 	var n := int(recipe.get("count", 1))
 	PlayerData.inventory.add(result, n)
 	EventBus.item_acquired.emit(result, n)
+	EventBus.item_crafted.emit(result)
 	Audio.play_ui(&"craft")
 	return true

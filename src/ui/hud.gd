@@ -28,6 +28,12 @@ var title_card: TitleCard
 var boss_plate: BossPlate
 var ability: AbilityIndicator
 var shop: ShopPanel
+var board: BoardPanel
+var altar: AltarPanel
+var banner: EncounterBanner
+var rewards: RewardPopup
+var _jade: Label
+var _jade_t := 0.0
 var _spurs: Control
 
 
@@ -74,6 +80,12 @@ func _ready() -> void:
 	_status.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
 	_status.add_theme_constant_override("outline_size", 6)
 	_top_left.add_child(_status)
+	# Jade count: shows for a moment whenever it changes.
+	_jade = UITheme.label("", 22, UITheme.ACCENT_2)
+	_jade.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
+	_jade.add_theme_constant_override("outline_size", 6)
+	_jade.modulate.a = 0.0
+	_top_left.add_child(_jade)
 
 	# Top-center compass
 	compass = Compass.new()
@@ -111,6 +123,10 @@ func _ready() -> void:
 	_feed.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(_feed)
 
+	banner = EncounterBanner.new()
+	_root.add_child(banner)
+	rewards = RewardPopup.new()
+	_root.add_child(rewards)
 	dialogue = DialogueBox.new()
 	_root.add_child(dialogue)
 	touch.blockers.append(dialogue)
@@ -126,6 +142,18 @@ func _ready() -> void:
 	add_child(cooking)
 	shop = ShopPanel.new()
 	add_child(shop)
+	board = BoardPanel.new()
+	add_child(board)
+	altar = AltarPanel.new()
+	add_child(altar)
+	EventBus.panel_requested.connect(func(panel: StringName, arg: String) -> void:
+		if panel == &"board":
+			board.open_board(arg)
+		elif panel == &"altar":
+			altar.open_panel(tr("ALTAR_TITLE")))
+	EventBus.jade_changed.connect(func(total: int) -> void:
+		_jade.text = "◆ %d  %s" % [total, tr("JADE")]
+		_jade_t = 4.0)
 
 	EventBus.toast.connect(show_toast)
 	EventBus.item_acquired.connect(_on_item)
@@ -164,6 +192,8 @@ func _layout() -> void:
 	_toasts.size = Vector2(600, 200)
 	_feed.position = Vector2(vs.x - m["right"] - 360, m["top"] + 230)
 	_feed.size = Vector2(360, 300)
+	banner.position = Vector2(vs.x * 0.5 - banner.size.x * 0.5, m["top"] + 66)
+	rewards.position = Vector2(m["left"], vs.y * 0.34)
 	tracker.position = Vector2(vs.x - m["right"] - 420, m["top"] + 74)
 	tracker.size = Vector2(420, 140)
 	(tracker.get_child(0) as Control).size = Vector2(420, 140)
@@ -193,6 +223,9 @@ func _process(delta: float) -> void:
 	_status.text = "  ".join(status)
 	_status.add_theme_color_override("font_color", UITheme.DANGER if exp != 0 else UITheme.TEXT)
 	_update_buffs()
+	if _jade_t > 0.0:
+		_jade_t -= delta
+		_jade.modulate.a = clampf(_jade_t, 0.0, 1.0)
 	_spurs.visible = p.mount != null
 	if _spurs.visible:
 		_spurs.queue_redraw()

@@ -26,15 +26,31 @@ func _process(delta: float) -> void:
 		var center := arena_center(d)
 		var dist := Vector2(p.x - center.x, p.z - center.z).length()
 		var defeated := WorldState.flags.has("boss_" + String(d["entity"]))
+		var allowed := conditions_ok(d)
 		if _live.has(id):
 			var b: Boss = _live[id]
 			if not is_instance_valid(b):
 				_live.erase(id)
-			elif dist > FREE_DISTANCE and not b.engaged:
+			elif (dist > FREE_DISTANCE or not allowed) and not b.engaged:
 				b.queue_free()
 				_live.erase(id)
-		elif not defeated and dist < SPAWN_DISTANCE:
+		elif not defeated and allowed and dist < float(d.get("spawn_distance", SPAWN_DISTANCE)):
 			_spawn(id, d, center)
+
+
+## Mini-bosses may only show up at night, in a storm, or once a flag / quest
+## state is reached: {period, weather: [..], flag, quest_active}.
+static func conditions_ok(d: Dictionary) -> bool:
+	var c: Dictionary = d.get("conditions", {})
+	if c.has("period") and (c["period"] == "night") != Clock.is_night():
+		return false
+	if c.has("weather") and not String(Weather.target) in c["weather"]:
+		return false
+	if c.has("flag") and not WorldState.flags.has(String(c["flag"])):
+		return false
+	if c.has("quest_active") and not Quests.is_active(StringName(c["quest_active"])):
+		return false
+	return true
 
 
 func arena_center(d: Dictionary) -> Vector3:

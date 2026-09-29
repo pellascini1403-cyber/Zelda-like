@@ -1,14 +1,13 @@
 [
-  {"id": "wind_rift", "name_key": "EVENT_WIND_RIFT", "chance_per_hour": 0.35, "regions": ["valley", "forest", "highlands", "lakeshore", "coast"],
-   "distance": [60, 140], "duration_hours": 2.0, "reward": {"items": [{"id": "glimmer_shard", "count": [4, 8]}]},
-   "period": "any"},
-  {"id": "thorn_ambush", "name_key": "EVENT_THORN_AMBUSH", "chance_per_hour": 0.18, "regions": ["valley", "forest"],
-   "distance": [14, 20], "spawn": "ENEMY_THORNLING", "count": [3, 4], "period": "night"},
-  {"id": "sand_swarm", "name_key": "EVENT_SAND_SWARM", "chance_per_hour": 0.3, "regions": ["desert"],
-   "distance": [16, 24], "spawn": "ENEMY_SCUTTLER", "count": [3, 5], "period": "any"},
-  {"id": "veil_surge", "name_key": "EVENT_VEIL_SURGE", "chance_per_hour": 0.4, "regions": ["veil"],
-   "distance": [18, 26], "spawn": "ENEMY_SHADE", "count": [2, 3], "period": "any"},
-  {"id": "star_fall", "name_key": "EVENT_STAR_FALL", "chance_per_hour": 0.12, "regions": ["valley", "forest", "highlands", "lakeshore", "coast", "desert"],
-   "distance": [80, 160], "duration_hours": 3.0, "reward": {"items": [{"id": "glass_shard", "count": [1, 2]}, {"id": "glimmer_shard", "count": [6, 10]}]},
-   "period": "night"}
+  {"id": "wind_rift", "name_key": "EVENT_WIND_RIFT", "chance_per_hour": 0.35, "regions": ["valley", "forest", "highlands", "lakeshore", "coast"], "distance": [60, 140], "duration_hours": 2.0, "reward": {"items": [{"id": "glimmer_shard", "count": [4, 8]}]}, "period": "any"},
+  {"id": "thorn_ambush", "name_key": "EVENT_THORN_AMBUSH", "chance_per_hour": 0.18, "regions": ["valley", "forest"], "distance": [14, 20], "spawn": "ENEMY_THORNLING", "count": [3, 4], "period": "night"},
+  {"id": "sand_swarm", "name_key": "EVENT_SAND_SWARM", "chance_per_hour": 0.3, "regions": ["desert"], "distance": [16, 24], "spawn": "ENEMY_SCUTTLER", "count": [3, 5], "period": "any"},
+  {"id": "veil_surge", "name_key": "EVENT_VEIL_SURGE", "chance_per_hour": 0.4, "regions": ["veil"], "distance": [18, 26], "spawn": "ENEMY_SHADE", "count": [2, 3], "period": "any"},
+  {"id": "star_fall", "name_key": "EVENT_STAR_FALL", "chance_per_hour": 0.12, "regions": ["valley", "forest", "highlands", "lakeshore", "coast", "desert"], "distance": [80, 160], "duration_hours": 3.0, "reward": {"items": [{"id": "glass_shard", "count": [1, 2]}, {"id": "glimmer_shard", "count": [6, 10]}]}, "period": "night"},
+  {"id": "traveler_attacked", "name_key": "EVENT_TRAVELER", "chance_per_hour": 0.22, "regions": ["valley", "forest", "lakeshore", "coast"], "distance": [45, 70], "period": "any", "encounter": {"mode": "protect", "actor": "NPC_TRAVELER", "actor_hp": 90, "shout_key": "SHOUT_HELP", "trigger_radius": 26, "element": "thorn", "waves": [{"entity": "ENEMY_THORNLING", "count": 3, "dist": 12}], "end_lines": ["DLG_TRAVELER_THANKS"], "reward": {"glimmer": 25, "items": [{"id": "sunpear", "count": 2}]}}},
+  {"id": "nomad_raid", "name_key": "EVENT_NOMAD_RAID", "chance_per_hour": 0.2, "regions": ["desert"], "distance": [45, 70], "period": "any", "encounter": {"mode": "protect", "actor": "NPC_TRAVELER", "actor_hp": 110, "shout_key": "SHOUT_HELP", "trigger_radius": 26, "element": "sand", "waves": [{"entity": "ENEMY_SCUTTLER", "count": 3, "dist": 12}, {"entity": "ENEMY_SCUTTLER", "count": 2, "dist": 14}], "end_lines": ["DLG_TRAVELER_THANKS"], "reward": {"glimmer": 35, "items": [{"id": "cooling_salad", "count": 1}]}}},
+  {"id": "elite_patrol", "name_key": "EVENT_ELITE_PATROL", "chance_per_hour": 0.14, "regions": ["valley", "highlands", "forest"], "distance": [70, 100], "spawn": "ENEMY_BULWARK", "escort": "ENEMY_THORNLING", "count": [2, 3], "alert": false, "period": "day"},
+  {"id": "gilded_hop", "name_key": "EVENT_GILDED_HOP", "chance_per_hour": 0.3, "regions": ["valley", "lakeshore", "forest"], "distance": [40, 80], "rare": "ANIMAL_GILDED_HOP", "hours": [5.0, 7.5, 18.0, 20.0]},
+  {"id": "wisp_lights", "name_key": "EVENT_WISP_LIGHTS", "chance_per_hour": 0.2, "regions": ["forest", "lakeshore", "veil"], "distance": [70, 130], "duration_hours": 2.0, "period": "night", "reward": {"items": [{"id": "wisp_filament", "count": [2, 3]}, {"id": "glowmoss", "count": [1, 2]}]}},
+  {"id": "storm_glass", "name_key": "EVENT_STORM_GLASS", "chance_per_hour": 0.35, "regions": ["desert", "highlands", "coast"], "distance": [70, 140], "duration_hours": 2.0, "weather": ["storm", "sandstorm"], "reward": {"items": [{"id": "glass_shard", "count": [1, 2]}, {"id": "glimmer_shard", "count": [3, 6]}]}}
 ]

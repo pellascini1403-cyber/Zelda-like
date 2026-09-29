@@ -66,13 +66,19 @@ func _draw() -> void:
 		var pp := _to_map(hud.compass.pin)
 		draw_circle(pp, 10, UITheme.DANGER)
 		draw_circle(pp, 4, Color.WHITE)
-	var q: Variant = Quests.tracked_target()
-	if q != null:
-		var qp := _to_map(q)
+	var qm := Quests.tracked_marker()
+	if not qm.is_empty():
+		var qp := _to_map(qm["pos"])
 		var pulse := 1.0 + 0.2 * sin(Time.get_ticks_msec() * 0.006)
-		UIArt.diamond(self, qp, 13.0 * pulse, Color(0.1, 0.07, 0.04, 0.8))
-		UIArt.diamond(self, qp, 10.0 * pulse, UIArt.GOLD)
-		draw_circle(qp, 2.5, Color(0.1, 0.07, 0.04))
+		if String(qm["hint"]) == "area":
+			# "Somewhere around here": a soft circle, no exact spot.
+			var r := float(qm["radius"]) / (WorldGen.WORLD_HALF * 2.0) * _map_rect.size.x
+			draw_circle(qp, r, Color(UIArt.GOLD, 0.16))
+			draw_arc(qp, r, 0, TAU, 40, Color(0.35, 0.24, 0.1, 0.8), 2.0, true)
+		else:
+			UIArt.diamond(self, qp, 13.0 * pulse, Color(0.1, 0.07, 0.04, 0.8))
+			UIArt.diamond(self, qp, 10.0 * pulse, UIArt.GOLD)
+			draw_circle(qp, 2.5, Color(0.1, 0.07, 0.04))
 	var gw := Game.world as GameWorld
 	if gw and gw.events:
 		var bp: Variant = gw.events.beacon_position()

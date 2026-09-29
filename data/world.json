@@ -61,8 +61,29 @@
           "NPC_VILLAGER",
           -4,
           10
+        ],
+        [
+          "NPC_SMITH",
+          -9,
+          -3
+        ],
+        [
+          "NPC_CHILD",
+          7,
+          9
+        ],
+        [
+          "NPC_COURIER",
+          5,
+          -6
         ]
-      ]
+      ],
+      "board": "hamlet",
+      "board_at": [
+        -6,
+        14
+      ],
+      "board_yaw": 0.4
     },
     {
       "id": "echo_chamber",
@@ -155,7 +176,8 @@
         "ENEMY_THORNLING",
         "ENEMY_THORNLING",
         "ENEMY_THORNLING"
-      ]
+      ],
+      "smoke": true
     },
     {
       "id": "needles",
@@ -176,7 +198,8 @@
         {
           "id": "windrunner_band"
         }
-      ]
+      ],
+      "beacon": "beacon_heights"
     },
     {
       "id": "elder_tree",
@@ -298,7 +321,8 @@
         "ENEMY_THORNLING",
         "ENEMY_THORNLING",
         "ENEMY_THORNLING"
-      ]
+      ],
+      "smoke": true
     },
     {
       "id": "cloud_temple",
@@ -319,6 +343,15 @@
         {
           "id": "stamina_bloom"
         }
+      ],
+      "beacon": "beacon_valley",
+      "npcs": [
+        [
+          "NPC_MENTOR",
+          3,
+          8,
+          "ending_reached"
+        ]
       ]
     },
     {
@@ -334,7 +367,12 @@
       "pad_height": 25.0,
       "clear_radius": 10,
       "discover_radius": 24,
-      "lore": "LORE_SHRINE"
+      "lore": "LORE_SHRINE",
+      "altar": true,
+      "altar_at": [
+        0,
+        4.5
+      ]
     },
     {
       "id": "heath_shrine",
@@ -350,7 +388,19 @@
       "clear_radius": 10,
       "discover_radius": 24,
       "lore": "LORE_SHRINE",
-      "loot": "chest_common"
+      "loot": "chest_common",
+      "npcs": [
+        [
+          "NPC_KEEPER",
+          2,
+          3
+        ]
+      ],
+      "altar": true,
+      "altar_at": [
+        0,
+        4.5
+      ]
     },
     {
       "id": "jade_bridge",
@@ -410,7 +460,17 @@
           4
         ]
       ],
-      "lore": "LORE_OASIS"
+      "lore": "LORE_OASIS",
+      "board": "oasis",
+      "board_at": [
+        6,
+        10
+      ],
+      "altar": true,
+      "altar_at": [
+        -8,
+        12
+      ]
     },
     {
       "id": "sun_vault",
@@ -461,7 +521,12 @@
       "pad_height": 13.0,
       "clear_radius": 40,
       "discover_radius": 50,
-      "radius": 22
+      "radius": 22,
+      "beacon": "beacon_desert",
+      "beacon_at": [
+        19,
+        19
+      ]
     },
     {
       "id": "still_heart",
@@ -551,6 +616,400 @@
         }
       ],
       "levity_radius": 110
+    },
+    {
+      "id": "hamlet_lookout",
+      "type": "watchtower",
+      "pos": [
+        -15,
+        210
+      ],
+      "name_key": "POI_HAMLET_LOOKOUT",
+      "flatten": 10,
+      "pad_height": 24.9,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "lore": "LORE_TOWER"
+    },
+    {
+      "id": "lake_hut",
+      "type": "npc_camp",
+      "pos": [
+        -250,
+        100
+      ],
+      "name_key": "POI_LAKE_HUT",
+      "style": "fisher",
+      "tents": 1,
+      "flatten": 9,
+      "pad_height": 6.4,
+      "clear_radius": 16,
+      "discover_radius": 30,
+      "yaw": 1.4,
+      "npcs": [
+        [
+          "NPC_FISHER",
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "id": "lake_isle",
+      "type": "shrine",
+      "pos": [
+        -440,
+        60
+      ],
+      "name_key": "POI_LAKE_ISLE",
+      "flatten": 9,
+      "pad_height": 1.6,
+      "clear_radius": 10,
+      "discover_radius": 26,
+      "yaw": 0.3,
+      "lore": "LORE_SHRINE",
+      "beacon": "beacon_lake"
+    },
+    {
+      "id": "hunters_lodge",
+      "type": "npc_camp",
+      "pos": [
+        370,
+        160
+      ],
+      "name_key": "POI_HUNTERS_LODGE",
+      "style": "hunter",
+      "tents": 2,
+      "flatten": 12,
+      "pad_height": 20.0,
+      "clear_radius": 18,
+      "discover_radius": 34,
+      "yaw": 0.5,
+      "npcs": [
+        [
+          "NPC_HUNTER",
+          1,
+          4
+        ],
+        [
+          "NPC_SCHOLAR",
+          -3,
+          6,
+          "quill_safe"
+        ]
+      ],
+      "board": "lodge",
+      "board_at": [
+        6,
+        6
+      ],
+      "board_yaw": -0.6
+    },
+    {
+      "id": "road_post",
+      "type": "post",
+      "pos": [
+        700,
+        240
+      ],
+      "name_key": "POI_ROAD_POST",
+      "flatten": 12,
+      "pad_height": 19.6,
+      "clear_radius": 18,
+      "discover_radius": 36,
+      "yaw": 1.6,
+      "smoke": true,
+      "smoke_at": [
+        3,
+        3.5
+      ],
+      "npcs": [
+        [
+          "NPC_GUARD",
+          0,
+          4
+        ]
+      ],
+      "altar": true,
+      "altar_at": [
+        -4,
+        5
+      ]
+    },
+    {
+      "id": "climbers_camp",
+      "type": "npc_camp",
+      "pos": [
+        320,
+        -160
+      ],
+      "name_key": "POI_CLIMBERS_CAMP",
+      "style": "climber",
+      "tents": 1,
+      "flatten": 9,
+      "pad_height": 46.3,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "yaw": -0.8,
+      "npcs": [
+        [
+          "NPC_CLIMBER",
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "id": "hermit_hut",
+      "type": "npc_camp",
+      "pos": [
+        -300,
+        -360
+      ],
+      "name_key": "POI_HERMIT_HUT",
+      "style": "hermit",
+      "tents": 1,
+      "flatten": 9,
+      "pad_height": 36.9,
+      "clear_radius": 14,
+      "discover_radius": 28,
+      "yaw": 0.9,
+      "smoke": true,
+      "npcs": [
+        [
+          "NPC_HERMIT",
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "id": "pilgrim_camp",
+      "type": "npc_camp",
+      "pos": [
+        650,
+        -650
+      ],
+      "name_key": "POI_PILGRIM_CAMP",
+      "style": "pilgrim",
+      "tents": 2,
+      "flatten": 12,
+      "pad_height": 8.8,
+      "clear_radius": 18,
+      "discover_radius": 34,
+      "yaw": -0.7,
+      "npcs": [
+        [
+          "NPC_PILGRIM",
+          1,
+          4
+        ]
+      ],
+      "board": "veil",
+      "board_at": [
+        6,
+        5
+      ],
+      "altar": true,
+      "altar_at": [
+        -6,
+        5
+      ]
+    },
+    {
+      "id": "glow_grotto",
+      "type": "cave",
+      "pos": [
+        600,
+        330
+      ],
+      "name_key": "POI_GLOW_GROTTO",
+      "radius": 9.0,
+      "yaw": 2.2,
+      "flatten": 11,
+      "pad_height": 24.3,
+      "clear_radius": 14,
+      "discover_radius": 18,
+      "rock_color": "#5f6a58",
+      "loot": "chest_rare",
+      "nodes": [
+        [
+          "glowmoss",
+          -4,
+          -2
+        ],
+        [
+          "glowmoss",
+          3,
+          -4
+        ],
+        [
+          "glowmoss",
+          0,
+          2
+        ],
+        [
+          "glowmoss",
+          -2,
+          4
+        ],
+        [
+          "glowmoss",
+          5,
+          1
+        ]
+      ]
+    },
+    {
+      "id": "smugglers_cove",
+      "type": "cave",
+      "pos": [
+        -600,
+        520
+      ],
+      "name_key": "POI_SMUGGLERS_COVE",
+      "radius": 10.0,
+      "yaw": -2.3,
+      "flatten": 12,
+      "pad_height": 7.0,
+      "clear_radius": 16,
+      "discover_radius": 20,
+      "rock_color": "#7a6f60",
+      "loot": "chest_camp"
+    },
+    {
+      "id": "old_quarry",
+      "type": "quarry",
+      "pos": [
+        -330,
+        -300
+      ],
+      "name_key": "POI_OLD_QUARRY",
+      "flatten": 16,
+      "pad_height": 33.5,
+      "clear_radius": 22,
+      "discover_radius": 34,
+      "yaw": 0.4,
+      "loot": "chest_common",
+      "nodes": [
+        [
+          "iron_vein",
+          -8,
+          -6
+        ],
+        [
+          "iron_vein",
+          6,
+          -8
+        ],
+        [
+          "iron_vein",
+          10,
+          2
+        ],
+        [
+          "flint_rock",
+          -4,
+          6
+        ]
+      ]
+    },
+    {
+      "id": "dune_ruins",
+      "type": "ruins",
+      "pos": [
+        900,
+        480
+      ],
+      "name_key": "POI_DUNE_RUINS",
+      "flatten": 18,
+      "pad_height": 15.4,
+      "clear_radius": 22,
+      "discover_radius": 34,
+      "loot": "chest_vault",
+      "lore": "LORE_SUNKEN_HALL",
+      "npcs": [
+        [
+          "NPC_CARAVAN",
+          3,
+          4,
+          "tobb_arrived"
+        ]
+      ]
+    },
+    {
+      "id": "veil_shrine",
+      "type": "shrine",
+      "pos": [
+        700,
+        -720
+      ],
+      "name_key": "POI_VEIL_SHRINE",
+      "yaw": -0.8,
+      "flatten": 9,
+      "pad_height": 35.8,
+      "clear_radius": 10,
+      "discover_radius": 26,
+      "lore": "LORE_SHRINE"
+    },
+    {
+      "id": "sea_bluff",
+      "type": "overlook",
+      "pos": [
+        300,
+        700
+      ],
+      "name_key": "POI_SEA_BLUFF",
+      "flatten": 10,
+      "pad_height": 34.0,
+      "clear_radius": 12,
+      "discover_radius": 28,
+      "lore": "LORE_OVERLOOK"
+    },
+    {
+      "id": "sea_stack",
+      "type": "shrine",
+      "pos": [
+        330,
+        792
+      ],
+      "name_key": "POI_SEA_STACK",
+      "yaw": 2.8,
+      "flatten": 6,
+      "pad_height": 11.0,
+      "clear_radius": 8,
+      "discover_radius": 18,
+      "beacon": "beacon_coast"
+    },
+    {
+      "id": "hollow_ring",
+      "type": "arena",
+      "pos": [
+        1000,
+        -790
+      ],
+      "name_key": "POI_HOLLOW_RING",
+      "style": "veil",
+      "radius": 14,
+      "flatten": 18,
+      "pad_height": 15.0,
+      "clear_radius": 20,
+      "discover_radius": 40
+    },
+    {
+      "id": "frost_shrine",
+      "type": "shrine",
+      "pos": [
+        -150,
+        -500
+      ],
+      "name_key": "POI_FROST_SHRINE",
+      "yaw": 0.5,
+      "flatten": 9,
+      "pad_height": 207.5,
+      "clear_radius": 10,
+      "discover_radius": 24,
+      "lore": "LORE_SHRINE"
     }
   ],
   "falls": [

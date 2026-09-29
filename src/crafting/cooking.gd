@@ -76,6 +76,7 @@ static func cook(ids: Array) -> Dictionary:
 	if is_new:
 		EventBus.recipe_discovered.emit(res["item"])
 	EventBus.item_acquired.emit(res["item"], 1)
+	EventBus.dish_cooked.emit(res["item"])
 	Audio.play_ui(&"cook")
 	return res
 

@@ -1082,5 +1082,1309 @@
   },
   "attacks": [],
   "loot_table": ""
+ },
+ {
+  "id": "NPC_SMITH",
+  "kind": "NPC",
+  "name_key": "NAME_SMITH",
+  "placeholder_color": "#8f1d1d",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_SMITH_1"
+   ],
+   "night": [
+    "DLG_SMITH_NIGHT"
+   ]
+  }
+ },
+ {
+  "id": "NPC_CHILD",
+  "kind": "NPC",
+  "name_key": "NAME_CHILD",
+  "placeholder_color": "#ffb3c7",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.28,
+   "height": 1.25
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_CHILD_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_COURIER",
+  "kind": "NPC",
+  "name_key": "NAME_COURIER",
+  "placeholder_color": "#c2e05a",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_COURIER_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_FISHER",
+  "kind": "NPC",
+  "name_key": "NAME_FISHER",
+  "placeholder_color": "#1f6f8b",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_FISHER_1"
+   ],
+   "night": [
+    "DLG_FISHER_NIGHT"
+   ]
+  }
+ },
+ {
+  "id": "NPC_HUNTER",
+  "kind": "NPC",
+  "name_key": "NAME_HUNTER",
+  "placeholder_color": "#3f5a1c",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_HUNTER_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_SCHOLAR",
+  "kind": "NPC",
+  "name_key": "NAME_SCHOLAR",
+  "placeholder_color": "#d9c89a",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_SCHOLAR_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_KEEPER",
+  "kind": "NPC",
+  "name_key": "NAME_KEEPER",
+  "placeholder_color": "#cfc3f5",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_KEEPER_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_CLIMBER",
+  "kind": "NPC",
+  "name_key": "NAME_CLIMBER",
+  "placeholder_color": "#ff5c8a",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_CLIMBER_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_GUARD",
+  "kind": "NPC",
+  "name_key": "NAME_GUARD",
+  "placeholder_color": "#4a5a6a",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_GUARD_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_HERMIT",
+  "kind": "NPC",
+  "name_key": "NAME_HERMIT",
+  "placeholder_color": "#8fae6e",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_HERMIT_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_PILGRIM",
+  "kind": "NPC",
+  "name_key": "NAME_PILGRIM",
+  "placeholder_color": "#9b6fc9",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_PILGRIM_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_CARAVAN",
+  "kind": "NPC",
+  "name_key": "NAME_CARAVAN",
+  "placeholder_color": "#0b6e4f",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_CARAVAN_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_TRAVELER",
+  "kind": "NPC",
+  "name_key": "NAME_TRAVELER",
+  "placeholder_color": "#5e7b8c",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_TRAVELER_1"
+   ]
+  }
+ },
+ {
+  "id": "NPC_MENTOR",
+  "kind": "NPC",
+  "name_key": "NAME_MENTOR",
+  "placeholder_color": "#00e5a0",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      1,
+      -2
+     ]
+    ],
+    [
+     7,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     13,
+     [
+      -3,
+      1
+     ]
+    ],
+    [
+     19,
+     [
+      0,
+      3
+     ]
+    ],
+    [
+     22,
+     [
+      1,
+      -2
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_MENTOR_1"
+   ]
+  }
+ },
+ {
+  "id": "BOSS_THORN_CHIEF",
+  "kind": "BOSS",
+  "name_key": "NAME_THORN_CHIEF",
+  "placeholder_color": "#ff2e63",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.9,
+   "height": 1.8
+  },
+  "stats": {
+   "max_health": 220,
+   "defense": 2,
+   "poise": 60,
+   "walk_speed": 2.6,
+   "run_speed": 7.0,
+   "turn_speed": 5,
+   "mass": 260
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 360,
+   "hearing": 2.0,
+   "leash": 40,
+   "respawn_hours": 999999
+  },
+  "attacks": [
+   {
+    "id": "rake",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.8,
+    "windup": 0.55,
+    "active": 0.15,
+    "recovery": 0.7,
+    "cooldown": 1.2,
+    "damage": 14,
+    "knockback": 6,
+    "reach": 2.4,
+    "arc": 70,
+    "weight": 3,
+    "telegraph": true
+   },
+   {
+    "id": "leap",
+    "type": "lunge",
+    "range_min": 4,
+    "range_max": 11,
+    "windup": 0.7,
+    "active": 0.45,
+    "recovery": 0.9,
+    "cooldown": 4,
+    "damage": 20,
+    "knockback": 9,
+    "reach": 1.8,
+    "arc": 60,
+    "lunge_speed": 16,
+    "weight": 2
+   },
+   {
+    "id": "howl_thorns",
+    "type": "volley",
+    "range_min": 4,
+    "range_max": 16,
+    "windup": 0.8,
+    "active": 0.2,
+    "recovery": 0.7,
+    "cooldown": 6,
+    "damage": 8,
+    "count": 4,
+    "spread": 45,
+    "projectile_speed": 15,
+    "element": "thorn",
+    "weight": 1
+   }
+  ],
+  "loot_table": "drop_chief",
+  "element_mult": {
+   "fire": 1.5
+  }
+ },
+ {
+  "id": "BOSS_CRAG_HARRIER",
+  "kind": "BOSS",
+  "name_key": "NAME_CRAG_HARRIER",
+  "placeholder_color": "#1f3fa8",
+  "placeholder_shape": "orb",
+  "model": "",
+  "collider": {
+   "radius": 1.1,
+   "height": 1.6
+  },
+  "stats": {
+   "max_health": 300,
+   "defense": 1,
+   "poise": 50,
+   "walk_speed": 4,
+   "run_speed": 9.0,
+   "turn_speed": 6,
+   "mass": 120
+  },
+  "ai": {
+   "sight_range": 45,
+   "fov": 360,
+   "hearing": 2.0,
+   "leash": 60,
+   "respawn_hours": 999999
+  },
+  "attacks": [
+   {
+    "id": "dive",
+    "type": "charge",
+    "range_min": 5,
+    "range_max": 24,
+    "windup": 0.9,
+    "active": 1.0,
+    "recovery": 1.1,
+    "cooldown": 4.5,
+    "damage": 18,
+    "knockback": 10,
+    "reach": 24,
+    "charge_speed": 17,
+    "poise_damage": 30,
+    "blockable": false,
+    "weight": 3
+   },
+   {
+    "id": "talon",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 3.2,
+    "windup": 0.5,
+    "active": 0.15,
+    "recovery": 0.6,
+    "cooldown": 1.3,
+    "damage": 12,
+    "knockback": 5,
+    "reach": 2.6,
+    "arc": 80,
+    "weight": 2
+   },
+   {
+    "id": "gale_feathers",
+    "type": "volley",
+    "range_min": 6,
+    "range_max": 22,
+    "windup": 0.8,
+    "active": 0.2,
+    "recovery": 0.8,
+    "cooldown": 5,
+    "damage": 9,
+    "count": 5,
+    "spread": 60,
+    "projectile_speed": 18,
+    "element": "wind",
+    "weight": 2
+   }
+  ],
+  "loot_table": "drop_harrier",
+  "element_mult": {
+   "electric": 1.5
+  },
+  "flying": true
+ },
+ {
+  "id": "BOSS_STONEWARD",
+  "kind": "BOSS",
+  "name_key": "NAME_STONEWARD",
+  "placeholder_color": "#7d7461",
+  "placeholder_shape": "giant",
+  "model": "",
+  "collider": {
+   "radius": 0.9,
+   "height": 3.2
+  },
+  "stats": {
+   "max_health": 420,
+   "defense": 5,
+   "poise": 110,
+   "walk_speed": 1.5,
+   "run_speed": 3.4,
+   "turn_speed": 3.5,
+   "mass": 700
+  },
+  "ai": {
+   "sight_range": 26,
+   "fov": 200,
+   "hearing": 1.0,
+   "leash": 35,
+   "respawn_hours": 999999
+  },
+  "attacks": [
+   {
+    "id": "hammer",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 3.4,
+    "windup": 0.9,
+    "active": 0.2,
+    "recovery": 1.0,
+    "cooldown": 1.8,
+    "damage": 22,
+    "knockback": 9,
+    "reach": 3.0,
+    "arc": 85,
+    "poise_damage": 35,
+    "weight": 3,
+    "telegraph": true
+   },
+   {
+    "id": "quarry_slam",
+    "type": "slam",
+    "range_min": 0,
+    "range_max": 5,
+    "windup": 1.3,
+    "active": 0.2,
+    "recovery": 1.4,
+    "cooldown": 6,
+    "damage": 28,
+    "knockback": 12,
+    "reach": 1.0,
+    "radius": 5.5,
+    "blockable": false,
+    "poise_damage": 50,
+    "weight": 2
+   },
+   {
+    "id": "rock_rain",
+    "type": "eruption",
+    "range_min": 0,
+    "range_max": 24,
+    "windup": 0.9,
+    "active": 0.2,
+    "recovery": 1.1,
+    "cooldown": 8,
+    "damage": 14,
+    "count": 4,
+    "radius": 2.2,
+    "delay": 1.0,
+    "element": "",
+    "weight": 1
+   }
+  ],
+  "loot_table": "drop_stoneward",
+  "element_mult": {
+   "electric": 1.6
+  }
+ },
+ {
+  "id": "BOSS_GLASS_STALKER",
+  "kind": "BOSS",
+  "name_key": "NAME_GLASS_STALKER",
+  "placeholder_color": "#a8ffee",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 1.0,
+   "height": 1.4
+  },
+  "stats": {
+   "max_health": 340,
+   "defense": 3,
+   "poise": 70,
+   "walk_speed": 2.8,
+   "run_speed": 8.0,
+   "turn_speed": 6,
+   "mass": 220
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 300,
+   "hearing": 1.8,
+   "leash": 45,
+   "respawn_hours": 999999
+  },
+  "attacks": [
+   {
+    "id": "glass_sting",
+    "type": "lunge",
+    "range_min": 0,
+    "range_max": 5,
+    "windup": 0.5,
+    "active": 0.3,
+    "recovery": 0.7,
+    "cooldown": 1.4,
+    "damage": 16,
+    "knockback": 6,
+    "reach": 1.8,
+    "arc": 50,
+    "lunge_speed": 12,
+    "weight": 3
+   },
+   {
+    "id": "sand_dash",
+    "type": "charge",
+    "range_min": 6,
+    "range_max": 20,
+    "windup": 0.8,
+    "active": 0.9,
+    "recovery": 1.0,
+    "cooldown": 5,
+    "damage": 18,
+    "knockback": 10,
+    "reach": 20,
+    "charge_speed": 16,
+    "blockable": false,
+    "weight": 2
+   },
+   {
+    "id": "shard_burst",
+    "type": "volley",
+    "range_min": 3,
+    "range_max": 16,
+    "windup": 0.8,
+    "active": 0.2,
+    "recovery": 0.8,
+    "cooldown": 6,
+    "damage": 9,
+    "count": 6,
+    "spread": 90,
+    "projectile_speed": 15,
+    "element": "glass",
+    "weight": 1
+   }
+  ],
+  "loot_table": "drop_stalker",
+  "element_mult": {
+   "ice": 1.6
+  }
+ },
+ {
+  "id": "BOSS_HOLLOW_SHADE",
+  "kind": "BOSS",
+  "name_key": "NAME_HOLLOW_SHADE",
+  "placeholder_color": "#3d0066",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.6,
+   "height": 2.8
+  },
+  "stats": {
+   "max_health": 380,
+   "defense": 3,
+   "poise": 60,
+   "walk_speed": 2.0,
+   "run_speed": 5.2,
+   "turn_speed": 6,
+   "mass": 140
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 300,
+   "hearing": 1.6,
+   "leash": 45,
+   "respawn_hours": 999999
+  },
+  "attacks": [
+   {
+    "id": "hollow_claw",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 3.0,
+    "windup": 0.6,
+    "active": 0.15,
+    "recovery": 0.7,
+    "cooldown": 1.3,
+    "damage": 18,
+    "knockback": 6,
+    "reach": 2.6,
+    "arc": 70,
+    "element": "still",
+    "weight": 3
+   },
+   {
+    "id": "hush_wave",
+    "type": "pulse",
+    "range_min": 0,
+    "range_max": 5,
+    "windup": 1.1,
+    "active": 0.2,
+    "recovery": 1.0,
+    "cooldown": 6,
+    "damage": 16,
+    "radius": 5.0,
+    "knockback": 8,
+    "blockable": false,
+    "element": "still",
+    "weight": 2
+   },
+   {
+    "id": "still_lances",
+    "type": "volley",
+    "range_min": 5,
+    "range_max": 20,
+    "windup": 0.9,
+    "active": 0.2,
+    "recovery": 0.9,
+    "cooldown": 5,
+    "damage": 11,
+    "count": 3,
+    "spread": 30,
+    "projectile_speed": 17,
+    "element": "still",
+    "weight": 2
+   }
+  ],
+  "loot_table": "drop_hollow",
+  "element_mult": {
+   "fire": 1.4,
+   "electric": 0.7
+  }
+ },
+ {
+  "id": "ANIMAL_GILDED_HOP",
+  "kind": "ANIMAL",
+  "name_key": "NAME_GILDED_HOP",
+  "placeholder_color": "#fff176",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.28,
+   "height": 0.55
+  },
+  "stats": {
+   "max_health": 10,
+   "poise": 2,
+   "walk_speed": 1.8,
+   "run_speed": 10.5,
+   "turn_speed": 14,
+   "mass": 6
+  },
+  "ai": {
+   "sight_range": 22,
+   "fov": 330,
+   "hearing": 2.0,
+   "skittish": 0.05,
+   "wander_radius": 8,
+   "respawn_hours": 24
+  },
+  "attacks": [],
+  "loot_table": "drop_gilded"
  }
 ]

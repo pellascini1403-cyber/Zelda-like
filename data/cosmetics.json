@@ -1,0 +1,14 @@
+[
+  {"id": "trail_ember", "slot": "trail", "name_key": "COS_TRAIL_EMBER", "color": "#ff8a3d"},
+  {"id": "trail_jade", "slot": "trail", "name_key": "COS_TRAIL_JADE", "color": "#5cf0a8"},
+  {"id": "trail_frost", "slot": "trail", "name_key": "COS_TRAIL_FROST", "color": "#9fdcff"},
+  {"id": "trail_dusk", "slot": "trail", "name_key": "COS_TRAIL_DUSK", "color": "#c07bff"},
+  {"id": "trail_gilt", "slot": "trail", "name_key": "COS_TRAIL_GILT", "color": "#ffd46b"},
+  {"id": "ribbon_cinnabar", "slot": "glider_trail", "name_key": "COS_RIBBON_CINNABAR", "color": "#e0503a"},
+  {"id": "ribbon_jade", "slot": "glider_trail", "name_key": "COS_RIBBON_JADE", "color": "#4fd08a"},
+  {"id": "ribbon_dawn", "slot": "glider_trail", "name_key": "COS_RIBBON_DAWN", "color": "#ffb37a"},
+  {"id": "ribbon_star", "slot": "glider_trail", "name_key": "COS_RIBBON_STAR", "color": "#e8f0ff"},
+  {"id": "echo_sand", "slot": "afterimage", "name_key": "COS_ECHO_SAND", "color": "#ffcf7a"},
+  {"id": "echo_veil", "slot": "afterimage", "name_key": "COS_ECHO_VEIL", "color": "#d98cff"},
+  {"id": "echo_storm", "slot": "afterimage", "name_key": "COS_ECHO_STORM", "color": "#8fb8ff"}
+]

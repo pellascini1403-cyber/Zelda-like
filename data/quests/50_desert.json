@@ -1,0 +1,519 @@
+[
+ {
+  "id": "sq_nomad_water",
+  "type": "side",
+  "category": "gathering",
+  "region": "desert",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "collect",
+      "target": "sunpear",
+      "text_key": "QO_COLLECT_SUNPEARS",
+      "count": 4
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_RETURN_NOMAD",
+      "marker": [
+       1012,
+       304
+      ]
+     }
+    ],
+    "talk_lines": [
+     "DLG_SQ_NOMAD_DONE"
+    ]
+   }
+  ],
+  "title_key": "QUEST_NOMAD_WATER",
+  "desc_key": "QUEST_NOMAD_WATER_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "cooling_salad",
+     "count": 3
+    }
+   ],
+   "glimmer": 45
+  },
+  "start": "talk:NPC_NOMAD",
+  "requires": [
+   "mq_sand_road"
+  ],
+  "offer_lines": [
+   "DLG_SQ_NOMAD_OFFER_1",
+   "DLG_SQ_NOMAD_OFFER_2"
+  ]
+ },
+ {
+  "id": "sq_glass_harvest",
+  "type": "side",
+  "category": "gathering",
+  "region": "desert",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "gather",
+      "target": "glass_outcrop",
+      "text_key": "QO_T_GATHER",
+      "text_args": [
+       "Q_SQ_GLASS_HARVEST_S0_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 250.0,
+      "marker": [
+       1150,
+       300
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_CARAVAN",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_GLASS_SHARD",
+       "NAME_CARAVAN"
+      ],
+      "count": 2,
+      "item": "glass_shard"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_GLASS_HARVEST_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_GLASS_HARVEST",
+  "desc_key": "Q_SQ_GLASS_HARVEST_DESC",
+  "rewards": {
+   "glimmer": 90,
+   "jade": 1
+  },
+  "start": "talk:NPC_CARAVAN",
+  "requires": [
+   "mq_caravan"
+  ],
+  "offer_lines": [
+   "Q_SQ_GLASS_HARVEST_OF0"
+  ]
+ },
+ {
+  "id": "sq_scuttler_burrows",
+  "type": "side",
+  "category": "combat",
+  "region": "desert",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "destroy",
+      "target": "group:burrows",
+      "text_key": "QO_T_DESTROY",
+      "text_args": [
+       "Q_SQ_SCUTTLER_BURROWS_S0_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 70.0,
+      "marker": [
+       880,
+       285
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "nest",
+      "id": "burrow_0",
+      "group": "burrows",
+      "nest": "burrow",
+      "pos": [
+       860,
+       250
+      ],
+      "hp": 50,
+      "melee": 0.1,
+      "weak": {
+       "fire": 1.0,
+       "explosion": 4.0
+      },
+      "spawn": "ENEMY_SCUTTLER",
+      "spawn_every": 11,
+      "spawn_max": 2,
+      "element": "sand",
+      "hint_key": "HINT_RUBBLE",
+      "drops": [
+       {
+        "id": "scuttler_chitin",
+        "count": 2
+       }
+      ]
+     },
+     {
+      "kind": "nest",
+      "id": "burrow_1",
+      "group": "burrows",
+      "nest": "burrow",
+      "pos": [
+       880,
+       330
+      ],
+      "hp": 50,
+      "melee": 0.1,
+      "weak": {
+       "fire": 1.0,
+       "explosion": 4.0
+      },
+      "spawn": "ENEMY_SCUTTLER",
+      "spawn_every": 11,
+      "spawn_max": 2,
+      "element": "sand",
+      "hint_key": "HINT_RUBBLE",
+      "drops": [
+       {
+        "id": "scuttler_chitin",
+        "count": 2
+       }
+      ]
+     },
+     {
+      "kind": "nest",
+      "id": "burrow_2",
+      "group": "burrows",
+      "nest": "burrow",
+      "pos": [
+       902,
+       282
+      ],
+      "hp": 50,
+      "melee": 0.1,
+      "weak": {
+       "fire": 1.0,
+       "explosion": 4.0
+      },
+      "spawn": "ENEMY_SCUTTLER",
+      "spawn_every": 11,
+      "spawn_max": 2,
+      "element": "sand",
+      "hint_key": "HINT_RUBBLE",
+      "drops": [
+       {
+        "id": "scuttler_chitin",
+        "count": 2
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_GUARD",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_GUARD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SCUTTLER_BURROWS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SCUTTLER_BURROWS",
+  "desc_key": "Q_SQ_SCUTTLER_BURROWS_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "resin_bomb",
+     "count": 4
+    }
+   ],
+   "jade": 2,
+   "glimmer": 40
+  },
+  "start": "talk:NPC_GUARD",
+  "requires": [
+   "mq_sand_road"
+  ],
+  "offer_lines": [
+   "Q_SQ_SCUTTLER_BURROWS_OF0"
+  ]
+ },
+ {
+  "id": "dq_mirage_obelisks",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "desert",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:mirage",
+      "text_key": "QO_T_EXAMINE",
+      "text_args": [
+       "Q_DQ_MIRAGE_OBELISKS_S0_O0_A0"
+      ],
+      "count": 3,
+      "conditions": {
+       "weather": [
+        "sandstorm"
+       ]
+      },
+      "hint": "area",
+      "area_radius": 220.0,
+      "marker": [
+       1100,
+       270
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_MIRAGE_OBELISKS",
+  "desc_key": "Q_DQ_MIRAGE_OBELISKS_DESC",
+  "rewards": {
+   "jade": 3,
+   "reveal": {
+    "pos": [
+     1170,
+     300
+    ],
+    "radius": 9
+   }
+  },
+  "start": "event",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "mirage_0",
+    "group": "mirage",
+    "look": "obelisk",
+    "pos": [
+     980,
+     150
+    ],
+    "when": "open",
+    "conditions": {
+     "weather": [
+      "sandstorm"
+     ]
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "sand",
+    "range": 300,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_MIRAGE_OBELISKS_P0_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "mirage_1",
+    "group": "mirage",
+    "look": "obelisk",
+    "pos": [
+     1102,
+     202
+    ],
+    "when": "open",
+    "conditions": {
+     "weather": [
+      "sandstorm"
+     ]
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "sand",
+    "range": 300,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_MIRAGE_OBELISKS_P1_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "mirage_2",
+    "group": "mirage",
+    "look": "obelisk",
+    "pos": [
+     1200,
+     450
+    ],
+    "when": "open",
+    "conditions": {
+     "weather": [
+      "sandstorm"
+     ]
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "sand",
+    "range": 300,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_MIRAGE_OBELISKS_P2_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dq_buried_relic",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "desert",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "ability_use",
+      "target": "wind_sight",
+      "text_key": "QO_T_USE",
+      "text_args": [
+       "ABILITY_WIND_SIGHT"
+      ],
+      "conditions": {
+       "region": "desert"
+      }
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "sand_relic",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "Q_DQ_BURIED_RELIC_S1_O0_A0"
+      ],
+      "marker": [
+       1150,
+       330
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "sand_relic",
+      "look": "relic",
+      "pos": [
+       1150,
+       330
+      ],
+      "prompt": "PROMPT_TAKE",
+      "element": "sand",
+      "reward": {
+       "items": [
+        {
+         "id": "glimmer_shard",
+         "count": 12
+        }
+       ]
+      }
+     },
+     {
+      "kind": "cue",
+      "cue": "pillar",
+      "pos": [
+       1150,
+       330
+      ],
+      "range": 900
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_BURIED_RELIC",
+  "desc_key": "Q_DQ_BURIED_RELIC_DESC",
+  "rewards": {
+   "cosmetic": "echo_sand",
+   "jade": 2
+  },
+  "start": "event",
+  "requires_abilities": [
+   "wind_sight"
+  ]
+ },
+ {
+  "id": "sq_glass_stalker",
+  "type": "side",
+  "category": "boss",
+  "region": "desert",
+  "difficulty": 4,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_GLASS_STALKER",
+      "text_key": "Q_SQ_GLASS_STALKER_S0_O0_TEXT",
+      "marker": [
+       1180,
+       520
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_NOMAD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_GLASS_STALKER_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_GLASS_STALKER",
+  "desc_key": "Q_SQ_GLASS_STALKER_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 80,
+   "items": [
+    {
+     "id": "dune_wrap",
+     "count": 1
+    }
+   ]
+  },
+  "start": "talk:NPC_NOMAD",
+  "requires": [
+   "mq_caravan"
+  ],
+  "offer_lines": [
+   "Q_SQ_GLASS_STALKER_OF0"
+  ]
+ }
+]

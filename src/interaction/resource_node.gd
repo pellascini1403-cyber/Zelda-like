@@ -83,5 +83,6 @@ func _harvest() -> void:
 				EventBus.item_acquired.emit(drop["id"], added)
 	Audio.play_at(&"gather", global_position, -3.0)
 	Effects.leaves(self, global_position + Vector3.UP * 0.4)
+	EventBus.resource_gathered.emit(StringName(def.get("id", "")), global_position)
 	WorldState.mark_harvested(node_id, float(def.get("respawn_hours", 48)))
 	queue_free()

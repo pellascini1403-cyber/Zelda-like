@@ -7,8 +7,15 @@ extends Node3D
 ##    distance; reaching it pays out and ends the event.
 ##  * "spawn" events (ambush, swarm, surge): a group appears around the
 ##    player, just out of sight, and hunts them.
+##  * "encounter" events (a traveller under attack): a live QuestEncounter
+##    appears within earshot — a shout for help, not a map icon.
+##  * "rare" events: a rare creature (the gilded hop at dawn and dusk)
+##    shows up somewhere nearby for a while.
+## Spawn events with "alert": false are patrols that have not seen the
+## player: a powerful enemy walking the land, visible from a distance.
 ## At most one of each kind runs at a time; everything is freed when it ends
-## or the player wanders far away (streaming-safe).
+## or the player wanders far away (streaming-safe). Recently seen events are
+## skipped (anti-repetition).
 
 const MAX_BEACON_DISTANCE := 400.0
 
@@ -19,6 +26,8 @@ var _beacon: Node3D = null
 var _beacon_def: Dictionary = {}
 var _beacon_expire := 0.0
 var _rng := RandomNumberGenerator.new()
+var _encounter: QuestEncounter = null
+var _recent: Array = []   # last event ids (anti-repetition)
 
 
 func _ready() -> void:
@@ -36,6 +45,11 @@ func _process(_delta: float) -> void:
 		_roll()
 	if _beacon:
 		_update_beacon()
+	if _encounter and is_instance_valid(_encounter):
+		var far := Game.player.global_position.distance_to(_encounter.center) > 220.0
+		if far and _encounter.can_release():
+			_encounter.queue_free()
+			_encounter = null
 
 
 func _roll() -> void:
@@ -43,29 +57,84 @@ func _roll() -> void:
 	for ev in DB.world_events:
 		if not String(p.region) in ev.get("regions", []):
 			continue
-		var period := String(ev.get("period", "any"))
-		if (period == "night" and not Clock.is_night()) or (period == "day" and Clock.is_night()):
+		if not _time_ok(ev) or String(ev["id"]) in _recent:
 			continue
 		if _rng.randf() > float(ev.get("chance_per_hour", 0.1)):
 			continue
-		if ev.has("spawn"):
-			if not Game.in_combat:
-				_start_spawn(ev)
-				return
-		elif _beacon == null:
-			_start_beacon(ev)
+		if _start(ev):
 			return
+
+
+func _time_ok(ev: Dictionary) -> bool:
+	var period := String(ev.get("period", "any"))
+	if (period == "night" and not Clock.is_night()) or (period == "day" and Clock.is_night()):
+		return false
+	if ev.has("hours"):
+		var hs: Array = ev["hours"]
+		var ok := false
+		for i in range(0, hs.size() - 1, 2):
+			if Clock.hour >= float(hs[i]) and Clock.hour < float(hs[i + 1]):
+				ok = true
+		if not ok:
+			return false
+	if ev.has("weather") and not String(Weather.target) in ev["weather"]:
+		return false
+	return true
+
+
+func _start(ev: Dictionary) -> bool:
+	var started := false
+	if ev.has("encounter"):
+		if not Game.in_combat and (_encounter == null or not is_instance_valid(_encounter)):
+			started = _start_encounter(ev)
+	elif ev.has("rare"):
+		started = _start_rare(ev)
+	elif ev.has("spawn"):
+		if not Game.in_combat or not ev.get("alert", true):
+			_start_spawn(ev)
+			started = true
+	elif _beacon == null:
+		_start_beacon(ev)
+		started = true
+	if started:
+		_recent.push_front(String(ev["id"]))
+		_recent.resize(mini(_recent.size(), 3))
+	return started
 
 
 func trigger(id: StringName) -> bool:
 	for ev in DB.world_events:
 		if StringName(ev["id"]) == id:
-			if ev.has("spawn"):
-				_start_spawn(ev)
-			else:
-				_start_beacon(ev)
-			return true
+			return _start(ev)
 	return false
+
+
+func _start_encounter(ev: Dictionary) -> bool:
+	var at := _pick_spot(ev.get("distance", [45, 70]))
+	if at == Vector3.INF:
+		return false
+	var e: Dictionary = (ev["encounter"] as Dictionary).duplicate(true)
+	e["id"] = "event:" + String(ev["id"])
+	e["once"] = false
+	_encounter = QuestEncounter.create(e, at, [] as Array[Vector3], spawner, gen)
+	add_child(_encounter)
+	EventBus.world_event_started.emit(StringName(ev["id"]), at)
+	return true
+
+
+func _start_rare(ev: Dictionary) -> bool:
+	var at := _pick_spot(ev.get("distance", [40, 80]))
+	if at == Vector3.INF:
+		return false
+	var c := spawner.spawn_creature(StringName(ev["rare"]), at + Vector3.UP * 0.4, "", "event:" + String(ev["id"]))
+	if c == null:
+		return false
+	spawner.adopt_orphan(c)
+	ElementFX.burst(c, at + Vector3.UP * 0.5, &"jade", 1.2)
+	EventBus.world_event_started.emit(StringName(ev["id"]), at)
+	if ev.has("name_key"):
+		EventBus.toast.emit(tr(ev["name_key"]))
+	return true
 
 
 func _pick_spot(dist: Array) -> Vector3:
@@ -91,13 +160,15 @@ func _start_spawn(ev: Dictionary) -> void:
 		var a := TAU * i / n
 		var sp := center + Vector3(cos(a) * 2.5, 0, sin(a) * 2.5)
 		sp.y = gen.height(sp.x, sp.z) + 0.4
-		var m := spawner.spawn_creature(StringName(ev["spawn"]), sp, "", group)
+		var m := spawner.spawn_creature(StringName(ev["spawn"] if i == 0 or not ev.has("escort") else ev["escort"]), sp, "", group)
 		if m:
-			m.perception.alert(Game.player.global_position)
+			if ev.get("alert", true):
+				m.perception.alert(Game.player.global_position)
 			spawner.adopt_orphan(m)
 			ElementFX.burst(m, sp, &"still" if ev["id"] == "veil_surge" else &"sand" if ev["id"] == "sand_swarm" else &"thorn", 1.4)
 	EventBus.world_event_started.emit(StringName(ev["id"]), center)
-	EventBus.toast.emit(tr(ev.get("name_key", "")))
+	if ev.get("alert", true):
+		EventBus.toast.emit(tr(ev.get("name_key", "")))
 
 
 func _start_beacon(ev: Dictionary) -> void:

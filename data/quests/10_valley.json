@@ -1,0 +1,1232 @@
+[
+ {
+  "id": "sq_lost_kite",
+  "type": "side",
+  "category": "traversal",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "lio_kite",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "Q_SQ_LOST_KITE_S0_O0_A0"
+      ],
+      "marker": [
+       -15,
+       210
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "lio_kite",
+      "look": "kite",
+      "poi": "hamlet_lookout",
+      "pos": [
+       0.9,
+       0.7
+      ],
+      "snap": "top",
+      "min_y": 28.0,
+      "item": "lios_kite",
+      "prompt": "PROMPT_TAKE",
+      "range": 200
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_CHILD",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "Q_SQ_LOST_KITE_S1_O0_A0",
+       "NAME_CHILD"
+      ],
+      "item": "lios_kite"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_LOST_KITE_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_LOST_KITE",
+  "desc_key": "Q_SQ_LOST_KITE_DESC",
+  "rewards": {
+   "cosmetic": "ribbon_dawn",
+   "glimmer": 15
+  },
+  "start": "talk:NPC_CHILD",
+  "requires": [
+   "mq_vela"
+  ],
+  "offer_lines": [
+   "Q_SQ_LOST_KITE_OF0"
+  ]
+ },
+ {
+  "id": "sq_mushroom_stew",
+  "type": "side",
+  "category": "gathering",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "collect",
+      "target": "cap_mushroom",
+      "text_key": "QO_COLLECT_MUSHROOMS",
+      "count": 5
+     }
+    ],
+    "hint_lines": [
+     "DLG_SQ_MUSH_HINT"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_MERCHANT",
+      "text_key": "QO_RETURN_MERCHANT"
+     }
+    ],
+    "talk_lines": [
+     "DLG_SQ_MUSH_DONE"
+    ]
+   }
+  ],
+  "title_key": "QUEST_MUSHROOM",
+  "desc_key": "QUEST_MUSHROOM_DESC",
+  "rewards": {
+   "glimmer": 40,
+   "items": [
+    {
+     "id": "hearty_stew",
+     "count": 2
+    }
+   ]
+  },
+  "start": "talk:NPC_MERCHANT",
+  "requires": [
+   "mq_thorn_road"
+  ],
+  "offer_lines": [
+   "DLG_SQ_MUSH_OFFER_1",
+   "DLG_SQ_MUSH_OFFER_2"
+  ]
+ },
+ {
+  "id": "sq_thorn_cull",
+  "type": "side",
+  "category": "combat",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "kill",
+      "target": "ENEMY_THORNLING",
+      "text_key": "QO_KILL_THORNLINGS",
+      "count": 5,
+      "marker": [
+       -150,
+       420
+      ],
+      "hint": "area",
+      "area_radius": 120.0
+     }
+    ],
+    "hint_lines": [
+     "DLG_SQ_THORN_HINT"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_VILLAGER",
+      "text_key": "QO_RETURN_VILLAGER"
+     }
+    ],
+    "talk_lines": [
+     "DLG_SQ_THORN_DONE"
+    ]
+   }
+  ],
+  "title_key": "QUEST_THORN_CULL",
+  "desc_key": "QUEST_THORN_CULL_DESC",
+  "rewards": {
+   "glimmer": 30,
+   "items": [
+    {
+     "id": "fur_cap",
+     "count": 1
+    },
+    {
+     "id": "whetstone",
+     "count": 2
+    }
+   ]
+  },
+  "start": "talk:NPC_VILLAGER",
+  "offer_lines": [
+   "DLG_SQ_THORN_OFFER_1",
+   "DLG_SQ_THORN_OFFER_2"
+  ]
+ },
+ {
+  "id": "sq_smith_ore",
+  "type": "side",
+  "category": "crafting",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "gather",
+      "target": "iron_vein",
+      "text_key": "QO_T_GATHER",
+      "text_args": [
+       "Q_SQ_SMITH_ORE_S0_O0_A0"
+      ],
+      "count": 3,
+      "marker": [
+       -330,
+       -300
+      ],
+      "hint": "area",
+      "area_radius": 60.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "craft",
+      "target": "iron_ingot",
+      "text_key": "QO_T_CRAFT",
+      "text_args": [
+       "ITEM_IRON_INGOT"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_SMITH",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_IRON_INGOT",
+       "NAME_SMITH"
+      ],
+      "item": "iron_ingot"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SMITH_ORE_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SMITH_ORE",
+  "desc_key": "Q_SQ_SMITH_ORE_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "quarry_saber",
+     "count": 1
+    }
+   ],
+   "glimmer": 30,
+   "jade": 1
+  },
+  "start": "talk:NPC_SMITH",
+  "requires": [
+   "mq_thorn_road"
+  ],
+  "offer_lines": [
+   "Q_SQ_SMITH_ORE_OF0"
+  ]
+ },
+ {
+  "id": "sq_arsenal",
+  "type": "side",
+  "category": "crafting",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "craft",
+      "target": "whetstone",
+      "text_key": "QO_T_CRAFT",
+      "text_args": [
+       "ITEM_WHETSTONE"
+      ]
+     },
+     {
+      "type": "craft",
+      "target": "resin_bomb",
+      "text_key": "QO_T_CRAFT",
+      "text_args": [
+       "ITEM_RESIN_BOMB"
+      ]
+     },
+     {
+      "type": "craft",
+      "target": "fur_cap",
+      "text_key": "QO_T_CRAFT",
+      "text_args": [
+       "ITEM_FUR_CAP"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_SMITH",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_SMITH"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_ARSENAL_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_ARSENAL",
+  "desc_key": "Q_SQ_ARSENAL_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "forge_stone",
+     "count": 1
+    }
+   ],
+   "jade": 1
+  },
+  "start": "talk:NPC_SMITH",
+  "requires": [
+   "sq_smith_ore"
+  ],
+  "offer_lines": [
+   "Q_SQ_ARSENAL_OF0"
+  ]
+ },
+ {
+  "id": "sq_night_lanterns",
+  "type": "side",
+  "category": "puzzle",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "hamlet_lanterns",
+      "text_key": "QO_T_NIGHT",
+      "text_args": [
+       "Q_SQ_NIGHT_LANTERNS_S0_O0_A0"
+      ],
+      "marker": [
+       60,
+       150
+      ],
+      "hint": "area",
+      "area_radius": 40.0
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "puzzle",
+      "id": "hamlet_lanterns",
+      "pos": [
+       60,
+       150
+      ],
+      "conditions": {
+       "period": "night"
+      },
+      "elements": [
+       {
+        "type": "brazier",
+        "at": [
+         26,
+         0
+        ]
+       },
+       {
+        "type": "brazier",
+        "at": [
+         -26,
+         4
+        ]
+       },
+       {
+        "type": "brazier",
+        "at": [
+         2,
+         27
+        ]
+       },
+       {
+        "type": "brazier",
+        "at": [
+         -2,
+         -29
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_VILLAGER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_VILLAGER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_NIGHT_LANTERNS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_NIGHT_LANTERNS",
+  "desc_key": "Q_SQ_NIGHT_LANTERNS_DESC",
+  "rewards": {
+   "cosmetic": "trail_ember",
+   "glimmer": 20
+  },
+  "start": "talk:NPC_VILLAGER",
+  "requires": [
+   "sq_thorn_cull"
+  ],
+  "offer_lines": [
+   "Q_SQ_NIGHT_LANTERNS_OF0"
+  ]
+ },
+ {
+  "id": "sq_strays",
+  "type": "side",
+  "category": "npc",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:strays",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "Q_SQ_STRAYS_S0_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 150.0,
+      "marker": [
+       20,
+       230
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "actor",
+      "entity": "ANIMAL_WOOLHORN",
+      "pos": [
+       -100,
+       160
+      ],
+      "yaw": 40,
+      "talk": {
+       "id": "stray_a",
+       "group": "strays",
+       "prompt": "PROMPT_CALM",
+       "then_path": [
+        [
+         -30,
+         165
+        ],
+        [
+         40,
+         170
+        ]
+       ]
+      }
+     },
+     {
+      "kind": "actor",
+      "entity": "ANIMAL_WOOLHORN",
+      "pos": [
+       -180,
+       235
+      ],
+      "yaw": 120,
+      "talk": {
+       "id": "stray_b",
+       "group": "strays",
+       "prompt": "PROMPT_CALM",
+       "then_path": [
+        [
+         -100,
+         200
+        ],
+        [
+         40,
+         170
+        ]
+       ]
+      }
+     },
+     {
+      "kind": "actor",
+      "entity": "ANIMAL_WOOLHORN",
+      "pos": [
+       170,
+       305
+      ],
+      "yaw": 250,
+      "talk": {
+       "id": "stray_c",
+       "group": "strays",
+       "prompt": "PROMPT_CALM",
+       "then_path": [
+        [
+         110,
+         240
+        ],
+        [
+         60,
+         175
+        ]
+       ]
+      }
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_VILLAGER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_VILLAGER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_STRAYS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_STRAYS",
+  "desc_key": "Q_SQ_STRAYS_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "woolen_wrap",
+     "count": 1
+    }
+   ],
+   "glimmer": 25
+  },
+  "start": "talk:NPC_VILLAGER",
+  "requires": [
+   "sq_night_lanterns"
+  ],
+  "offer_lines": [
+   "Q_SQ_STRAYS_OF0"
+  ]
+ },
+ {
+  "id": "dq_wayfarer_trail",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "wayfarer_1",
+      "text_key": "QO_T_EXAMINE",
+      "text_args": [
+       "Q_DQ_WAYFARER_TRAIL_S0_O0_A0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "wayfarer_2",
+      "text_key": "Q_DQ_WAYFARER_TRAIL_S1_O0_TEXT",
+      "hint": "area",
+      "area_radius": 50.0,
+      "marker": [
+       150,
+       290
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "wayfarer_2",
+      "look": "clue",
+      "pos": [
+       152,
+       292
+      ],
+      "prompt": "PROMPT_EXAMINE",
+      "lines": [
+       "Q_DQ_WAYFARER_TRAIL_S1_P0_L0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "wayfarer_3",
+      "text_key": "Q_DQ_WAYFARER_TRAIL_S2_O0_TEXT",
+      "hint": "area",
+      "area_radius": 45.0,
+      "marker": [
+       262,
+       418
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "wayfarer_3",
+      "look": "clue",
+      "pos": [
+       262,
+       418
+      ],
+      "prompt": "PROMPT_EXAMINE",
+      "lines": [
+       "Q_DQ_WAYFARER_TRAIL_S2_P0_L0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "wayfarer_cache",
+      "text_key": "Q_DQ_WAYFARER_TRAIL_S3_O0_TEXT",
+      "hint": "area",
+      "area_radius": 40.0,
+      "marker": [
+       330,
+       360
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "chest",
+      "id": "wayfarer_cache",
+      "pos": [
+       331,
+       362
+      ],
+      "table": "chest_hidden",
+      "items": [
+       {
+        "id": "stamina_bloom",
+        "count": 1
+       }
+      ]
+     },
+     {
+      "kind": "object",
+      "id": "cache_mushroom",
+      "look": "flower",
+      "pos": [
+       333,
+       360
+      ],
+      "once": false,
+      "hide_used": false,
+      "sparkle": false,
+      "prompt": "PROMPT_EXAMINE",
+      "lines": [
+       "Q_DQ_WAYFARER_TRAIL_S3_P1_L0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_WAYFARER_TRAIL",
+  "desc_key": "Q_DQ_WAYFARER_TRAIL_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 40
+  },
+  "start": "event",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "wayfarer_1",
+    "look": "clue",
+    "pos": [
+     100,
+     176
+    ],
+    "prompt": "PROMPT_EXAMINE",
+    "when": "open",
+    "lines": [
+     "Q_DQ_WAYFARER_TRAIL_P0_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sq_fang_rescue",
+  "type": "side",
+  "category": "combat",
+  "region": "valley",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "fang_captive",
+      "text_key": "QO_T_FREE",
+      "text_args": [
+       "NAME_TRAVELER"
+      ],
+      "marker": [
+       292,
+       -29
+      ]
+     },
+     {
+      "type": "sneak",
+      "target": "ENEMY_THORNLING",
+      "text_key": "QO_T_SNEAK",
+      "text_args": [
+       "NAME_THORNLING"
+      ],
+      "count": 2,
+      "optional": true
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "actor",
+      "entity": "NPC_TRAVELER",
+      "pos": [
+       292,
+       -29
+      ],
+      "tied": true,
+      "hp": 100,
+      "talk": {
+       "id": "fang_captive",
+       "prompt": "PROMPT_FREE",
+       "then_path": [
+        [
+         270,
+         -10
+        ],
+        [
+         230,
+         30
+        ],
+        [
+         180,
+         70
+        ]
+       ],
+       "lines": [
+        "Q_SQ_FANG_RESCUE_S0_P0_K_L0"
+       ]
+      }
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_COURIER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_COURIER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_FANG_RESCUE_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_FANG_RESCUE",
+  "desc_key": "Q_SQ_FANG_RESCUE_DESC",
+  "rewards": {
+   "jade": 1,
+   "glimmer": 40
+  },
+  "bonus_rewards": {
+   "cosmetic": "echo_storm",
+   "items": [
+    {
+     "id": "resin_bomb",
+     "count": 3
+    }
+   ]
+  },
+  "start": "talk:NPC_COURIER",
+  "requires": [
+   "mq_thorn_road"
+  ],
+  "offer_lines": [
+   "Q_SQ_FANG_RESCUE_OF0"
+  ]
+ },
+ {
+  "id": "sq_courier_rounds",
+  "type": "side",
+  "category": "npc",
+  "region": "valley",
+  "difficulty": 1,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_COURIER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_COURIER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_COURIER_ROUNDS_S0_TL0"
+    ],
+    "rewards": {
+     "items": [
+      {
+       "id": "pips_letter",
+       "count": 3
+      }
+     ]
+    }
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_FISHER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_PIPS_LETTER",
+       "NAME_FISHER"
+      ],
+      "item": "pips_letter"
+     },
+     {
+      "type": "deliver",
+      "target": "NPC_HUNTER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_PIPS_LETTER",
+       "NAME_HUNTER"
+      ],
+      "item": "pips_letter"
+     },
+     {
+      "type": "deliver",
+      "target": "NPC_CLIMBER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_PIPS_LETTER",
+       "NAME_CLIMBER"
+      ],
+      "item": "pips_letter"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_COURIER_ROUNDS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_COURIER_ROUNDS",
+  "desc_key": "Q_SQ_COURIER_ROUNDS_DESC",
+  "rewards": {
+   "glimmer": 50,
+   "reveal": [
+    {
+     "pos": [
+      -250,
+      100
+     ],
+     "radius": 3
+    },
+    {
+     "pos": [
+      370,
+      160
+     ],
+     "radius": 3
+    },
+    {
+     "pos": [
+      320,
+      -160
+     ],
+     "radius": 3
+    }
+   ]
+  },
+  "start": "talk:NPC_COURIER",
+  "requires": [
+   "sq_fang_rescue"
+  ],
+  "offer_lines": [
+   "Q_SQ_COURIER_ROUNDS_OF0"
+  ]
+ },
+ {
+  "id": "dq_gilded_hop",
+  "type": "discovery",
+  "category": "combat",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "hunt",
+      "target": "ANIMAL_GILDED_HOP",
+      "text_key": "QO_T_HUNT",
+      "text_args": [
+       "NAME_GILDED_HOP"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_MERCHANT",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_GILDED_FUR",
+       "NAME_MERCHANT"
+      ],
+      "item": "gilded_fur"
+     }
+    ],
+    "talk_lines": [
+     "Q_DQ_GILDED_HOP_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_GILDED_HOP",
+  "desc_key": "Q_DQ_GILDED_HOP_DESC",
+  "rewards": {
+   "glimmer": 150,
+   "jade": 2
+  },
+  "start": "event"
+ },
+ {
+  "id": "dq_smoke_signal",
+  "type": "discovery",
+  "category": "combat",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "Q_DQ_SMOKE_SIGNAL_S0_O0_A0"
+      ],
+      "pos": [
+       -60,
+       330
+      ],
+      "radius": 32.0
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "protect",
+      "target": "farm_raid",
+      "text_key": "QO_T_PROTECT",
+      "text_args": [
+       "Q_DQ_SMOKE_SIGNAL_S1_O0_A0"
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "farm_raid",
+      "mode": "protect",
+      "pos": [
+       -58,
+       334
+      ],
+      "actor": "NPC_TRAVELER",
+      "actor_hp": 110,
+      "trigger_radius": 30,
+      "element": "thorn",
+      "shout_key": "SHOUT_HELP",
+      "waves": [
+       {
+        "entity": "ENEMY_THORNLING",
+        "count": 3,
+        "dist": 13
+       },
+       {
+        "entity": "ENEMY_THORNLING",
+        "count": 2,
+        "dist": 15,
+        "delay": 3
+       },
+       {
+        "entity": "ENEMY_BULWARK",
+        "count": 1,
+        "dist": 16,
+        "delay": 3
+       }
+      ],
+      "end_lines": [
+       "Q_DQ_SMOKE_SIGNAL_S1_P0_EL0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_SMOKE_SIGNAL",
+  "desc_key": "Q_DQ_SMOKE_SIGNAL_DESC",
+  "rewards": {
+   "jade": 1,
+   "glimmer": 50,
+   "items": [
+    {
+     "id": "hearty_stew",
+     "count": 2
+    },
+    {
+     "id": "raw_meat",
+     "count": 3
+    }
+   ]
+  },
+  "start": "event",
+  "spawns": [
+   {
+    "kind": "cue",
+    "cue": "smoke",
+    "pos": [
+     -60,
+     330
+    ],
+    "when": "open",
+    "range": 900
+   },
+   {
+    "kind": "object",
+    "id": "farm_cart",
+    "look": "crate",
+    "pos": [
+     -64,
+     326
+    ],
+    "when": "open",
+    "once": false,
+    "hide_used": false,
+    "sparkle": false,
+    "prompt": "PROMPT_EXAMINE",
+    "lines": [
+     "Q_DQ_SMOKE_SIGNAL_P1_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dq_sealed_sails",
+  "type": "discovery",
+  "category": "puzzle",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "sails_tablet",
+      "text_key": "QO_T_EXAMINE",
+      "text_args": [
+       "Q_DQ_SEALED_SAILS_S0_O0_A0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "sealed_sails",
+      "text_key": "QO_T_SOLVE",
+      "text_args": [
+       "Q_DQ_SEALED_SAILS_S1_O0_A0"
+      ],
+      "marker": [
+       176,
+       312
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "sealed_sails:chest",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_SEALED_SAILS_S2_O0_A0"
+      ],
+      "marker": [
+       176,
+       312
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_SEALED_SAILS",
+  "desc_key": "Q_DQ_SEALED_SAILS_DESC",
+  "rewards": {
+   "jade": 2
+  },
+  "start": "interact:sails_tablet",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "sails_tablet",
+    "look": "board",
+    "pos": [
+     168,
+     318
+    ],
+    "yaw": 30,
+    "when": "open",
+    "once": false,
+    "hide_used": false,
+    "prompt": "PROMPT_EXAMINE",
+    "lines": [
+     "Q_DQ_SEALED_SAILS_P0_L0"
+    ]
+   },
+   {
+    "kind": "puzzle",
+    "id": "sealed_sails",
+    "pos": [
+     176,
+     312
+    ],
+    "when": "open",
+    "elements": [
+     {
+      "type": "vane",
+      "at": [
+       -7,
+       0
+      ]
+     },
+     {
+      "type": "vane",
+      "at": [
+       5,
+       -6
+      ]
+     },
+     {
+      "type": "vane",
+      "at": [
+       5,
+       6
+      ]
+     }
+    ],
+    "seal": {
+     "at": [
+      0,
+      0
+     ],
+     "chest": {
+      "id": "sealed_sails:chest",
+      "table": "chest_hidden",
+      "items": [
+       {
+        "id": "vital_seed",
+        "count": 1
+       }
+      ]
+     }
+    }
+   }
+  ]
+ }
+]

@@ -1,0 +1,510 @@
+[
+ {
+  "id": "sq_tamsin_survey",
+  "type": "side",
+  "category": "exploration",
+  "region": "any",
+  "difficulty": 2,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "needles",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_NEEDLES"
+      ]
+     },
+     {
+      "type": "discover",
+      "target": "elder_tree",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_ELDER_TREE"
+      ]
+     },
+     {
+      "type": "discover",
+      "target": "jade_bridge",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_JADE_BRIDGE"
+      ]
+     },
+     {
+      "type": "discover",
+      "target": "broken_tower",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_BROKEN_TOWER"
+      ]
+     },
+     {
+      "type": "discover",
+      "target": "dawn_wreck",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_DAWN_WRECK"
+      ]
+     },
+     {
+      "type": "discover",
+      "target": "moss_crypt",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_MOSS_CRYPT"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CARTOGRAPHER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_CARTOGRAPHER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_TAMSIN_SURVEY_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_TAMSIN_SURVEY",
+  "desc_key": "Q_SQ_TAMSIN_SURVEY_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 60,
+   "reveal": [
+    {
+     "pos": [
+      0,
+      0
+     ],
+     "radius": 20
+    }
+   ]
+  },
+  "start": "talk:NPC_CARTOGRAPHER",
+  "requires": [
+   "mq_echoes"
+  ],
+  "offer_lines": [
+   "Q_SQ_TAMSIN_SURVEY_OF0"
+  ]
+ },
+ {
+  "id": "sq_cookbook",
+  "type": "side",
+  "category": "crafting",
+  "region": "any",
+  "difficulty": 2,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "cook",
+      "target": "hearty_stew",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_HEARTY_STEW"
+      ]
+     },
+     {
+      "type": "cook",
+      "target": "vigor_broth",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_VIGOR_BROTH"
+      ]
+     },
+     {
+      "type": "cook",
+      "target": "warming_curry",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_WARMING_CURRY"
+      ]
+     },
+     {
+      "type": "cook",
+      "target": "cooling_salad",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_COOLING_SALAD"
+      ]
+     },
+     {
+      "type": "cook",
+      "target": "fierce_skewer",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_FIERCE_SKEWER"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_MERCHANT",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_MERCHANT"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_COOKBOOK_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_COOKBOOK",
+  "desc_key": "Q_SQ_COOKBOOK_DESC",
+  "rewards": {
+   "recipes": [
+    [
+     "honeycomb",
+     "sunpear",
+     "sunpear"
+    ]
+   ],
+   "items": [
+    {
+     "id": "honey_pear_tart",
+     "count": 1
+    }
+   ],
+   "jade": 2,
+   "glimmer": 50
+  },
+  "start": "talk:NPC_MERCHANT",
+  "requires": [
+   "sq_mushroom_stew"
+  ],
+  "offer_lines": [
+   "Q_SQ_COOKBOOK_OF0"
+  ]
+ },
+ {
+  "id": "sq_ribbons",
+  "type": "side",
+  "category": "exploration",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "wayside_shrine",
+      "text_key": "QO_SHRINE_WAYSIDE"
+     },
+     {
+      "type": "discover",
+      "target": "heath_shrine",
+      "text_key": "QO_SHRINE_HEATH"
+     },
+     {
+      "type": "discover",
+      "target": "jade_bridge",
+      "text_key": "QO_JADE_BRIDGE"
+     }
+    ]
+   }
+  ],
+  "title_key": "QUEST_RIBBONS",
+  "desc_key": "QUEST_RIBBONS_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "stamina_bloom",
+     "count": 1
+    }
+   ],
+   "glimmer": 25,
+   "ability": "wind_sight"
+  },
+  "start": "event"
+ },
+ {
+  "id": "sq_windstrider",
+  "type": "side",
+  "category": "traversal",
+  "region": "valley",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "mount",
+      "target": "windstrider",
+      "text_key": "QO_TAME_STRIDER",
+      "marker": [
+       260,
+       110
+      ]
+     }
+    ],
+    "hint_lines": [
+     "DLG_SQ_STRIDER_HINT"
+    ]
+   }
+  ],
+  "title_key": "QUEST_WINDSTRIDER",
+  "desc_key": "QUEST_WINDSTRIDER_DESC",
+  "rewards": {
+   "ability": "strider_call",
+   "glimmer": 20
+  },
+  "start": "talk:NPC_CARTOGRAPHER",
+  "requires": [
+   "mq_vela"
+  ],
+  "offer_lines": [
+   "DLG_SQ_STRIDER_OFFER_1",
+   "DLG_SQ_STRIDER_OFFER_2"
+  ]
+ },
+ {
+  "id": "dq_wind_chimes",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "any",
+  "difficulty": 3,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:chimes",
+      "text_key": "QO_T_RING",
+      "text_args": [
+       "Q_DQ_WIND_CHIMES_S0_O0_A0"
+      ],
+      "count": 8,
+      "hint": "none"
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_WIND_CHIMES",
+  "desc_key": "Q_DQ_WIND_CHIMES_DESC",
+  "rewards": {
+   "cosmetic": "ribbon_jade",
+   "jade": 3,
+   "glimmer": 50
+  },
+  "start": "event",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "chime_0",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     -40,
+     140
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_1",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     180,
+     200
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_2",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     230,
+     280
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_3",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     440,
+     300
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_4",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     -200,
+     20
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_5",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     -60,
+     -200
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_6",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     320,
+     -100
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   },
+   {
+    "kind": "object",
+    "id": "chime_7",
+    "group": "chimes",
+    "look": "chime",
+    "pos": [
+     -250,
+     -200
+    ],
+    "when": "open",
+    "prompt": "PROMPT_RING",
+    "sound": "chime",
+    "element": "wind",
+    "hide_used": false,
+    "reward": {
+     "glimmer": 10
+    }
+   }
+  ]
+ },
+ {
+  "id": "dq_night_bloom",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "highlands",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "moon_bloom",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "Q_DQ_NIGHT_BLOOM_S0_O0_A0"
+      ],
+      "hint": "none"
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_NIGHT_BLOOM",
+  "desc_key": "Q_DQ_NIGHT_BLOOM_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "stamina_bloom",
+     "count": 1
+    }
+   ],
+   "jade": 1
+  },
+  "start": "interact:moon_bloom",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "moon_bloom",
+    "look": "flower",
+    "pos": [
+     124,
+     64.4,
+     -379
+    ],
+    "when": "available",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_TAKE",
+    "element": "jade",
+    "range": 160
+   }
+  ]
+ }
+]

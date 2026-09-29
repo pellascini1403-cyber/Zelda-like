@@ -15,6 +15,7 @@ var pois: PoiManager
 var bosses: BossManager
 var mounts: MountManager
 var events: WorldEventDirector
+var quest_content: QuestSpawner
 var ai: AIManager
 var environment_ctl: EnvironmentController
 var weather_fx: WeatherFX
@@ -113,6 +114,12 @@ func _start() -> void:
 	events.gen = gen
 	events.spawner = spawner
 	add_child(events)
+	quest_content = QuestSpawner.new()
+	quest_content.name = "QuestContent"
+	quest_content.gen = gen
+	quest_content.spawner = spawner
+	quest_content.streamer = streamer
+	add_child(quest_content)
 	ai = AIManager.new()
 	ai.name = "AIManager"
 	add_child(ai)

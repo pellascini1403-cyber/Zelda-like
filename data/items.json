@@ -793,5 +793,52 @@
    "defense": 2,
    "heat_resist": 0.5
   }
+ },
+ {
+  "id": "lios_kite",
+  "category": "key",
+  "max_stack": 1
+ },
+ {
+  "id": "oren_letter",
+  "category": "key",
+  "max_stack": 1
+ },
+ {
+  "id": "fishing_net",
+  "category": "key",
+  "max_stack": 1
+ },
+ {
+  "id": "sun_disc",
+  "category": "key",
+  "max_stack": 1
+ },
+ {
+  "id": "warden_breath",
+  "category": "key",
+  "max_stack": 1,
+  "rarity": 3
+ },
+ {
+  "id": "charged_core",
+  "category": "key",
+  "max_stack": 1
+ },
+ {
+  "id": "pips_letter",
+  "category": "key",
+  "max_stack": 5
+ },
+ {
+  "id": "gilded_fur",
+  "category": "material",
+  "value": 90,
+  "rarity": 2
+ },
+ {
+  "id": "river_lantern",
+  "category": "key",
+  "max_stack": 3
  }
 ]

@@ -185,5 +185,260 @@
     "title_key": "BOSS_WARDEN_P3"
    }
   ]
+ },
+ {
+  "id": "thorn_chief",
+  "entity": "BOSS_THORN_CHIEF",
+  "title_key": "BOSS_THORN_CHIEF_TITLE",
+  "element": "thorn",
+  "loot": "chest_rare",
+  "mini": true,
+  "conditions": {
+   "period": "night"
+  },
+  "spawn_distance": 120,
+  "arena": {
+   "center": [
+    -150,
+    432
+   ],
+   "radius": 16,
+   "home": [
+    0,
+    0
+   ]
+  },
+  "rewards": [
+   {
+    "id": "fierce_skewer",
+    "count": 2
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "rake",
+     "leap"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.5,
+    "attacks": [
+     "rake",
+     "leap",
+     "howl_thorns"
+    ],
+    "speed": 1.25,
+    "shockwave": 5,
+    "summon": "ENEMY_THORNLING",
+    "summon_count": 2,
+    "title_key": "BOSS_THORN_CHIEF_P2"
+   }
+  ]
+ },
+ {
+  "id": "crag_harrier",
+  "entity": "BOSS_CRAG_HARRIER",
+  "title_key": "BOSS_CRAG_HARRIER_TITLE",
+  "element": "wind",
+  "loot": "chest_rare",
+  "mini": true,
+  "conditions": {
+   "flag": "harrier_roused"
+  },
+  "spawn_distance": 160,
+  "arena": {
+   "center": [
+    390,
+    -205
+   ],
+   "radius": 28,
+   "home": [
+    0,
+    0
+   ]
+  },
+  "rewards": [
+   {
+    "id": "windrunner_band",
+    "count": 1
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "dive",
+     "talon"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.5,
+    "attacks": [
+     "dive",
+     "talon",
+     "gale_feathers"
+    ],
+    "speed": 1.3,
+    "shockwave": 6,
+    "title_key": "BOSS_CRAG_HARRIER_P2"
+   }
+  ]
+ },
+ {
+  "id": "stoneward",
+  "entity": "BOSS_STONEWARD",
+  "title_key": "BOSS_STONEWARD_TITLE",
+  "element": "",
+  "loot": "chest_rare",
+  "mini": true,
+  "spawn_distance": 120,
+  "arena": {
+   "center": [
+    -330,
+    -296
+   ],
+   "radius": 18,
+   "home": [
+    0,
+    0
+   ]
+  },
+  "rewards": [
+   {
+    "id": "anvil_maul",
+    "count": 1
+   },
+   {
+    "id": "forge_stone",
+    "count": 1
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "hammer",
+     "quarry_slam"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.45,
+    "attacks": [
+     "hammer",
+     "quarry_slam",
+     "rock_rain"
+    ],
+    "speed": 1.2,
+    "shockwave": 6,
+    "title_key": "BOSS_STONEWARD_P2"
+   }
+  ]
+ },
+ {
+  "id": "glass_stalker",
+  "entity": "BOSS_GLASS_STALKER",
+  "title_key": "BOSS_GLASS_STALKER_TITLE",
+  "element": "glass",
+  "loot": "chest_rare",
+  "mini": true,
+  "conditions": {
+   "period": "night"
+  },
+  "spawn_distance": 140,
+  "arena": {
+   "center": [
+    1180,
+    520
+   ],
+   "radius": 20,
+   "home": [
+    0,
+    0
+   ]
+  },
+  "rewards": [
+   {
+    "id": "sunglass_blade",
+    "count": 1
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "glass_sting",
+     "sand_dash"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.5,
+    "attacks": [
+     "glass_sting",
+     "sand_dash",
+     "shard_burst"
+    ],
+    "speed": 1.25,
+    "shockwave": 6,
+    "summon": "ENEMY_SCUTTLER",
+    "summon_count": 2,
+    "title_key": "BOSS_GLASS_STALKER_P2"
+   }
+  ]
+ },
+ {
+  "id": "hollow_shade",
+  "entity": "BOSS_HOLLOW_SHADE",
+  "title_key": "BOSS_HOLLOW_SHADE_TITLE",
+  "element": "still",
+  "loot": "chest_rare",
+  "mini": true,
+  "spawn_distance": 130,
+  "arena": {
+   "center": [
+    1000,
+    -790
+   ],
+   "radius": 14,
+   "home": [
+    0,
+    0
+   ],
+   "y": 15.0
+  },
+  "rewards": [
+   {
+    "id": "vital_seed",
+    "count": 1
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "hollow_claw",
+     "still_lances"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.5,
+    "attacks": [
+     "hollow_claw",
+     "still_lances",
+     "hush_wave"
+    ],
+    "speed": 1.2,
+    "shockwave": 7,
+    "summon": "ENEMY_SHADE",
+    "summon_count": 2,
+    "title_key": "BOSS_HOLLOW_SHADE_P2"
+   }
+  ]
  }
 ]

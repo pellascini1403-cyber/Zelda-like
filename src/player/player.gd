@@ -99,6 +99,10 @@ func _ready() -> void:
 	trail.name = "WeaponTrail"
 	trail.p = self
 	add_child(trail)
+	var glide_trail := GlideTrail.new()
+	glide_trail.name = "GlideTrail"
+	glide_trail.p = self
+	add_child(glide_trail)
 	abilities = PlayerAbilities.new()
 	abilities.name = "Abilities"
 	add_child(abilities)

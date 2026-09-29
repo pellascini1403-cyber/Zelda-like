@@ -1,0 +1,677 @@
+[
+ {
+  "id": "sq_hungry_hunter",
+  "type": "side",
+  "category": "gathering",
+  "region": "forest",
+  "difficulty": 1,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "hunt",
+      "target": "ANIMAL_WOOLHORN",
+      "text_key": "QO_T_HUNT",
+      "text_args": [
+       "NAME_WOOLHORN"
+      ],
+      "count": 2,
+      "hint": "area",
+      "area_radius": 150.0,
+      "marker": [
+       300,
+       150
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "cook",
+      "target": "hearty_stew",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_HEARTY_STEW"
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_HUNGRY_HUNTER_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_HUNTER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_HEARTY_STEW",
+       "NAME_HUNTER"
+      ],
+      "item": "hearty_stew"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_HUNGRY_HUNTER_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_HUNGRY_HUNTER",
+  "desc_key": "Q_SQ_HUNGRY_HUNTER_DESC",
+  "rewards": {
+   "recipes": [
+    [
+     "fang_pepper",
+     "raw_meat"
+    ]
+   ],
+   "glimmer": 30,
+   "jade": 1
+  },
+  "start": "talk:NPC_HUNTER",
+  "offer_lines": [
+   "Q_SQ_HUNGRY_HUNTER_OF0"
+  ]
+ },
+ {
+  "id": "dq_amber_hives",
+  "type": "discovery",
+  "category": "combat",
+  "region": "forest",
+  "difficulty": 2,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "destroy",
+      "target": "group:amber_hives",
+      "text_key": "QO_T_DESTROY",
+      "text_args": [
+       "Q_DQ_AMBER_HIVES_S0_O0_A0"
+      ],
+      "count": 2,
+      "hint": "area",
+      "area_radius": 60.0,
+      "marker": [
+       520,
+       260
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "nest",
+      "id": "hive_a",
+      "group": "amber_hives",
+      "nest": "hive",
+      "pos": [
+       545,
+       290
+      ],
+      "hp": 55,
+      "spawn": "ENEMY_WISP",
+      "spawn_every": 13,
+      "spawn_max": 2,
+      "element": "electric",
+      "drops": [
+       {
+        "id": "honeycomb",
+        "count": 2
+       },
+       {
+        "id": "amber_sap",
+        "count": 2
+       }
+      ]
+     },
+     {
+      "kind": "nest",
+      "id": "hive_b",
+      "group": "amber_hives",
+      "nest": "hive",
+      "pos": [
+       500,
+       225
+      ],
+      "hp": 55,
+      "spawn": "ENEMY_WISP",
+      "spawn_every": 13,
+      "spawn_max": 2,
+      "element": "electric",
+      "drops": [
+       {
+        "id": "honeycomb",
+        "count": 2
+       },
+       {
+        "id": "amber_sap",
+        "count": 2
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_AMBER_HIVES",
+  "desc_key": "Q_DQ_AMBER_HIVES_DESC",
+  "rewards": {
+   "jade": 1,
+   "glimmer": 40
+  },
+  "start": "poi:elder_tree"
+ },
+ {
+  "id": "sq_glowmoss",
+  "type": "side",
+  "category": "gathering",
+  "region": "forest",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "gather",
+      "target": "glowmoss",
+      "text_key": "Q_SQ_GLOWMOSS_S0_O0_TEXT",
+      "count": 3,
+      "conditions": {
+       "period": "night"
+      },
+      "hint": "area",
+      "area_radius": 40.0,
+      "marker": [
+       600,
+       330
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_HUNTER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_GLOWMOSS",
+       "NAME_HUNTER"
+      ],
+      "count": 3,
+      "item": "glowmoss"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_GLOWMOSS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_GLOWMOSS",
+  "desc_key": "Q_SQ_GLOWMOSS_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "mending_tea",
+     "count": 2
+    }
+   ],
+   "recipes": [
+    [
+     "glowmoss",
+     "glowmoss"
+    ]
+   ],
+   "jade": 1
+  },
+  "start": "talk:NPC_HUNTER",
+  "requires": [
+   "sq_hungry_hunter"
+  ],
+  "offer_lines": [
+   "Q_SQ_GLOWMOSS_OF0"
+  ]
+ },
+ {
+  "id": "dq_sap_and_fire",
+  "type": "discovery",
+  "category": "crafting",
+  "region": "forest",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "rubble_note",
+      "text_key": "QO_T_EXAMINE",
+      "text_args": [
+       "Q_DQ_SAP_AND_FIRE_S0_O0_A0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "gather",
+      "target": "amber_tree",
+      "text_key": "QO_T_GATHER",
+      "text_args": [
+       "Q_DQ_SAP_AND_FIRE_S1_O0_A0"
+      ],
+      "count": 2,
+      "hint": "area",
+      "area_radius": 200.0,
+      "marker": [
+       470,
+       230
+      ]
+     },
+     {
+      "type": "craft",
+      "target": "resin_bomb",
+      "text_key": "QO_T_CRAFT",
+      "text_args": [
+       "ITEM_RESIN_BOMB"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "destroy",
+      "target": "cache_rubble",
+      "text_key": "QO_T_DESTROY",
+      "text_args": [
+       "Q_DQ_SAP_AND_FIRE_S2_O0_A0"
+      ],
+      "marker": [
+       585,
+       400
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "nest",
+      "id": "cache_rubble",
+      "nest": "rubble",
+      "pos": [
+       585,
+       400
+      ],
+      "hp": 40,
+      "melee": 0.0,
+      "weak": {
+       "fire": 0.0,
+       "explosion": 4.0
+      },
+      "hint_key": "HINT_RUBBLE",
+      "element": ""
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "rubble_stash",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_SAP_AND_FIRE_S3_O0_A0"
+      ],
+      "marker": [
+       588,
+       405
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "chest",
+      "id": "rubble_stash",
+      "pos": [
+       588,
+       405
+      ],
+      "table": "chest_camp",
+      "items": [
+       {
+        "id": "lodestone_charm",
+        "count": 1
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_SAP_AND_FIRE",
+  "desc_key": "Q_DQ_SAP_AND_FIRE_DESC",
+  "rewards": {
+   "jade": 1
+  },
+  "start": "interact:rubble_note",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "rubble_note",
+    "look": "scroll",
+    "pos": [
+     580,
+     396
+    ],
+    "when": "open",
+    "once": false,
+    "hide_used": false,
+    "prompt": "PROMPT_EXAMINE",
+    "lines": [
+     "Q_DQ_SAP_AND_FIRE_P0_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sq_lost_scholar",
+  "type": "side",
+  "category": "npc",
+  "region": "forest",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "clear",
+      "target": "quill_spitters",
+      "text_key": "QO_T_CLEAR",
+      "text_args": [
+       "NAME_SPITTER"
+      ],
+      "count": 3,
+      "marker": [
+       660,
+       200
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "creature",
+      "entity": "ENEMY_SPITTER",
+      "group": "quill_spitters",
+      "pos": [
+       662,
+       204
+      ],
+      "count": 3,
+      "spread": 9
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "escort",
+      "target": "quill_escort",
+      "text_key": "QO_T_ESCORT",
+      "text_args": [
+       "NAME_SCHOLAR"
+      ],
+      "marker": [
+       660,
+       200
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_LOST_SCHOLAR",
+  "desc_key": "Q_SQ_LOST_SCHOLAR_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 40
+  },
+  "start": "talk:NPC_HUNTER",
+  "requires": [
+   "sq_hungry_hunter"
+  ],
+  "spawns": [
+   {
+    "kind": "encounter",
+    "id": "quill_escort",
+    "mode": "escort",
+    "pos": [
+     660,
+     200
+    ],
+    "actor": "NPC_SCHOLAR",
+    "actor_hp": 120,
+    "when": "active",
+    "element": "thorn",
+    "path": [
+     [
+      620,
+      195
+     ],
+     [
+      560,
+      186
+     ],
+     [
+      500,
+      180
+     ],
+     [
+      440,
+      170
+     ],
+     [
+      385,
+      163
+     ]
+    ],
+    "wait_distance": 22,
+    "vanish": true,
+    "ambushes": [
+     {
+      "at": 2,
+      "entity": "ENEMY_THORNLING",
+      "count": 3,
+      "dist": 12
+     }
+    ],
+    "start_lines": [
+     "Q_SQ_LOST_SCHOLAR_P0_SL0"
+    ],
+    "end_lines": [
+     "Q_SQ_LOST_SCHOLAR_P0_EL0"
+    ]
+   }
+  ],
+  "unlocks": {
+   "flags": [
+    "quill_safe"
+   ]
+  },
+  "offer_lines": [
+   "Q_SQ_LOST_SCHOLAR_OF0"
+  ]
+ },
+ {
+  "id": "sq_whispering_stones",
+  "type": "side",
+  "category": "exploration",
+  "region": "forest",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:whisper",
+      "text_key": "QO_T_NIGHT",
+      "text_args": [
+       "Q_SQ_WHISPERING_STONES_S0_O0_A0"
+      ],
+      "count": 4,
+      "hint": "area",
+      "area_radius": 220.0,
+      "marker": [
+       430,
+       300
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "whisper_0",
+      "group": "whisper",
+      "look": "stone",
+      "pos": [
+       430,
+       330
+      ],
+      "conditions": {
+       "period": "night"
+      },
+      "prompt": "PROMPT_EXAMINE",
+      "hint_key": "HINT_WRONG_TIME",
+      "element": "wind",
+      "lines": [
+       "Q_SQ_WHISPERING_STONES_S0_P0_L0"
+      ]
+     },
+     {
+      "kind": "object",
+      "id": "whisper_1",
+      "group": "whisper",
+      "look": "stone",
+      "pos": [
+       560,
+       180
+      ],
+      "conditions": {
+       "period": "night"
+      },
+      "prompt": "PROMPT_EXAMINE",
+      "hint_key": "HINT_WRONG_TIME",
+      "element": "wind",
+      "lines": [
+       "Q_SQ_WHISPERING_STONES_S0_P1_L0"
+      ]
+     },
+     {
+      "kind": "object",
+      "id": "whisper_2",
+      "group": "whisper",
+      "look": "stone",
+      "pos": [
+       250,
+       250
+      ],
+      "conditions": {
+       "period": "night"
+      },
+      "prompt": "PROMPT_EXAMINE",
+      "hint_key": "HINT_WRONG_TIME",
+      "element": "wind",
+      "lines": [
+       "Q_SQ_WHISPERING_STONES_S0_P2_L0"
+      ]
+     },
+     {
+      "kind": "object",
+      "id": "whisper_3",
+      "group": "whisper",
+      "look": "stone",
+      "pos": [
+       480,
+       420
+      ],
+      "conditions": {
+       "period": "night"
+      },
+      "prompt": "PROMPT_EXAMINE",
+      "hint_key": "HINT_WRONG_TIME",
+      "element": "wind",
+      "lines": [
+       "Q_SQ_WHISPERING_STONES_S0_P3_L0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_SCHOLAR",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_SCHOLAR"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_WHISPERING_STONES_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_WHISPERING_STONES",
+  "desc_key": "Q_SQ_WHISPERING_STONES_DESC",
+  "rewards": {
+   "cosmetic": "trail_jade",
+   "jade": 2,
+   "items": [
+    {
+     "id": "vital_seed",
+     "count": 1
+    }
+   ]
+  },
+  "start": "talk:NPC_SCHOLAR",
+  "requires": [
+   "sq_lost_scholar"
+  ],
+  "offer_lines": [
+   "Q_SQ_WHISPERING_STONES_OF0"
+  ]
+ },
+ {
+  "id": "dq_thorn_chief",
+  "type": "discovery",
+  "category": "boss",
+  "region": "valley",
+  "difficulty": 3,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_THORN_CHIEF",
+      "text_key": "Q_DQ_THORN_CHIEF_S0_O0_TEXT",
+      "marker": [
+       -150,
+       432
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_THORN_CHIEF",
+  "desc_key": "Q_DQ_THORN_CHIEF_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 60
+  },
+  "start": "poi:thorn_den"
+ }
+]

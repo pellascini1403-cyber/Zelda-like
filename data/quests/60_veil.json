@@ -1,0 +1,376 @@
+[
+ {
+  "id": "dq_veil_echoes",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "veil",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "group:veil_echo",
+      "text_key": "QO_T_NIGHT",
+      "text_args": [
+       "Q_DQ_VEIL_ECHOES_S0_O0_A0"
+      ],
+      "count": 5,
+      "conditions": {
+       "period": "night"
+      },
+      "hint": "area",
+      "area_radius": 230.0,
+      "marker": [
+       880,
+       -880
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_VEIL_ECHOES",
+  "desc_key": "Q_DQ_VEIL_ECHOES_DESC",
+  "rewards": {
+   "cosmetic": "echo_veil",
+   "jade": 2,
+   "items": [
+    {
+     "id": "vital_seed",
+     "count": 1
+    }
+   ]
+  },
+  "start": "event",
+  "spawns": [
+   {
+    "kind": "object",
+    "id": "veil_echo_0",
+    "group": "veil_echo",
+    "look": "stone",
+    "pos": [
+     1001,
+     -792
+    ],
+    "when": "open",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "still",
+    "hint_key": "HINT_WRONG_TIME",
+    "range": 220,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_VEIL_ECHOES_P0_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "veil_echo_1",
+    "group": "veil_echo",
+    "look": "stone",
+    "pos": [
+     834,
+     -1023
+    ],
+    "when": "open",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "still",
+    "hint_key": "HINT_WRONG_TIME",
+    "range": 220,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_VEIL_ECHOES_P1_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "veil_echo_2",
+    "group": "veil_echo",
+    "look": "stone",
+    "pos": [
+     926,
+     -1023
+    ],
+    "when": "open",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "still",
+    "hint_key": "HINT_WRONG_TIME",
+    "range": 220,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_VEIL_ECHOES_P2_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "veil_echo_3",
+    "group": "veil_echo",
+    "look": "stone",
+    "pos": [
+     760,
+     -760
+    ],
+    "when": "open",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "still",
+    "hint_key": "HINT_WRONG_TIME",
+    "range": 220,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_VEIL_ECHOES_P3_L0"
+    ]
+   },
+   {
+    "kind": "object",
+    "id": "veil_echo_4",
+    "group": "veil_echo",
+    "look": "stone",
+    "pos": [
+     1030,
+     -880
+    ],
+    "when": "open",
+    "conditions": {
+     "period": "night"
+    },
+    "prompt": "PROMPT_EXAMINE",
+    "element": "still",
+    "hint_key": "HINT_WRONG_TIME",
+    "range": 220,
+    "hide_used": false,
+    "lines": [
+     "Q_DQ_VEIL_ECHOES_P4_L0"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sq_crystal_resonance",
+  "type": "side",
+  "category": "gathering",
+  "region": "veil",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "gather",
+      "target": "still_crystal",
+      "text_key": "QO_T_GATHER",
+      "text_args": [
+       "Q_SQ_CRYSTAL_RESONANCE_S0_O0_A0"
+      ],
+      "count": 3,
+      "hint": "area",
+      "area_radius": 220.0,
+      "marker": [
+       880,
+       -880
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_PILGRIM",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_PILGRIM"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_CRYSTAL_RESONANCE_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_CRYSTAL_RESONANCE",
+  "desc_key": "Q_SQ_CRYSTAL_RESONANCE_DESC",
+  "rewards": {
+   "jade": 2,
+   "items": [
+    {
+     "id": "vital_seed",
+     "count": 1
+    }
+   ],
+   "glimmer": 40
+  },
+  "start": "talk:NPC_PILGRIM",
+  "requires": [
+   "mq_veil_edge"
+  ],
+  "offer_lines": [
+   "Q_SQ_CRYSTAL_RESONANCE_OF0"
+  ]
+ },
+ {
+  "id": "sq_pilgrim_path",
+  "type": "side",
+  "category": "npc",
+  "region": "veil",
+  "difficulty": 3,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "escort",
+      "target": "pilgrim_walk",
+      "text_key": "QO_T_ESCORT",
+      "text_args": [
+       "Q_SQ_PILGRIM_PATH_S0_O0_A0"
+      ],
+      "marker": [
+       656,
+       -646
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_PILGRIM_PATH",
+  "desc_key": "Q_SQ_PILGRIM_PATH_DESC",
+  "rewards": {
+   "jade": 2,
+   "items": [
+    {
+     "id": "mending_tea",
+     "count": 2
+    }
+   ]
+  },
+  "start": "talk:NPC_PILGRIM",
+  "requires": [
+   "mq_veil_edge"
+  ],
+  "spawns": [
+   {
+    "kind": "encounter",
+    "id": "pilgrim_walk",
+    "mode": "escort",
+    "pos": [
+     656,
+     -646
+    ],
+    "actor": "NPC_TRAVELER",
+    "actor_hp": 110,
+    "when": "active",
+    "element": "still",
+    "vanish": true,
+    "path": [
+     [
+      664,
+      -664
+     ],
+     [
+      676,
+      -684
+     ],
+     [
+      688,
+      -702
+     ],
+     [
+      697,
+      -716
+     ]
+    ],
+    "wait_distance": 20,
+    "ambushes": [
+     {
+      "at": 1,
+      "entity": "ENEMY_SHADE",
+      "count": 2,
+      "dist": 12
+     },
+     {
+      "at": 3,
+      "entity": "ENEMY_WISP",
+      "count": 2,
+      "dist": 10
+     }
+    ],
+    "start_lines": [
+     "Q_SQ_PILGRIM_PATH_P0_SL0"
+    ],
+    "end_lines": [
+     "Q_SQ_PILGRIM_PATH_P0_EL0"
+    ]
+   }
+  ],
+  "offer_lines": [
+   "Q_SQ_PILGRIM_PATH_OF0"
+  ]
+ },
+ {
+  "id": "sq_hollow_shade",
+  "type": "side",
+  "category": "boss",
+  "region": "veil",
+  "difficulty": 4,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_HOLLOW_SHADE",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_HOLLOW_SHADE"
+      ],
+      "marker": [
+       1000,
+       -790
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_PILGRIM",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_PILGRIM"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_HOLLOW_SHADE_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_HOLLOW_SHADE",
+  "desc_key": "Q_SQ_HOLLOW_SHADE_DESC",
+  "rewards": {
+   "cosmetic": "trail_dusk",
+   "jade": 3,
+   "glimmer": 60
+  },
+  "start": "talk:NPC_PILGRIM",
+  "requires": [
+   "mq_anchors"
+  ],
+  "offer_lines": [
+   "Q_SQ_HOLLOW_SHADE_OF0"
+  ]
+ }
+]

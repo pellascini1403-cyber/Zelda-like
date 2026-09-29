@@ -58,7 +58,7 @@ func _run() -> void:
 	await seconds(1.0)
 
 	# --- Quests ---------------------------------------------------------------------------------
-	check(Quests.is_active(&"mq_first_wind") and Quests.tracked == &"mq_first_wind", "main quest auto-starts and is tracked")
+	check(Quests.is_active(&"mq_vela") and Quests.tracked == &"mq_vela", "main quest auto-starts and is tracked")
 	check(w.hud.tracker.visible, "HUD quest tracker visible")
 	var carto: Node = null
 	for n in get_tree().get_nodes_in_group(&"npcs"):
@@ -70,7 +70,8 @@ func _run() -> void:
 			if c is NPCTalk:
 				(c as NPCTalk).interact(p)
 	await frames(5)
-	check(Quests.state[&"mq_first_wind"]["stage"] >= 1, "talking to the cartographer advances the main quest")
+	check(Quests.state[&"mq_vela"]["stage"] >= 1, "talking to the cartographer advances the main quest")
+	check(PlayerData.has_glider(), "Tamsin hands over the Vela")
 	check(w.hud.dialogue.visible, "quest dialogue shown")
 	w.hud.dialogue.visible = false
 
@@ -189,6 +190,9 @@ func _run() -> void:
 		check(PlayerData.inventory.count_of(&"sunpear") == had + 1 and PlayerData.glimmer == 196, "buying spends glimmer")
 		w.hud.shop.close_panel()
 
+	# --- Quest world content -----------------------------------------------------------------------
+	await _quest_content(w, p)
+
 	# --- World event -----------------------------------------------------------------------------------
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
 	var bp: Variant = w.events.beacon_position()
@@ -202,7 +206,7 @@ func _run() -> void:
 	await teleport(1010.0, 300.0)
 	await seconds(2.0)
 	check(p.region == &"desert", "desert region reached (%s)" % p.region)
-	check(Quests.is_active(&"mq_first_wind") and not Quests.is_active(&"mq_sand_voices"), "desert main quest waits for the first act")
+	check(not Quests.is_active(&"mq_sand_road"), "desert main quest waits for the beacons")
 	await teleport(700.0, -880.0)
 	await seconds(1.5)
 	check(p.region == &"veil", "veil region reached (%s)" % p.region)
@@ -230,6 +234,159 @@ func _run() -> void:
 		print("after:  ", after)
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
 	_finish()
+
+
+func _npc(id: StringName) -> Creature:
+	for n in get_tree().get_nodes_in_group(&"npcs"):
+		if (n as Creature).type.id == id:
+			return n
+	return null
+
+
+func _talk(id: StringName, p: Player) -> void:
+	var n := _npc(id)
+	if n:
+		for c in n.get_children():
+			if c is NPCTalk:
+				(c as NPCTalk).interact(p)
+	await frames(3)
+	(Game.world as GameWorld).hud.dialogue.visible = false
+
+
+func _kill_near(pos: Vector3, r: float) -> int:
+	var n := 0
+	for c in get_tree().get_nodes_in_group(&"creatures"):
+		var cr := c as Creature
+		if cr and not cr.is_dead() and cr.kind_is_hostile() and not cr is Boss and cr.global_position.distance_to(pos) < r:
+			var info := DamageInfo.make(9999.0, Game.player, Vector3.ZERO)
+			info.blockable = false
+			cr.take_damage(info)
+			n += 1
+	return n
+
+
+## Quest content in the real world: spawner, encounter, nest, course,
+## object on a roof, board, altar, beacon, emergent encounter.
+func _quest_content(w: GameWorld, p: Player) -> void:
+	# Finish the first main quest so the next ones open up.
+	Quests.state[&"mq_vela"]["state"] = Quests.State.COMPLETED
+	Quests.state[&"mq_vela"]["completions"] = 1
+	Quests._refresh_availability()
+	await teleport(60.0, 150.0)
+	await seconds(1.5)
+	await _talk(&"NPC_MERCHANT", p)
+	check(Quests.is_active(&"mq_thorn_road"), "Brask offers 'Thorns on the Road'")
+	await teleport(165.0, 82.0)
+	await seconds(2.0)
+	var enc: QuestEncounter = null
+	for e in get_tree().get_nodes_in_group(&"quest_encounters"):
+		if (e as QuestEncounter).enc_id == &"cart_ambush":
+			enc = e
+	check(enc != null and enc.actor != null, "the cart ambush and its hauler are placed")
+	var t0 := Time.get_ticks_msec()
+	while enc and is_instance_valid(enc) and enc.phase != QuestEncounter.Phase.DONE and Time.get_ticks_msec() - t0 < 40000:
+		await seconds(0.5)
+		if enc.is_active():
+			_kill_near(enc.center, 40.0)
+	check(Quests.state[&"mq_thorn_road"]["stage"] >= 1, "protecting the hauler completes the stage")
+	await seconds(1.5)
+	var nest: QuestNest = null
+	for n in get_tree().get_nodes_in_group(&"quest_nests"):
+		if (n as QuestNest).nest_id == &"road_nest":
+			nest = n
+	check(nest != null, "the thorn nest is placed")
+	if nest:
+		var slash := DamageInfo.make(20.0, p, Vector3.ZERO)
+		nest.take_damage(slash)
+		check(not nest.is_dead(), "blades barely scratch the nest")
+		var blast := DamageInfo.make(40.0, p, Vector3.ZERO, &"fire")
+		blast.kind = &"explosion"
+		nest.take_damage(blast)
+		await frames(3)
+		check(QuestNest.destroyed("road_nest"), "an explosion destroys the nest")
+	check(Quests.state[&"mq_thorn_road"]["stage"] >= 2, "destroying the nest advances the quest")
+	var bombs := PlayerData.inventory.count_of(&"resin_bomb")
+	await teleport(60.0, 150.0)
+	await seconds(1.0)
+	await _talk(&"NPC_MERCHANT", p)
+	check(Quests.is_completed(&"mq_thorn_road") and PlayerData.inventory.count_of(&"resin_bomb") == bombs + 3, "turning in pays the reward")
+	check(Quests.is_active(&"mq_echoes"), "the next main quest starts on its own")
+	# Kite on the lookout roof (object snapped onto a structure).
+	await _talk(&"NPC_CHILD", p)
+	check(Quests.is_active(&"sq_lost_kite"), "Lio asks for the kite")
+	await teleport(-15.0, 205.0)
+	await seconds(2.0)
+	var kite: QuestObject = null
+	for o in get_tree().get_nodes_in_group(&"quest_objects"):
+		if (o as QuestObject).object_id == &"lio_kite":
+			kite = o
+	check(kite != null and kite.global_position.y > 28.0, "the kite sits on the lookout roof (y %.1f)" % (kite.global_position.y if kite else 0.0))
+	if kite:
+		kite.interact(p)
+		await frames(3)
+	check(PlayerData.inventory.has(&"lios_kite"), "the kite is retrieved")
+	await teleport(60.0, 150.0)
+	await seconds(1.0)
+	await _talk(&"NPC_CHILD", p)
+	check(Quests.is_completed(&"sq_lost_kite") and PlayerData.cosmetics.has("ribbon_dawn"), "Lio rewards a glider-ribbon cosmetic")
+	# Ring course (discovery start + par recheck on the same run).
+	await teleport(70.0, 185.0)
+	await seconds(2.0)
+	var course: RingCourse = null
+	for c in get_tree().get_nodes_in_group(&"ring_courses"):
+		if (c as RingCourse).course_id == &"shrine_sprint":
+			course = c
+	check(course != null, "the shrine sprint course is placed")
+	if course:
+		for pt in course.points:
+			p.global_position = pt
+			await frames(4)
+	await frames(5)
+	check(Quests.is_completed(&"ch_shrine_sprint"), "running the rings under par clears the challenge")
+	# Bounty board and Warden altar.
+	EventBus.panel_requested.emit(&"board", "hamlet")
+	await frames(2)
+	check(w.hud.board.visible and w.hud.board.body.get_child_count() >= 2, "the hamlet board lists bounties")
+	var offers := Quests.board_offers("hamlet", 3)
+	if not offers.is_empty():
+		Quests.start(offers[0])
+	check(not offers.is_empty() and Quests.is_active(offers[0]), "a bounty can be taken")
+	w.hud.board.close_panel()
+	PlayerData.add_jade(10)
+	var st := PlayerData.max_stamina
+	EventBus.panel_requested.emit(&"altar", "")
+	await frames(2)
+	check(w.hud.altar.visible, "the Warden altar opens")
+	check(PlayerData.buy_upgrade(&"breath") and PlayerData.upgrade_level(&"breath") == 1 and PlayerData.max_stamina == st + 20.0, "jade buys a blessing")
+	w.hud.altar.close_panel()
+	# Beacon at the temple.
+	await teleport(-14.0, -312.0, 3.0)
+	await seconds(2.0)
+	var beacon: WardenBeacon = null
+	for b in get_tree().get_nodes_in_group(&"warden_beacons"):
+		if (b as WardenBeacon).flag_id == "beacon_valley":
+			beacon = b
+	check(beacon != null, "the valley beacon stands at the temple")
+	if beacon:
+		beacon.interact(p)
+		await frames(3)
+	check(WorldState.flags.has("beacon_valley"), "lighting the beacon sets its flag")
+	# Emergent encounter: a traveller under attack.
+	await teleport(120.0, 220.0)
+	await seconds(1.0)
+	check(w.events.trigger(&"traveler_attacked"), "a traveller-under-attack event triggers")
+	var ev: QuestEncounter = w.events._encounter
+	check(ev != null, "the emergent encounter is placed nearby")
+	if ev:
+		p.global_position = ev.center + Vector3(4, 2, 0)
+		await seconds(1.0)
+		var g := PlayerData.glimmer
+		t0 = Time.get_ticks_msec()
+		while is_instance_valid(ev) and ev.phase != QuestEncounter.Phase.DONE and Time.get_ticks_msec() - t0 < 30000:
+			await seconds(0.5)
+			if ev.is_active():
+				_kill_near(ev.center, 40.0)
+		check(PlayerData.glimmer > g, "saving the traveller pays a reward")
 
 
 func _finish() -> void:

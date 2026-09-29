@@ -19,6 +19,16 @@ func enter() -> void:
 
 func tick(_delta: float) -> StringName:
 	var p := c.perception
+	var tgt := c.threat_target()
+	if tgt != null and tgt != Game.player:
+		# Quest focus (protect/escort): go for it directly, no sight check.
+		var fd := c.global_position.distance_to(tgt.global_position)
+		var fatk := b.pick_attack(fd)
+		if fatk:
+			(b.states[&"attack"] as AttackState).attack = fatk
+			return &"attack"
+		c.go_to(tgt.global_position, c.type.run_speed)
+		return &""
 	var player := Game.player as Player
 	if player == null or player.is_dead():
 		return &"search"

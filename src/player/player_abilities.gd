@@ -104,7 +104,7 @@ func use(id: StringName) -> bool:
 		_:
 			ok = false
 	if ok:
-		cooldowns[id] = float(d.get("cooldown", 1.0))
+		cooldowns[id] = float(d.get("cooldown", 1.0)) * (1.0 - PlayerData.upgrade_bonus(&"winds"))
 		EventBus.ability_used.emit(id)
 	return ok
 

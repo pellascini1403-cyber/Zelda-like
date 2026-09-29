@@ -68,9 +68,17 @@ func _draw() -> void:
 		var bp: Variant = gw.events.beacon_position()
 		if bp != null:
 			_marker(bp, ppos, heading, "event", UIArt.JADE_LIGHT)
-	var q: Variant = Quests.tracked_target()
-	if q != null:
-		_marker(q, ppos, heading, "quest", UIArt.GOLD)
+	# Tracked objective: an exact diamond, or for "search the area" goals a
+	# broad arc that fades once the player is inside the area.
+	var qm := Quests.tracked_marker()
+	if not qm.is_empty():
+		var qp: Vector3 = qm["pos"]
+		if String(qm["hint"]) == "area":
+			var dd := Vector2(qp.x - ppos.x, qp.z - ppos.z).length()
+			if dd > float(qm["radius"]) * 0.8:
+				_marker(qp, ppos, heading, "area", UIArt.GOLD)
+		else:
+			_marker(qp, ppos, heading, "quest", UIArt.GOLD)
 	if pin != Vector3.INF:
 		_marker(pin, ppos, heading, "pin", UITheme.DANGER)
 	# Centre needle
@@ -86,7 +94,7 @@ func _marker(world: Vector3, ppos: Vector3, heading: float, kind: String, col: C
 	var x := _x_for(bearing, heading)
 	if x < 0.0:
 		# Off-scroll quest objective: clamp to the edge so it is never lost.
-		if kind != "quest":
+		if kind != "quest" and kind != "area":
 			return
 		var diff := wrapf(bearing - heading, -180.0, 180.0)
 		x = 24.0 if diff < 0.0 else size.x - 24.0
@@ -105,6 +113,9 @@ func _marker(world: Vector3, ppos: Vector3, heading: float, kind: String, col: C
 				draw_string(_font, Vector2(x - w * 0.5, 62), t, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(UIArt.GOLD, 0.9))
 		"event":
 			draw_arc(Vector2(x, 42), 5.0, 0, TAU, 14, col, 2.0, true)
+		"area":
+			draw_arc(Vector2(x, 42), 9.0, PI * 1.1, PI * 1.9, 10, Color(col, 0.9), 2.5, true)
+			draw_arc(Vector2(x, 42), 5.0, 0, TAU, 12, Color(col, 0.5), 1.5, true)
 
 
 func _x_for(bearing: float, heading: float) -> float:

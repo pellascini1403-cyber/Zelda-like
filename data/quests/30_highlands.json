@@ -1,0 +1,438 @@
+[
+ {
+  "id": "sq_summit_offering",
+  "type": "side",
+  "category": "traversal",
+  "region": "highlands",
+  "difficulty": 3,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "interact",
+      "target": "summit_offering",
+      "text_key": "Q_SQ_SUMMIT_OFFERING_S0_O0_TEXT",
+      "marker": [
+       -103,
+       -573
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "summit_offering",
+      "look": "offering",
+      "poi": "cendal_summit",
+      "pos": [
+       -2.2,
+       1.8
+      ],
+      "needs_item": "honeycomb",
+      "needs_count": 1,
+      "prompt": "PROMPT_OFFER",
+      "element": "jade",
+      "hide_used": false,
+      "range": 220,
+      "lines": [
+       "Q_SQ_SUMMIT_OFFERING_S0_P0_L0"
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_HERMIT",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_HERMIT"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SUMMIT_OFFERING_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SUMMIT_OFFERING",
+  "desc_key": "Q_SQ_SUMMIT_OFFERING_DESC",
+  "rewards": {
+   "cosmetic": "ribbon_star",
+   "jade": 2
+  },
+  "start": "talk:NPC_HERMIT",
+  "offer_lines": [
+   "Q_SQ_SUMMIT_OFFERING_OF0"
+  ]
+ },
+ {
+  "id": "sq_warm_hearts",
+  "type": "side",
+  "category": "gathering",
+  "region": "highlands",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "cook",
+      "target": "warming_curry",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_WARMING_CURRY"
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_WARM_HEARTS_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_CLIMBER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_WARMING_CURRY",
+       "NAME_CLIMBER"
+      ],
+      "item": "warming_curry"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_WARM_HEARTS_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_WARM_HEARTS",
+  "desc_key": "Q_SQ_WARM_HEARTS_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "climber_gloves",
+     "count": 1
+    }
+   ],
+   "jade": 1
+  },
+  "start": "talk:NPC_CLIMBER",
+  "offer_lines": [
+   "Q_SQ_WARM_HEARTS_OF0"
+  ]
+ },
+ {
+  "id": "dq_stoneward",
+  "type": "discovery",
+  "category": "boss",
+  "region": "valley",
+  "difficulty": 3,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "boss",
+      "target": "BOSS_STONEWARD",
+      "text_key": "QO_T_DEFEAT",
+      "text_args": [
+       "NAME_STONEWARD"
+      ],
+      "marker": [
+       -330,
+       -296
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_STONEWARD",
+  "desc_key": "Q_DQ_STONEWARD_DESC",
+  "rewards": {
+   "jade": 2,
+   "glimmer": 60
+  },
+  "start": "poi:old_quarry"
+ },
+ {
+  "id": "sq_storm_rod",
+  "type": "side",
+  "category": "exploration",
+  "region": "lakeshore",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "retrieve",
+      "target": "storm_rod",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_CHARGED_CORE"
+      ],
+      "marker": [
+       -330,
+       -60
+      ],
+      "conditions": {
+       "weather": [
+        "storm"
+       ]
+      }
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "object",
+      "id": "storm_rod",
+      "look": "lever",
+      "poi": "broken_tower",
+      "pos": [
+       0.8,
+       0.6
+      ],
+      "snap": "top",
+      "min_y": 9.0,
+      "item": "charged_core",
+      "prompt": "PROMPT_PULL",
+      "element": "electric",
+      "range": 200,
+      "conditions": {
+       "weather": [
+        "storm"
+       ]
+      },
+      "hint_key": "HINT_WRONG_WEATHER"
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_SMITH",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_CHARGED_CORE",
+       "NAME_SMITH"
+      ],
+      "item": "charged_core"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_STORM_ROD_S1_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_STORM_ROD",
+  "desc_key": "Q_SQ_STORM_ROD_DESC",
+  "rewards": {
+   "items": [
+    {
+     "id": "lodestone_charm",
+     "count": 1
+    }
+   ],
+   "jade": 2
+  },
+  "start": "talk:NPC_SMITH",
+  "requires": [
+   "sq_arsenal"
+  ],
+  "offer_lines": [
+   "Q_SQ_STORM_ROD_OF0"
+  ]
+ },
+ {
+  "id": "dq_frost_shrine",
+  "type": "discovery",
+  "category": "puzzle",
+  "region": "highlands",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "puzzle",
+      "target": "frost_seal",
+      "text_key": "QO_T_SOLVE",
+      "text_args": [
+       "POI_FROST_SHRINE"
+      ],
+      "marker": [
+       -150,
+       -500
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_DQ_FROST_SHRINE_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "frost_seal:chest",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_FROST_SHRINE_S1_O0_A0"
+      ]
+     }
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_FROST_SHRINE",
+  "desc_key": "Q_DQ_FROST_SHRINE_DESC",
+  "rewards": {
+   "jade": 2
+  },
+  "start": "poi:frost_shrine",
+  "spawns": [
+   {
+    "kind": "puzzle",
+    "id": "frost_seal",
+    "poi": "frost_shrine",
+    "pos": [
+     0,
+     0
+    ],
+    "when": "open",
+    "elements": [
+     {
+      "type": "brazier",
+      "at": [
+       6,
+       4
+      ]
+     },
+     {
+      "type": "brazier",
+      "at": [
+       -6,
+       4
+      ]
+     },
+     {
+      "type": "brazier",
+      "at": [
+       0,
+       -7
+      ]
+     },
+     {
+      "type": "vane",
+      "at": [
+       5,
+       -5
+      ]
+     }
+    ],
+    "seal": {
+     "at": [
+      -6.5,
+      -4
+     ],
+     "chest": {
+      "id": "frost_seal:chest",
+      "table": "chest_rare",
+      "items": [
+       {
+        "id": "stamina_bloom",
+        "count": 1
+       },
+       {
+        "id": "woolen_wrap",
+        "count": 1
+       }
+      ]
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "sq_hermit_pantry",
+  "type": "side",
+  "category": "gathering",
+  "region": "highlands",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_HERMIT",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_EMBERROOT",
+       "NAME_HERMIT"
+      ],
+      "count": 2,
+      "item": "emberroot"
+     },
+     {
+      "type": "deliver",
+      "target": "NPC_HERMIT",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_FROSTMINT",
+       "NAME_HERMIT"
+      ],
+      "count": 2,
+      "item": "frostmint"
+     },
+     {
+      "type": "deliver",
+      "target": "NPC_HERMIT",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_HONEYCOMB",
+       "NAME_HERMIT"
+      ],
+      "count": 1,
+      "item": "honeycomb"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_HERMIT_PANTRY_S0_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_HERMIT_PANTRY",
+  "desc_key": "Q_SQ_HERMIT_PANTRY_DESC",
+  "rewards": {
+   "recipes": [
+    [
+     "emberroot",
+     "raw_meat"
+    ],
+    [
+     "frostmint",
+     "sunpear"
+    ],
+    [
+     "honeycomb",
+     "sunpear",
+     "sunpear"
+    ]
+   ],
+   "jade": 1,
+   "glimmer": 20
+  },
+  "start": "talk:NPC_HERMIT",
+  "requires": [
+   "sq_summit_offering"
+  ],
+  "offer_lines": [
+   "Q_SQ_HERMIT_PANTRY_OF0"
+  ]
+ }
+]
