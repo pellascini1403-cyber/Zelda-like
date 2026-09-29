@@ -12,6 +12,9 @@ var gen: WorldGen
 var streamer: WorldStreamer
 var spawner: SpawnDirector
 var pois: PoiManager
+var bosses: BossManager
+var mounts: MountManager
+var events: WorldEventDirector
 var ai: AIManager
 var environment_ctl: EnvironmentController
 var weather_fx: WeatherFX
@@ -93,6 +96,21 @@ func _start() -> void:
 	pois.gen = gen
 	pois.spawner = spawner
 	add_child(pois)
+	bosses = BossManager.new()
+	bosses.name = "Bosses"
+	bosses.gen = gen
+	bosses.spawner = spawner
+	add_child(bosses)
+	mounts = MountManager.new()
+	mounts.name = "Mounts"
+	mounts.gen = gen
+	mounts.spawner = spawner
+	add_child(mounts)
+	events = WorldEventDirector.new()
+	events.name = "WorldEvents"
+	events.gen = gen
+	events.spawner = spawner
+	add_child(events)
 	ai = AIManager.new()
 	ai.name = "AIManager"
 	add_child(ai)
@@ -170,12 +188,23 @@ func _process(delta: float) -> void:
 ## Audio.play_music; this only chooses the mood.
 func _update_music() -> void:
 	var track := &"music_day"
-	if Game.in_combat:
+	var boss_fight := false
+	for b in get_tree().get_nodes_in_group(&"bosses"):
+		if (b as Boss).engaged and not (b as Boss).dead:
+			boss_fight = true
+	var region := player.region if player else &""
+	if boss_fight:
+		track = &"music_boss"
+	elif Game.in_combat:
 		track = &"music_combat"
 	elif Clock.is_night():
 		track = &"music_night"
 	elif player and player.global_position.y > 110.0:
 		track = &"music_high"
+	elif region == &"desert":
+		track = &"music_desert"
+	elif region == &"veil":
+		track = &"music_veil"
 	Audio.play_music(track)
 
 

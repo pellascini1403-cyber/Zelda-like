@@ -1,0 +1,14 @@
+[
+  {"id": "wind_rift", "name_key": "EVENT_WIND_RIFT", "chance_per_hour": 0.35, "regions": ["valley", "forest", "highlands", "lakeshore", "coast"],
+   "distance": [60, 140], "duration_hours": 2.0, "reward": {"items": [{"id": "glimmer_shard", "count": [4, 8]}]},
+   "period": "any"},
+  {"id": "thorn_ambush", "name_key": "EVENT_THORN_AMBUSH", "chance_per_hour": 0.18, "regions": ["valley", "forest"],
+   "distance": [14, 20], "spawn": "ENEMY_THORNLING", "count": [3, 4], "period": "night"},
+  {"id": "sand_swarm", "name_key": "EVENT_SAND_SWARM", "chance_per_hour": 0.3, "regions": ["desert"],
+   "distance": [16, 24], "spawn": "ENEMY_SCUTTLER", "count": [3, 5], "period": "any"},
+  {"id": "veil_surge", "name_key": "EVENT_VEIL_SURGE", "chance_per_hour": 0.4, "regions": ["veil"],
+   "distance": [18, 26], "spawn": "ENEMY_SHADE", "count": [2, 3], "period": "any"},
+  {"id": "star_fall", "name_key": "EVENT_STAR_FALL", "chance_per_hour": 0.12, "regions": ["valley", "forest", "highlands", "lakeshore", "coast", "desert"],
+   "distance": [80, 160], "duration_hours": 3.0, "reward": {"items": [{"id": "glass_shard", "count": [1, 2]}, {"id": "glimmer_shard", "count": [6, 10]}]},
+   "period": "night"}
+]

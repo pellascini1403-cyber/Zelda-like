@@ -93,7 +93,11 @@
       "guards": [
         "ENEMY_THORNLING",
         "ENEMY_THORNLING"
-      ]
+      ],
+      "puzzle": {
+        "type": "braziers",
+        "count": 3
+      }
     },
     {
       "id": "moss_crypt",
@@ -123,7 +127,11 @@
       ],
       "guards": [
         "ENEMY_SPITTER"
-      ]
+      ],
+      "puzzle": {
+        "type": "plates",
+        "count": 2
+      }
     },
     {
       "id": "fang_camp",
@@ -382,6 +390,167 @@
         "ENEMY_THORNLING",
         "ENEMY_SPITTER"
       ]
+    },
+    {
+      "id": "sunscar_oasis",
+      "type": "oasis",
+      "name_key": "POI_SUNSCAR_OASIS",
+      "pos": [
+        1010,
+        300
+      ],
+      "flatten": 22,
+      "pad_height": 7.0,
+      "clear_radius": 30,
+      "discover_radius": 45,
+      "npcs": [
+        [
+          "NPC_NOMAD",
+          2,
+          4
+        ]
+      ],
+      "lore": "LORE_OASIS"
+    },
+    {
+      "id": "sun_vault",
+      "type": "maze",
+      "name_key": "POI_SUN_VAULT",
+      "pos": [
+        1250,
+        380
+      ],
+      "flatten": 30,
+      "pad_height": 11.5,
+      "clear_radius": 34,
+      "discover_radius": 44,
+      "cells": 9,
+      "wall_height": 5.5,
+      "style": "sandstone",
+      "small_chests": 2,
+      "loot": "chest_vault",
+      "lore": "LORE_SUN_VAULT",
+      "reward": [
+        {
+          "id": "dune_wrap"
+        },
+        {
+          "id": "vital_seed"
+        }
+      ],
+      "guards": [
+        "ENEMY_SCUTTLER",
+        "ENEMY_SCUTTLER",
+        "ENEMY_SCUTTLER"
+      ],
+      "puzzle": {
+        "type": "braziers",
+        "count": 4
+      }
+    },
+    {
+      "id": "glass_arena",
+      "type": "arena",
+      "style": "desert",
+      "name_key": "POI_GLASS_ARENA",
+      "pos": [
+        1300,
+        120
+      ],
+      "flatten": 28,
+      "pad_height": 13.0,
+      "clear_radius": 40,
+      "discover_radius": 50,
+      "radius": 22
+    },
+    {
+      "id": "still_heart",
+      "type": "arena",
+      "style": "veil",
+      "name_key": "POI_STILL_HEART",
+      "pos": [
+        880,
+        -880
+      ],
+      "flatten": 34,
+      "pad_height": 3.0,
+      "clear_radius": 46,
+      "discover_radius": 70,
+      "radius": 26
+    },
+    {
+      "id": "anchor_north",
+      "type": "anchor",
+      "name_key": "POI_ANCHOR_NORTH",
+      "pos": [
+        880,
+        -1085
+      ],
+      "flatten": 10,
+      "pad_height": 48.8,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "flag": "anchor_north",
+      "guards": [
+        "ENEMY_SHADE",
+        "ENEMY_SHADE"
+      ]
+    },
+    {
+      "id": "anchor_east",
+      "type": "anchor",
+      "name_key": "POI_ANCHOR_EAST",
+      "pos": [
+        1085,
+        -880
+      ],
+      "flatten": 10,
+      "pad_height": 58.6,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "flag": "anchor_east",
+      "guards": [
+        "ENEMY_SHADE",
+        "ENEMY_SHADE",
+        "ENEMY_WISP"
+      ]
+    },
+    {
+      "id": "anchor_west",
+      "type": "anchor",
+      "name_key": "POI_ANCHOR_WEST",
+      "pos": [
+        675,
+        -880
+      ],
+      "flatten": 10,
+      "pad_height": 58.1,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "flag": "anchor_west",
+      "guards": [
+        "ENEMY_SHADE",
+        "ENEMY_SHADE"
+      ]
+    },
+    {
+      "id": "drifting_isles",
+      "type": "floating_isles",
+      "name_key": "POI_DRIFTING_ISLES",
+      "pos": [
+        800,
+        -990
+      ],
+      "clear_radius": 10,
+      "discover_radius": 90,
+      "count": 7,
+      "loot": "chest_rare",
+      "reward": [
+        {
+          "id": "stamina_bloom"
+        }
+      ],
+      "levity_radius": 110
     }
   ],
   "falls": [
@@ -681,6 +850,37 @@
         -100
       ],
       "sunken_hall"
+    ],
+    [
+      [
+        640,
+        250
+      ],
+      [
+        760,
+        260
+      ],
+      "sunscar_oasis",
+      "sun_vault"
+    ],
+    [
+      "sunscar_oasis",
+      [
+        1150,
+        200
+      ],
+      "glass_arena"
     ]
+  ],
+  "mounts": [
+    {
+      "id": "windstrider",
+      "entity": "MOUNT_WINDSTRIDER",
+      "herd": [
+        260,
+        110
+      ],
+      "count": 3
+    }
   ]
 }

@@ -1,27 +1,546 @@
 {
-  "crate": [{"id": "wood_bundle", "chance": 0.7, "count": [1, 2]}, {"id": "fiber", "chance": 0.5, "count": [1, 2]}, {"id": "sunpear", "chance": 0.3, "count": [1, 2]}, {"id": "resin_bomb", "chance": 0.1, "count": [1, 1]}],
-  "chest_common": [{"id": "glimmer_shard", "chance": 1.0, "count": [2, 5]}, {"id": "resin_bomb", "chance": 0.4, "count": [1, 2]}, {"id": "whetstone", "chance": 0.4, "count": [1, 1]}, {"id": "cap_mushroom", "chance": 0.5, "count": [2, 3]}, {"id": "flint", "chance": 0.5, "count": [2, 3]}],
-  "chest_camp": [{"id": "glimmer_shard", "chance": 1.0, "count": [5, 10]}, {"id": "anvil_maul", "chance": 1.0, "count": [1, 1]}, {"id": "resin_bomb", "chance": 0.8, "count": [2, 3]}, {"id": "iron_ore", "chance": 0.7, "count": [2, 3]}],
-  "chest_rare": [{"id": "glimmer_shard", "chance": 1.0, "count": [10, 20]}, {"id": "whetstone", "chance": 0.8, "count": [2, 3]}, {"id": "honeycomb", "chance": 0.5, "count": [1, 2]}],
-  "chest_grand": [{"id": "glimmer_shard", "chance": 1.0, "count": [20, 40]}, {"id": "forge_stone", "chance": 1.0, "count": [1, 1]}],
-  "drop_thornling": [{"id": "thorn_fang", "chance": 0.8, "count": [1, 2]}, {"id": "beast_hide", "chance": 0.3, "count": [1, 1]}, {"id": "raw_meat", "chance": 0.3, "count": [1, 1]}],
-  "drop_bulwark": [{"id": "bulwark_plate", "chance": 0.9, "count": [1, 2]}, {"id": "iron_ore", "chance": 0.6, "count": [1, 2]}, {"id": "quarry_saber", "chance": 0.2, "count": [1, 1]}],
-  "drop_spitter": [{"id": "spitter_gland", "chance": 0.9, "count": [1, 1]}, {"id": "amber_sap", "chance": 0.5, "count": [1, 2]}],
-  "drop_wisp": [{"id": "wisp_filament", "chance": 1.0, "count": [1, 1]}, {"id": "glimmer_shard", "chance": 0.5, "count": [1, 2]}],
-  "drop_woolhorn": [{"id": "raw_meat", "chance": 1.0, "count": [1, 2]}, {"id": "beast_hide", "chance": 0.6, "count": [1, 1]}],
-  "drop_burrowhop": [{"id": "raw_meat", "chance": 0.7, "count": [1, 1]}],
-  "res_sunpear": [{"id": "sunpear", "chance": 1.0, "count": [2, 3]}],
-  "res_mushroom": [{"id": "cap_mushroom", "chance": 1.0, "count": [1, 3]}],
-  "res_emberroot": [{"id": "emberroot", "chance": 1.0, "count": [1, 2]}],
-  "res_frostmint": [{"id": "frostmint", "chance": 1.0, "count": [1, 2]}],
-  "res_pepper": [{"id": "fang_pepper", "chance": 1.0, "count": [1, 2]}],
-  "res_stoneleaf": [{"id": "stoneleaf", "chance": 1.0, "count": [1, 2]}],
-  "res_swiftleaf": [{"id": "swiftleaf", "chance": 1.0, "count": [1, 2]}],
-  "res_glowmoss": [{"id": "glowmoss", "chance": 1.0, "count": [1, 2]}],
-  "res_fiber": [{"id": "fiber", "chance": 1.0, "count": [2, 3]}],
-  "res_flint": [{"id": "flint", "chance": 1.0, "count": [2, 3]}],
-  "res_iron": [{"id": "iron_ore", "chance": 1.0, "count": [2, 3]}, {"id": "glimmer_shard", "chance": 0.3, "count": [1, 2]}],
-  "res_amber": [{"id": "amber_sap", "chance": 1.0, "count": [1, 2]}],
-  "res_wood": [{"id": "wood_bundle", "chance": 1.0, "count": [2, 3]}],
-  "res_honey": [{"id": "honeycomb", "chance": 1.0, "count": [1, 2]}]
+ "crate": [
+  {
+   "id": "wood_bundle",
+   "chance": 0.7,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "fiber",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "sunpear",
+   "chance": 0.3,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "resin_bomb",
+   "chance": 0.1,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    5
+   ]
+  },
+  {
+   "id": "resin_bomb",
+   "chance": 0.4,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "whetstone",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "cap_mushroom",
+   "chance": 0.5,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "flint",
+   "chance": 0.5,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "chest_camp": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    5,
+    10
+   ]
+  },
+  {
+   "id": "anvil_maul",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "resin_bomb",
+   "chance": 0.8,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "iron_ore",
+   "chance": 0.7,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "chest_rare": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    10,
+    20
+   ]
+  },
+  {
+   "id": "whetstone",
+   "chance": 0.8,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "honeycomb",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "chest_grand": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    20,
+    40
+   ]
+  },
+  {
+   "id": "forge_stone",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_thornling": [
+  {
+   "id": "thorn_fang",
+   "chance": 0.8,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "beast_hide",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "raw_meat",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_bulwark": [
+  {
+   "id": "bulwark_plate",
+   "chance": 0.9,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "iron_ore",
+   "chance": 0.6,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "quarry_saber",
+   "chance": 0.2,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_spitter": [
+  {
+   "id": "spitter_gland",
+   "chance": 0.9,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "amber_sap",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_wisp": [
+  {
+   "id": "wisp_filament",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_woolhorn": [
+  {
+   "id": "raw_meat",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "beast_hide",
+   "chance": 0.6,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_burrowhop": [
+  {
+   "id": "raw_meat",
+   "chance": 0.7,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "res_sunpear": [
+  {
+   "id": "sunpear",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "res_mushroom": [
+  {
+   "id": "cap_mushroom",
+   "chance": 1.0,
+   "count": [
+    1,
+    3
+   ]
+  }
+ ],
+ "res_emberroot": [
+  {
+   "id": "emberroot",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_frostmint": [
+  {
+   "id": "frostmint",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_pepper": [
+  {
+   "id": "fang_pepper",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_stoneleaf": [
+  {
+   "id": "stoneleaf",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_swiftleaf": [
+  {
+   "id": "swiftleaf",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_glowmoss": [
+  {
+   "id": "glowmoss",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_fiber": [
+  {
+   "id": "fiber",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "res_flint": [
+  {
+   "id": "flint",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "res_iron": [
+  {
+   "id": "iron_ore",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 0.3,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_amber": [
+  {
+   "id": "amber_sap",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_wood": [
+  {
+   "id": "wood_bundle",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "res_honey": [
+  {
+   "id": "honeycomb",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_scuttler": [
+  {
+   "id": "scuttler_chitin",
+   "chance": 0.8,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "sunpear",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_shade": [
+  {
+   "id": "shade_essence",
+   "chance": 0.7,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 0.5,
+   "count": [
+    1,
+    3
+   ]
+  }
+ ],
+ "drop_matriarch": [
+  {
+   "id": "glass_shard",
+   "chance": 1.0,
+   "count": [
+    3,
+    5
+   ]
+  }
+ ],
+ "res_cactus": [
+  {
+   "id": "sunpear",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "fiber",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "res_glass": [
+  {
+   "id": "glass_shard",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "flint",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "res_still_crystal": [
+  {
+   "id": "shade_essence",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    4
+   ]
+  }
+ ],
+ "chest_vault": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    8,
+    14
+   ]
+  },
+  {
+   "id": "glass_shard",
+   "chance": 0.8,
+   "count": [
+    1,
+    3
+   ]
+  },
+  {
+   "id": "forge_stone",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ]
 }

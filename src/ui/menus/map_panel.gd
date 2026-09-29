@@ -39,7 +39,13 @@ func _build_fog() -> void:
 func _draw() -> void:
 	var s := minf(size.x, size.y) - 10.0
 	_map_rect = Rect2(Vector2((size.x - s) * 0.5, (size.y - s) * 0.5), Vector2(s, s))
-	draw_rect(_map_rect.grow(8), Color(0.33, 0.26, 0.18))
+	# Mounted scroll: dark lacquer frame, gold hairlines, rollers top/bottom.
+	draw_rect(_map_rect.grow(14), Color(0.13, 0.09, 0.07))
+	draw_rect(_map_rect.grow(10), Color(UIArt.GOLD, 0.7), false, 1.5)
+	for yy in [_map_rect.position.y - 18.0, _map_rect.end.y + 12.0]:
+		draw_rect(Rect2(Vector2(_map_rect.position.x - 26, yy), Vector2(_map_rect.size.x + 52, 8)), Color(0.3, 0.19, 0.12))
+		draw_circle(Vector2(_map_rect.position.x - 28, yy + 4), 7, UIArt.GOLD)
+		draw_circle(Vector2(_map_rect.end.x + 28, yy + 4), 7, UIArt.GOLD)
 	draw_rect(_map_rect, Color(0.8, 0.73, 0.58))
 	if _tex:
 		draw_texture_rect(_tex, _map_rect, false)
@@ -50,9 +56,9 @@ func _draw() -> void:
 			continue
 		var p: Array = poi["pos"]
 		var sp := _to_map(Vector3(p[0], 0, p[1]))
-		var col := UITheme.ACCENT if poi["type"] == "village" else UITheme.ACCENT_2
-		draw_circle(sp, 9, Color(0, 0, 0, 0.6))
-		draw_circle(sp, 6, col)
+		var col := UIArt.CINNABAR if poi["type"] in ["village", "oasis", "temple"] else Color(0.18, 0.4, 0.33)
+		UIArt.diamond(self, sp, 9.0, Color(0.12, 0.09, 0.06, 0.8))
+		UIArt.diamond(self, sp, 6.5, col)
 		var name := tr(poi["name_key"])
 		draw_string(_font, sp + Vector2(12, 6), name, HORIZONTAL_ALIGNMENT_LEFT, -1, UITheme.fs(18), Color(0.12, 0.1, 0.08))
 	var hud: HUD = Game.world.hud if Game.world else null
@@ -60,6 +66,18 @@ func _draw() -> void:
 		var pp := _to_map(hud.compass.pin)
 		draw_circle(pp, 10, UITheme.DANGER)
 		draw_circle(pp, 4, Color.WHITE)
+	var q: Variant = Quests.tracked_target()
+	if q != null:
+		var qp := _to_map(q)
+		var pulse := 1.0 + 0.2 * sin(Time.get_ticks_msec() * 0.006)
+		UIArt.diamond(self, qp, 13.0 * pulse, Color(0.1, 0.07, 0.04, 0.8))
+		UIArt.diamond(self, qp, 10.0 * pulse, UIArt.GOLD)
+		draw_circle(qp, 2.5, Color(0.1, 0.07, 0.04))
+	var gw := Game.world as GameWorld
+	if gw and gw.events:
+		var bp: Variant = gw.events.beacon_position()
+		if bp != null:
+			draw_arc(_to_map(bp), 9.0, 0, TAU, 18, Color(0.15, 0.55, 0.45), 3.0, true)
 	if Game.player:
 		var pl := _to_map(Game.player.global_position)
 		var fwd := (Game.player as Player).facing_dir()
@@ -68,6 +86,13 @@ func _draw() -> void:
 		draw_colored_polygon(PackedVector2Array([pl + d * 16, pl - d * 9 + side * 9, pl - d * 9 - side * 9]), Color.WHITE)
 		draw_polyline(PackedVector2Array([pl + d * 16, pl - d * 9 + side * 9, pl - d * 9 - side * 9, pl + d * 16]), Color.BLACK, 2.0)
 	draw_string(_font, _map_rect.position + Vector2(12, 30), tr("MAP_HINT"), HORIZONTAL_ALIGNMENT_LEFT, -1, UITheme.fs(18), Color(0.12, 0.1, 0.08))
+	UIArt.corners(self, _map_rect.grow(-6), 26.0, Color(0.35, 0.22, 0.12, 0.8))
+	# Compass rose (north up)
+	var rose := _map_rect.position + Vector2(_map_rect.size.x - 44, 52)
+	draw_arc(rose, 24, 0, TAU, 24, Color(0.25, 0.17, 0.1, 0.8), 1.5, true)
+	draw_colored_polygon(PackedVector2Array([rose + Vector2(0, -30), rose + Vector2(6, 0), rose + Vector2(-6, 0)]), UIArt.CINNABAR)
+	draw_colored_polygon(PackedVector2Array([rose + Vector2(0, 30), rose + Vector2(6, 0), rose + Vector2(-6, 0)]), Color(0.25, 0.17, 0.1, 0.8))
+	draw_string(UITheme.title_font(), rose + Vector2(-6, -34), "N", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.25, 0.17, 0.1))
 
 
 func _to_map(w: Vector3) -> Vector2:

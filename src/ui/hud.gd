@@ -23,6 +23,12 @@ var _flash: ColorRect
 var _top_right: HBoxContainer
 var _top_left: VBoxContainer
 var _buffs: HBoxContainer
+var tracker: QuestTracker
+var title_card: TitleCard
+var boss_plate: BossPlate
+var ability: AbilityIndicator
+var shop: ShopPanel
+var _spurs: Control
 
 
 func _ready() -> void:
@@ -81,19 +87,21 @@ func _ready() -> void:
 	_clock.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
 	_clock.add_theme_constant_override("outline_size", 6)
 	_top_right.add_child(_clock)
-	var map_btn := UITheme.button(tr("BTN_MAP"), 56)
-	map_btn.custom_minimum_size.x = 96
-	map_btn.pressed.connect(func() -> void: open_menu(PauseMenu.TAB_MAP))
-	_top_right.add_child(map_btn)
-	var bag_btn := UITheme.button(tr("BTN_BAG"), 56)
-	bag_btn.custom_minimum_size.x = 96
-	bag_btn.pressed.connect(func() -> void: open_menu(PauseMenu.TAB_INVENTORY))
-	_top_right.add_child(bag_btn)
-	var pause_btn := UITheme.button("II", 56)
-	pause_btn.custom_minimum_size.x = 64
-	pause_btn.pressed.connect(func() -> void: open_menu(PauseMenu.TAB_SETTINGS))
-	_top_right.add_child(pause_btn)
+	for pair in [["map", PauseMenu.TAB_MAP], ["journal", PauseMenu.TAB_JOURNAL], ["bag", PauseMenu.TAB_INVENTORY], ["pause", PauseMenu.TAB_SETTINGS]]:
+		var gb := GlyphButton.make(pair[0], 58.0)
+		var tab: int = pair[1]
+		gb.pressed.connect(func() -> void: open_menu(tab))
+		_top_right.add_child(gb)
 	touch.blockers.append(_top_right)
+	tracker = QuestTracker.new()
+	_root.add_child(tracker)
+	ability = AbilityIndicator.new()
+	_root.add_child(ability)
+	_spurs = Control.new()
+	_spurs.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_spurs.custom_minimum_size = Vector2(160, 24)
+	_spurs.draw.connect(_draw_spurs)
+	_root.add_child(_spurs)
 
 	_toasts = VBoxContainer.new()
 	_toasts.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -106,12 +114,18 @@ func _ready() -> void:
 	dialogue = DialogueBox.new()
 	_root.add_child(dialogue)
 	touch.blockers.append(dialogue)
+	boss_plate = BossPlate.new()
+	_root.add_child(boss_plate)
+	title_card = TitleCard.new()
+	_root.add_child(title_card)
 
 	menu = PauseMenu.new()
 	menu.hud = self
 	add_child(menu)
 	cooking = CookingPanel.new()
 	add_child(cooking)
+	shop = ShopPanel.new()
+	add_child(shop)
 
 	EventBus.toast.connect(show_toast)
 	EventBus.item_acquired.connect(_on_item)
@@ -126,7 +140,9 @@ func _ready() -> void:
 	EventBus.game_saved.connect(func() -> void: _feed_line(tr("TOAST_SAVED"), UITheme.TEXT_DIM))
 	EventBus.station_opened.connect(func(station: StringName, node: Node3D) -> void:
 		if station == &"campfire":
-			cooking.open(node))
+			cooking.open(node)
+		elif station == &"shop":
+			shop.open(node))
 	EventBus.stamina_exhausted.connect(func() -> void: _stamina.pulse())
 	# Full-screen menus own the screen: hide the HUD underneath.
 	EventBus.menu_toggled.connect(func(open: bool) -> void: _root.visible = not open)
@@ -146,8 +162,13 @@ func _layout() -> void:
 	compass.position = Vector2(vs.x * 0.5 - compass.size.x * 0.5, m["top"])
 	_toasts.position = Vector2(vs.x * 0.5 - 300, m["top"] + 70)
 	_toasts.size = Vector2(600, 200)
-	_feed.position = Vector2(vs.x - m["right"] - 360, m["top"] + 80)
+	_feed.position = Vector2(vs.x - m["right"] - 360, m["top"] + 230)
 	_feed.size = Vector2(360, 300)
+	tracker.position = Vector2(vs.x - m["right"] - 420, m["top"] + 74)
+	tracker.size = Vector2(420, 140)
+	(tracker.get_child(0) as Control).size = Vector2(420, 140)
+	ability.position = Vector2(vs.x - m["right"] - 90, vs.y - m["bottom"] - 110)
+	_spurs.position = Vector2(vs.x * 0.5 - 80, vs.y - m["bottom"] - 40)
 
 
 func _process(delta: float) -> void:
@@ -172,6 +193,9 @@ func _process(delta: float) -> void:
 	_status.text = "  ".join(status)
 	_status.add_theme_color_override("font_color", UITheme.DANGER if exp != 0 else UITheme.TEXT)
 	_update_buffs()
+	_spurs.visible = p.mount != null
+	if _spurs.visible:
+		_spurs.queue_redraw()
 	# Low health pulse + damage flash
 	_vignette_t = maxf(_vignette_t - delta * 1.5, 0.0)
 	var low := 1.0 - smoothstep(0.15, 0.3, PlayerData.health / PlayerData.max_health)
@@ -254,3 +278,17 @@ func _feed_line(text: String, color: Color) -> void:
 func _flash_screen(c: Color) -> void:
 	_flash.color = c
 	create_tween().tween_property(_flash, "color:a", 0.0, 0.5)
+
+
+## Mount spur charges (riding only).
+func _draw_spurs() -> void:
+	var p := Game.player as Player
+	if p == null or p.mount == null:
+		return
+	var mt := p.mount
+	var n := int(mt.m("stamina", 4))
+	for i in n:
+		var c := Vector2(20 + i * 30, 12)
+		var fill := clampf(mt.spurs - i, 0.0, 1.0)
+		UIArt.diamond(_spurs, c, 9.0, Color(0, 0, 0, 0.5))
+		UIArt.diamond(_spurs, c, 7.0 * maxf(fill, 0.25), Color(UIArt.JADE_LIGHT, 0.4 + 0.6 * fill))

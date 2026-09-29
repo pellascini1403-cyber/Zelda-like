@@ -95,11 +95,15 @@ func _paint_map(gen: WorldGen) -> Image:
 			var c: Color
 			if h < 0.0:
 				c = sea.lerp(sea_deep, clampf(-h / 18.0, 0.0, 1.0))
+				# The Veil's still lake glows faintly jade on the map.
+				c = c.lerp(Color(0.3, 0.62, 0.58), smoothstep(0.5, 0.9, gen.veil_k(x, z)))
 			elif h < 2.5:
 				c = sand
 			else:
 				var slope := absf(h - heights[j * RES + i + 1]) + absf(h - heights[(j + 1) * RES + i])
 				c = grass.lerp(forest, gen.forest_density(x, z))
+				c = c.lerp(Color(0.88, 0.72, 0.5), smoothstep(0.2, 0.6, gen.desert_k(x, z)))
+				c = c.lerp(Color(0.46, 0.42, 0.58), smoothstep(0.3, 0.7, gen.veil_k(x, z)))
 				c = c.lerp(rock, clampf((slope - 3.0) / 6.0, 0.0, 1.0))
 				c = c.lerp(rock, smoothstep(90.0, 140.0, h))
 				c = c.lerp(snow, smoothstep(150.0, 175.0, h))

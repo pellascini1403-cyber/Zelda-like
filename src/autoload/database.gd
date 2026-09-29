@@ -5,6 +5,9 @@ extends Node
 ## `validate()` cross-checks references and is run by the test suite.
 
 const DATA_DIR := "res://data/"
+## POI types StructureBuilder knows how to build.
+const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
+	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles"]
 
 var items: Dictionary = {}          # StringName -> ItemData
 var entities: Dictionary = {}       # StringName -> EntityType
@@ -150,6 +153,104 @@ func validate() -> PackedStringArray:
 		for ing in sp["ingredients"] + [sp["item"]]:
 			if not items.has(StringName(ing)):
 				errors.append("cooking special '%s' unknown item '%s'" % [sp["id"], ing])
+	errors.append_array(_validate_progression())
+	return errors
+
+
+## Quests, bosses, abilities, shops, events, mounts and POI types.
+func _validate_progression() -> PackedStringArray:
+	var errors := PackedStringArray()
+	var poi_ids := {}
+	for poi in world.get("pois", []):
+		poi_ids[poi["id"]] = true
+		if not poi["type"] in POI_TYPES:
+			errors.append("poi '%s' unknown type '%s'" % [poi["id"], poi["type"]])
+		for g in poi.get("guards", []) + poi.get("npcs", []).map(func(n: Array) -> String: return n[0]):
+			if not entities.has(StringName(g)):
+				errors.append("poi '%s' unknown entity '%s'" % [poi["id"], g])
+		for r in poi.get("reward", []):
+			if not items.has(StringName(r["id"])):
+				errors.append("poi '%s' unknown reward '%s'" % [poi["id"], r["id"]])
+	var quest_ids := {}
+	for q in quests:
+		quest_ids[q["id"]] = true
+	for q in quests:
+		for pre in q.get("requires", []):
+			if not quest_ids.has(pre):
+				errors.append("quest '%s' requires unknown quest '%s'" % [q["id"], pre])
+		var st := String(q.get("start", "auto"))
+		if st.begins_with("talk:") and not entities.has(StringName(st.trim_prefix("talk:"))):
+			errors.append("quest '%s' starts at unknown NPC '%s'" % [q["id"], st])
+		if (q.get("stages", []) as Array).is_empty():
+			errors.append("quest '%s' has no stages" % q["id"])
+		for stage in q.get("stages", []):
+			for o in stage.get("objectives", []):
+				var t := String(o.get("target", ""))
+				match String(o.get("type", "")):
+					"kill", "boss", "talk":
+						if not entities.has(StringName(t)):
+							errors.append("quest '%s' objective targets unknown entity '%s'" % [q["id"], t])
+					"collect":
+						if not items.has(StringName(t)):
+							errors.append("quest '%s' collects unknown item '%s'" % [q["id"], t])
+					"discover":
+						if not poi_ids.has(t):
+							errors.append("quest '%s' discovers unknown poi '%s'" % [q["id"], t])
+					"region":
+						if not regions.has(StringName(t)):
+							errors.append("quest '%s' unknown region '%s'" % [q["id"], t])
+					"ability":
+						if not abilities.has(StringName(t)):
+							errors.append("quest '%s' unknown ability '%s'" % [q["id"], t])
+					"flag", "open_chest", "reach", "cook", "mount":
+						pass
+					_:
+						errors.append("quest '%s' unknown objective type '%s'" % [q["id"], o.get("type", "")])
+		var r: Dictionary = q.get("rewards", {})
+		for it in r.get("items", []):
+			if not items.has(StringName(it["id"])):
+				errors.append("quest '%s' rewards unknown item '%s'" % [q["id"], it["id"]])
+		if r.has("ability") and not abilities.has(StringName(r["ability"])):
+			errors.append("quest '%s' rewards unknown ability '%s'" % [q["id"], r["ability"]])
+	for b in bosses.values():
+		var e: EntityType = entities.get(StringName(b["entity"]))
+		if e == null or e.kind != EntityType.Kind.BOSS:
+			errors.append("boss '%s' entity '%s' missing or not BOSS" % [b["id"], b["entity"]])
+			continue
+		var atk := {}
+		for a in e.attacks:
+			atk[String(a.id)] = true
+		for ph in b.get("phases", []):
+			for a in ph.get("attacks", []):
+				if not atk.has(a):
+					errors.append("boss '%s' phase uses unknown attack '%s'" % [b["id"], a])
+			if ph.has("summon") and not entities.has(StringName(ph["summon"])):
+				errors.append("boss '%s' summons unknown entity '%s'" % [b["id"], ph["summon"]])
+		for it in b.get("rewards", []):
+			if not items.has(StringName(it["id"])):
+				errors.append("boss '%s' rewards unknown item '%s'" % [b["id"], it["id"]])
+	for s in shops.values():
+		if not entities.has(StringName(s.get("npc", ""))):
+			errors.append("shop '%s' unknown npc" % s["id"])
+		for it in s.get("stock", []):
+			if not items.has(StringName(it["id"])):
+				errors.append("shop '%s' sells unknown item '%s'" % [s["id"], it["id"]])
+	for a in abilities.values():
+		if a.has("mount") and not entities.has(StringName(a["mount"])):
+			errors.append("ability '%s' unknown mount" % a["id"])
+	for ev in world_events:
+		if ev.has("spawn") and not entities.has(StringName(ev["spawn"])):
+			errors.append("event '%s' spawns unknown entity" % ev["id"])
+		for rg in ev.get("regions", []):
+			if not regions.has(StringName(rg)):
+				errors.append("event '%s' unknown region '%s'" % [ev["id"], rg])
+		for it in ev.get("reward", {}).get("items", []):
+			if not items.has(StringName(it["id"])):
+				errors.append("event '%s' rewards unknown item" % ev["id"])
+	for m in world.get("mounts", []):
+		var e: EntityType = entities.get(StringName(m["entity"]))
+		if e == null or e.mount.is_empty():
+			errors.append("mount herd '%s' entity is not rideable" % m["id"])
 	return errors
 
 

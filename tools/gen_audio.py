@@ -221,8 +221,109 @@ def ambience():
     write("amb_night", night, loop=True)
 
 
+def pluck(freq, dur, vol=0.5, decay=0.996):
+    # Karplus-Strong string: a plucked zither-like voice for melodies.
+    n = int(dur * RATE)
+    period = max(2, int(RATE / freq))
+    buf = [rng.uniform(-1, 1) for _ in range(period)]
+    out = []
+    for i in range(n):
+        v = buf[i % period]
+        nxt = buf[(i + 1) % period]
+        buf[i % period] = decay * 0.5 * (v + nxt)
+        out.append(v * vol)
+    return shaped(out, 0.001, 0.5)
+
+
+def melody(notes, step, total, vol=0.35):
+    # notes: list of (beat, midi); pentatonic phrases over the pads.
+    n = int(total * RATE)
+    out = [0.0] * n
+    for beat, m in notes:
+        f = 440.0 * 2 ** ((m - 69) / 12)
+        start = int(beat * step * RATE)
+        s = pluck(f, 1.6, vol)
+        for i, v in enumerate(s):
+            if start + i < n:
+                out[start + i] += v
+    return out
+
+
+def drums(total, bpm, pattern, vol=0.7):
+    n = int(total * RATE)
+    out = [0.0] * n
+    step = int(RATE * 60 / bpm / 2)
+    for k in range(0, n, step):
+        idx = (k // step) % len(pattern)
+        c = pattern[idx]
+        if c == "B":
+            hit = shaped(mix(lowpass(noise(int(0.25 * RATE)), 0.04), tone(52, 0.25, "sine", 1.0, -0.4)), 0.001, 0.35)
+        elif c == "s":
+            hit = shaped(lowpass(noise(int(0.1 * RATE)), 0.3), 0.001, 0.3)
+        else:
+            continue
+        for i, v in enumerate(hit):
+            if k + i < n:
+                out[k + i] += v * vol
+    return out
+
+
+def sfx2():
+    n = lambda d: int(d * RATE)
+    write("quest_start", mix(*[[0.0] * int(i * 0.14 * RATE) + pluck(f, 1.4, 0.4) for i, f in enumerate([392.0, 523.25, 587.33])]))
+    write("quest_stage", mix(pluck(659.25, 1.0, 0.35), [0.0] * int(0.1 * RATE) + pluck(783.99, 1.0, 0.3)))
+    write("quest_complete", mix(*[[0.0] * int(i * 0.12 * RATE) + pluck(f, 1.8, 0.4) for i, f in enumerate([523.25, 587.33, 659.25, 783.99, 1046.5])]))
+    write("boss_roar", shaped(mix(lowpass(noise(n(1.6)), 0.03), tone(70, 1.6, "saw", 0.6, -0.3), tone(105, 1.6, "tri", 0.3, -0.2)), 0.08, 0.5))
+    write("gust", shaped(highpass(lowpass(noise(n(0.45)), 0.25), 0.02), 0.03, 0.6))
+    write("jade", shaped(mix(tone(1320, 0.5, "sine", 0.35), tone(1980, 0.5, "sine", 0.2), tone(660, 0.5, "tri", 0.2)), 0.002, 0.7))
+    write("wind_sight", shaped(mix(lowpass(noise(n(1.2)), 0.05), tone(880, 1.2, "sine", 0.15, 0.2), tone(1320, 1.2, "sine", 0.1, 0.2)), 0.2, 0.6))
+    write("stillness", shaped(mix(tone(220, 1.5, "sine", 0.4, -0.5), tone(330, 1.5, "sine", 0.2, -0.5), lowpass(noise(n(1.5)), 0.02)), 0.02, 0.7))
+    write("whistle", shaped(mix(tone(1400, 0.25, "sine", 0.4, 0.2), [0.0] * n(0.28) + tone(1700, 0.35, "sine", 0.4, -0.1)), 0.01, 0.5))
+    write("mount", shaped(mix(lowpass(noise(n(0.3)), 0.1), tone(160, 0.3, "tri", 0.4, 0.3)), 0.01, 0.5))
+    write("puzzle_solved", mix(*[[0.0] * int(i * 0.1 * RATE) + pluck(f, 1.6, 0.35) for i, f in enumerate([440.0, 554.37, 659.25, 880.0])]))
+    write("coin", shaped(mix(tone(1568, 0.12, "sine", 0.35), [0.0] * n(0.05) + tone(2093, 0.18, "sine", 0.3)), 0.001, 0.6))
+
+
+def music2():
+    D = lambda *m: [440.0 * 2 ** ((x - 69) / 12) for x in m]
+    # Boss: taiko-like drums, low fifths, urgent pentatonic plucks.
+    total = 16.0
+    base = pad(D(38, 45, 50), 8.0, 0.55) + pad(D(36, 43, 48), 8.0, 0.55)
+    dr = drums(total, 124, "B.s.B.sBB.s.BsBs")
+    mel = melody([(0, 62), (1, 65), (2, 67), (3, 69), (4, 67), (6, 65), (8, 62), (9, 60), (10, 62), (12, 65), (13, 67), (14, 72), (16, 69), (18, 67), (20, 65), (22, 62), (24, 62), (26, 65), (28, 67), (30, 60)], 60 / 124, total, 0.3)
+    write("music_boss", mix(base, dr, mel), loop=True)
+    # Desert: open fifths drone, sparse descending plucks.
+    total = 24.0
+    base = pad(D(40, 47, 52), 12.0, 0.3) + pad(D(38, 45, 52), 12.0, 0.3)
+    mel = melody([(0, 76), (3, 74), (4, 71), (8, 69), (12, 71), (15, 74), (16, 76), (20, 79), (24, 76), (27, 74), (28, 71), (32, 69), (36, 64), (40, 67), (44, 69)], 0.5, total, 0.28)
+    write("music_desert", mix(base, mel), loop=True)
+    # Veil: glassy detuned high pad, very slow tones.
+    total = 28.0
+    base = pad(D(57, 64, 71, 76), 14.0, 0.1) + pad(D(55, 62, 69, 74), 14.0, 0.1)
+    det = pad(D(57.12, 64.1, 71.08), 28.0, 0.05)
+    mel = melody([(0, 81), (8, 79), (16, 76), (24, 74), (32, 76), (40, 72), (48, 74)], 0.5, total, 0.18)
+    write("music_veil", mix(base, [v * 0.5 for v in det], mel), loop=True)
+    # Day theme gains a pentatonic melody over its pads.
+    total = 24.0
+    day = pad(D(50, 57, 62, 66), 6.0, 0.35) + pad(D(47, 54, 59, 62), 6.0, 0.35) + pad(D(43, 55, 59, 62), 6.0, 0.35) + pad(D(45, 52, 57, 61), 6.0, 0.35)
+    mel = melody([(0, 74), (1, 76), (2, 78), (4, 81), (6, 78), (8, 76), (10, 74), (12, 71), (14, 74), (16, 76), (20, 74), (24, 78), (25, 81), (26, 83), (28, 81), (30, 78), (32, 76), (36, 74), (40, 71), (44, 74)], 0.5, total, 0.25)
+    write("music_day", mix(day, mel), loop=True)
+
+
+def ambience2():
+    n = int(6.0 * RATE)
+    roar = lowpass(noise(n), 0.12)
+    hiss = highpass(noise(n), 0.3)
+    write("amb_waterfall", [0.7 * a + 0.25 * b for a, b in zip(roar, hiss)], loop=True)
+
+
 if __name__ == "__main__":
-    sfx()
-    ambience()
-    music()
+    import sys
+    if "--new" not in sys.argv:
+        sfx()
+        ambience()
+        music()
+    sfx2()
+    ambience2()
+    music2()
     print("audio written to", os.path.normpath(OUT))

@@ -22,6 +22,7 @@ static func create(id: String, table: StringName, items: Array = [], is_grand: b
 
 
 func _ready() -> void:
+	add_to_group(&"chests")
 	super._ready()
 	_opened = WorldState.opened.has(chest_id)
 	var s := 1.35 if grand else 1.0

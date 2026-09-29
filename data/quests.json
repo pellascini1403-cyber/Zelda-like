@@ -101,8 +101,8 @@
             "target": "NPC_NOMAD",
             "text_key": "QO_TALK_NOMAD",
             "marker": [
-              1080,
-              340
+              1012,
+              304
             ]
           }
         ],
@@ -171,7 +171,7 @@
             "text_key": "QO_ANCHOR_NORTH",
             "marker": [
               880,
-              -1080
+              -1085
             ]
           },
           {
@@ -179,8 +179,8 @@
             "target": "anchor_east",
             "text_key": "QO_ANCHOR_EAST",
             "marker": [
-              1060,
-              -820
+              1085,
+              -880
             ]
           },
           {
@@ -188,8 +188,8 @@
             "target": "anchor_west",
             "text_key": "QO_ANCHOR_WEST",
             "marker": [
-              700,
-              -900
+              675,
+              -880
             ]
           }
         ]
@@ -350,7 +350,8 @@
           "count": 1
         }
       ],
-      "glimmer": 25
+      "glimmer": 25,
+      "ability": "wind_sight"
     }
   },
   {
@@ -492,7 +493,11 @@
           {
             "type": "talk",
             "target": "NPC_NOMAD",
-            "text_key": "QO_RETURN_NOMAD"
+            "text_key": "QO_RETURN_NOMAD",
+            "marker": [
+              1012,
+              304
+            ]
           }
         ],
         "talk_lines": [

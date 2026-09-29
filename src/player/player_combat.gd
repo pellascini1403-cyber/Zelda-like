@@ -61,6 +61,11 @@ func wstat(key: String, default_value: Variant) -> Variant:
 	return s.def().w(key, default_value)
 
 
+## True while a blow is in flight (drives the weapon trail).
+func is_swinging() -> bool:
+	return (_swing_t >= 0.0 and _swing_t <= _swing_len * 0.8) or _plunging or p.state_name() == &"busy" and p.visual._action in [&"spin", &"thrust", &"attack_3", &"slam"]
+
+
 func weapon_damage() -> float:
 	var d: float = wstat("damage", 4.0)
 	var s := weapon_stack()
@@ -282,7 +287,9 @@ func _resolve_hits(reach: float, arc: float, dmg: float, knock: float, element: 
 			info.is_critical = true
 		if CombatUtils.deal(body, info):
 			landed = true
-			Effects.hit_spark(p, body.global_position + Vector3.UP * 0.9 - dir.normalized() * 0.3, info.is_critical)
+			var hp := body.global_position + Vector3.UP * 0.9 - dir.normalized() * 0.3
+			Effects.hit_spark(p, hp, info.is_critical)
+			ElementFX.ring(p, hp, element, 0.9 if not info.is_critical else 1.5, 0.22)
 	if landed:
 		PlayerData.wear_weapon(1.0)
 		Game.hitstop(0.055 if dmg < 20.0 else 0.085)
@@ -427,12 +434,16 @@ func _parry(info: DamageInfo) -> void:
 	Game.camera_rig.add_trauma(0.3)
 	InputRouter.vibrate(40, 1.0)
 	EventBus.parry_success.emit(p.global_position)
+	p.visual.play_action(&"parry", 0.3)
+	ElementFX.ring(p, p.chest_position() + p.facing_dir() * 0.6, &"", 2.2, 0.35)
+	ElementFX.burst(p, p.global_position, &"", 2.5)
 	if info.source and info.source.has_method("on_parried"):
 		info.source.on_parried()
 
 
 func _perfect_dodge() -> void:
 	EventBus.perfect_dodge.emit()
+	Afterimage.spawn(p.visual)
 	Audio.play_ui(&"perfect_dodge", 0.0)
 	Game.slow_motion(0.35, 0.9)
 	PlayerData.restore_stamina(20.0)

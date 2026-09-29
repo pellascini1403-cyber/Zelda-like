@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 		var d := Vector2(ppos.x - pos.x, ppos.z - pos.z).length()
 		if d < float(poi.get("discover_radius", 40.0)):
 			if WorldState.discover_poi(StringName(id)):
-				EventBus.toast.emit(tr("TOAST_DISCOVERED") % tr(poi["name_key"]))
+				EventBus.title_card.emit(tr(poi["name_key"]), tr(DB.region(gen.region_at(pos.x, pos.z)).name_key) if DB.region(gen.region_at(pos.x, pos.z)) else "")
 				Audio.play_ui(&"discovery", -2.0)
 		if not _built.has(id):
 			if d < BUILD_DISTANCE and not poi in _build_queue:

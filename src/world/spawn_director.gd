@@ -19,6 +19,7 @@ var _poi_zones: Array = []   # [Vector2 center, radius]
 
 
 func _ready() -> void:
+	add_to_group(&"spawn_director")
 	creatures_root = Node3D.new()
 	creatures_root.name = "Creatures"
 	add_child(creatures_root)
@@ -165,6 +166,8 @@ func spawn_creature(entity_id: StringName, pos: Vector3, spawn_id: String, group
 			c = Animal.new()
 		EntityType.Kind.NPC:
 			c = NPC.new()
+		EntityType.Kind.BOSS:
+			c = Boss.new()
 		_:
 			c = Enemy.new()
 	c.setup(type, pos, spawn_id, group)

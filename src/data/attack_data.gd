@@ -2,7 +2,7 @@ class_name AttackData
 extends Resource
 ## One attack of an enemy (or a weapon move). Timings are in seconds.
 
-## melee | lunge | projectile | slam | pulse
+## melee | lunge | projectile | slam | pulse | charge | volley | eruption | summon
 @export var type: StringName = &"melee"
 @export var id: StringName
 @export var range_min: float = 0.0
@@ -23,6 +23,17 @@ extends Resource
 @export var projectile_speed: float = 14.0
 @export var weight: float = 1.0
 @export var blockable: bool = true
+## Ground warning during the windup (auto for slam/pulse/charge/eruption).
+@export var telegraph: bool = false
+## volley: projectiles per shot and total fan angle (deg)
+@export var count: int = 1
+@export var spread: float = 0.0
+## charge: dash speed; eruption: delay between telegraph and burst
+@export var charge_speed: float = 14.0
+@export var delay: float = 0.9
+## summon: entity id and how many
+@export var summon: StringName = &""
+@export var summon_count: int = 0
 
 
 static func from_dict(d: Dictionary) -> AttackData:
@@ -46,4 +57,11 @@ static func from_dict(d: Dictionary) -> AttackData:
 	a.projectile_speed = d.get("projectile_speed", 14.0)
 	a.weight = d.get("weight", 1.0)
 	a.blockable = d.get("blockable", true)
+	a.telegraph = d.get("telegraph", a.type in [&"slam", &"pulse", &"charge", &"eruption"])
+	a.count = int(d.get("count", 1))
+	a.spread = d.get("spread", 0.0)
+	a.charge_speed = d.get("charge_speed", 14.0)
+	a.delay = d.get("delay", 0.9)
+	a.summon = StringName(d.get("summon", ""))
+	a.summon_count = int(d.get("summon_count", 0))
 	return a

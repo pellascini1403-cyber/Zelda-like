@@ -48,6 +48,8 @@ enum Kind { PLAYER, ENEMY, ANIMAL, NPC, BOSS }
 ## any | day | night
 @export var active_period: StringName = &"any"
 @export var dialogue: Dictionary = {}
+## Rideable creatures: speeds, spur stamina, taming difficulty, seat height.
+@export var mount: Dictionary = {}
 
 
 static func from_dict(d: Dictionary) -> EntityType:
@@ -81,6 +83,7 @@ static func from_dict(d: Dictionary) -> EntityType:
 	e.loot_table = StringName(d.get("loot_table", ""))
 	e.active_period = StringName(d.get("active_period", "any"))
 	e.dialogue = d.get("dialogue", {})
+	e.mount = d.get("mount", {})
 	return e
 
 

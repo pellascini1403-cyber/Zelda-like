@@ -1,9 +1,108 @@
 [
-  {"id": "clear", "rain": 0.0, "cloud_cover": 0.3, "fog": 0.0, "wind": 0.2, "storm": 0.0, "temperature": 2, "duration": [240, 480]},
-  {"id": "cloudy", "rain": 0.0, "cloud_cover": 0.68, "fog": 0.05, "wind": 0.3, "storm": 0.0, "temperature": 0, "duration": [200, 400]},
-  {"id": "rain", "rain": 0.8, "cloud_cover": 0.92, "fog": 0.15, "wind": 0.4, "storm": 0.0, "temperature": -3, "duration": [150, 300]},
-  {"id": "storm", "rain": 1.0, "cloud_cover": 1.0, "fog": 0.2, "wind": 0.8, "storm": 1.0, "temperature": -4, "duration": [120, 240]},
-  {"id": "fog", "rain": 0.0, "cloud_cover": 0.55, "fog": 0.7, "wind": 0.05, "storm": 0.0, "temperature": -1, "duration": [150, 300]},
-  {"id": "windy", "rain": 0.0, "cloud_cover": 0.45, "fog": 0.0, "wind": 1.0, "storm": 0.0, "temperature": -1, "duration": [150, 300]},
-  {"id": "snow", "rain": 0.6, "snow": 1.0, "cloud_cover": 0.85, "fog": 0.25, "wind": 0.5, "storm": 0.0, "temperature": -8, "duration": [180, 360]}
+ {
+  "id": "clear",
+  "rain": 0.0,
+  "cloud_cover": 0.3,
+  "fog": 0.0,
+  "wind": 0.2,
+  "storm": 0.0,
+  "temperature": 2,
+  "duration": [
+   240,
+   480
+  ]
+ },
+ {
+  "id": "cloudy",
+  "rain": 0.0,
+  "cloud_cover": 0.68,
+  "fog": 0.05,
+  "wind": 0.3,
+  "storm": 0.0,
+  "temperature": 0,
+  "duration": [
+   200,
+   400
+  ]
+ },
+ {
+  "id": "rain",
+  "rain": 0.8,
+  "cloud_cover": 0.92,
+  "fog": 0.15,
+  "wind": 0.4,
+  "storm": 0.0,
+  "temperature": -3,
+  "duration": [
+   150,
+   300
+  ]
+ },
+ {
+  "id": "storm",
+  "rain": 1.0,
+  "cloud_cover": 1.0,
+  "fog": 0.2,
+  "wind": 0.8,
+  "storm": 1.0,
+  "temperature": -4,
+  "duration": [
+   120,
+   240
+  ]
+ },
+ {
+  "id": "fog",
+  "rain": 0.0,
+  "cloud_cover": 0.55,
+  "fog": 0.7,
+  "wind": 0.05,
+  "storm": 0.0,
+  "temperature": -1,
+  "duration": [
+   150,
+   300
+  ]
+ },
+ {
+  "id": "windy",
+  "rain": 0.0,
+  "cloud_cover": 0.45,
+  "fog": 0.0,
+  "wind": 1.0,
+  "storm": 0.0,
+  "temperature": -1,
+  "duration": [
+   150,
+   300
+  ]
+ },
+ {
+  "id": "snow",
+  "rain": 0.6,
+  "snow": 1.0,
+  "cloud_cover": 0.85,
+  "fog": 0.25,
+  "wind": 0.5,
+  "storm": 0.0,
+  "temperature": -8,
+  "duration": [
+   180,
+   360
+  ]
+ },
+ {
+  "id": "sandstorm",
+  "rain": 0.0,
+  "cloud_cover": 0.4,
+  "fog": 0.2,
+  "wind": 1.0,
+  "storm": 0.0,
+  "sand": 1.0,
+  "temperature": 4,
+  "duration": [
+   90,
+   200
+  ]
+ }
 ]

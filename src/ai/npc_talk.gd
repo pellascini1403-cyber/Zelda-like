@@ -28,6 +28,9 @@ func interact(_player: Player) -> void:
 	var quest_lines := Quests.talk_lines(npc.type.id)
 	EventBus.npc_talked.emit(npc.type.id)
 	EventBus.dialogue_requested.emit(npc.type.name_key, quest_lines if not quest_lines.is_empty() else PackedStringArray(lines))
+	for sid in DB.shops:
+		if StringName(DB.shops[sid].get("npc", "")) == npc.type.id and Game.world and (Game.world as GameWorld).hud:
+			(Game.world as GameWorld).hud.dialogue.offer_trade(npc)
 	var give: String = d.get("gift", "")
 	var flag := "gift_" + String(npc.type.id)
 	if give != "" and not WorldState.flags.has(flag):

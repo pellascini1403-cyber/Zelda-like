@@ -268,9 +268,16 @@ func _on_died(_info: DamageInfo) -> void:
 	EventBus.entity_killed.emit(type.id, global_position)
 	Audio.play_at(&"creature_die", global_position, -2.0)
 	died_signal.emit(self)
-	await get_tree().create_timer(2.2).timeout
+	# Dissolve: the body sinks and shrinks into motes of its own colour.
+	await get_tree().create_timer(1.3).timeout
+	if not is_instance_valid(self):
+		return
+	var t := create_tween()
+	t.tween_property(visual, "scale", Vector3(1.15, 0.05, 1.15), 0.7).set_ease(Tween.EASE_IN)
+	Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, type.placeholder_color, 0.6)
+	await t.finished
 	if is_instance_valid(self):
-		Effects.dust(self, global_position, 1.2)
+		Effects.dust(self, global_position, 1.0)
 		queue_free()
 
 

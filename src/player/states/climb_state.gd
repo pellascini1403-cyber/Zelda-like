@@ -121,7 +121,7 @@ func _start_mantle(top: Vector3) -> StringName:
 	_mantle_t = 0.0
 	_mantle_from = p.global_position
 	_mantle_to = top + Vector3(0, 0.05, 0)
-	p.visual.play_action(&"interact", 0.35)
+	p.visual.play_action(&"ledge_climb", 0.35)
 	return &""
 
 

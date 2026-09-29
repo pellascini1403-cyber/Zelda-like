@@ -48,6 +48,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	# Stillness slows everything that is not the player's.
+	if owner_body != Game.player:
+		delta *= Game.enemy_time_scale
 	life -= delta
 	if life <= 0.0:
 		_impact(global_position, null)

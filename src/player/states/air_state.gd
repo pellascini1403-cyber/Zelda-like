@@ -26,7 +26,7 @@ func physics(delta: float) -> StringName:
 	var move := p.move_dir()
 	var target := move * maxf(p.air_speed, p.RUN_SPEED * 0.6)
 	p.apply_horizontal(target, p.AIR_ACCEL, delta)
-	p.velocity.y -= p.GRAVITY * delta
+	p.velocity.y -= p.GRAVITY * p.gravity_scale() * delta
 	p.velocity.y = maxf(p.velocity.y, -p.TERMINAL_VELOCITY)
 	_peak_fall_speed = maxf(_peak_fall_speed, -p.velocity.y)
 	p.face_move(delta * 0.5)

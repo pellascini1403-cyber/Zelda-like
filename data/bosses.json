@@ -1,0 +1,189 @@
+[
+ {
+  "id": "thornback",
+  "entity": "BOSS_THORNBACK",
+  "title_key": "BOSS_THORNBACK_TITLE",
+  "element": "thorn",
+  "loot": "chest_grand",
+  "arena": {
+   "center": [
+    0,
+    -298
+   ],
+   "radius": 18,
+   "home": [
+    0,
+    -2
+   ],
+   "y": 69.6
+  },
+  "rewards": [
+   {
+    "id": "vital_seed"
+   },
+   {
+    "id": "wayfarer_edge"
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "maul",
+     "gore_charge",
+     "thorn_volley"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.55,
+    "attacks": [
+     "maul",
+     "gore_charge",
+     "thorn_volley",
+     "stomp",
+     "bramble_eruption"
+    ],
+    "speed": 1.2,
+    "shockwave": 7,
+    "summon": "ENEMY_THORNLING",
+    "summon_count": 2,
+    "title_key": "BOSS_THORNBACK_P2"
+   }
+  ]
+ },
+ {
+  "id": "glass_matriarch",
+  "entity": "BOSS_GLASS_MATRIARCH",
+  "title_key": "BOSS_MATRIARCH_TITLE",
+  "element": "glass",
+  "loot": "chest_grand",
+  "arena": {
+   "center": [
+    1300,
+    120
+   ],
+   "radius": 22,
+   "home": [
+    0,
+    0
+   ],
+   "y": 13.0
+  },
+  "rewards": [
+   {
+    "id": "vital_seed"
+   },
+   {
+    "id": "sunglass_blade"
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "pincer",
+     "burrow_rush",
+     "glass_shards"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.65,
+    "attacks": [
+     "pincer",
+     "burrow_rush",
+     "glass_shards",
+     "dune_eruption"
+    ],
+    "speed": 1.15,
+    "shockwave": 8,
+    "summon": "ENEMY_SCUTTLER",
+    "summon_count": 3,
+    "weather": "sandstorm",
+    "title_key": "BOSS_MATRIARCH_P2"
+   },
+   {
+    "at": 0.3,
+    "attacks": [
+     "pincer",
+     "burrow_rush",
+     "glass_shards",
+     "dune_eruption",
+     "sun_pulse"
+    ],
+    "speed": 1.35,
+    "shockwave": 9,
+    "title_key": "BOSS_MATRIARCH_P3"
+   }
+  ]
+ },
+ {
+  "id": "stillwake_warden",
+  "entity": "BOSS_STILLWAKE_WARDEN",
+  "title_key": "BOSS_WARDEN_TITLE",
+  "element": "still",
+  "loot": "chest_grand",
+  "arena": {
+   "center": [
+    880,
+    -880
+   ],
+   "radius": 26,
+   "home": [
+    0,
+    -6
+   ],
+   "y": 3.0
+  },
+  "rewards": [
+   {
+    "id": "vital_seed"
+   },
+   {
+    "id": "stamina_bloom"
+   }
+  ],
+  "phases": [
+   {
+    "at": 1.0,
+    "attacks": [
+     "sweep",
+     "quake",
+     "still_orbs"
+    ],
+    "speed": 1.0
+   },
+   {
+    "at": 0.66,
+    "attacks": [
+     "sweep",
+     "quake",
+     "still_orbs",
+     "veil_eruption"
+    ],
+    "speed": 1.15,
+    "shockwave": 9,
+    "summon": "ENEMY_SHADE",
+    "summon_count": 2,
+    "title_key": "BOSS_WARDEN_P2"
+   },
+   {
+    "at": 0.33,
+    "attacks": [
+     "sweep",
+     "quake",
+     "still_orbs",
+     "veil_eruption",
+     "hush_pulse",
+     "stride"
+    ],
+    "speed": 1.3,
+    "shockwave": 11,
+    "summon": "ENEMY_WISP",
+    "summon_count": 3,
+    "title_key": "BOSS_WARDEN_P3"
+   }
+  ]
+ }
+]

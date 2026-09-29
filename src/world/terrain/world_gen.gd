@@ -107,6 +107,7 @@ func height(x: float, z: float) -> float:
 	var dk := desert_k(x + wx * 0.5, z + wz * 0.5)
 	var vk := veil_k(x + wx * 0.5, z + wz * 0.5)
 	land = maxf(land, maxf(dk, vk))
+	land = maxf(land, _isthmus_k(x + wx * 0.3, z + wz * 0.3))
 	var h := lerpf(-22.0, 5.0, land)
 
 	# --- Rolling hills with terraced rock bands (climbable cliffs) -----------
@@ -236,6 +237,26 @@ func surface_at(x: float, z: float, h: float, n: Vector3) -> Surface:
 
 
 ## 0..1 influence of the eastern desert landmass.
+## Land bridges tying the desert and the Veil to the main island (walkable,
+## so the regions are reached by exploring, not by a loading screen).
+const ISTHMUS_A := [Vector2(430.0, -430.0), Vector2(600.0, 190.0)]
+const ISTHMUS_B := [Vector2(720.0, -720.0), Vector2(840.0, 250.0)]
+const ISTHMUS_W := [95.0, 120.0]
+
+
+func _isthmus_k(x: float, z: float) -> float:
+	var p := Vector2(x, z)
+	var k := 0.0
+	for i in ISTHMUS_W.size():
+		var a: Vector2 = ISTHMUS_A[i]
+		var b: Vector2 = ISTHMUS_B[i]
+		var w: float = ISTHMUS_W[i]
+		var t := clampf((p - a).dot(b - a) / (b - a).length_squared(), 0.0, 1.0)
+		var d := p.distance_to(a.lerp(b, t))
+		k = maxf(k, 1.0 - smoothstep(w * 0.55, w, d))
+	return k
+
+
 func desert_k(x: float, z: float) -> float:
 	var q := (Vector2(x, z) - DESERT_CENTER) / DESERT_RADIUS
 	return 1.0 - smoothstep(0.65, 1.0, q.length())

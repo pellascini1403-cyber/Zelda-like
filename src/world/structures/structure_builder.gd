@@ -39,6 +39,10 @@ func build(poi: Dictionary, root: Node3D) -> Array:
 		"shrine": return _shrine(poi, root)
 		"bridge": return _bridge(poi, root)
 		"ruins": return _ruins(poi, root)
+		"oasis": return _oasis(poi, root)
+		"arena": return _arena(poi, root)
+		"anchor": return _anchor(poi, root)
+		"floating_isles": return _floating_isles(poi, root)
 	push_warning("StructureBuilder: unknown POI type " + kind)
 	return []
 
@@ -188,7 +192,8 @@ func _maze(poi: Dictionary, root: Node3D) -> Array:
 	var k := StructureKit.new(hash(poi["id"]) + 1)
 	var half := size * cell * 0.5
 	var origin := Vector3(-half, 0, -half)
-	var col := Color(0.7, 0.74, 0.62) if poi.get("style", "moss") == "moss" else StructureKit.WHITE_STONE
+	var style: String = poi.get("style", "moss")
+	var col: Color = {"moss": Color(0.7, 0.74, 0.62), "sandstone": Color(0.86, 0.66, 0.46)}.get(style, StructureKit.WHITE_STONE)
 	for x in size:
 		for z in size:
 			var base := origin + Vector3(x * cell, 0, z * cell)
@@ -237,6 +242,38 @@ func _maze(poi: Dictionary, root: Node3D) -> Array:
 			if open == 1 and absi(x - mid) + absi(z - mid) > 2:
 				dead_ends.append(Vector2i(x, z))
 	var n_small: int = poi.get("small_chests", 3)
+	# Puzzle: the grand chest sits inside a wind seal until every element
+	# (braziers / pressure plates) placed in the far dead ends is active.
+	var pz: Dictionary = poi.get("puzzle", {})
+	if not pz.is_empty():
+		var group := PuzzleGroup.new()
+		group.puzzle_id = poi["id"]
+		root.add_child(group)
+		var seal := WindSeal.new()
+		seal.puzzle_id = poi["id"]
+		seal.radius = 1.5
+		root.add_child(seal)
+		seal.position = grand.position - Vector3(0, 0.05, 0)
+		var far_ends := dead_ends.duplicate()
+		far_ends.sort_custom(func(a: Vector2i, b2: Vector2i) -> bool: return absi(a.x - mid) + absi(a.y - mid) > absi(b2.x - mid) + absi(b2.y - mid))
+		for i in mini(int(pz.get("count", 2)), far_ends.size()):
+			var de: Vector2i = far_ends[i]
+			var cpos := origin + Vector3((de.x + 0.5) * cell, 0.0, (de.y + 0.5) * cell)
+			if pz.get("type", "braziers") == "braziers":
+				var br := Brazier.new()
+				br.puzzle_id = poi["id"]
+				root.add_child(br)
+				br.position = cpos
+			else:
+				var plate := PressurePlate.new()
+				plate.puzzle_id = poi["id"]
+				root.add_child(plate)
+				plate.position = cpos
+				# A crate one cell toward the maze's open side to push onto it.
+				var crate := PhysicsProp.create(&"crate", "%s:weight%d" % [poi["id"], i])
+				root.add_child(crate)
+				crate.position = cpos + Vector3(0, 0.6, 0) + (Vector3(mid - de.x, 0, mid - de.y).normalized() * 1.4)
+			dead_ends.erase(de)
 	for i in mini(n_small, dead_ends.size()):
 		var de: Vector2i = dead_ends[(i * 7 + 3) % dead_ends.size()]
 		var ch := Chest.create("%s:small%d" % [poi["id"], i], &"chest_common")
@@ -678,3 +715,163 @@ func _ruins(poi: Dictionary, root: Node3D) -> Array:
 	for i in guards.size():
 		spawns.append(_spawn(root, guards[i], basis * Vector3(-6.0 + i * 4.0, 0, 2.0), poi["id"], i, poi["id"]))
 	return spawns
+
+
+# --- Sunscar Oasis: nomad tents, a shade pavilion, palms around the pool -------------------------
+func _oasis(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	var sand_cloth := [Color(0.82, 0.42, 0.24), Color(0.92, 0.78, 0.52), Color(0.36, 0.52, 0.56)]
+	var tents := [[Vector3(-9, 0, -4), 0.5], [Vector3(8, 0, -7), -0.4], [Vector3(-6, 0, 9), 2.3], [Vector3(10, 0, 6), -2.0]]
+	for i in tents.size():
+		var c: Vector3 = tents[i][0]
+		c.y = _ground(root, c)
+		for off in [Vector3(-1.9, 0, -2.2), Vector3(1.9, 0, -2.2), Vector3(1.9, 0, 2.2), Vector3(-1.9, 0, 2.2)]:
+			k.pillar(c + Basis(Vector3.UP, tents[i][1]) * off, 2.2, 0.08, StructureKit.INK_WOOD, 4)
+		k.roof(c + Vector3(0, 2.2, 0), 4.2, 5.0, 1.4, sand_cloth[i % 3], tents[i][1])
+		k.ribbon(c + Basis(Vector3.UP, tents[i][1]) * Vector3(2.2, 3.4, 0), 1.6, 0.18, sand_cloth[(i + 1) % 3], tents[i][1])
+	# Shade pavilion at the water's edge (the nomads borrowed Warden stones)
+	var pv := Vector3(0, _ground(root, Vector3(0, 0, -12)), -12)
+	k.pavilion(pv, 2.6, 6, 3.0, 0.2, 0)
+	for lp in [Vector3(4, 0, 2), Vector3(-4, 0, 2), Vector3(0, 0, 8)]:
+		lp.y = _ground(root, lp)
+		k.lantern_post(lp, randf() * TAU)
+	k.build(root, "Oasis", 900.0)
+	_night_lights(root, k.lamps, 2)
+	# Palms (shared vegetation meshes, one instance each)
+	var palm := MeshKit.get_mesh(&"palm")
+	for i in 9:
+		var a := TAU * i / 9.0 + 0.3
+		var pp := Vector3(cos(a) * 17.0, 0, sin(a) * 17.0)
+		pp.y = _ground(root, pp) - 0.3
+		var mi := MeshInstance3D.new()
+		mi.mesh = palm
+		mi.material_override = WorldMaterials.get_mat(&"foliage")
+		mi.visibility_range_end = 700.0
+		root.add_child(mi)
+		mi.position = pp
+		mi.rotation.y = a * 3.0
+		mi.scale = Vector3.ONE * (1.0 + (i % 3) * 0.15)
+	var fire := Campfire.new()
+	root.add_child(fire)
+	fire.position = Vector3(0, _ground(root, Vector3(0, 0, 2)), 2)
+	var stone := LoreStone.new()
+	stone.lore_key = poi.get("lore", "LORE_OASIS")
+	stone.title_key = poi["name_key"]
+	root.add_child(stone)
+	stone.position = pv + Vector3(0, 0.45, 1.5)
+	var spawns: Array = []
+	var npcs: Array = poi.get("npcs", [])
+	for i in npcs.size():
+		spawns.append(_spawn(root, npcs[i][0], Vector3(npcs[i][1], 0, npcs[i][2]), poi["id"], i, poi["id"]))
+	return spawns
+
+
+# --- Boss arena: a ring of broken Warden pillars around a paved floor ---------------------------
+func _arena(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	k.near_range = 240.0
+	var r: float = poi.get("radius", 22.0)
+	var veil: bool = poi.get("style", "desert") == "veil"
+	var stone: Color = Color(0.36, 0.33, 0.46) if veil else Color(0.84, 0.64, 0.44)
+	var g := _ground(root, Vector3.ZERO)
+	# Paved floor with inlaid rings
+	StructureKit.prism_into(k.b, Vector3(0, g - 2.0, 0), Vector3(0, g + 0.25, 0), r + 1.5, r + 1.0, 24, StructureKit.id(stone * 0.85, 1.0))
+	StructureKit.prism_into(k.far, Vector3(0, g - 2.0, 0), Vector3(0, g + 0.25, 0), r + 1.5, r + 1.0, 12, StructureKit.id(stone * 0.85, 1.0))
+	var floor_shape := CylinderShape3D.new()
+	floor_shape.radius = r + 1.0
+	floor_shape.height = 2.25
+	k.shapes.append([Transform3D(Basis(), Vector3(0, g - 0.875, 0)), floor_shape])
+	for ring_r in [r * 0.35, r * 0.7]:
+		k.rune(Vector3(0, g + 0.27, 0) + Vector3(ring_r, 0, 0), Vector3(0.3, 0.02, 0.3))
+		for i in 24:
+			var a := TAU * i / 24.0
+			StructureKit.box_into(k.b, Transform3D(Basis(Vector3.UP, -a), Vector3(cos(a) * ring_r, g + 0.27, sin(a) * ring_r)), Vector3(0.25, 0.04, ring_r * TAU / 24.0 * 0.9), StructureKit.id(StructureKit.GOLD * 0.8 if not veil else Color(0.45, 0.95, 0.85), StructureKit.GILT if not veil else StructureKit.LAMP))
+	# Ring of pillars, some broken, lintels on the intact pairs
+	var n := 12
+	for i in n:
+		var a := TAU * i / n
+		var p := Vector3(cos(a) * (r + 0.4), g + 0.25, sin(a) * (r + 0.4))
+		var h := 7.0 if i % 3 != 1 else 2.0 + (i % 5) * 0.6
+		k.drum(p, h, 0.75, 0.6, 8, stone)
+		var cs := CylinderShape3D.new()
+		cs.radius = 0.75
+		cs.height = h
+		k.shapes.append([Transform3D(Basis(), p + Vector3(0, h * 0.5, 0)), cs])
+		if h > 6.0:
+			k.block(p + Vector3(0, h + 0.3, 0), Vector3(1.8, 0.6, 1.8), stone * 1.1, -a)
+			k.ribbon(p + Vector3(0, h - 0.2, 0) + Vector3(cos(a), 0, sin(a)) * 0.8, 3.0, 0.3, Color(0.55, 0.35, 0.85) if veil else StructureKit.CINNABAR_LIGHT, -a + PI * 0.5)
+	if veil:
+		# Still-crystals erupting around the island
+		for i in 10:
+			var a := TAU * i / 10.0 + 0.2
+			var cp := Vector3(cos(a), 0, sin(a)) * (r + 6.0 + (i % 3) * 3.0)
+			cp.y = _ground(root, cp) - 0.5
+			var mi := MeshInstance3D.new()
+			mi.mesh = MeshKit.get_mesh(&"crystal")
+			mi.material_override = WorldMaterials.get_mat(&"crystal")
+			mi.scale = Vector3.ONE * (1.4 + (i % 4) * 0.4)
+			mi.visibility_range_end = 1500.0
+			root.add_child(mi)
+			mi.position = cp
+	k.build(root, "Arena", 2200.0)
+	return []
+
+
+# --- Veil anchor: a hush-pillar on the crater rim, guarded by shades ------------------------------
+func _anchor(poi: Dictionary, root: Node3D) -> Array:
+	var g := _ground(root, Vector3.ZERO)
+	var a := VeilAnchor.new()
+	a.flag_id = poi.get("flag", poi["id"])
+	root.add_child(a)
+	a.position = Vector3(0, g, 0)
+	var k := StructureKit.new(hash(poi["id"]))
+	for i in 5:
+		var ang := TAU * i / 5.0
+		var p := Vector3(cos(ang) * 6.0, 0, sin(ang) * 6.0)
+		p.y = _ground(root, p)
+		k.drum(p, 1.6 + (i % 2) * 1.4, 0.45, 0.3, 5, Color(0.34, 0.3, 0.44))
+	k.build(root, "AnchorRing", 900.0)
+	var spawns: Array = []
+	var guards: Array = poi.get("guards", [])
+	for i in guards.size():
+		var ang := TAU * i / maxf(guards.size(), 1)
+		spawns.append(_spawn(root, guards[i], Vector3(cos(ang) * 4.0, 0, sin(ang) * 4.0), poi["id"], i, poi["id"]))
+	return spawns
+
+
+# --- Drifting isles: floating rock islands with crystals over the still lake ----------------------
+func _floating_isles(poi: Dictionary, root: Node3D) -> Array:
+	var k := StructureKit.new(hash(poi["id"]))
+	k.near_range = 260.0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(poi["id"])
+	var top := Vector3.ZERO
+	var count: int = poi.get("count", 7)
+	for i in count:
+		var t := float(i) / maxf(count - 1, 1)
+		# A rising spiral: each isle reachable from the previous by glide/jade.
+		var a := t * TAU * 1.2
+		var p := Vector3(cos(a) * (40.0 - t * 22.0), 18.0 + t * 52.0, sin(a) * (40.0 - t * 22.0))
+		var s := rng.randf_range(4.0, 7.0) * (1.0 - t * 0.3)
+		k.rock(p, Vector3(s, s * 0.45, s * 0.9), Color(0.38, 0.34, 0.48), false)
+		k.rock(p + Vector3(0, -s * 0.55, 0), Vector3(s * 0.6, s * 0.7, s * 0.55), Color(0.3, 0.27, 0.4), false)
+		k.block(p + Vector3(0, s * 0.3, 0), Vector3(s * 1.3, 0.6, s * 1.1), Color(0.3, 0.42, 0.34), rng.randf() * TAU)
+		var cs := CylinderShape3D.new()
+		cs.radius = s * 0.75
+		cs.height = s * 0.7
+		k.shapes.append([Transform3D(Basis(), p), cs])
+		var mi := MeshInstance3D.new()
+		mi.mesh = MeshKit.get_mesh(&"crystal")
+		mi.material_override = WorldMaterials.get_mat(&"crystal")
+		mi.visibility_range_end = 1500.0
+		root.add_child(mi)
+		mi.position = p + Vector3(s * 0.3, s * 0.3, 0)
+		top = p + Vector3(0, s * 0.3 + 0.35, 0)
+	k.build(root, "Isles", 2400.0)
+	var chest := Chest.create(poi["id"] + ":crown", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
+	root.add_child(chest)
+	chest.position = top
+	var lev := LevityZone.new()
+	lev.radius = poi.get("levity_radius", 110.0)
+	root.add_child(lev)
+	return []

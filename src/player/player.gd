@@ -34,6 +34,8 @@ var visual: EntityVisual
 var vitals: PlayerVitals
 var combat: PlayerCombat
 var interactor: Interactor
+var abilities: PlayerAbilities
+var mount: Mount = null
 var health: Health
 
 var state: PlayerState
@@ -93,13 +95,21 @@ func _ready() -> void:
 	interactor = Interactor.new()
 	interactor.name = "Interactor"
 	add_child(interactor)
+	var trail := WeaponTrail.new()
+	trail.name = "WeaponTrail"
+	trail.p = self
+	add_child(trail)
+	abilities = PlayerAbilities.new()
+	abilities.name = "Abilities"
+	add_child(abilities)
 
 	_glider = GliderVisual.build()
 	visual.get_socket(&"back").add_child(_glider)
 	_glider.visible = false
 
 	for s: PlayerState in [GroundState.new(self), AirState.new(self), ClimbState.new(self), GlideState.new(self),
-			SwimState.new(self), DodgeState.new(self), BusyState.new(self), DeadState.new(self)]:
+			SwimState.new(self), DodgeState.new(self), BusyState.new(self), DeadState.new(self),
+			GustState.new(self), RideState.new(self)]:
 		states[s.state_name()] = s
 	state = states[&"ground"]
 	_world_gen = WorldGen.from_world_data(DB.world)
@@ -151,6 +161,43 @@ func change_state(n: StringName) -> void:
 
 func state_name() -> StringName:
 	return state.state_name()
+
+
+# --- Mounts ---------------------------------------------------------------------------------------
+func ride(m: Mount) -> void:
+	if mount != null or state_name() in [&"dead", &"climb", &"swim", &"glide"]:
+		return
+	mount = m
+	m.start_ride(self)
+	change_state(&"ride")
+
+
+## Leaves the saddle; `thrown` knocks the rider aside.
+func dismount(thrown: bool) -> void:
+	var m := mount
+	if m == null:
+		return
+	mount = null
+	m.end_ride()
+	var side := m.facing_dir().cross(Vector3.UP).normalized()
+	global_position = m.global_position + side * (m.type.collider_radius + 0.8) + Vector3.UP * 0.6
+	velocity = side * (6.0 if thrown else 2.0) + Vector3.UP * (5.0 if thrown else 2.5)
+	if state_name() == &"ride":
+		change_state(&"air")
+
+
+## Levity fields (Veil) lighten gravity. Cheap: a handful of zones at most.
+func gravity_scale() -> float:
+	var g := 1.0
+	for z in get_tree().get_nodes_in_group(&"levity"):
+		g = minf(g, (z as LevityZone).scale_at(global_position))
+	return g
+
+
+func set_collision_enabled(on: bool) -> void:
+	for c in get_children():
+		if c is CollisionShape3D:
+			(c as CollisionShape3D).set_deferred("disabled", not on)
 
 
 ## Commit to a short action (attack swing, stagger, gather, eat).
@@ -228,6 +275,7 @@ func land(fall_speed: float) -> void:
 	if fall_speed > 4.0:
 		Audio.play_at(&"land", global_position, -4.0)
 		spawn_dust(0.6)
+		visual.play_action(&"land", clampf(fall_speed * 0.025, 0.15, 0.4))
 
 
 func face_move(delta: float) -> void:
@@ -336,6 +384,8 @@ func track_safe_ground(delta: float) -> void:
 
 # --- Damage / death --------------------------------------------------------------------------------
 func take_damage(info: DamageInfo) -> void:
+	if mount and not invulnerable and info.damage >= 18.0:
+		dismount(true)
 	combat.receive(info)
 
 

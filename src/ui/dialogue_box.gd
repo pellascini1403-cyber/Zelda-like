@@ -8,6 +8,8 @@ var _index := 0
 var _speaker: Label
 var _text: Label
 var _reveal := 0.0
+var _trade: Button
+var _trade_npc: Node3D = null
 
 
 func _ready() -> void:
@@ -15,15 +17,25 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var v := VBoxContainer.new()
 	add_child(v)
-	_speaker = UITheme.label("", 20, UITheme.ACCENT)
+	_speaker = UITheme.title("", 22, UITheme.ACCENT)
 	v.add_child(_speaker)
 	_text = UITheme.label("", 24)
 	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_text.custom_minimum_size = Vector2(760, 90)
 	v.add_child(_text)
+	var row := HBoxContainer.new()
+	v.add_child(row)
+	_trade = UITheme.button(tr("BTN_TRADE"), 52)
+	_trade.custom_minimum_size.x = 160
+	_trade.visible = false
+	_trade.pressed.connect(func() -> void:
+		visible = false
+		EventBus.station_opened.emit(&"shop", _trade_npc))
+	row.add_child(_trade)
 	var hint := UITheme.label(tr("DIALOGUE_TAP"), 16, UITheme.TEXT_DIM)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	v.add_child(hint)
+	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(hint)
 	EventBus.dialogue_requested.connect(show_lines)
 	get_viewport().size_changed.connect(_layout)
 
@@ -42,6 +54,8 @@ func show_lines(speaker_key: String, lines: PackedStringArray) -> void:
 		return
 	_lines = lines
 	_index = 0
+	_trade.visible = false
+	_trade_npc = null
 	_speaker.text = tr(speaker_key)
 	visible = true
 	_layout()
@@ -78,3 +92,13 @@ func advance() -> void:
 		visible = false
 	else:
 		_show_current()
+
+
+## Offer a Trade button for this dialogue (merchants).
+func offer_trade(npc: Node3D) -> void:
+	_trade_npc = npc
+	_trade.visible = true
+
+
+func _draw() -> void:
+	UIArt.corners(self, Rect2(Vector2(6, 6), size - Vector2(12, 12)), 16.0, Color(UIArt.GOLD, 0.7))

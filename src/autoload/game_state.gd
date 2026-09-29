@@ -22,6 +22,11 @@ var _slowmo_until := 0.0
 var _combat_enemies: Dictionary = {}
 
 
+## < 1 while the Stillness ability is active: AI and hostile projectiles
+## advance slower, the player keeps full speed.
+var enemy_time_scale := 1.0
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 

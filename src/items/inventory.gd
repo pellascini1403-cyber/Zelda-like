@@ -17,6 +17,12 @@ func add(item_id: StringName, count: int = 1, data: Dictionary = {}) -> int:
 	if it == null:
 		push_warning("Inventory: unknown item " + item_id)
 		return 0
+	# Glimmer shards are the currency: they go to the purse, not the bag
+	# (only for the player's inventory; other inventories keep them).
+	if item_id == &"glimmer_shard" and self == PlayerData.inventory:
+		PlayerData.glimmer += count
+		inventory_changed_currency()
+		return count
 	if data.is_empty():
 		data = ItemStack.initial_data(item_id)
 	var remaining := count
@@ -129,3 +135,7 @@ func from_array(arr: Array) -> void:
 		if DB.item(s.id) != null and s.count > 0:
 			stacks.append(s)
 	changed.emit()
+
+
+func inventory_changed_currency() -> void:
+	EventBus.inventory_changed.emit()

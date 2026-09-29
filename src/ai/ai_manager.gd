@@ -40,11 +40,11 @@ func _physics_process(delta: float) -> void:
 		var id := c.get_instance_id()
 		match tier:
 			Creature.Tier.FULL:
-				c.ai_tick(delta)
+				c.ai_tick(delta * Game.enemy_time_scale)
 			Creature.Tier.REDUCED:
 				_accum[id] = _accum.get(id, 0.0) + delta
 				if (_frame + id) % REDUCED_STRIDE == 0:
-					c.ai_tick(minf(_accum[id], 0.2))
+					c.ai_tick(minf(_accum[id], 0.2) * Game.enemy_time_scale)
 					_accum[id] = 0.0
 			_:
 				_accum.erase(id)

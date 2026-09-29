@@ -21,6 +21,7 @@ static func create(definition: Dictionary, id: String) -> ResourceNode:
 
 
 func _ready() -> void:
+	add_to_group(&"resource_nodes")
 	super._ready()
 	_visual = ResourceVisuals.build(def)
 	add_child(_visual)

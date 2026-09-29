@@ -385,6 +385,8 @@ func load_state(d: Dictionary) -> void:
 		var stages: Array = defs[id]["stages"]
 		state[id]["stage"] = clampi(int(st.get("stage", 0)), 0, stages.size() - 1)
 		var need: int = (stages[state[id]["stage"]] as Dictionary).get("objectives", []).size()
+		if state[id]["state"] != State.ACTIVE:
+			need = 0
 		var prog: Array = st.get("progress", [])
 		prog.resize(need)
 		for i in need:

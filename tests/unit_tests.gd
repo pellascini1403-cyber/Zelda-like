@@ -30,6 +30,9 @@ func _run() -> void:
 	test_quality_presets()
 	test_ai_attack_pick()
 	test_placeholder_colors()
+	test_quests()
+	test_boss_data()
+	test_abilities_data()
 	print("==== UNIT: %d checks, %d failed ====" % [_count, _fails])
 	get_tree().quit(1 if _fails > 0 else 0)
 
@@ -244,3 +247,64 @@ func _files(dir: String, ext: String) -> PackedStringArray:
 	for sub in d.get_directories():
 		out.append_array(_files(dir.path_join(sub), ext))
 	return out
+
+
+## Quest flow without a world: start, progress by events, stage advance,
+## rewards, save/load round trip.
+func test_quests() -> void:
+	PlayerData.reset_new_game()
+	WorldState.reset()
+	Quests.reset()
+	ok(Quests.quest_state(&"mq_first_wind") == Quests.State.AVAILABLE, "first main quest available at start")
+	ok(Quests.quest_state(&"mq_sand_voices") == Quests.State.LOCKED, "second main quest locked by prerequisite")
+	ok(Quests.start(&"sq_thorn_cull", true), "side quest starts")
+	for i in 5:
+		EventBus.entity_killed.emit(&"ENEMY_THORNLING", Vector3.ZERO)
+	ok(Quests.state[&"sq_thorn_cull"]["stage"] == 1, "kill objective advances the stage")
+	var g := PlayerData.glimmer
+	EventBus.npc_talked.emit(&"NPC_VILLAGER")
+	ok(Quests.is_completed(&"sq_thorn_cull"), "talk objective completes the quest")
+	ok(PlayerData.glimmer == g + 30 and PlayerData.inventory.has(&"fur_cap"), "rewards granted")
+	Quests.start(&"sq_mushroom_stew", true)
+	PlayerData.inventory.add(&"cap_mushroom", 5)
+	EventBus.item_acquired.emit(&"cap_mushroom", 5)
+	ok(Quests.state[&"sq_mushroom_stew"]["stage"] == 1, "collect objective counts held items")
+	var saved := Quests.save_state()
+	Quests.reset()
+	Quests.load_state(saved)
+	ok(Quests.is_completed(&"sq_thorn_cull") and Quests.state[&"sq_mushroom_stew"]["stage"] == 1, "quest state survives save/load")
+	Quests.start(&"mq_first_wind", true)
+	WorldState.discover_poi(&"wind_overlook")
+	EventBus.npc_talked.emit(&"NPC_CARTOGRAPHER")
+	ok(Quests.state[&"mq_first_wind"]["stage"] == 2, "already-discovered places satisfy later objectives")
+	ok(Quests.tracked_target() != null, "tracked quest exposes a target position")
+	WorldState.flags["boss_BOSS_THORNBACK"] = true
+	Quests.notify(&"discover", &"cloud_temple")
+	EventBus.boss_defeated.emit(&"BOSS_THORNBACK")
+	ok(Quests.is_completed(&"mq_first_wind") and PlayerData.has_ability(&"gust_step"), "main quest grants its ability")
+	ok(Quests.quest_state(&"mq_sand_voices") != Quests.State.LOCKED, "completing a quest unlocks the next")
+	Quests.reset()
+	PlayerData.reset_new_game()
+	WorldState.reset()
+
+
+func test_boss_data() -> void:
+	ok(DB.bosses.size() >= 3, "three bosses defined")
+	for b in DB.bosses.values():
+		var phases: Array = b.get("phases", [])
+		var sorted := true
+		for i in range(1, phases.size()):
+			if float(phases[i]["at"]) >= float(phases[i - 1]["at"]):
+				sorted = false
+		ok(phases.size() >= 2 and sorted, "boss %s has ordered phases" % b["id"])
+	ok(ElementFX.color(&"fire") != ElementFX.color(&"ice"), "elements have distinct FX colours")
+
+
+func test_abilities_data() -> void:
+	for id in [&"gust_step", &"jade_platform", &"wind_sight", &"stillness", &"strider_call"]:
+		ok(DB.abilities.has(id), "ability %s defined" % id)
+	var quest_abilities := {}
+	for q in DB.quests:
+		if q.get("rewards", {}).has("ability"):
+			quest_abilities[q["rewards"]["ability"]] = true
+	ok(quest_abilities.size() >= 4, "abilities are earned through quests (%d)" % quest_abilities.size())

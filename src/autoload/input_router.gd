@@ -30,6 +30,8 @@ const BUTTONS := {
 	"map": [KEY_M, JOY_BUTTON_BACK],
 	"inventory": [KEY_I, JOY_BUTTON_DPAD_UP],
 	"debug_console": [KEY_F1, -1],
+	"ability": [KEY_V, JOY_BUTTON_MISC1],
+	"cycle_ability": [KEY_B, -1],
 }
 
 var touch_move := Vector2.ZERO
@@ -75,6 +77,12 @@ func _register_actions() -> void:
 	var ctrl := InputEventKey.new()
 	ctrl.physical_keycode = KEY_CTRL
 	InputMap.action_add_event("dodge", ctrl)
+	# Gamepad triggers: right = ability, left = cycle ability.
+	for pair in [["ability", JOY_AXIS_TRIGGER_RIGHT], ["cycle_ability", JOY_AXIS_TRIGGER_LEFT]]:
+		var tj := InputEventJoypadMotion.new()
+		tj.axis = pair[1]
+		tj.axis_value = 1.0
+		InputMap.action_add_event(pair[0], tj)
 	var grave := InputEventKey.new()
 	grave.physical_keycode = KEY_QUOTELEFT
 	InputMap.action_add_event("debug_console", grave)

@@ -13,6 +13,23 @@ extends Node3D
 ## instanced instead and logical states are mapped to its clips through
 ## EntityType.anim_map. Nothing else changes. See docs/ASSETS.md.
 
+## Every logical animation the gameplay layer can request. A final model
+## maps these to its clips through EntityType.anim_map (missing entries fall
+## back along FALLBACK, so a model with only idle/run/attack still works).
+const LOGICAL := [
+	&"idle", &"walk", &"run", &"sprint", &"move", &"jump", &"fall", &"land",
+	&"climb", &"climb_idle", &"ledge_climb", &"glide", &"swim", &"dodge",
+	&"attack_1", &"attack_2", &"attack_3", &"attack", &"charge", &"spin", &"thrust", &"slam", &"lunge", &"windup",
+	&"block", &"parry", &"hit", &"die", &"interact", &"gather", &"throw", &"eat", &"ride", &"roar",
+]
+const FALLBACK := {
+	&"sprint": &"run", &"run": &"move", &"walk": &"move", &"move": &"idle",
+	&"attack_1": &"attack", &"attack_2": &"attack", &"attack_3": &"attack", &"lunge": &"attack", &"slam": &"attack",
+	&"spin": &"attack", &"thrust": &"attack", &"charge": &"windup", &"windup": &"idle", &"land": &"idle",
+	&"ledge_climb": &"climb", &"climb_idle": &"climb", &"parry": &"block", &"gather": &"interact", &"eat": &"interact",
+	&"throw": &"attack", &"ride": &"idle", &"roar": &"windup", &"fall": &"jump",
+}
+
 var type: EntityType
 var is_placeholder := true
 var state: StringName = &"idle"
@@ -20,6 +37,11 @@ var speed_ratio := 0.0
 
 var _model: Node3D
 var _anim: AnimationPlayer
+var _tree: AnimationTree
+var _playback: AnimationNodeStateMachinePlayback
+var _land_t := 0.0
+var _prev_yaw := 0.0
+var _lean := 0.0
 var _parts: Dictionary = {}          # placeholder limbs by name
 var _sockets: Dictionary = {}
 var _geoms: Array[GeometryInstance3D] = []
@@ -54,6 +76,14 @@ func _build_model() -> void:
 	_model.position = type.model_offset
 	add_child(_model)
 	_anim = _model.find_child("AnimationPlayer", true, false)
+	# Optional AnimationTree with a state machine: logical states travel to
+	# nodes of the same (mapped) name; "parameters/speed" gets speed_ratio.
+	_tree = _model.find_child("AnimationTree", true, false)
+	if _tree:
+		_tree.active = true
+		var pb: Variant = _tree.get("parameters/playback")
+		if pb is AnimationNodeStateMachinePlayback:
+			_playback = pb
 	for n in _model.find_children("*", "Node3D", true, false):
 		if n.name.begins_with("socket_"):
 			_sockets[StringName(n.name.trim_prefix("socket_"))] = n
@@ -272,11 +302,33 @@ func set_flash(amount: float, color: Color = Color.WHITE) -> void:
 
 
 func _play_clip(logical: StringName) -> void:
-	if _anim == null:
+	var clip := resolve_clip(logical)
+	if clip == "":
 		return
-	var clip: String = type.anim_map.get(String(logical), String(logical))
-	if _anim.has_animation(clip):
+	if _playback:
+		_playback.travel(StringName(clip))
+	elif _anim:
 		_anim.play(clip, 0.15)
+
+
+## Mapped clip name for a logical state, following FALLBACK until the model
+## has something to play ("" when nothing matches).
+func resolve_clip(logical: StringName) -> String:
+	var l := logical
+	for i in 6:
+		var clip: String = type.anim_map.get(String(l), String(l))
+		if _has_clip(clip):
+			return clip
+		if not FALLBACK.has(l):
+			break
+		l = FALLBACK[l]
+	return ""
+
+
+func _has_clip(clip: String) -> bool:
+	if _playback and _tree and _tree.tree_root is AnimationNodeStateMachine:
+		return (_tree.tree_root as AnimationNodeStateMachine).has_node(StringName(clip))
+	return _anim != null and _anim.has_animation(clip)
 
 
 func _process(delta: float) -> void:
@@ -286,6 +338,8 @@ func _process(delta: float) -> void:
 			_action = &""
 			if not is_placeholder:
 				_play_clip(state)
+	if _tree and _tree.get("parameters/speed") != null:
+		_tree.set("parameters/speed", speed_ratio)
 	if is_placeholder:
 		_animate_placeholder(delta)
 
@@ -306,8 +360,16 @@ func _animate_placeholder(delta: float) -> void:
 	var torso: Node3D = _parts.get(&"torso")
 	rig.rotation = Vector3.ZERO
 	rig.position = Vector3.ZERO
+	rig.scale = Vector3.ONE
 	if torso:
 		torso.rotation = Vector3.ZERO
+		# Breathing (idle life) and forward lean with speed.
+		torso.scale = Vector3(1.0, 1.0 + sin(Time.get_ticks_msec() * 0.0025) * 0.012, 1.0)
+	# Lean into turns: yaw rate of the whole visual, smoothed.
+	var yaw := global_rotation.y
+	var yaw_rate := wrapf(yaw - _prev_yaw, -PI, PI) / maxf(delta, 0.001)
+	_prev_yaw = yaw
+	_lean = lerpf(_lean, clampf(-yaw_rate * 0.05 * speed_ratio, -0.3, 0.3), minf(delta * 8.0, 1.0))
 
 	if type.placeholder_shape == &"quadruped":
 		for i in 4:
@@ -334,6 +396,8 @@ func _animate_placeholder(delta: float) -> void:
 			arm_l.rotation = Vector3(-swing * 0.6, 0, -0.04)
 			arm_r.rotation = Vector3(swing * 0.6, 0, 0.04)
 		rig.position.y = absf(sin(_phase)) * 0.05 * speed_ratio
+		rig.rotation.x = -0.12 * clampf(speed_ratio, 0.0, 1.3)
+		rig.rotation.z = _lean
 		match state:
 			&"climb", &"climb_idle":
 				var c := sin(_phase * 0.8) if state == &"climb" else 0.0
@@ -359,6 +423,12 @@ func _animate_placeholder(delta: float) -> void:
 			&"block":
 				arm_r.rotation = Vector3(-1.4, 0.5, 0)
 				arm_l.rotation = Vector3(-1.3, -0.5, 0)
+			&"ride":
+				rig.rotation = Vector3(-0.15, 0, 0)
+				leg_l.rotation = Vector3(-1.2, 0, -0.5)
+				leg_r.rotation = Vector3(-1.2, 0, 0.5)
+				arm_l.rotation = Vector3(-0.9 + sin(_phase) * 0.1, 0, -0.1)
+				arm_r.rotation = Vector3(-0.9 - sin(_phase) * 0.1, 0, 0.1)
 		match _action:
 			&"attack_1", &"attack", &"lunge":
 				arm_r.rotation = Vector3(lerpf(-2.6, 0.9, _ease_strike(t)), 0, lerpf(0.4, -0.3, t))
@@ -391,6 +461,28 @@ func _animate_placeholder(delta: float) -> void:
 				rig.position.y = 0.5 * sin(t * PI) * 0.6
 			&"hit":
 				rig.rotation.x = sin(t * PI) * 0.35
+			&"land":
+				# Squash on impact, knees bend, arms balance.
+				var sq := sin(t * PI) * 0.18
+				rig.scale = Vector3(1.0 + sq * 0.6, 1.0 - sq, 1.0 + sq * 0.6)
+				leg_l.rotation.x = -0.6 * sin(t * PI)
+				leg_r.rotation.x = -0.6 * sin(t * PI)
+				arm_l.rotation.z = -0.7 * sin(t * PI)
+				arm_r.rotation.z = 0.7 * sin(t * PI)
+			&"ledge_climb":
+				arm_l.rotation = Vector3(lerpf(PI * 0.9, 0.3, t), 0, 0)
+				arm_r.rotation = Vector3(lerpf(PI * 0.9, 0.3, t), 0, 0)
+				leg_l.rotation.x = -1.2 * sin(t * PI)
+				rig.rotation.x = -0.3 * sin(t * PI)
+			&"parry":
+				arm_r.rotation = Vector3(-1.6, lerpf(0.8, -0.6, _ease_strike(t)), 0)
+				arm_l.rotation = Vector3(-0.6, 0, -0.8)
+				if torso:
+					torso.rotation.y = lerpf(0.4, -0.3, t)
+			&"roar":
+				rig.rotation.x = -0.35 * sin(t * PI)
+				arm_l.rotation = Vector3(-1.0, 0, -1.2 * sin(t * PI))
+				arm_r.rotation = Vector3(-1.0, 0, 1.2 * sin(t * PI))
 			&"die":
 				rig.rotation.x = lerpf(0.0, PI * 0.5, minf(t * 1.6, 1.0))
 				rig.position.y = lerpf(0.0, type.collider_radius * 0.8, minf(t * 1.6, 1.0))

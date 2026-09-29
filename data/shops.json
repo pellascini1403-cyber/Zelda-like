@@ -1,0 +1,22 @@
+[
+  {"id": "hamlet_merchant", "npc": "NPC_MERCHANT", "name_key": "SHOP_HAMLET", "sell_rate": 0.5,
+   "stock": [
+     {"id": "sunpear", "price": 4, "count": 10},
+     {"id": "hearty_stew", "price": 22, "count": 3},
+     {"id": "resin_bomb", "price": 18, "count": 6},
+     {"id": "whetstone", "price": 25, "count": 4},
+     {"id": "woolen_wrap", "price": 60, "count": 1},
+     {"id": "fur_cap", "price": 45, "count": 1},
+     {"id": "quarry_saber", "price": 70, "count": 2},
+     {"id": "stamina_bloom", "price": 220, "count": 1, "requires_flag": "boss_BOSS_THORNBACK"}
+   ]},
+  {"id": "oasis_nomad", "npc": "NPC_NOMAD", "name_key": "SHOP_OASIS", "sell_rate": 0.6,
+   "stock": [
+     {"id": "cooling_salad", "price": 20, "count": 5},
+     {"id": "frostmint", "price": 8, "count": 8},
+     {"id": "nomad_veil", "price": 90, "count": 1},
+     {"id": "dune_wrap", "price": 140, "count": 1},
+     {"id": "forge_stone", "price": 180, "count": 1},
+     {"id": "vital_seed", "price": 400, "count": 1, "requires_flag": "boss_BOSS_GLASS_MATRIARCH"}
+   ]}
+]
