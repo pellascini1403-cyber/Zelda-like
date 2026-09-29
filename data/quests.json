@@ -1,0 +1,513 @@
+[
+  {
+    "id": "mq_first_wind",
+    "type": "main",
+    "start": "auto",
+    "title_key": "QUEST_FIRST_WIND",
+    "desc_key": "QUEST_FIRST_WIND_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "talk",
+            "target": "NPC_CARTOGRAPHER",
+            "text_key": "QO_TALK_CARTOGRAPHER",
+            "marker": [
+              60,
+              156
+            ]
+          }
+        ],
+        "talk_lines": [
+          "DLG_Q1_CARTO_1",
+          "DLG_Q1_CARTO_2",
+          "DLG_Q1_CARTO_3"
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "wind_overlook",
+            "text_key": "QO_FIND_OVERLOOK"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "cloud_temple",
+            "text_key": "QO_FIND_TEMPLE"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "boss",
+            "target": "BOSS_THORNBACK",
+            "text_key": "QO_DEFEAT_THORNBACK",
+            "marker": [
+              0,
+              -280
+            ]
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "ability": "gust_step",
+      "glimmer": 60,
+      "max_stamina": 20
+    }
+  },
+  {
+    "id": "mq_sand_voices",
+    "type": "main",
+    "start": "auto",
+    "requires": [
+      "mq_first_wind"
+    ],
+    "title_key": "QUEST_SAND_VOICES",
+    "desc_key": "QUEST_SAND_VOICES_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "region",
+            "target": "desert",
+            "text_key": "QO_ENTER_DESERT",
+            "marker": [
+              760,
+              250
+            ]
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "sunscar_oasis",
+            "text_key": "QO_FIND_OASIS"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "talk",
+            "target": "NPC_NOMAD",
+            "text_key": "QO_TALK_NOMAD",
+            "marker": [
+              1080,
+              340
+            ]
+          }
+        ],
+        "talk_lines": [
+          "DLG_Q2_NOMAD_1",
+          "DLG_Q2_NOMAD_2"
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "sun_vault",
+            "text_key": "QO_FIND_VAULT"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "boss",
+            "target": "BOSS_GLASS_MATRIARCH",
+            "text_key": "QO_DEFEAT_MATRIARCH",
+            "marker": [
+              1300,
+              120
+            ]
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "ability": "jade_platform",
+      "glimmer": 120,
+      "max_health": 20
+    }
+  },
+  {
+    "id": "mq_still_heart",
+    "type": "main",
+    "start": "auto",
+    "requires": [
+      "mq_sand_voices"
+    ],
+    "title_key": "QUEST_STILL_HEART",
+    "desc_key": "QUEST_STILL_HEART_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "region",
+            "target": "veil",
+            "text_key": "QO_ENTER_VEIL",
+            "marker": [
+              700,
+              -700
+            ]
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "flag",
+            "target": "anchor_north",
+            "text_key": "QO_ANCHOR_NORTH",
+            "marker": [
+              880,
+              -1080
+            ]
+          },
+          {
+            "type": "flag",
+            "target": "anchor_east",
+            "text_key": "QO_ANCHOR_EAST",
+            "marker": [
+              1060,
+              -820
+            ]
+          },
+          {
+            "type": "flag",
+            "target": "anchor_west",
+            "text_key": "QO_ANCHOR_WEST",
+            "marker": [
+              700,
+              -900
+            ]
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "boss",
+            "target": "BOSS_STILLWAKE_WARDEN",
+            "text_key": "QO_DEFEAT_WARDEN",
+            "marker": [
+              880,
+              -880
+            ]
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "ability": "stillness",
+      "flag": "ending_reached",
+      "glimmer": 300
+    }
+  },
+  {
+    "id": "sq_mushroom_stew",
+    "type": "side",
+    "start": "talk:NPC_MERCHANT",
+    "title_key": "QUEST_MUSHROOM",
+    "desc_key": "QUEST_MUSHROOM_DESC",
+    "offer_lines": [
+      "DLG_SQ_MUSH_OFFER_1",
+      "DLG_SQ_MUSH_OFFER_2"
+    ],
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "collect",
+            "target": "cap_mushroom",
+            "count": 5,
+            "text_key": "QO_COLLECT_MUSHROOMS"
+          }
+        ],
+        "hint_lines": [
+          "DLG_SQ_MUSH_HINT"
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "talk",
+            "target": "NPC_MERCHANT",
+            "text_key": "QO_RETURN_MERCHANT"
+          }
+        ],
+        "talk_lines": [
+          "DLG_SQ_MUSH_DONE"
+        ]
+      }
+    ],
+    "rewards": {
+      "glimmer": 40,
+      "items": [
+        {
+          "id": "hearty_stew",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "sq_thorn_cull",
+    "type": "side",
+    "start": "talk:NPC_VILLAGER",
+    "title_key": "QUEST_THORN_CULL",
+    "desc_key": "QUEST_THORN_CULL_DESC",
+    "offer_lines": [
+      "DLG_SQ_THORN_OFFER_1",
+      "DLG_SQ_THORN_OFFER_2"
+    ],
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "kill",
+            "target": "ENEMY_THORNLING",
+            "count": 5,
+            "text_key": "QO_KILL_THORNLINGS",
+            "marker": [
+              -150,
+              420
+            ]
+          }
+        ],
+        "hint_lines": [
+          "DLG_SQ_THORN_HINT"
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "talk",
+            "target": "NPC_VILLAGER",
+            "text_key": "QO_RETURN_VILLAGER"
+          }
+        ],
+        "talk_lines": [
+          "DLG_SQ_THORN_DONE"
+        ]
+      }
+    ],
+    "rewards": {
+      "glimmer": 30,
+      "items": [
+        {
+          "id": "fur_cap",
+          "count": 1
+        },
+        {
+          "id": "whetstone",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "sq_ribbons",
+    "type": "side",
+    "start": "event",
+    "title_key": "QUEST_RIBBONS",
+    "desc_key": "QUEST_RIBBONS_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "wayside_shrine",
+            "text_key": "QO_SHRINE_WAYSIDE"
+          },
+          {
+            "type": "discover",
+            "target": "heath_shrine",
+            "text_key": "QO_SHRINE_HEATH"
+          },
+          {
+            "type": "discover",
+            "target": "jade_bridge",
+            "text_key": "QO_JADE_BRIDGE"
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "items": [
+        {
+          "id": "stamina_bloom",
+          "count": 1
+        }
+      ],
+      "glimmer": 25
+    }
+  },
+  {
+    "id": "sq_echoes",
+    "type": "side",
+    "start": "event",
+    "title_key": "QUEST_ECHOES",
+    "desc_key": "QUEST_ECHOES_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "echo_chamber",
+            "text_key": "QO_FIND_ECHO"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "open_chest",
+            "target": "echo_chamber:grand",
+            "text_key": "QO_ECHO_HEART",
+            "marker": [
+              230,
+              420
+            ]
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "glimmer": 50
+    }
+  },
+  {
+    "id": "sq_sunken_hall",
+    "type": "side",
+    "start": "event",
+    "title_key": "QUEST_SUNKEN",
+    "desc_key": "QUEST_SUNKEN_DESC",
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "discover",
+            "target": "sunken_hall",
+            "text_key": "QO_FIND_SUNKEN"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "open_chest",
+            "target": "sunken_hall:cache",
+            "text_key": "QO_SUNKEN_CACHE",
+            "marker": [
+              -466,
+              -165
+            ]
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "glimmer": 35,
+      "items": [
+        {
+          "id": "forge_stone",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "sq_windstrider",
+    "type": "side",
+    "start": "talk:NPC_CARTOGRAPHER",
+    "requires": [
+      "mq_first_wind"
+    ],
+    "title_key": "QUEST_WINDSTRIDER",
+    "desc_key": "QUEST_WINDSTRIDER_DESC",
+    "offer_lines": [
+      "DLG_SQ_STRIDER_OFFER_1",
+      "DLG_SQ_STRIDER_OFFER_2"
+    ],
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "mount",
+            "target": "windstrider",
+            "text_key": "QO_TAME_STRIDER",
+            "marker": [
+              260,
+              110
+            ]
+          }
+        ],
+        "hint_lines": [
+          "DLG_SQ_STRIDER_HINT"
+        ]
+      }
+    ],
+    "rewards": {
+      "ability": "strider_call",
+      "glimmer": 20
+    }
+  },
+  {
+    "id": "sq_nomad_water",
+    "type": "side",
+    "start": "talk:NPC_NOMAD",
+    "requires": [
+      "mq_first_wind"
+    ],
+    "title_key": "QUEST_NOMAD_WATER",
+    "desc_key": "QUEST_NOMAD_WATER_DESC",
+    "offer_lines": [
+      "DLG_SQ_NOMAD_OFFER_1",
+      "DLG_SQ_NOMAD_OFFER_2"
+    ],
+    "stages": [
+      {
+        "objectives": [
+          {
+            "type": "collect",
+            "target": "sunpear",
+            "count": 4,
+            "text_key": "QO_COLLECT_SUNPEARS"
+          }
+        ]
+      },
+      {
+        "objectives": [
+          {
+            "type": "talk",
+            "target": "NPC_NOMAD",
+            "text_key": "QO_RETURN_NOMAD"
+          }
+        ],
+        "talk_lines": [
+          "DLG_SQ_NOMAD_DONE"
+        ]
+      }
+    ],
+    "rewards": {
+      "items": [
+        {
+          "id": "cooling_salad",
+          "count": 3
+        }
+      ],
+      "glimmer": 45
+    }
+  }
+]

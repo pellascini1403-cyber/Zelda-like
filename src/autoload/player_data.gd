@@ -68,6 +68,17 @@ func _process(delta: float) -> void:
 
 
 # --- Vitals ---------------------------------------------------------------------------
+func has_ability(id: StringName) -> bool:
+	return abilities.has(String(id))
+
+
+func unlock_ability(id: StringName) -> void:
+	if has_ability(id):
+		return
+	abilities[String(id)] = true
+	EventBus.ability_unlocked.emit(id)
+
+
 func heal(amount: float, silent: bool = false) -> void:
 	var before := health
 	health = minf(health + amount, max_health)

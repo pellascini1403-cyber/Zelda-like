@@ -24,7 +24,10 @@ func interact(_player: Player) -> void:
 	if Clock.is_night() and d.has("night"):
 		lines = d["night"]
 	(npc.brain as NPCBrain).talking = true
-	EventBus.dialogue_requested.emit(npc.type.name_key, PackedStringArray(lines))
+	# Quests may override the line set (offer, hint, turn-in).
+	var quest_lines := Quests.talk_lines(npc.type.id)
+	EventBus.npc_talked.emit(npc.type.id)
+	EventBus.dialogue_requested.emit(npc.type.name_key, quest_lines if not quest_lines.is_empty() else PackedStringArray(lines))
 	var give: String = d.get("gift", "")
 	var flag := "gift_" + String(npc.type.id)
 	if give != "" and not WorldState.flags.has(flag):

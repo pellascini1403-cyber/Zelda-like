@@ -5,7 +5,7 @@ extends Node
 ## so a crash or the OS killing the app mid-write never corrupts the save.
 ## If the main file is unreadable the backup is used.
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const SLOT_PATH := "user://save_0.json"
 const BACKUP_PATH := "user://save_0.bak.json"
 const TMP_PATH := "user://save_0.tmp.json"
@@ -47,6 +47,7 @@ func save_game() -> bool:
 		"world": WorldState.save_state(),
 		"clock": Clock.save_state(),
 		"weather": Weather.save_state(),
+		"quests": Quests.save_state(),
 	}
 	var f := FileAccess.open(TMP_PATH, FileAccess.WRITE)
 	if f == null:
@@ -97,6 +98,7 @@ func apply_loaded_globals() -> void:
 	WorldState.load_state(section("world"))
 	Clock.load_state(section("clock"))
 	Weather.load_state(section("weather"))
+	Quests.load_state(section("quests"))
 	EventBus.game_loaded.emit()
 
 
@@ -105,6 +107,7 @@ func new_game() -> void:
 	playtime = 0.0
 	WorldState.reset()
 	PlayerData.reset_new_game()
+	Quests.reset()
 	Clock.load_state({"hour": 7.2, "day": 1})
 	Weather.set_weather(&"clear", true)
 
@@ -120,4 +123,8 @@ func _migrate(d: Dictionary) -> Dictionary:
 	var v := int(d.get("version", 1))
 	if v > SAVE_VERSION:
 		push_warning("SaveSystem: save from a newer build (v%d)" % v)
+	if v < 2:
+		# v1 had no quests: start them fresh (auto quests begin on load).
+		d["quests"] = {}
+		d["version"] = 2
 	return d

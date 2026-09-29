@@ -137,6 +137,7 @@ func _start() -> void:
 	camera_rig.snap_to_target()
 	player.physics_ready = true
 	Game.state = Game.State.PLAYING
+	Quests.on_game_started()
 	InputRouter.gameplay_enabled = true
 	_ready_to_play = true
 	loading.finish()

@@ -49,4 +49,24 @@ signal chest_opened(chest_id: String, items: Array)
 signal settings_changed
 signal game_saved
 signal game_loaded
+
+# --- Quests / progression ---------------------------------------------------
+signal npc_talked(npc_id: StringName)
+signal quest_started(quest_id: StringName)
+signal quest_updated(quest_id: StringName)
+signal quest_stage_advanced(quest_id: StringName, stage: int)
+signal quest_completed(quest_id: StringName)
+signal flag_set(flag: StringName)
+signal ability_unlocked(ability_id: StringName)
+signal ability_used(ability_id: StringName)
+signal boss_engaged(boss_id: StringName, node: Node3D)
+signal boss_phase_changed(boss_id: StringName, phase: int)
+signal boss_defeated(boss_id: StringName)
+signal boss_disengaged(boss_id: StringName)
+signal mount_tamed(mount_id: StringName)
+signal mount_changed(mounted: bool)
+signal world_event_started(event_id: StringName, position: Vector3)
+signal world_event_ended(event_id: StringName)
+## Big centred title card (discoveries, quests, bosses): title, subtitle.
+signal title_card(title: String, subtitle: String)
 signal quality_changed(level: int)

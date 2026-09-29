@@ -71,6 +71,8 @@ static func get_mat(key: StringName) -> Material:
 			gm.emission = Color(0.3, 0.85, 1.0)
 			gm.emission_energy_multiplier = 1.6
 			m = gm
+		&"architecture":
+			m = _shader_mat("res://assets/shaders/architecture.gdshader")
 		&"vertex_color":
 			var vm := StandardMaterial3D.new()
 			vm.vertex_color_use_as_albedo = true

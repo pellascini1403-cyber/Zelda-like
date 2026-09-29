@@ -170,12 +170,6 @@ func height(x: float, z: float) -> float:
 		var carve := smoothstep(40.0, 7.0, rd)
 		h = lerpf(h, minf(h, -3.5), carve)
 
-	# --- Waterfall pools ---------------------------------------------------------
-	for pool in _pools:
-		var pdist: float = p.distance_to(pool[0])
-		if pdist < pool[1] * 1.6:
-			h = lerpf(h, minf(h, pool[2]), smoothstep(pool[1] * 1.6, pool[1] * 0.6, pdist))
-
 	# --- POI pads (village, ruins, camps) --------------------------------------
 	for pad in _pads:
 		var dd: float = p.distance_to(pad[0])
@@ -186,6 +180,12 @@ func height(x: float, z: float) -> float:
 				continue
 			var k := smoothstep(r * 1.8, r, dd)
 			h = lerpf(h, target, k)
+
+	# --- Waterfall pools (after pads: a pad never fills a pool) -----------------
+	for pool in _pools:
+		var pdist: float = p.distance_to(pool[0])
+		if pdist < pool[1] * 1.6:
+			h = lerpf(h, minf(h, pool[2]), smoothstep(pool[1] * 1.6, pool[1] * 0.6, pdist))
 	return h
 
 

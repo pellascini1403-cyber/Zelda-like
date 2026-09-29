@@ -291,6 +291,97 @@
         "ENEMY_THORNLING",
         "ENEMY_THORNLING"
       ]
+    },
+    {
+      "id": "cloud_temple",
+      "type": "temple",
+      "name_key": "POI_CLOUD_TEMPLE",
+      "pos": [
+        0,
+        -306
+      ],
+      "yaw": 0.0,
+      "flatten": 24,
+      "pad_height": 68.0,
+      "clear_radius": 40,
+      "discover_radius": 60,
+      "loot": "chest_rare",
+      "lore": "LORE_TEMPLE",
+      "reward": [
+        {
+          "id": "stamina_bloom"
+        }
+      ]
+    },
+    {
+      "id": "wayside_shrine",
+      "type": "shrine",
+      "name_key": "POI_WAYSIDE_SHRINE",
+      "pos": [
+        140,
+        280
+      ],
+      "yaw": 0.6,
+      "flatten": 9,
+      "pad_height": 25.0,
+      "clear_radius": 10,
+      "discover_radius": 24,
+      "lore": "LORE_SHRINE"
+    },
+    {
+      "id": "heath_shrine",
+      "type": "shrine",
+      "name_key": "POI_HEATH_SHRINE",
+      "pos": [
+        -120,
+        120
+      ],
+      "yaw": -1.2,
+      "flatten": 9,
+      "pad_height": 22.0,
+      "clear_radius": 10,
+      "discover_radius": 24,
+      "lore": "LORE_SHRINE",
+      "loot": "chest_common"
+    },
+    {
+      "id": "jade_bridge",
+      "type": "bridge",
+      "name_key": "POI_JADE_BRIDGE",
+      "pos": [
+        -325,
+        420
+      ],
+      "yaw": 0.0,
+      "span": 70.0,
+      "rise": 6.0,
+      "pad_height": 15.0,
+      "clear_radius": 36,
+      "discover_radius": 40
+    },
+    {
+      "id": "sunken_hall",
+      "type": "ruins",
+      "name_key": "POI_SUNKEN_HALL",
+      "pos": [
+        -460,
+        -160
+      ],
+      "flatten": 18,
+      "pad_height": 31.0,
+      "clear_radius": 22,
+      "discover_radius": 34,
+      "loot": "chest_camp",
+      "lore": "LORE_SUNKEN_HALL",
+      "reward": [
+        {
+          "id": "vital_seed"
+        }
+      ],
+      "guards": [
+        "ENEMY_THORNLING",
+        "ENEMY_SPITTER"
+      ]
     }
   ],
   "falls": [
@@ -566,6 +657,30 @@
         300
       ],
       "thorn_den"
+    ],
+    [
+      "thorn_den",
+      [
+        -250,
+        430
+      ],
+      "jade_bridge",
+      [
+        -420,
+        430
+      ],
+      [
+        -470,
+        300
+      ]
+    ],
+    [
+      "broken_tower",
+      [
+        -400,
+        -100
+      ],
+      "sunken_hall"
     ]
   ]
 }

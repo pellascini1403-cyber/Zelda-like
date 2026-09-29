@@ -16,8 +16,11 @@ var texture: ImageTexture
 var map_image: Image
 
 
-static func cache_path(seed_value: int) -> String:
-	return "user://cache/island_%d_v%d.bin" % [seed_value, CACHE_VERSION]
+## The key includes a hash of everything in world data that shapes terrain
+## (pads, falls, paths), so editing data/world.json never serves stale heights.
+static func cache_path(seed_value: int, world: Dictionary = {}) -> String:
+	var shape_key := JSON.stringify([world.get("pois", []), world.get("falls", []), world.get("paths", [])]).hash()
+	return "user://cache/island_%d_v%d_%x.bin" % [seed_value, CACHE_VERSION, shape_key & 0xffffffff]
 
 
 ## Heavy: call from a worker thread.
@@ -28,7 +31,7 @@ func build(world: Dictionary) -> void:
 
 func _build_heights(world: Dictionary) -> void:
 	var seed_value := int(world.get("seed", 1337))
-	var path := cache_path(seed_value)
+	var path := cache_path(seed_value, world)
 	if FileAccess.file_exists(path):
 		var f := FileAccess.open(path, FileAccess.READ)
 		if f and f.get_length() == RES * RES * 4:

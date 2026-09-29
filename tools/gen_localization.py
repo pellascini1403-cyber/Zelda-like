@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Builds localization/strings.csv (imported by Godot as 8 translations).
 
-Source of truth for text lives in tools/loc_ui.py, tools/loc_content.py and
-tools/loc_items.py. Run after editing them:  python3 tools/gen_localization.py
+Source of truth for text lives in tools/loc_ui.py, tools/loc_content.py,
+tools/loc_items.py and tools/loc_world2.py. Run after editing them:  python3 tools/gen_localization.py
 """
 import csv
 import os
@@ -13,13 +13,14 @@ sys.path.insert(0, HERE)
 from loc_ui import UI  # noqa: E402
 from loc_content import CONTENT  # noqa: E402
 from loc_items import ITEMS  # noqa: E402
+from loc_world2 import WORLD2  # noqa: E402
 
 LANGS = ["en", "es", "pt", "fr", "de", "ja", "ko", "zh"]
 
 
 def main() -> None:
     rows = {}
-    for table in (UI, CONTENT):
+    for table in (UI, CONTENT, WORLD2):
         for key, values in table.items():
             rows[key] = values
     for item_id, (names, descs) in ITEMS.items():

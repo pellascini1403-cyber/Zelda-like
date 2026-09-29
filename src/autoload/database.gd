@@ -17,6 +17,11 @@ var weather_types: Dictionary = {}  # StringName -> Dictionary
 var buffs: Dictionary = {}          # StringName -> Dictionary
 var world: Dictionary = {}          # layout: pois, structures, spawn point
 var element_rules: Dictionary = {}
+var quests: Array = []              # quest definitions (see Quests autoload)
+var bosses: Dictionary = {}         # StringName -> boss definition
+var abilities: Dictionary = {}      # StringName -> ability definition
+var shops: Dictionary = {}          # StringName -> shop definition
+var world_events: Array = []        # dynamic world event definitions
 
 
 func _ready() -> void:
@@ -50,6 +55,17 @@ func reload() -> void:
 	buffs = _keyed(_load_dict("buffs.json"))
 	world = _load_dict("world.json")
 	element_rules = _load_dict("elements.json")
+	quests = _load_array("quests.json")
+	bosses = {}
+	for b in _load_array("bosses.json"):
+		bosses[StringName(b["id"])] = b
+	abilities = {}
+	for a in _load_array("abilities.json"):
+		abilities[StringName(a["id"])] = a
+	shops = {}
+	for s in _load_array("shops.json"):
+		shops[StringName(s["id"])] = s
+	world_events = _load_array("world_events.json")
 
 
 # --- Accessors ----------------------------------------------------------------
