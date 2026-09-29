@@ -236,43 +236,51 @@ func _grooves(node: Node3D, a: Vector3, length: float, side: float, axis_z: bool
 		add(node, "dark", ShapeKit.box(Vector3(0.01, 0.012, length) if axis_z else Vector3(length, 0.012, 0.01)), xf(p + Vector3(side * 0.005, 0, 0)))
 
 
-# --- 01 Longwake: heavy, long, low, a tall leaning prow ------------------------------------------
-## Silhouette: a long low keel, stepped carapace plates rising to a short
-## rear cowl, side pontoons along the big rear wheel, and a tall forward-
-## leaning twin-blade prow carrying a black visor over an EXPOSED front wheel.
+# --- 01 Longwake: heavy, long, low, a beak over an open front wheel ------------------------------------
+## Silhouette: a long bullet hull slung low between the wheels, a hump that
+## rises behind the saddle into a faceted tail with two swept fins, broad
+## side pods along the big rear wheel, and a long faceted beak reaching over
+## an EXPOSED front wheel (no enclosing fairing), black visor at its root.
 func _longwake() -> void:
 	body = _node(lean_node, "Body", Vector3.ZERO)
 	var b := body
-	add(b, "dark", ShapeKit.box(Vector3(0.62, 0.26, 2.1)), xf(Vector3(0, 0.42, 0.05)))
-	add(b, "silver", ShapeKit.box(Vector3(1.04, 0.2, 1.45)), xf(Vector3(0, 0.62, 0.3)))
-	add(b, "silver", ShapeKit.box(Vector3(0.9, 0.16, 1.05)), xf(Vector3(0, 0.79, 0.45), Vector3(-3, 0, 0)))
-	add(b, "silver", ShapeKit.box(Vector3(0.84, 0.36, 0.55)), xf(Vector3(0, 0.98, 0.95), Vector3(-14, 0, 0)))
-	add(b, "silver", ShapeKit.box(Vector3(0.6, 0.12, 0.35)), xf(Vector3(0, 1.2, 1.05), Vector3(-24, 0, 0)))
-	add(b, "dark", ShapeKit.box(Vector3(0.46, 0.12, 0.62)), xf(Vector3(0, 0.93, 0.32)))
-	add(b, "silver", ShapeKit.box(Vector3(0.72, 0.1, 0.5)), xf(Vector3(0, 0.74, -0.45), Vector3(8, 0, 0)))
+	# Keel and bullet hull.
+	add(b, "dark", ShapeKit.box(Vector3(0.44, 0.2, 1.9)), xf(Vector3(0, 0.36, 0.1)))
+	add(b, "silver", ShapeKit.capsule(0.3, 2.05), xf(Vector3(0, 0.6, 0.12), Vector3(90, 0, 0), Vector3(1.45, 1, 0.78)))
+	# Hump behind the saddle, faceted tail, swept fins.
+	add(b, "silver", ShapeKit.capsule(0.27, 1.0), xf(Vector3(0, 0.84, 0.72), Vector3(82, 0, 0), Vector3(1.3, 1, 0.85)))
+	add(b, "silver", ShapeKit.cyl(0.04, 0.3, 0.62, 6), xf(Vector3(0, 0.88, 1.42), Vector3(96, 0, 0), Vector3(1.25, 1, 0.8)))
 	for sx in [-1.0, 1.0]:
-		# Side pontoons along the rear wheel, with soot vent slats.
-		add(b, "silver", ShapeKit.capsule(0.2, 1.35), xf(Vector3(sx * 0.6, 0.45, 0.55), Vector3(90, 0, 0), Vector3(1, 1, 0.85)))
+		add(b, "silver", ShapeKit.cone(0.22, 0.62, 3), xf(Vector3(sx * 0.3, 1.02, 1.2), Vector3(120, 0, sx * -32), Vector3(1, 1, 0.16)))
+	add(b, "dark", ShapeKit.capsule(0.13, 0.7), xf(Vector3(0, 0.9, 0.28), Vector3(86, 0, 0), Vector3(1.6, 1, 0.6)))
+	# The beak: a long faceted blade reaching over the front wheel.
+	add(b, "silver", ShapeKit.cyl(0.3, 0.06, 1.2, 6), xf(Vector3(0, 0.84, -0.78), Vector3(82, 0, 0), Vector3(1.25, 1, 0.62)))
+	add(b, "silver", ShapeKit.box(Vector3(0.05, 0.16, 0.9)), xf(Vector3(0, 1.0, -0.8), Vector3(-6, 0, 0)))
+	add(b, "glass", ShapeKit.sphere(0.24, 12), xf(Vector3(0, 1.0, -0.36), Vector3(-18, 0, 0), Vector3(1.15, 0.5, 1.5)))
+	add(b, "dark", ShapeKit.torus(0.22, 0.26), xf(Vector3(0, 1.0, -0.36), Vector3(-18, 0, 0), Vector3(1.15, 0.9, 1.5)))
+	add(b, "lamp", ShapeKit.box(Vector3(0.2, 0.04, 0.03)), xf(Vector3(0, 0.72, -1.2), Vector3(-10, 0, 0)))
+	add(b, "amber", ShapeKit.box(Vector3(0.05, 0.03, 0.02)), xf(Vector3(0, 0.98, 1.72)))
+	add(b, "dark", ShapeKit.cyl(0.03, 0.03, 0.9, 6), xf(Vector3(0, 1.06, -0.2), Vector3(0, 0, 90)))
+	for sx in [-1.0, 1.0]:
+		# Side pods along the rear wheel: the heavy stance.
+		add(b, "silver", ShapeKit.capsule(0.21, 1.3), xf(Vector3(sx * 0.58, 0.44, 0.62), Vector3(90, 0, 0), Vector3(1, 1, 0.9)))
 		for i in 3:
-			add(b, "dark", ShapeKit.box(Vector3(0.02, 0.05, 0.3)), xf(Vector3(sx * 0.79, 0.4 + i * 0.07, 0.55)))
-		add(b, "dark", ShapeKit.cyl(0.07, 0.08, 0.3, 8), xf(Vector3(sx * 0.6, 0.45, 1.3), Vector3(90, 0, 0)))
-		_grooves(b, Vector3(sx * 0.52, 0.7, 0.3), 1.2, sx)
-		_badge(b, Vector3(sx * 0.425, 1.0, 0.95), sx, 1.2)
-		# Tall prow blades, leaning forward.
-		add(b, "silver", ShapeKit.box(Vector3(0.07, 0.78, 0.5)), xf(Vector3(sx * 0.2, 0.92, -0.62), Vector3(-26, 0, 0)))
-		add(b, "silver", ShapeKit.box(Vector3(0.07, 0.2, 0.62)), xf(Vector3(sx * 0.2, 0.55, -0.4), Vector3(4, 0, 0)))
-	add(b, "glass", ShapeKit.box(Vector3(0.36, 0.3, 0.04)), xf(Vector3(0, 1.17, -0.66), Vector3(-38, 0, 0)))
-	add(b, "dark", ShapeKit.box(Vector3(0.44, 0.05, 0.1)), xf(Vector3(0, 1.3, -0.74), Vector3(-38, 0, 0)))
-	add(b, "lamp", ShapeKit.box(Vector3(0.22, 0.05, 0.03)), xf(Vector3(0, 0.82, -0.86)))
-	add(b, "amber", ShapeKit.box(Vector3(0.05, 0.03, 0.02)), xf(Vector3(0, 1.21, 1.26)))
-	add(b, "dark", ShapeKit.cyl(0.03, 0.03, 0.86, 6), xf(Vector3(0, 1.02, -0.38), Vector3(0, 0, 90)))
-	# Front: exposed wheel, soot forks, a floating silver guard blade.
+			add(b, "dark", ShapeKit.box(Vector3(0.02, 0.045, 0.34)), xf(Vector3(sx * 0.78, 0.38 + i * 0.07, 0.62)))
+		add(b, "dark", ShapeKit.cyl(0.075, 0.09, 0.26, 8), xf(Vector3(sx * 0.58, 0.44, 1.36), Vector3(90, 0, 0)))
+		add(b, "dark", ShapeKit.cyl(0.05, 0.05, 0.1, 6), xf(Vector3(sx * 0.46, 1.06, -0.2), Vector3(0, 0, 90)))
+		_grooves(b, Vector3(sx * 0.44, 0.72, 0.1), 1.1, sx)
+		_badge(b, Vector3(sx * 0.4, 0.86, 0.95), sx, 1.2)
+		# Footrests.
+		add(b, "dark", ShapeKit.box(Vector3(0.18, 0.04, 0.12)), xf(Vector3(sx * 0.5, 0.36, 0.05)))
+	# Front: exposed wheel, soot forks, a short guard blade.
 	steer_node = _node(b, "Steer", Vector3(0, 0.95, -0.95))
 	for sx in [-1.0, 1.0]:
-		add(steer_node, "dark", ShapeKit.cyl(0.035, 0.04, 0.72, 8), xf(Vector3(sx * 0.16, -0.3, -0.16), Vector3(-24, 0, 0)))
-	add(steer_node, "silver", ShapeKit.box(Vector3(0.3, 0.04, 0.72)), xf(Vector3(0, 0.02, -0.26), Vector3(-6, 0, 0)))
-	_wheel(steer_node, "wheel_front", Vector3(0, -0.53, -0.3), 0.42, 0.24, false, 0.26)
-	_wheel(b, "wheel_rear", Vector3(0, 0.46, 1.05), 0.46, 0.34, false, 0.3)
+		add(steer_node, "dark", ShapeKit.cyl(0.045, 0.05, 0.78, 8), xf(Vector3(sx * 0.17, -0.3, -0.18), Vector3(-26, 0, 0)))
+		add(steer_node, "silver", ShapeKit.cyl(0.065, 0.065, 0.16, 8), xf(Vector3(sx * 0.17, 0.02, -0.03), Vector3(-26, 0, 0)))
+	add(steer_node, "silver", ShapeKit.box(Vector3(0.28, 0.035, 0.5)), xf(Vector3(0, -0.02, -0.4), Vector3(-10, 0, 0)))
+	_wheel(steer_node, "wheel_front", Vector3(0, -0.53, -0.34), 0.42, 0.26, false, 0.26)
+	add(b, "dark", ShapeKit.box(Vector3(0.1, 0.12, 0.8)), xf(Vector3(0.24, 0.46, 0.75), Vector3(-6, 0, 0)))
+	_wheel(b, "wheel_rear", Vector3(0, 0.48, 1.08), 0.48, 0.36, false, 0.32)
 	_seat = _socket(lean_node, "seat", _v(def.get("seat", [0, 0.95, 0.35])))
 
 
@@ -283,8 +291,9 @@ func _longwake() -> void:
 func _sparrow() -> void:
 	body = _node(lean_node, "Body", Vector3.ZERO)
 	var b := body
-	add(b, "silver", ShapeKit.capsule(0.21, 0.95), xf(Vector3(0, 0.72, 0.08), Vector3(80, 0, 0), Vector3(1.05, 1, 0.9)))
-	add(b, "silver", ShapeKit.sphere(0.22, 12), xf(Vector3(0, 0.8, -0.3), Vector3.ZERO, Vector3(1, 0.85, 1.1)))
+	add(b, "silver", ShapeKit.capsule(0.25, 1.0), xf(Vector3(0, 0.74, 0.1), Vector3(78, 0, 0), Vector3(1.1, 1, 0.95)))
+	add(b, "silver", ShapeKit.sphere(0.26, 12), xf(Vector3(0, 0.84, -0.28), Vector3.ZERO, Vector3(1, 0.85, 1.15)))
+	add(b, "silver", ShapeKit.box(Vector3(0.3, 0.035, 0.5)), xf(Vector3(0, 0.92, 0.8), Vector3(12, 0, 0)))
 	add(b, "dark", ShapeKit.capsule(0.12, 0.6), xf(Vector3(0, 0.93, 0.25), Vector3(84, 0, 0), Vector3(1.2, 1, 0.55)))
 	add(b, "dark", ShapeKit.box(Vector3(0.24, 0.06, 0.55)), xf(Vector3(0, 0.46, 0.0), Vector3(-6, 0, 0)))
 	add(b, "dark", ShapeKit.box(Vector3(0.08, 0.08, 0.62)), xf(Vector3(0, 0.5, 0.42), Vector3(-18, 0, 0)))
@@ -300,10 +309,13 @@ func _sparrow() -> void:
 	add(b, "amber", ShapeKit.box(Vector3(0.04, 0.025, 0.02)), xf(Vector3(0, 0.99, 0.76)))
 	steer_node = _node(b, "Steer", Vector3(0, 1.1, -0.5))
 	for sx in [-1.0, 1.0]:
-		add(steer_node, "dark", ShapeKit.cyl(0.042, 0.042, 1.02, 8), xf(Vector3(sx * 0.12, -0.36, -0.1), Vector3(-12, 0, 0)))
-		add(steer_node, "silver", ShapeKit.cyl(0.058, 0.058, 0.14, 8), xf(Vector3(sx * 0.12, -0.02, -0.03), Vector3(-12, 0, 0)))
+		add(steer_node, "dark", ShapeKit.cyl(0.062, 0.062, 1.02, 8), xf(Vector3(sx * 0.14, -0.36, -0.1), Vector3(-12, 0, 0)))
+		add(steer_node, "silver", ShapeKit.cyl(0.085, 0.085, 0.22, 8), xf(Vector3(sx * 0.14, 0.0, -0.02), Vector3(-12, 0, 0)))
+		add(steer_node, "silver", ShapeKit.cyl(0.075, 0.075, 0.12, 8), xf(Vector3(sx * 0.14, -0.55, -0.14), Vector3(-12, 0, 0)))
 		add(steer_node, "dark", ShapeKit.cyl(0.035, 0.035, 0.12, 6), xf(Vector3(sx * 0.33, 0.2, 0.05), Vector3(0, 0, 90)))
-	add(steer_node, "dark", ShapeKit.cyl(0.022, 0.022, 0.6, 6), xf(Vector3(0, 0.2, 0.05), Vector3(0, 0, 90)))
+	add(steer_node, "dark", ShapeKit.cyl(0.026, 0.026, 0.62, 6), xf(Vector3(0, 0.16, 0.05), Vector3(0, 0, 90)))
+	add(steer_node, "silver", ShapeKit.box(Vector3(0.36, 0.08, 0.1)), xf(Vector3(0, 0.1, 0.0)))
+	add(steer_node, "silver", ShapeKit.box(Vector3(0.3, 0.035, 0.46)), xf(Vector3(0, -0.72, -0.24), Vector3(-6, 0, 0)))
 	add(steer_node, "silver", ShapeKit.box(Vector3(0.22, 0.2, 0.1)), xf(Vector3(0, -0.06, -0.14)))
 	add(steer_node, "glass", ShapeKit.box(Vector3(0.18, 0.16, 0.02)), xf(Vector3(0, -0.06, -0.195)))
 	add(steer_node, "lamp", ShapeKit.box(Vector3(0.08, 0.06, 0.01)), xf(Vector3(0, -0.06, -0.207)))
@@ -324,7 +336,7 @@ func _bellhull() -> void:
 	add(b, "dark", ShapeKit.torus(0.72, 0.8), xf(Vector3(0, 1.86, 0), Vector3.ZERO, Vector3(0.78, 1, 0.74)))
 	add(b, "dark", ShapeKit.torus(0.76, 0.81), xf(Vector3(0, 0.95, 0), Vector3.ZERO, Vector3(1.0, 1.4, 0.96)))
 	add(b, "glass", ShapeKit.sphere(0.5, 14), xf(Vector3(0, 1.45, -0.56), Vector3.ZERO, Vector3(1.15, 0.5, 0.42)))
-	add(b, "dark", ShapeKit.torus(0.5, 0.58), xf(Vector3(0, 1.45, -0.55), Vector3(90, 0, 0), Vector3(1.12, 1, 0.5)))
+	add(b, "dark", ShapeKit.torus(0.5, 0.57), xf(Vector3(0, 1.45, -0.6), Vector3(90, 0, 0), Vector3(1.15, 0.5, 1.0)))
 	# Chin weapon pod: soot housing, two short barrels (integrated, not a turret).
 	add(b, "dark", ShapeKit.capsule(0.13, 0.72), xf(Vector3(0, 1.1, -0.66), Vector3(0, 0, 90)))
 	for sx in [-1.0, 1.0]:
@@ -417,15 +429,16 @@ func set_headlamp(on: bool) -> void:
 	if on and _lamp == null and Quality.level >= 1:
 		_lamp = SpotLight3D.new()
 		_lamp.light_color = Color(1.0, 0.88, 0.7)
-		_lamp.light_energy = 1.6
-		_lamp.spot_range = 22.0
-		_lamp.spot_angle = 32.0
+		_lamp.light_energy = 7.0
+		_lamp.spot_range = 26.0
+		_lamp.spot_angle = 30.0
+		_lamp.spot_attenuation = 0.6
 		_lamp.shadow_enabled = false
 		_lamp.distance_fade_enabled = true
 		_lamp.distance_fade_begin = 40.0
 		_lamp.distance_fade_length = 15.0
 		_lamp.position = Vector3(0, 1.0 if String(def.get("class", "")) != "capsule" else 1.7, -1.0)
-		_lamp.rotation_degrees = Vector3(-8, 0, 0)
+		_lamp.rotation_degrees = Vector3(-14, 0, 0)
 		lean_node.add_child(_lamp)
 	if _lamp:
 		_lamp.visible = on

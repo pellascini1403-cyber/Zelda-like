@@ -140,6 +140,8 @@ func run(text: String) -> String:
 				if pos == Vector3.ZERO:
 					return "unknown poi"
 			pos.y = w.gen.height(pos.x, pos.z) + 3.0
+			if p.vehicle:
+				p.exit_vehicle(false)
 			p.global_position = pos
 			p.velocity = Vector3.ZERO
 			return "teleported to %s" % pos

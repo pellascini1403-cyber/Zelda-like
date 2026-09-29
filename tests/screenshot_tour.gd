@@ -53,6 +53,14 @@ const SHOTS := [
 	["32_lineup_enemies_night", 154.0, 94.0, -47.0, -10.0, 22.5, "clear", "lineup:enemies"],
 	["34_lineup_enemies_close", 154.0, 94.0, -47.0, -14.0, 10.5, "clear", "lineup:enemies_close"],
 	["35_lineup_warden", 154.0, 94.0, -47.0, 4.0, 17.5, "clear", "lineup:warden"],
+	["36_vehicles_lineup", 154.0, 94.0, -47.0, -10.0, 10.0, "clear", "vehicles:lineup"],
+	["36b_vehicles_close", 154.0, 94.0, -47.0, -14.0, 16.5, "clear", "vehicles:close"],
+	["37_vehicle_heavy_drive", 1100.0, 250.0, -90.0, -10.0, 10.5, "clear", "vehicles:drive_longwake"],
+	["37b_vehicle_light_jump", 1100.0, 250.0, -90.0, -8.0, 10.5, "clear", "vehicles:jump_sparrow"],
+	["38_vehicle_capsule_water", -330.0, 60.0, 45.0, -10.0, 11.0, "clear", "vehicles:water"],
+	["39_garage", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "vehicles:garage"],
+	["40_vantrel_depot", 1052.0, 448.0, -146.0, -4.0, 16.0, "clear", "vehicles:none"],
+	["41_vehicles_night", 1100.0, 250.0, -90.0, -10.0, 22.5, "clear", "vehicles:drive_longwake"],
 	["33_lineup_wildlife", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:wildlife"],
 ]
 
@@ -169,6 +177,8 @@ func _shot(s: Array) -> void:
 	if String(s[7]).begins_with("lineup:"):
 		_lineup(String(s[7]).trim_prefix("lineup:"), p, w)
 		await get_tree().create_timer(0.8).timeout
+	if String(s[7]).begins_with("vehicles:"):
+		await _vehicle_shot(String(s[7]).trim_prefix("vehicles:"), p, w)
 	if s[7] == "title":
 		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
 		await get_tree().create_timer(1.2).timeout
@@ -206,7 +216,8 @@ func _shot(s: Array) -> void:
 			w.hud.cooking._chosen = [&"emberroot", &"cap_mushroom"]
 			w.hud.cooking._refresh()
 			await get_tree().create_timer(0.4, true, false, true).timeout
-	rig.yaw = s[3]
+	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water"]:
+		rig.yaw = s[3]
 	rig.pitch = s[4]
 	if not s[7] in ["reward"]:
 		w.hud.dialogue.visible = false
@@ -232,6 +243,61 @@ func _shot(s: Array) -> void:
 			c.queue_free()
 	for n in get_tree().get_nodes_in_group(&"tour_lineup"):
 		n.queue_free()
+	InputRouter.touch_move = Vector2.ZERO
+	if p.vehicle:
+		p.exit_vehicle(false)
+	w.vehicles.put_away()
+
+
+## Vehicle captures: parked lineup, driving, jumping, floating, garage.
+func _vehicle_shot(kind: String, p: Player, w: GameWorld) -> void:
+	for id in DB.vehicles:
+		PlayerData.own_vehicle(id, "earned")
+	w.vehicles._unveil_pending = &""
+	w.hud.title_card.visible = false
+	match kind:
+		"lineup", "close":
+			var fwd := p.facing_dir()
+			var right := fwd.cross(Vector3.UP).normalized()
+			var dist := 7.0 if kind == "lineup" else 4.2
+			var ids := [&"longwake", &"sparrow", &"bellhull"]
+			for i in ids.size():
+				if kind == "close" and i != 0:
+					continue
+				var vis := VehicleVisual.new()
+				vis.add_to_group(&"tour_lineup")
+				w.add_child(vis)
+				vis.setup(DB.vehicles[ids[i]])
+				var pos := p.global_position + fwd * dist + right * (i - 1) * 3.4 * (1.0 if kind == "lineup" else 0.0)
+				pos.y = w.gen.height(pos.x, pos.z)
+				vis.global_position = pos
+				vis.rotation.y = p.facing_yaw + PI * 0.5 + 0.35
+		"drive_longwake", "jump_sparrow", "water":
+			var id: StringName = {"drive_longwake": &"longwake", "jump_sparrow": &"sparrow", "water": &"bellhull"}[kind]
+			if kind == "water":
+				p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+				p.change_state(&"swim")
+				await get_tree().create_timer(0.3).timeout
+			PlayerData.equip_vehicle(id)
+			w.vehicles.summon(p)
+			await get_tree().create_timer(0.6).timeout
+			p.enter_vehicle(w.vehicles.active)
+			InputRouter.touch_move = Vector2(0, 1)
+			await get_tree().create_timer(2.4 if kind != "water" else 3.0).timeout
+			if kind == "jump_sparrow":
+				Input.action_press("jump")
+				await get_tree().create_timer(0.45).timeout
+				Input.action_release("jump")
+				await get_tree().create_timer(0.35).timeout
+			InputRouter.touch_move = Vector2.ZERO if kind == "water" else InputRouter.touch_move
+
+			(Game.camera_rig as CameraRig).yaw = rad_to_deg(w.vehicles.active.heading) + 25.0
+		"garage":
+			w.hud.visible = true
+			w.hud.menu.open(PauseMenu.TAB_GARAGE)
+			w.hud.menu.garage._selected = &"longwake"
+			w.hud.menu.garage.refresh()
+			await get_tree().create_timer(0.6, true, false, true).timeout
 
 
 ## Visual-only lineup (no AI) in front of the player, turned 3/4 to camera.

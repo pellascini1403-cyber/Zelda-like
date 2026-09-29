@@ -447,6 +447,8 @@ func drown() -> void:
 
 
 func respawn() -> void:
+	if vehicle:
+		exit_vehicle(false)
 	var pos := WorldState.last_safe_position
 	if pos == Vector3.ZERO:
 		var sp: Array = DB.world.get("spawn", [0, 20, 0])

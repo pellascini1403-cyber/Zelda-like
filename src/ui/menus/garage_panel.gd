@@ -13,7 +13,7 @@ var _selected: StringName = &""
 var _stand: Node3D
 var _view: SubViewport
 var _preview: VehicleVisual
-var _spin := 0.0
+var _spin := 0.8
 var _unveil := 0.0
 
 
@@ -84,16 +84,18 @@ func _build_stand() -> void:
 	rim.light_color = Color(0.75, 0.82, 1.0)
 	root.add_child(rim)
 	var floor_mi := MeshInstance3D.new()
-	floor_mi.mesh = ShapeKit.cyl(2.2, 2.3, 0.12, 32)
+	floor_mi.mesh = ShapeKit.cyl(1.7, 1.8, 0.12, 32)
 	floor_mi.position.y = -0.06
 	floor_mi.material_override = VehicleVisual.mat("dark")
 	root.add_child(floor_mi)
 	_stand = Node3D.new()
 	root.add_child(_stand)
 	var cam := Camera3D.new()
-	cam.position = Vector3(0, 1.55, 4.6)
-	cam.rotation_degrees = Vector3(-12, 0, 0)
-	cam.fov = 45.0
+	# Keep the width: long bikes must fit a tall, narrow preview column.
+	cam.keep_aspect = Camera3D.KEEP_WIDTH
+	cam.position = Vector3(0, 1.7, 4.4)
+	cam.rotation_degrees = Vector3(-15, 0, 0)
+	cam.fov = 52.0
 	root.add_child(cam)
 
 

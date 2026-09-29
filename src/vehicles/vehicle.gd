@@ -520,6 +520,7 @@ func _make_wake() -> CPUParticles3D:
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.vertex_color_use_as_albedo = true
+	m.albedo_texture = ArtStyle._soft_dot()
 	quad.material = m
 	p.mesh = quad
 	var g := Gradient.new()

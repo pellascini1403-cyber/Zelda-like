@@ -39,12 +39,13 @@ void vertex() {
 }
 
 void fragment() {
-	float patches = vnoise(obj * 2.1);
+	float patches = vnoise(obj * 3.3) * 0.6 + vnoise(obj * 11.0) * 0.4;
 	float fine = vnoise(obj * 9.0);
 	vec3 col = base_color * (0.86 + 0.18 * patches);
 	// Fine scratches: short streaks along the body's length, only in worn zones.
-	float streak = abs(sin(obj.z * 55.0 + fine * 7.0 + obj.x * 9.0));
-	float scratch = smoothstep(0.975, 1.0, streak) * step(0.52, vnoise(obj * 3.7 + 11.0)) * scratches * wear;
+	// Short, sparse: only where a small-scale mask lets a few through.
+	float streak = abs(sin(obj.z * 90.0 + obj.x * 23.0 + fine * 2.0));
+	float scratch = smoothstep(0.992, 1.0, streak) * step(0.78, vnoise(obj * 7.3 + 11.0)) * scratches * wear;
 	// Worn edges: glancing light on the facets reads as rubbed-bright metal.
 	float rim = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
 	// Road dust: dense near the ground, patchy higher up, a little on top faces.
