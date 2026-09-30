@@ -1,0 +1,53 @@
+class_name Features
+extends RefCounted
+## World features that discoveries and quests can place (QuestSpawner kind
+## "feature"): the forest's glowcaps and bellcaps, bramble walls, ribbon
+## trail markers, fishing spots, air vents and storm buoys.
+##   {"kind": "feature", "feature": "<type>", "id": ..., "pos": [...], ...}
+
+const TYPES := ["glowcap", "bellcap", "bramble", "ribbon", "fishing_spot", "air_vent", "storm_buoy"]
+
+
+static func make(e: Dictionary) -> Node3D:
+	var id := String(e.get("id", ""))
+	match String(e.get("feature", "")):
+		"glowcap":
+			return Glowcap.create(id)
+		"bellcap":
+			return Bellcap.create(id, float(e.get("size", 1.3)))
+		"bramble":
+			var sz: Array = e.get("size", [3.2, 3.6, 1.2])
+			return BrambleWall.create(id, Vector3(sz[0], sz[1], sz[2]))
+		"ribbon":
+			return _ribbon_post(id)
+		"fishing_spot":
+			return FishingSpot.create(id, String(e.get("waters", "lake")))
+		"air_vent":
+			return AirVent.new()
+		"storm_buoy":
+			return StormBuoy.create(id)
+	return null
+
+
+## A trail marker: a stake with a red ribbon (hunters mark their paths).
+static func _ribbon_post(id: String) -> Node3D:
+	var n := Node3D.new()
+	n.name = "Ribbon_" + id
+	var stake := MeshInstance3D.new()
+	stake.mesh = ShapeKit.cyl(0.05, 0.07, 1.6, 5)
+	stake.position.y = 0.8
+	var sm := StandardMaterial3D.new()
+	sm.albedo_color = Color(0.45, 0.33, 0.22)
+	stake.material_override = sm
+	n.add_child(stake)
+	var rib := MeshInstance3D.new()
+	rib.mesh = ShapeKit.box(Vector3(0.05, 0.7, 0.18))
+	rib.position = Vector3(0.08, 1.2, 0)
+	rib.rotation.z = 0.25
+	var rm := StandardMaterial3D.new()
+	rm.albedo_color = Color(0.85, 0.2, 0.15)
+	rm.emission_enabled = true
+	rm.emission = Color(0.5, 0.08, 0.05)
+	rib.material_override = rm
+	n.add_child(rib)
+	return n

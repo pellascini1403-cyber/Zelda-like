@@ -159,43 +159,44 @@
   "enemy_spawns": [
    {
     "entity": "ENEMY_BRAMBLE_CARAPACE",
-    "weight": 2.5,
+    "weight": 3,
     "group": [
      1,
      2
     ]
+   },
+   {
+    "entity": "ENEMY_ELDER_CARAPACE",
+    "weight": 0.25,
+    "group": [
+     1,
+     1
+    ],
+    "period": "day"
    },
    {
     "entity": "ENEMY_SPITTER",
-    "weight": 2,
-    "group": [
-     1,
-     2
-    ]
-   },
-   {
-    "entity": "ENEMY_THORNLING",
     "weight": 1,
     "group": [
-     2,
-     3
+     1,
+     1
     ]
    },
    {
-    "entity": "ENEMY_WISP",
-    "weight": 1.5,
+    "entity": "ENEMY_DUSKWING",
+    "weight": 2.5,
     "group": [
-     1,
-     2
+     3,
+     5
     ],
     "period": "night"
    },
    {
-    "entity": "ENEMY_DUSKWING",
-    "weight": 2,
+    "entity": "ENEMY_WISP",
+    "weight": 1,
     "group": [
-     3,
-     5
+     1,
+     2
     ],
     "period": "night"
    },
@@ -220,11 +221,20 @@
    },
    {
     "entity": "ANIMAL_WOOLHORN",
-    "weight": 1,
+    "weight": 0.6,
     "group": [
      2,
      3
     ]
+   },
+   {
+    "entity": "ANIMAL_BRUSH_FOX",
+    "weight": 1.5,
+    "group": [
+     1,
+     2
+    ],
+    "period": "night"
    }
   ],
   "resources": [
@@ -455,6 +465,18 @@
      2
     ],
     "habitat": "water"
+   },
+   {
+    "entity": "ENEMY_MIRE_EEL",
+    "weight": 4,
+    "group": [
+     2,
+     3
+    ],
+    "habitat": "water",
+    "weather": [
+     "storm"
+    ]
    }
   ],
   "animal_spawns": [

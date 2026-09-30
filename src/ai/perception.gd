@@ -56,6 +56,10 @@ func effective_range() -> float:
 	r *= 1.0 - Weather.fog * 0.5
 	if c.brain and c.brain.is_sleeping():
 		r *= 0.25
+	var pl := Game.player as Player
+	if pl and pl.health and pl.health.has_status(&"spored"):
+		r *= 0.5
+	r *= clampf(1.0 - (PlayerData.armor_bonus("stealth") + PlayerData.buff_potency(&"stealth") * 0.4) * 0.6, 0.5, 1.0)
 	return maxf(r, 3.0)
 
 

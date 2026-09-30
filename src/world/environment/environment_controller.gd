@@ -163,6 +163,18 @@ func _process(delta: float) -> void:
 	env.fog_height = 30.0 + dawn * 25.0
 	env.fog_height_density += dawn * 0.008
 
+	# Under the surface: teal murk, short sight, a tint over everything.
+	var cam := get_viewport().get_camera_3d()
+	var under_target := 1.0 if cam and cam.global_position.y < WorldGen.SEA_LEVEL - 0.1 else 0.0
+	underwater = move_toward(underwater, under_target, delta * 4.0)
+	if underwater > 0.0:
+		var murk := Color(0.08, 0.32, 0.36) * maxf(daylight, 0.25)
+		env.fog_light_color = env.fog_light_color.lerp(murk, underwater)
+		env.fog_density = lerpf(env.fog_density, 0.075, underwater)
+		env.fog_height_density = lerpf(env.fog_height_density, 0.0, underwater)
+	_under_overlay().color = Color(0.1, 0.45, 0.5, 0.28 * underwater)
+	_under_overlay().visible = underwater > 0.01
+
 	sky_mat.set_shader_parameter("top_color", sky_top)
 	sky_mat.set_shader_parameter("horizon_color", horizon)
 	sky_mat.set_shader_parameter("ground_color", horizon * 0.62)
@@ -181,6 +193,22 @@ func _process(delta: float) -> void:
 		(l as Light3D).light_energy = night_energy
 	RenderingServer.global_shader_parameter_set(&"night_glow", 1.0 - daylight)
 	RenderingServer.global_shader_parameter_set(&"mist_color", Vector3(fog_col.r, fog_col.g, fog_col.b) * 1.04)
+
+
+var underwater := 0.0
+var _overlay: ColorRect
+
+
+func _under_overlay() -> ColorRect:
+	if _overlay == null:
+		var layer := CanvasLayer.new()
+		layer.layer = -1
+		add_child(layer)
+		_overlay = ColorRect.new()
+		_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		layer.add_child(_overlay)
+	return _overlay
 
 
 func _sample(h: float) -> Array:

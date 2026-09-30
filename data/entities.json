@@ -1330,6 +1330,13 @@
    ],
    "night": [
     "DLG_FISHER_NIGHT"
+   ],
+   "rumors": [
+    "RUMOR_FISHER_1",
+    "RUMOR_FISHER_2",
+    "RUMOR_FISHER_3",
+    "RUMOR_FISHER_4",
+    "RUMOR_FISHER_5"
    ]
   }
  },
@@ -1391,6 +1398,12 @@
   "dialogue": {
    "default": [
     "DLG_HUNTER_1"
+   ],
+   "rumors": [
+    "RUMOR_HUNTER_1",
+    "RUMOR_HUNTER_2",
+    "RUMOR_HUNTER_3",
+    "RUMOR_HUNTER_4"
    ]
   }
  },
@@ -3286,5 +3299,97 @@
    "respawn_hours": 72
   },
   "loot_table": "drop_lumen_stag"
+ },
+ {
+  "id": "ENEMY_ELDER_CARAPACE",
+  "variant_of": "ENEMY_BRAMBLE_CARAPACE",
+  "name_key": "NAME_ELDER_CARAPACE",
+  "placeholder_color": "#2c8a1a",
+  "stats": {
+   "max_health": 150,
+   "defense": 2,
+   "poise": 55,
+   "mass": 240
+  },
+  "loot_table": "drop_elder_carapace",
+  "ai": {
+   "armor_mult": 0.05,
+   "flipped_time": 4.0,
+   "respawn_hours": 168
+  },
+  "attacks": [
+   {
+    "id": "horn",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.8,
+    "windup": 0.7,
+    "recovery": 0.8,
+    "cooldown": 1.4,
+    "damage": 16,
+    "knockback": 7,
+    "reach": 2.4,
+    "arc": 45,
+    "weight": 2
+   },
+   {
+    "id": "sap_burst",
+    "type": "pulse",
+    "range_min": 0,
+    "range_max": 4.0,
+    "windup": 1.0,
+    "recovery": 1.0,
+    "cooldown": 6.0,
+    "damage": 6,
+    "radius": 4.0,
+    "knockback": 2,
+    "element": "web",
+    "blockable": false,
+    "weight": 2
+   },
+   {
+    "id": "roll",
+    "type": "charge",
+    "range_min": 5,
+    "range_max": 16,
+    "windup": 0.9,
+    "active": 1.1,
+    "recovery": 1.2,
+    "cooldown": 5.0,
+    "damage": 20,
+    "knockback": 11,
+    "reach": 16,
+    "charge_speed": 14,
+    "poise_damage": 30
+   }
+  ]
+ },
+ {
+  "id": "ANIMAL_BRUSH_FOX",
+  "variant_of": "ANIMAL_DUNE_FOX",
+  "name_key": "NAME_BRUSH_FOX",
+  "placeholder_color": "#d55f0c"
+ },
+ {
+  "id": "ANIMAL_MIST_FOX",
+  "variant_of": "ANIMAL_DUNE_FOX",
+  "name_key": "NAME_MIST_FOX",
+  "placeholder_color": "#c6b1c4",
+  "active_period": "any",
+  "loot_table": "drop_mist_fox",
+  "ai": {
+   "skittish": 0.02,
+   "respawn_hours": 999999
+  }
+ },
+ {
+  "id": "ANIMAL_WHITE_HERON",
+  "variant_of": "ANIMAL_REED_HERON",
+  "name_key": "NAME_WHITE_HERON",
+  "placeholder_color": "#ffe7d0",
+  "loot_table": "drop_white_heron",
+  "ai": {
+   "respawn_hours": 999999
+  }
  }
 ]

@@ -942,5 +942,244 @@
    "heal": 1.5,
    "swift": 0.5
   }
+ },
+ {
+  "id": "glowcap",
+  "category": "food",
+  "icon": "res://assets/icons/food_mushroom.svg",
+  "use_action": "eat",
+  "value": 6,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 6
+   }
+  ],
+  "cook": {
+   "mending": 1.0
+  }
+ },
+ {
+  "id": "bellcap_membrane",
+  "category": "material",
+  "icon": "res://assets/icons/mat_hide.svg",
+  "value": 8
+ },
+ {
+  "id": "heartwood",
+  "category": "material",
+  "icon": "res://assets/icons/mat_wood.svg",
+  "value": 40,
+  "rarity": 2
+ },
+ {
+  "id": "mist_fur",
+  "category": "material",
+  "icon": "res://assets/icons/mat_hide.svg",
+  "value": 80,
+  "rarity": 3
+ },
+ {
+  "id": "mossweave_hood",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_head.svg",
+  "value": 70,
+  "rarity": 2,
+  "armor": {
+   "slot": "head",
+   "defense": 1,
+   "stealth": 0.25
+  }
+ },
+ {
+  "id": "rootgrip_charm",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_accessory.svg",
+  "value": 110,
+  "rarity": 3,
+  "armor": {
+   "slot": "accessory",
+   "defense": 0,
+   "climb_speed": 0.2,
+   "stealth": 0.1
+  }
+ },
+ {
+  "id": "hush_tea",
+  "category": "food",
+  "icon": "res://assets/icons/food_dish.svg",
+  "use_action": "eat",
+  "value": 30,
+  "rarity": 2,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 10
+   },
+   {
+    "type": "buff",
+    "buff": "stealth",
+    "amount": 1,
+    "duration": 180
+   }
+  ]
+ },
+ {
+  "id": "fishing_rod",
+  "category": "key",
+  "icon": "res://assets/icons/tool_whetstone.svg",
+  "max_stack": 1,
+  "value": 20
+ },
+ {
+  "id": "mirror_perch",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 4,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 12
+   }
+  ],
+  "cook": {
+   "heal": 1.5
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "reed_pike",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 8,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 18
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "fierce": 1.0
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "moon_carp",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 40,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 30
+   }
+  ],
+  "cook": {
+   "heal": 2.0,
+   "mending": 1.0
+  },
+  "tags": [
+   "fish"
+  ],
+  "rarity": 3
+ },
+ {
+  "id": "stormfin",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 25,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 20
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "swift": 1.0
+  },
+  "tags": [
+   "fish"
+  ],
+  "rarity": 2
+ },
+ {
+  "id": "silverback",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 5,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 14
+   }
+  ],
+  "cook": {
+   "heal": 1.5
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "reef_glint",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 35,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 22
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "vigor": 1.0
+  },
+  "tags": [
+   "fish"
+  ],
+  "rarity": 3
+ },
+ {
+  "id": "storm_glass",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 45,
+  "rarity": 2,
+  "tags": [
+   "metal"
+  ]
+ },
+ {
+  "id": "lake_pearl",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 60,
+  "rarity": 2
+ },
+ {
+  "id": "tide_charm",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_accessory.svg",
+  "value": 120,
+  "rarity": 3,
+  "armor": {
+   "slot": "accessory",
+   "defense": 0,
+   "breath": 0.5,
+   "swim_speed": 0.25
+  }
  }
 ]

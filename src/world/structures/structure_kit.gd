@@ -44,6 +44,10 @@ var near_range := 170.0
 var lamps: Array[Vector3] = []
 
 
+## Colliders of this kit give no grip to climbers (see Player.probe_wall).
+var slick := false
+
+
 func _init(seed_value: int = 0) -> void:
 	rng.seed = seed_value
 	# UV.x carries the cloth sway weight: the format must be declared before
@@ -796,6 +800,8 @@ func build(parent: Node3D, node_name: String, vis_range: float = 0.0) -> Node3D:
 		var body := StaticBody3D.new()
 		body.collision_layer = 1
 		body.collision_mask = 0
+		if slick:
+			body.set_meta(&"no_climb", true)
 		for sh in shapes:
 			var cs := CollisionShape3D.new()
 			cs.shape = sh[1]

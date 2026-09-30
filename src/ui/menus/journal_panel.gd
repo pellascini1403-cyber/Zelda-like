@@ -139,7 +139,8 @@ func _atlas_list() -> void:
 		_list.add_child(UITheme.label("%s  %d/%d" % [tr(reg.name_key) if reg else rg, DiscoveryDirector.found_count(rg), (by_region[rg] as Array).size()], 18, UITheme.ACCENT_2))
 		for id: StringName in by_region[rg]:
 			var found := DiscoveryDirector.is_found(id)
-			var b := UITheme.button(("✦ " + tr(String(DB.discoveries[id].get("name_key", "")))) if found else "· ？", 48)
+			var icon := String(DB.discoveries[id].get("icon", "✦"))
+			var b := UITheme.button((icon + " " + tr(String(DB.discoveries[id].get("name_key", "")))) if found else icon + " ？", 48)
 			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			b.toggle_mode = true
 			b.button_pressed = String(_selected) == "atlas:" + String(id)
@@ -158,6 +159,9 @@ func _show_discovery(id: StringName) -> void:
 	_title.text = tr(String(d.get("name_key", ""))) if found else tr("ATLAS_UNKNOWN")
 	_meta.text = (tr(reg.name_key) if reg else "") + "  ·  " + tr("JOURNAL_ATLAS")
 	_desc.text = tr(String(d.get("desc_key", ""))) if found else tr(String(d.get("hint_key", "ATLAS_NO_HINT")))
+	# How it is found: always shown — the conditions are the clue.
+	_objs.add_child(UITheme.label(tr("ATLAS_CONDITIONS") % DiscoveryDirector.condition_text(d), 20, UITheme.ACCENT_2))
+	_objs.add_child(UITheme.label(("✦ " + tr("ATLAS_FOUND")) if found else ("· " + tr("ATLAS_UNKNOWN")), 20, UITheme.GOOD if found else UITheme.TEXT_DIM))
 	var parts := Rewards.describe(d.get("reward", {}))
 	_rewards.text = (tr("JOURNAL_REWARDS") + "  " + " · ".join(parts)) if found and not parts.is_empty() else ""
 	_track.visible = false

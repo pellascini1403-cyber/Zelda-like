@@ -1025,6 +1025,132 @@
       "clear_radius": 22,
       "discover_radius": 36,
       "lore": "LORE_VANTREL"
+    },
+    {
+      "id": "canopy_walk",
+      "type": "canopy_walk",
+      "name_key": "POI_CANOPY_WALK",
+      "pos": [
+        430,
+        280
+      ],
+      "clear_radius": 22,
+      "discover_radius": 34,
+      "reward": [
+        {
+          "id": "gale_feather",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "hollow_tree",
+      "type": "hollow_tree",
+      "name_key": "POI_HOLLOW_TREE",
+      "pos": [
+        390,
+        318
+      ],
+      "flatten": 15,
+      "pad_height": 14.0,
+      "pit": [
+        4.8,
+        7.5
+      ],
+      "clear_radius": 34,
+      "discover_radius": 36,
+      "reward": [
+        {
+          "id": "rootgrip_charm",
+          "count": 1
+        },
+        {
+          "id": "heartwood",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "moon_shrine",
+      "type": "moon_shrine",
+      "name_key": "POI_MOON_SHRINE",
+      "pos": [
+        635,
+        195
+      ],
+      "flatten": 10,
+      "pad_height": 20.5,
+      "clear_radius": 14,
+      "discover_radius": 24,
+      "yaw": 0.4,
+      "loot": "chest_rare",
+      "trail": [
+        [
+          -87,
+          67
+        ],
+        [
+          -75,
+          57
+        ],
+        [
+          -63,
+          49
+        ],
+        [
+          -50,
+          40
+        ],
+        [
+          -38,
+          31
+        ],
+        [
+          -27,
+          22
+        ],
+        [
+          -18,
+          14
+        ],
+        [
+          -10,
+          7
+        ]
+      ],
+      "gate_flag": "moon_gate_open",
+      "discovery": "forest_moon_gate",
+      "reward": [
+        {
+          "id": "hush_tea",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "sunken_shrine",
+      "type": "sunken_shrine",
+      "name_key": "POI_SUNKEN_SHRINE",
+      "pos": [
+        -420,
+        100
+      ],
+      "flatten": 12,
+      "pad_height": -8.5,
+      "clear_radius": 16,
+      "discover_radius": 18,
+      "loot": "chest_rare",
+      "gate_flag": "sunken_bells",
+      "reward": [
+        {
+          "id": "tide_charm",
+          "count": 1
+        },
+        {
+          "id": "lake_pearl",
+          "count": 1
+        }
+      ]
     }
   ],
   "falls": [

@@ -91,7 +91,7 @@ Variants: Rime Thornling (cold, highlands), Stormcaller Bulwark (storm),
 Tidepool Spitter (coast). Fauna: Crag Goat (climbs), Reed Heron, Tide Crab,
 Dune Fox (night), Lumen Stag (Veil) + AmbientLife groups.
 
-## Phase 3 — Weak regions (in order) `[ ]`
+## Phase 3 — Weak regions (in order) `[~]` (forest + lake done, see docs/FOREST_AND_LAKE.md)
 
 Forest → Lake → Coast/Sea → Diving → Highlands → Veil. Each gets its own
 enemy/fauna mix, 2-4 unique places with a mechanic, weather/night content,
@@ -146,3 +146,40 @@ Reward frequency, density, repetition audit, performance tour on low tier.
   Metrics: enemy entities 6 -> 21 (15 families), animals 3 -> 8,
   items 75 -> 83, loot tables 34 -> 59. Tests: unit 497 / smoke 36 /
   systems 124 green. Captures: docs/captures/ecosystems/.
+* Phase 3a/3b — Threshold Wood and Mirror Lake done (docs/FOREST_AND_LAKE.md).
+  Forest rules: glowcaps (night paths + spore stealth), bellcaps (rain
+  bounce), brambles (burn when dry); Canopy Walk, Hollow Tree (3 weather
+  routes, slick bark, root pit), Moon Shrine (night offering gate), Weeping
+  Grove, Varra's Blind. Lake: fishing (7 species over lake/sea tables),
+  diving (breath, vents, underwater fog), Sunken Shrine (3 bells), storm
+  buoys (lightning, electrified water, stormglass). 12 Atlas discoveries,
+  Ilo's "First Cast" quest, NPC rumours. Tests: unit 512 / systems 164.
+
+### Mini-audit after forest + lake
+
+* New experiences that do not exist in the valley: night stealth through
+  spore dust; weather-chosen routes into one place (burn / bounce / glide);
+  a 40 m climb with enemies on the way and a glide as the payoff; fishing
+  by hour and weather; diving with breath management; a storm that turns a
+  lake field into a hazard and a resource.
+* Systems reused: fire spread, weather wetness/storm/lightning, climbing
+  stamina, gliding, noise/perception, quest objects + flags, rewards,
+  POI pads, AI tiers, cooking specials, cosmetics.
+* New mechanics: spores (stealth status), slick surfaces, weather-reactive
+  props, diving/breath, bite-timing fishing, electrified water, bell
+  sequences, NPC rumour rotation, terrain pits.
+* Still repeated: valley/highland camps and shrines are unchanged; three
+  mazes remain clones; most bounties are still "defeat N".
+* Still absent: sea content for the Bellhull, highland verticality (Windstair,
+  thermals), Veil phenomena, races, interiors beyond the Hollow Tree.
+* Still empty: north/east/west coast, central valley south, open sea.
+* Reusable for coast/sea: FishingSpot (`waters: "sea"` already placed),
+  DiveState + AirVent (wreck and reef dives), StormBuoy fields (sea storm
+  routes for the Bellhull), BellSequence/FlagGate (sunken ruins), eels.
+* Reusable for highlands/Veil: bellcaps → wind vents/updraft zones, slick
+  bark → ice, glowcaps → Veil motes that reveal paths, canopy decks →
+  cliff ledges, the pit pad → Veil sinkholes.
+* Atlas: 12 wonders (7 forest, 5 lake) — enough to prove the category;
+  every other region needs 4-6.
+* Liveliness: foxes at night, herons/white heron at the lake, fish rings,
+  roosting swarms, weavers on decks, fireflies, gulls — noticeably more.

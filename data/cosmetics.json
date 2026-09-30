@@ -10,5 +10,7 @@
   {"id": "ribbon_star", "slot": "glider_trail", "name_key": "COS_RIBBON_STAR", "color": "#e8f0ff"},
   {"id": "echo_sand", "slot": "afterimage", "name_key": "COS_ECHO_SAND", "color": "#ffcf7a"},
   {"id": "echo_veil", "slot": "afterimage", "name_key": "COS_ECHO_VEIL", "color": "#d98cff"},
-  {"id": "echo_storm", "slot": "afterimage", "name_key": "COS_ECHO_STORM", "color": "#8fb8ff"}
+  {"id": "echo_storm", "slot": "afterimage", "name_key": "COS_ECHO_STORM", "color": "#8fb8ff"},
+  {"id": "ribbon_moon", "slot": "glider_trail", "name_key": "COS_RIBBON_MOON", "color": "#bfe8ff"},
+  {"id": "ribbon_heron", "slot": "glider_trail", "name_key": "COS_RIBBON_HERON", "color": "#f4f4ec"}
 ]

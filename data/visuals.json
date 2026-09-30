@@ -55,5 +55,9 @@
  {"id": "ANIMAL_REED_HERON", "family": "wildlife", "species": "wader", "features": []},
  {"id": "ANIMAL_TIDE_CRAB", "family": "wildlife", "species": "shellfolk", "features": []},
  {"id": "ANIMAL_DUNE_FOX", "family": "wildlife", "species": "grazer", "features": ["big_ears", "tail"], "scale": 0.55},
- {"id": "ANIMAL_LUMEN_STAG", "family": "wildlife", "species": "grazer", "features": ["antlers", "shimmer", "veil", "long_neck"], "scale": 1.1}
+ {"id": "ANIMAL_LUMEN_STAG", "family": "wildlife", "species": "grazer", "features": ["antlers", "shimmer", "veil", "long_neck"], "scale": 1.1},
+ {"id": "ENEMY_ELDER_CARAPACE", "rank": "elite", "features": ["back_spikes", "crystal_back"], "scale": 1.35},
+ {"id": "ANIMAL_BRUSH_FOX"},
+ {"id": "ANIMAL_MIST_FOX", "features": ["big_ears", "tail", "shimmer"], "scale": 0.6},
+ {"id": "ANIMAL_WHITE_HERON", "species": "wader", "scale": 1.25}
 ]

@@ -51,7 +51,7 @@ func on_sector_ready(chunk: TerrainChunk, slots: Array) -> void:
 				continue
 			if roll < 0.12 * region.enemy_density + 0.02:
 				var far := Vector2(pos.x, pos.z).distance_to(spawn_pos) > SAFE_RADIUS_AROUND_SPAWN
-				if far:
+				if far and not Debug.peaceful:
 					spawned.append_array(_spawn_group(region.enemy_spawns, pos, id, s["roll2"], hab))
 			elif roll > 1.0 - 0.2 * region.animal_density:
 				spawned.append_array(_spawn_group(region.animal_spawns, pos, id, s["roll2"], hab))
@@ -67,7 +67,7 @@ func on_sector_ready(chunk: TerrainChunk, slots: Array) -> void:
 				spawned.append_array(_spawn_group(region.animal_spawns, pos, id, s["roll2"]))
 		elif roll < enemy_cut:
 			var far_from_start := Vector2(pos.x, pos.z).distance_to(spawn_pos) > SAFE_RADIUS_AROUND_SPAWN
-			if far_from_start and not WorldState.is_defeated(id):
+			if far_from_start and not WorldState.is_defeated(id) and not Debug.peaceful:
 				spawned.append_array(_spawn_group(region.enemy_spawns, pos, id, s["roll2"]))
 		elif roll > 0.97 and not WorldState.is_harvested(id):
 			var prop := PhysicsProp.create(&"crate" if s["roll2"] < 0.7 else &"barrel", id)

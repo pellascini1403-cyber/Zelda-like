@@ -7,7 +7,8 @@ extends Node
 const DATA_DIR := "res://data/"
 ## POI types StructureBuilder knows how to build.
 const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
-	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry", "depot"]
+	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry", "depot",
+	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine"]
 
 var items: Dictionary = {}          # StringName -> ItemData
 var entities: Dictionary = {}       # StringName -> EntityType
@@ -34,6 +35,8 @@ var products: Dictionary = {}       # StringName -> store product (monetization 
 var discoveries: Dictionary = {}    # StringName -> discovery (optional wonders, not quests)
 var discovery_order: Array = []     # ids in file order (Atlas)
 var fauna: Array = []               # ambient fauna groups (AmbientLife)
+var fishing: Dictionary = {}        # fish species per waters (Fishing)
+var sites: Array = []               # always-present world features (fishing spots, buoys...)
 
 
 func _ready() -> void:
@@ -123,6 +126,8 @@ func reload() -> void:
 		discoveries[StringName(dv["id"])] = dv
 		discovery_order.append(StringName(dv["id"]))
 	fauna = _load_array("fauna.json")
+	fishing = _load_dict("fishing.json")
+	sites = _load_array("sites.json")
 
 
 ## Variants: an entry with "variant_of": "<base id>" is the base deep-merged
@@ -331,9 +336,13 @@ func _validate_ecology() -> PackedStringArray:
 			errors.append("%s unknown poi '%s'" % [w, d["poi"]])
 		if not d.has("pos") and not d.has("poi"):
 			errors.append("%s has no position" % w)
-		if not String(d.get("trigger", "reach")) in ["reach", "interact"]:
+		if not String(d.get("trigger", "reach")) in ["reach", "interact", "catch"]:
 			errors.append("%s unknown trigger" % w)
-		if String(d.get("trigger", "reach")) == "interact":
+		if String(d.get("trigger", "")) == "catch" and not items.has(StringName(d.get("catch", ""))):
+			errors.append("%s catches unknown item '%s'" % [w, d.get("catch", "")])
+		if d.has("found_in_poi") and not poi_ids.has(String(d["found_in_poi"])):
+			errors.append("%s found in unknown poi" % w)
+		if String(d.get("trigger", "reach")) == "interact" and not d.has("found_in_poi"):
 			var has_obj := false
 			for sp in d.get("spawns", []):
 				has_obj = has_obj or String(sp.get("discover", "")) == String(id)
@@ -342,6 +351,12 @@ func _validate_ecology() -> PackedStringArray:
 		errors.append_array(QuestValidator.check_reward(d.get("reward", {}), self, w))
 		for sp in d.get("spawns", []):
 			errors.append_array(QuestValidator._check_spawn(sp, self, poi_ids, w))
+	for sp in sites:
+		errors.append_array(QuestValidator._check_spawn(sp, self, poi_ids, "site"))
+	for wk in fishing.get("waters", {}):
+		for fe in fishing["waters"][wk]:
+			if not items.has(StringName(fe.get("item", ""))):
+				errors.append("fishing '%s' unknown fish '%s'" % [wk, fe.get("item", "")])
 	for f in fauna:
 		if not String(f.get("kind", "")) in FAUNA_KINDS:
 			errors.append("fauna '%s' unknown kind" % f.get("id", ""))

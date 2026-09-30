@@ -13,6 +13,8 @@ var god_mode := false
 var infinite_stamina := false
 var show_entity_debug := false
 var force_touch_ui := false
+## No hostile roaming spawns (tests, captures, vehicle tuning).
+var peaceful := false
 
 var _layer: CanvasLayer
 var _overlay: Label

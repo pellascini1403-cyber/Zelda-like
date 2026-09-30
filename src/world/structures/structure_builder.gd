@@ -119,6 +119,10 @@ func _build_type(poi: Dictionary, root: Node3D) -> Array:
 		"arena": return _arena(poi, root)
 		"anchor": return _anchor(poi, root)
 		"floating_isles": return _floating_isles(poi, root)
+		"canopy_walk": return SiteBuilder.new(self).canopy_walk(poi, root)
+		"hollow_tree": return SiteBuilder.new(self).hollow_tree(poi, root)
+		"moon_shrine": return SiteBuilder.new(self).moon_shrine(poi, root)
+		"sunken_shrine": return SiteBuilder.new(self).sunken_shrine(poi, root)
 	push_warning("StructureBuilder: unknown POI type " + kind)
 	return []
 

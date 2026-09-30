@@ -122,6 +122,34 @@ func _process(delta: float) -> void:
 			discover(id)
 
 
+## "at night · in rain · up high": how a discovery is found, for the Atlas.
+static func condition_text(d: Dictionary) -> String:
+	var c: Dictionary = d.get("conditions", {})
+	var parts := PackedStringArray()
+	if c.has("period"):
+		parts.append(TranslationServer.translate("COND_NIGHT" if String(c["period"]) == "night" else "COND_DAY"))
+	if c.has("hours") and float((c["hours"] as Array)[0]) < 7.0:
+		parts.append(TranslationServer.translate("COND_DAWN"))
+	for w in c.get("weather", []):
+		match String(w):
+			"rain": parts.append(TranslationServer.translate("COND_RAIN"))
+			"storm": parts.append(TranslationServer.translate("COND_STORM"))
+			"fog": parts.append(TranslationServer.translate("COND_FOG"))
+	if c.has("min_y"):
+		parts.append(TranslationServer.translate("COND_HIGH"))
+	if c.has("max_y"):
+		parts.append(TranslationServer.translate("COND_DEEP"))
+	if "dive" in c.get("state", []):
+		parts.append(TranslationServer.translate("COND_DIVE"))
+	elif "swim" in c.get("state", []):
+		parts.append(TranslationServer.translate("COND_ON_WATER"))
+	if String(d.get("trigger", "")) == "catch":
+		parts.append(TranslationServer.translate("COND_CATCH"))
+	if parts.is_empty():
+		parts.append(TranslationServer.translate("COND_FIND"))
+	return " · ".join(parts)
+
+
 ## Marks a discovery found, pays it once, announces it.
 static func discover(id: StringName) -> bool:
 	var d: Dictionary = DB.discoveries.get(id, {})

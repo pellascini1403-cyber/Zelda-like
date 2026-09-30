@@ -23,6 +23,7 @@ import qdsl  # noqa: E402
 from qdsl import Loc  # noqa: E402
 import world  # noqa: E402
 import ecology  # noqa: E402
+import wilds  # noqa: E402
 from loc_common import COMMON  # noqa: E402
 
 # Module -> output file. The numeric prefix fixes load order: the main
@@ -71,10 +72,13 @@ def main():
     loc = {}
     ents = load("entities.json")
     new = []
-    for d, l in world.NPCS + world.CREATURES + ecology.ENTITIES:
+    for d, l in world.NPCS + world.CREATURES + ecology.ENTITIES + wilds.ENTITIES:
         new.append(d)
         loc.update(strings(l))
     upsert(ents, new)
+    for e in ents:
+        for k, v in wilds.ENTITY_PATCHES.get(e["id"], {}).items():
+            e[k] = dict(e.get(k, {}), **v) if isinstance(v, dict) else v
     clash = world.color_check(ents, {d["id"] for d in new})
     if clash:
         raise SystemExit("placeholder colours too close: " + "; ".join(clash))
@@ -82,7 +86,7 @@ def main():
 
     items = load("items.json")
     new = []
-    for d, l in world.ITEMS + ecology.ITEMS:
+    for d, l in world.ITEMS + ecology.ITEMS + wilds.ITEMS:
         new.append(d)
         loc.update(strings(l))
     upsert(items, new)
@@ -91,21 +95,40 @@ def main():
     loot = load("loot.json")
     loot.update(world.LOOT)
     loot.update(ecology.LOOT)
+    loot.update(wilds.LOOT)
     dump("loot.json", loot, 1)
 
     visuals = load("visuals.json")
-    upsert(visuals, ecology.VISUALS)
+    upsert(visuals, ecology.VISUALS + wilds.VISUALS)
     with open(data("visuals.json"), "w", encoding="utf-8") as f:
         f.write("[\n" + ",\n".join(" " + json.dumps(e, ensure_ascii=True) for e in visuals) + "\n]\n")
 
     regions = load("regions.json")
     for r in regions:
-        for k, v in ecology.REGION_SPAWNS.get(r["id"], {}).items():
+        for k, v in dict(ecology.REGION_SPAWNS.get(r["id"], {}), **wilds.REGION_SPAWNS.get(r["id"], {})).items():
             r[k] = v
     dump("regions.json", regions, 1)
 
+    cos = load("cosmetics.json")
+    upsert(cos, [d for d, _l in wilds.COSMETICS])
+    for _d, l in wilds.COSMETICS:
+        loc.update(strings(l))
+    dump_lines("cosmetics.json", cos)
+    cook = load("cooking.json")
+    specials = cook.get("specials", [])
+    upsert(specials, wilds.SPECIALS)
+    cook["specials"] = specials
+    dump("cooking.json", cook, 2)
+    buffs = load("buffs.json")
+    buffs.update(wilds.BUFFS)
+    with open(data("buffs.json"), "w", encoding="utf-8") as f:
+        f.write("{\n" + ",\n".join("  %s: %s" % (json.dumps(k), json.dumps(v)) for k, v in buffs.items()) + "\n}\n")
+    dump("fishing.json", wilds.FISHING, 1)
+    dump_lines("sites.json", wilds.SITES)
+    loc.update(strings(wilds.STRINGS))
+
     discs = []
-    for d, l in ecology.DISCOVERIES:
+    for d, l in ecology.DISCOVERIES + wilds.DISCOVERIES:
         discs.append(d)
         loc.update(strings(l))
     dump_lines("discoveries.json", discs)
@@ -114,7 +137,7 @@ def main():
 
     w = load("world.json")
     new = []
-    for d, l in world.NEW_POIS:
+    for d, l in world.NEW_POIS + wilds.POIS:
         new.append(d)
         loc.update(strings(l))
     upsert(w["pois"], new)

@@ -114,7 +114,7 @@ func _ready() -> void:
 
 	for s: PlayerState in [GroundState.new(self), AirState.new(self), ClimbState.new(self), GlideState.new(self),
 			SwimState.new(self), DodgeState.new(self), BusyState.new(self), DeadState.new(self),
-			GustState.new(self), RideState.new(self), DriveState.new(self)]:
+			GustState.new(self), RideState.new(self), DriveState.new(self), DiveState.new(self)]:
 		states[s.state_name()] = s
 	state = states[&"ground"]
 	_world_gen = WorldGen.from_world_data(DB.world)
@@ -170,7 +170,7 @@ func state_name() -> StringName:
 
 # --- Mounts ---------------------------------------------------------------------------------------
 func ride(m: Mount) -> void:
-	if mount != null or vehicle != null or state_name() in [&"dead", &"climb", &"swim", &"glide"]:
+	if mount != null or vehicle != null or state_name() in [&"dead", &"climb", &"swim", &"glide", &"dive"]:
 		return
 	mount = m
 	m.start_ride(self)
@@ -359,6 +359,10 @@ func probe_wall(dir: Vector3, length: float = 0.9) -> Dictionary:
 	var n: Vector3 = hit["normal"]
 	if n.y > 0.6 or n.y < -0.5:
 		return {}
+	# Slick surfaces (wet living bark, polished stone) give no grip.
+	var col: Object = hit.get("collider")
+	if col and col.has_meta(&"no_climb"):
+		return {}
 	return {"position": hit["position"], "normal": n}
 
 
@@ -415,6 +419,10 @@ func emit_noise(radius: float) -> void:
 	if _noise_cooldown > 0.0:
 		return
 	_noise_cooldown = 0.4
+	# Glowcap spores muffle every step and swing (forest night stealth).
+	if health.has_status(&"spored"):
+		radius *= 0.35
+	radius *= clampf(1.0 - PlayerData.armor_bonus("stealth") - PlayerData.buff_potency(&"stealth") * 0.4, 0.3, 1.0)
 	EventBus.noise_emitted.emit(global_position, radius, self)
 
 
@@ -476,7 +484,7 @@ func respawn() -> void:
 
 
 func is_in_critical_state() -> bool:
-	return state.state_name() in [&"climb", &"glide", &"swim", &"air", &"dead", &"drive"]
+	return state.state_name() in [&"climb", &"glide", &"swim", &"dive", &"air", &"dead", &"drive"]
 
 
 # --- Lightning (storm + metal) ------------------------------------------------------------------------

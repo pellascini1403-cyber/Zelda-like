@@ -12,7 +12,7 @@ extends RefCounted
 const QUEST_TYPES := ["main", "side", "discovery", "bounty", "challenge"]
 const CATEGORIES := ["story", "combat", "exploration", "puzzle", "gathering", "npc", "discovery", "boss", "challenge", "crafting", "traversal"]
 const DURATIONS := ["short", "medium", "long"]
-const SPAWN_KINDS := ["object", "nest", "creature", "actor", "encounter", "course", "chest", "cue", "puzzle", "zone"]
+const SPAWN_KINDS := ["object", "nest", "creature", "actor", "encounter", "course", "chest", "cue", "puzzle", "zone", "feature"]
 const ENC_MODES := ["protect", "survive", "escort"]
 const COURSE_MODES := ["glide", "run", "swim", "ride"]
 const STATES := ["glide", "swim", "climb", "ride", "ground", "air"]
@@ -233,6 +233,9 @@ static func _check_spawn(sp: Dictionary, db: Node, poi_ids: Dictionary, where: S
 	if kind in ["object", "nest", "encounter", "course", "puzzle"] and String(sp.get("id", "")) == "":
 		errors.append("%s needs an id" % w)
 	match kind:
+		"feature":
+			if not String(sp.get("feature", "")) in Features.TYPES:
+				errors.append("%s unknown feature '%s'" % [w, sp.get("feature", "")])
 		"zone":
 			if not String(sp.get("zone", "updraft")) in ["updraft", "levity"]:
 				errors.append("%s unknown zone '%s'" % [w, sp.get("zone", "")])

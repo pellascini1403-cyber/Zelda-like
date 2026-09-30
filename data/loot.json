@@ -1214,5 +1214,51 @@
     1
    ]
   }
+ ],
+ "drop_elder_carapace": [
+  {
+   "id": "carapace_shard",
+   "chance": 1.0,
+   "count": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "heartwood",
+   "chance": 0.35,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "amber_sap",
+   "chance": 0.8,
+   "count": [
+    2,
+    3
+   ]
+  }
+ ],
+ "drop_mist_fox": [
+  {
+   "id": "mist_fur",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_white_heron": [
+  {
+   "id": "gale_feather",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  }
  ]
 }

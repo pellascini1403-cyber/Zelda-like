@@ -85,3 +85,13 @@ static func blade(length: float, width: float, thickness: float = 0.04) -> Cylin
 		m.rings = 1
 		_cache[key] = m
 	return _cache[key]
+
+
+## One mesh from many primitive parts ([[Mesh, Transform3D], ...]): a
+## cluster of caps or a thicket of thorns becomes a single draw call.
+static func merged(parts: Array) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for p: Array in parts:
+		st.append_from(p[0], 0, p[1])
+	return st.commit()

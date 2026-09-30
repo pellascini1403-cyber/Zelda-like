@@ -117,7 +117,7 @@ func _show_detail() -> void:
 			lines.append(tr("STAT_METAL"))
 	if not it.armor.is_empty():
 		lines.append("%s %d" % [tr("STAT_DEFENSE"), it.armor.get("defense", 0)])
-		for k in ["cold_resist", "heat_resist", "climb_speed", "stamina_regen", "lightning_immune", "speed"]:
+		for k in ["cold_resist", "heat_resist", "climb_speed", "stamina_regen", "lightning_immune", "speed", "stealth", "breath", "swim_speed"]:
 			if it.armor.has(k):
 				lines.append(tr("ARMOR_" + k.to_upper()))
 		if it.armor.has("set"):

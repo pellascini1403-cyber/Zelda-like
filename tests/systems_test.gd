@@ -56,6 +56,19 @@ func _run() -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	await seconds(1.0)
+	# --only <section>: run one section (vehicles, ecosystems, forest, lake).
+	var oi := OS.get_cmdline_user_args().find("--only")
+	if oi >= 0:
+		match OS.get_cmdline_user_args()[oi + 1]:
+			"vehicles": await _vehicles(w, p)
+			"ecosystems": await _ecosystems(w, p)
+			"forest": await _forest(w, p)
+			"lake": await _lake(w, p)
+		# Store sandbox state lives in user:// — never leak it into the next run.
+		Platform.backend.clear_owned()
+		Platform.backend.sandbox = false
+		_finish()
+		return
 
 	# --- Quests ---------------------------------------------------------------------------------
 	check(Quests.is_active(&"mq_vela") and Quests.tracked == &"mq_vela", "main quest auto-starts and is tracked")
@@ -196,8 +209,14 @@ func _run() -> void:
 	# --- Premium vehicles ---------------------------------------------------------------------------
 	await _vehicles(w, p)
 
+	Debug.peaceful = false
+
 	# --- Ecosystems (expansion phase 2) ------------------------------------------------------------
 	await _ecosystems(w, p)
+
+	# --- Forest and lake as places with rules (expansion phase 3) ---------------------------------
+	await _forest(w, p)
+	await _lake(w, p)
 
 	# --- World event -----------------------------------------------------------------------------------
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
@@ -240,6 +259,7 @@ func _run() -> void:
 		print("after:  ", after)
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
 	check(PlayerData.owns_vehicle(&"longwake") and PlayerData.owns_vehicle(&"sparrow") and PlayerData.owns_vehicle(&"bellhull"), "vehicles restored from the save")
+	check(DiscoveryDirector.is_found(&"forest_moon_gate") and WorldState.flags.has("moon_gate_open") and BrambleWall.burned("hollow_tree:door") and WorldState.flags.has("sunken_bells"), "discoveries, burned brambles and opened gates restored from the save")
 	# Store entitlements belong to the account: a brand-new game gets them back.
 	PlayerData.reset_new_game()
 	Platform.apply_entitlements()
@@ -467,6 +487,9 @@ func _vehicles(w: GameWorld, p: Player) -> void:
 	p.facing_yaw = -PI * 0.5
 	Game.camera_rig.yaw = -90.0
 	var far := Vector3(1400, 0, 250)
+	# The vehicle track must be empty: the desert has residents now
+	# (burrowers surface under wheels, imps run across the road).
+	_clear_hostiles(p.global_position, 120.0)
 	var heavy := await _summon_and_enter(p, &"longwake")
 	check(heavy != null and p.state_name() == &"drive", "Longwake summoned beside the player and driven")
 	var top_heavy := 0.0
@@ -484,6 +507,7 @@ func _vehicles(w: GameWorld, p: Player) -> void:
 		check(p.vehicle == null and p.state_name() != &"drive", "getting out leaves the driver on foot")
 	# Light: slower top speed, but it jumps.
 	await teleport(1100.0, 250.0)
+	_clear_hostiles(p.global_position, 120.0)
 	p.facing_yaw = -PI * 0.5
 	var light := await _summon_and_enter(p, &"sparrow")
 	check(light != null, "Sparrow summoned (previous machine put away)")
@@ -511,13 +535,22 @@ func _vehicles(w: GameWorld, p: Player) -> void:
 		var top_cap := await _drive(cap, far, 4.0)
 		check(top_cap < top_light, "capsule is the slowest (%.1f)" % top_cap)
 		InputRouter.touch_move = Vector2.ZERO
+		# The desert has its own residents now (burrowers, imps): clear the
+		# range so the auto-aim can only pick the test target.
+		for c in get_tree().get_nodes_in_group(&"creatures"):
+			if (c as Creature).kind_is_hostile() and (c as Node3D).global_position.distance_to(cap.global_position) < 45.0:
+				c.queue_free()
+		await frames(2)
 		var e := w.spawner.spawn_creature(&"ENEMY_THORNLING", cap.global_position + cap.facing_dir() * 9.0 + Vector3.UP, "", "test")
 		await frames(10)
 		var hp0: float = e.health.health if e else 0.0
 		Input.action_press("attack")
 		await seconds(2.2)
 		Input.action_release("attack")
-		check(e == null or not is_instance_valid(e) or e.health.health < hp0, "chin barrels hit the enemy in front")
+		var hit_ok := e == null or not is_instance_valid(e) or e.health.health < hp0
+		if not hit_ok:
+			print("chin debug: enemy at %s (d %.1f) hp %.0f/%.0f state %s hidden %s in_enemies %s | cap facing %s heat %.2f over %.1f mode %s" % [e.global_position, e.global_position.distance_to(cap.global_position), e.health.health, hp0, e.brain.state_name(), e.hidden, e.is_in_group(&"enemies"), cap.facing_dir(), cap.heat, cap.overheated, cap.mode])
+		check(hit_ok, "chin barrels hit the enemy in front")
 		check(cap.heat_ratio() > 0.3, "firing builds heat (%.2f)" % cap.heat_ratio())
 		mgr.boss_active = true
 		check(mgr.summon_block_reason(p) != "", "no summoning during a boss fight")
@@ -556,6 +589,14 @@ func _finish() -> void:
 	print("==== %d checks, %d failed ====" % [_log.size(), _failures.size()])
 	SaveSystem.delete_save()
 	get_tree().quit(1 if _failures.size() > 0 else 0)
+
+
+func _clear_hostiles(pos: Vector3, r: float) -> void:
+	Debug.peaceful = true
+	for c in get_tree().get_nodes_in_group(&"creatures"):
+		if (c as Creature).kind_is_hostile() and (c as Node3D).global_position.distance_to(pos) < r:
+			(c as Creature).dead = true
+			c.queue_free()
 
 
 func _spawn_test(w: GameWorld, id: StringName, pos: Vector3) -> Creature:
@@ -696,3 +737,194 @@ func _ecosystems(w: GameWorld, p: Player) -> void:
 				break
 		check(swooped, "gale kite swoops")
 		kite.queue_free()
+
+
+func _nodes_near(group: StringName, pos: Vector3, r: float) -> Array:
+	var out: Array = []
+	for n in get_tree().get_nodes_in_group(group):
+		if (n as Node3D).global_position.distance_to(pos) < r:
+			out.append(n)
+	return out
+
+
+func _top_at(x: float, z: float) -> float:
+	var from := Vector3(x, 400.0, z)
+	var hit := get_tree().root.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from, Vector3(x, -80.0, z), 1))
+	return (hit["position"] as Vector3).y if not hit.is_empty() else -INF
+
+
+func _forest(w: GameWorld, p: Player) -> void:
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(12.0)
+	# Hollow Tree: slick bark, brambles that burn only when dry, rain caps.
+	await teleport(390.0 + 16.0, 318.0, 1.0)
+	await seconds(4.0)
+	check(p.probe_wall(Vector3(-1, 0, 0), 9.0).is_empty(), "the Hollow Tree's living bark gives no grip")
+	var br: Array = _nodes_near(&"brambles", Vector3(399, 14, 318), 12.0)
+	check(br.size() == 1, "brambles choke the Hollow Tree's door")
+	if br.size() == 1:
+		Weather.set_weather(&"rain", true)
+		await seconds(0.5)
+		check(not (br[0] as BrambleWall).try_ignite(), "wet brambles will not burn")
+		var caps: Array = _nodes_near(&"bellcaps", Vector3(390, 14, 318), 40.0)
+		check(caps.size() >= 5 and Bellcap.is_wet(), "rain soaks the grove's bellcaps (%d)" % caps.size())
+		if not caps.is_empty():
+			var cap: Bellcap = caps[0]
+			await frames(25)
+			p.global_position = cap.global_position + Vector3(0, cap.size * 1.3 + 0.4, 0)
+			p.velocity = Vector3.ZERO
+			p.change_state(&"air")
+			var peak := 0.0
+			for i in 60:
+				await frames(1)
+				peak = maxf(peak, p.velocity.y)
+			check(peak > 10.0, "a swollen bellcap throws you high (v %.1f)" % peak)
+		Weather.set_weather(&"clear", true)
+		Weather.wetness = 0.0
+		Weather.rain = 0.0
+		await seconds(0.3)
+		check((br[0] as BrambleWall).try_ignite(), "dry brambles catch fire")
+		await seconds(3.0)
+		check(BrambleWall.burned("hollow_tree:door"), "burned brambles stay burned (door open)")
+	# Down into the root heart.
+	await teleport(390.0, 318.0, 0.5)
+	await seconds(1.5)
+	check(p.global_position.y < 9.5, "the heart pit lies below the ground (y %.1f)" % p.global_position.y)
+	check(DiscoveryDirector.is_found(&"forest_hollow_heart"), "Heart of the Hollow Tree discovered")
+	# Canopy Walk: decks you can stand on, weavers on them, the high nest.
+	await teleport(430.0, 280.0)
+	await seconds(2.0)
+	var nest_y := _top_at(442.0, 288.0)
+	check(nest_y > 52.0, "the crow's nest stands high above the wood (y %.1f)" % nest_y)
+	var weavers := 0
+	for c in _nodes_near(&"creatures", Vector3(430, 30, 280), 30.0):
+		if (c as Creature).type.id == &"ENEMY_CRAG_WEAVER":
+			weavers += 1
+	check(weavers >= 2, "weavers wait on the canopy decks (%d)" % weavers)
+	p.global_position = Vector3(442.0, nest_y + 0.5, 288.0)
+	p.velocity = Vector3.ZERO
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"forest_highest_bough"), "Highest Bough discovered from the nest")
+	# Night: glowcaps open, dust you in spores (stealth), open the Moon Gate.
+	Clock.set_time(23.0)
+	await teleport(585.0, 237.0)
+	await seconds(2.0)
+	check(DiscoveryDirector.is_found(&"forest_glowcap_trail"), "Glowcap Trail found at night")
+	var gcs: Array = _nodes_near(&"glowcaps", p.global_position, 80.0)
+	check(gcs.size() >= 6, "glowcaps line the trail (%d)" % gcs.size())
+	if not gcs.is_empty():
+		var gc: Glowcap = gcs[0]
+		check(gc.can_interact(), "glowcaps open at night")
+		p.global_position = gc.global_position + Vector3(0.8, 0.5, 0)
+		await seconds(1.5)
+		check(p.health.has_status(&"spored"), "glowcap dust spores the player")
+		var probe := _spawn_test(w, &"ENEMY_BRAMBLE_CARAPACE", p.global_position + Vector3(6, 0.5, 0))
+		await frames(2)
+		var hushed := probe.perception.effective_range()
+		p.health.remove_status(&"spored")
+		check(hushed < probe.perception.effective_range() * 0.6, "spores halve how far creatures see you")
+		probe.queue_free()
+	await teleport(635.0 + 3.0, 195.0 + 3.0)
+	await seconds(2.0)
+	PlayerData.inventory.add(&"glowcap", 3)
+	var offer: QuestObject = null
+	for o in _nodes_near(&"quest_objects", Vector3(635, 20, 195), 12.0):
+		if String((o as QuestObject).object_id).ends_with(":offering"):
+			offer = o
+	check(offer != null, "the moon-pool offering bowl is there")
+	if offer:
+		offer.interact(p)
+		await seconds(2.5)
+		check(WorldState.flags.has("moon_gate_open") and DiscoveryDirector.is_found(&"forest_moon_gate"), "three glowcaps at night open the Moon Gate")
+		check(PlayerData.cookbook.size() > 0 and PlayerData.cosmetics.has("ribbon_moon"), "the Moon Gate teaches hush tea and gives the moonlit ribbon")
+	Clock.set_time(12.0)
+
+
+func _lake(w: GameWorld, p: Player) -> void:
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(10.0)
+	# Fishing: rod, cast, wait for the bite, pull.
+	await teleport(-265.0, 94.0, 1.0)
+	await seconds(2.0)
+	var spots: Array = _nodes_near(&"fishing_spots", Vector3(-268, 0, 94), 8.0)
+	check(spots.size() == 1, "a fishing spot off Ilo's dock")
+	if spots.size() == 1:
+		var fs: FishingSpot = spots[0]
+		fs.interact(p)
+		check(fs.phase == FishingSpot.Phase.IDLE, "no rod, no fishing")
+		PlayerData.inventory.add(&"fishing_rod", 1)
+		var fish0 := 0
+		for f in [&"mirror_perch", &"reed_pike", &"raw_fish"]:
+			fish0 += PlayerData.inventory.count_of(f)
+		await seconds(0.6)
+		fs.interact(p)
+		check(fs.phase == FishingSpot.Phase.WAITING, "cast: the bobber is out")
+		for i in 60:
+			await seconds(0.2)
+			if fs.phase == FishingSpot.Phase.BITE:
+				break
+		check(fs.phase == FishingSpot.Phase.BITE, "a fish bites")
+		fs.interact(p)
+		var fish1 := 0
+		for f in [&"mirror_perch", &"reed_pike", &"raw_fish"]:
+			fish1 += PlayerData.inventory.count_of(f)
+		check(fish1 == fish0 + 1, "pulling on the bite lands a fish")
+	Clock.set_time(23.0)
+	check(Fishing.table("lake").any(func(e: Dictionary) -> bool: return e["item"] == "moon_carp"), "moon carp only in the night table")
+	Clock.set_time(10.0)
+	check(not Fishing.table("lake").any(func(e: Dictionary) -> bool: return e["item"] == "moon_carp"), "no moon carp by day")
+	Fishing.land(&"moon_carp")
+	check(DiscoveryDirector.is_found(&"lake_moon_carp"), "catching a moon carp is a discovery")
+	# Diving into the Sunken Shrine: breath, the air vent, the three bells.
+	await teleport(-420.0, 106.0, 0.0)
+	p.global_position.y = WorldGen.SEA_LEVEL - 1.3
+	p.change_state(&"swim")
+	await seconds(0.5)
+	p.change_state(&"dive")
+	var st0 := p.vitals.stamina
+	await seconds(2.5)
+	check(p.state_name() == &"dive" and p.global_position.y < -2.5, "diving sinks you under (y %.1f)" % p.global_position.y)
+	check(p.vitals.stamina < st0, "breath runs out underwater")
+	await seconds(3.0)
+	check(DiscoveryDirector.is_found(&"lake_sunken_shrine"), "Sunken Shrine discovered while diving")
+	var vents: Array = _nodes_near(&"air_vents", Vector3(-420, -8, 100), 20.0)
+	check(vents.size() == 1, "an air vent in the ruins")
+	if vents.size() == 1:
+		p.vitals.stamina = 5.0
+		p.global_position = (vents[0] as Node3D).global_position + Vector3(0, 1.0, 0)
+		await seconds(1.0)
+		check(p.vitals.stamina > 20.0, "the bubble column refills your breath")
+	var bells: Array = []
+	for o in _nodes_near(&"quest_objects", Vector3(-420, -8, 100), 20.0):
+		if String((o as QuestObject).object_id).contains(":bell"):
+			bells.append(o)
+	check(bells.size() == 3, "three drowned bells")
+	for b in bells:
+		(b as QuestObject).interact(p)
+		await seconds(0.5)
+	check(WorldState.flags.has("sunken_bells"), "ringing all three opens the sanctum")
+	p.change_state(&"swim")
+	# Night: drowned lanterns seen from the water.
+	Clock.set_time(23.0)
+	p.global_position = Vector3(-420.0, WorldGen.SEA_LEVEL - 1.3, 110.0)
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"lake_drowned_lanterns"), "drowned lanterns found at night on the water")
+	Clock.set_time(12.0)
+	# Storm: the buoys drink lightning and grow stormglass.
+	Weather.set_weather(&"storm", true)
+	await teleport(-290.0, 30.0, 0.0)
+	p.global_position.y = WorldGen.SEA_LEVEL - 1.3
+	p.change_state(&"swim")
+	var glass := false
+	for i in 80:
+		await seconds(0.25)
+		for pk in get_tree().get_nodes_in_group(&"pickups"):
+			if (pk as Pickup).item_id == &"storm_glass":
+				glass = true
+		if glass:
+			break
+	check(get_tree().get_nodes_in_group(&"storm_buoys").size() >= 6, "storm buoys float on the east water")
+	check(glass, "a lightning-struck buoy grows stormglass")
+	check(DiscoveryDirector.is_found(&"lake_storm_buoys"), "Storm Buoys discovered in a storm")
+	Weather.set_weather(&"clear", true)
+	p.change_state(&"ground")

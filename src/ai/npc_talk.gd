@@ -23,6 +23,11 @@ func interact(_player: Player) -> void:
 			lines = d[key]
 	if Clock.is_night() and d.has("night"):
 		lines = d["night"]
+	# Rumours: one per day, rotating — how people point you at the world's
+	# wonders without a quest marker.
+	var rumors: Array = d.get("rumors", [])
+	if not rumors.is_empty():
+		lines = lines + [rumors[int(Clock.total_hours() / 24.0) % rumors.size()]]
 	(npc.brain as NPCBrain).talking = true
 	# Quests may override the line set (offer, hint, turn-in).
 	var quest_lines := Quests.talk_lines(npc.type.id)

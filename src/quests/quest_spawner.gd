@@ -19,7 +19,7 @@ extends Node3D
 
 const RANGE := {
 	"object": 170.0, "nest": 150.0, "creature": 110.0, "actor": 130.0, "encounter": 140.0,
-	"course": 320.0, "chest": 150.0, "cue": 900.0, "zone": 260.0,
+	"course": 320.0, "chest": 150.0, "cue": 900.0, "zone": 260.0, "feature": 160.0,
 }
 const MARGIN := 30.0
 const LINGER_DISTANCE := 45.0
@@ -81,6 +81,12 @@ func wanted() -> Dictionary:
 			for i in sspawns.size():
 				if _conditions_ok(sspawns[i]):
 					out["%s:s%d:%d" % [id, st, i]] = [sspawns[i], id]
+	# Sites: world features that are simply always there (fishing spots,
+	# storm buoys, trail markers), subject to their own conditions.
+	for i in DB.sites.size():
+		var se: Dictionary = DB.sites[i]
+		if _conditions_ok(se):
+			out["site:%d" % i] = [se, &""]
 	# Discoveries: their things exist while waiting to be found (and after,
 	# if they persist) and only when their world conditions hold.
 	for did: StringName in DB.discovery_order:
@@ -349,6 +355,18 @@ func _spawn(key: String, e: Dictionary, quest: StringName, kind: String) -> void
 					root.add_child(ch)
 					ch.global_position = seal.global_position + Vector3(0, 0.05, 0)
 			nodes.append(root)
+		"feature":
+			var pos := place(e, xz)
+			if pos == Vector3.INF:
+				return
+			var f: Node3D = Features.make(e)
+			if f == null:
+				push_warning("QuestSpawner: unknown feature " + String(e.get("feature", "")))
+				return
+			add_child(f)
+			f.global_position = pos
+			f.rotation.y = deg_to_rad(float(e.get("yaw", 0.0)))
+			nodes.append(f)
 		"zone":
 			# Physics fields discoveries and quests can place: a thermal
 			# column, a low-gravity pocket.

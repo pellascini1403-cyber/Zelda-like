@@ -38,6 +38,9 @@ func physics(delta: float) -> StringName:
 		return &"dead"
 	if p.water_depth() < p.SWIM_DEPTH - 0.25 and p.is_on_floor_probe():
 		return &"ground"
+	# Dive: only where there is water below worth diving into.
+	if Input.is_action_just_pressed("dodge") and p.vitals.stamina > 12.0 and p.ground_distance(4.0) > 2.2:
+		return &"dive"
 	if p.consume_jump() and p.vitals.try_spend(10.0):
 		p.velocity.y = 5.0
 		return &"air"

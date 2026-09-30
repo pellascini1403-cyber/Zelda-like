@@ -76,7 +76,7 @@ func use(id: StringName) -> bool:
 	if id == &"" or not PlayerData.has_ability(id) or cooldowns.has(id):
 		return false
 	var d: Dictionary = DB.abilities.get(id, {})
-	if p.state_name() in [&"dead", &"busy", &"climb", &"swim", &"drive"] and not id in [&"wind_sight", &"vehicle_call"]:
+	if p.state_name() in [&"dead", &"busy", &"climb", &"swim", &"dive", &"drive"] and not id in [&"wind_sight", &"vehicle_call"]:
 		return false
 	var cost := float(d.get("stamina", 0.0))
 	if cost > 0.0 and not p.vitals.try_spend(cost):

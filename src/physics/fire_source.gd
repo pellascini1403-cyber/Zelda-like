@@ -12,6 +12,7 @@ const MAX_LIGHTS := 4
 
 static var active_count := 0
 static var light_count := 0
+static var _shared_gen: WorldGen
 
 var lifetime := 8.0
 var radius := 1.6
@@ -44,7 +45,10 @@ func _ready() -> void:
 	add_to_group(&"updraft")
 	add_to_group(&"heat_source")
 	active_count += 1
-	_gen = WorldGen.from_world_data(DB.world)
+	# One shared generator for every fire (imps and grass fires spawn many).
+	if _shared_gen == null:
+		_shared_gen = WorldGen.from_world_data(DB.world)
+	_gen = _shared_gen
 	_particles = _flames()
 	add_child(_particles)
 	_smoke = _smoke_fx()

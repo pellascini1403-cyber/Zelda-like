@@ -24,6 +24,7 @@ static func spawn(parent: Node, pos: Vector3, id: StringName, n: int = 1) -> Pic
 
 
 func _ready() -> void:
+	add_to_group(&"pickups")
 	_mesh = MeshInstance3D.new()
 	var it := DB.item(item_id)
 	var color := ItemIcons.category_color(it.category if it else &"material")

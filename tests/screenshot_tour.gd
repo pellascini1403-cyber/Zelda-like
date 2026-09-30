@@ -71,6 +71,20 @@ const SHOTS := [
 	["46_eco_eel_surfacing", -262.0, 70.0, 95.0, -14.0, 11.0, "clear", "eco:eel"],
 	["47_eco_kite_swoop", 40.0, 60.0, 14.0, 4.0, 12.0, "clear", "eco:kite"],
 	["48_eco_burning_imp", 700.0, -100.0, 30.0, -10.0, 13.0, "clear", "eco:imp"],
+	# Phase 3: the forest and the lake
+	["50_forest_day", 398.0, 244.0, -139.0, 6.0, 10.0, "clear", "wild:none"],
+	["51_canopy_walk", 398.0, 300.0, -58.0, 16.0, 11.0, "clear", "wild:none"],
+	["54b_hollow_tree_door", 418.0, 322.0, 100.0, 10.0, 11.0, "clear", "wild:none"],
+	["52_canopy_nest_view", 444.0, 290.0, 120.0, -20.0, 16.0, "clear", "wild:nest"],
+	["53_weeping_grove_rain", 356.0, 318.0, -90.0, 6.0, 15.0, "rain", "wild:none"],
+	["54_hollow_tree_heart", 390.0, 318.0, 0.0, 35.0, 12.0, "clear", "wild:heart"],
+	["55_forest_night_glowcaps", 575.0, 249.0, -50.0, -10.0, 23.0, "clear", "wild:none"],
+	["56_moon_shrine_night", 638.0, 202.0, 23.0, -2.0, 23.0, "clear", "wild:moongate"],
+	["57_lake_fishing", -264.0, 95.0, 90.0, -12.0, 17.5, "clear", "wild:fish"],
+	["58_diving_sunken_shrine", -420.0, 110.0, 0.0, -18.0, 12.0, "clear", "wild:dive"],
+	["59_storm_buoys", -276.0, 30.0, 60.0, -10.0, 16.0, "storm", "wild:storm"],
+	["60_forest_combat", 470.0, 230.0, -30.0, -10.0, 13.0, "clear", "wild:combat"],
+	["61_atlas", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "wild:atlas"],
 ]
 
 const LINEUPS := {
@@ -192,6 +206,8 @@ func _shot(s: Array) -> void:
 		await get_tree().create_timer(0.8).timeout
 	if String(s[7]).begins_with("vehicles:"):
 		await _vehicle_shot(String(s[7]).trim_prefix("vehicles:"), p, w)
+	if String(s[7]).begins_with("wild:"):
+		await _wild_shot(String(s[7]).trim_prefix("wild:"), p, w)
 	if String(s[7]).begins_with("eco:"):
 		await _eco_shot(String(s[7]).trim_prefix("eco:"), p, w)
 	if s[7] == "title":
@@ -259,9 +275,83 @@ func _shot(s: Array) -> void:
 	for n in get_tree().get_nodes_in_group(&"tour_lineup"):
 		n.queue_free()
 	InputRouter.touch_move = Vector2.ZERO
+	if p.state_name() in [&"dive", &"swim"]:
+		p.change_state(&"air")
 	if p.vehicle:
 		p.exit_vehicle(false)
 	w.vehicles.put_away()
+
+
+func _ray_top(x: float, z: float) -> float:
+	var from := Vector3(x, 400.0, z)
+	var hit := get_viewport().world_3d.direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from, Vector3(x, -80.0, z), 1))
+	return (hit["position"] as Vector3).y if not hit.is_empty() else 0.0
+
+
+## Phase 3 captures: the forest's rules and the lake's systems in place.
+func _wild_shot(kind: String, p: Player, w: GameWorld) -> void:
+	var rig := Game.camera_rig as CameraRig
+	match kind:
+		"nest":
+			p.global_position.y = _ray_top(442.0, 288.0) + 0.2
+			await get_tree().create_timer(1.0).timeout
+		"heart":
+			p.global_position.y = _ray_top(390.0, 318.0) + 0.2
+			await get_tree().create_timer(1.0).timeout
+		"moongate":
+			Quests.set_flag(&"moon_gate_open")
+			await get_tree().create_timer(2.5).timeout
+		"fish":
+			PlayerData.inventory.add(&"fishing_rod", 1)
+			for fs in get_tree().get_nodes_in_group(&"fishing_spots"):
+				if (fs as Node3D).global_position.distance_to(p.global_position) < 10.0:
+					(fs as FishingSpot).interact(p)
+					break
+			await get_tree().create_timer(1.2).timeout
+			w.hud.visible = true
+		"dive":
+			p.global_position = Vector3(p.global_position.x, WorldGen.SEA_LEVEL - 1.3, p.global_position.z)
+			p.change_state(&"swim")
+			await get_tree().create_timer(0.2).timeout
+			p.change_state(&"dive")
+			await get_tree().create_timer(2.8).timeout
+			w.hud.visible = true
+		"storm":
+			p.global_position.y = WorldGen.SEA_LEVEL - 1.3
+			p.change_state(&"swim")
+			for i in 40:
+				await get_tree().create_timer(0.25).timeout
+				var hot := false
+				for b in get_tree().get_nodes_in_group(&"storm_buoys"):
+					if (b as StormBuoy)._hum > 0.0 and (b as StormBuoy)._hum < 0.6:
+						hot = true
+				if hot:
+					break
+		"combat":
+			var fwd := p.facing_dir()
+			var e := w.spawner.spawn_creature(&"ENEMY_ELDER_CARAPACE", p.global_position + fwd * 7.0 + Vector3(0, 0.5, 0), "", "tour")
+			var c2 := w.spawner.spawn_creature(&"ENEMY_BRAMBLE_CARAPACE", p.global_position + fwd * 6.0 + fwd.cross(Vector3.UP) * 4.0 + Vector3(0, 0.5, 0), "", "tour")
+			for c in [e, c2]:
+				c.perception.alert(p.global_position)
+				c.brain.change(&"chase")
+			await get_tree().create_timer(1.6).timeout
+			w.hud.visible = true
+		"atlas":
+			for id in [&"forest_glowcap_trail", &"forest_weeping_grove", &"forest_moon_gate", &"lake_moon_carp", &"lake_storm_buoys"]:
+				WorldState.flags["disc:" + String(id)] = true
+			w.hud.visible = true
+			w.hud.menu.open(PauseMenu.TAB_JOURNAL)
+			var jp: JournalPanel = w.hud.menu.find_child("*Journal*", true, false) as JournalPanel
+			if jp == null:
+				for n in w.hud.menu.find_children("*", "JournalPanel", true, false):
+					jp = n
+			if jp:
+				jp._show_atlas = true
+				jp._selected = &"atlas:forest_moon_gate"
+				jp.refresh()
+			await get_tree().create_timer(0.5, true, false, true).timeout
+		_:
+			await get_tree().create_timer(2.0).timeout
 
 
 ## Ecosystem captures: creatures doing their thing in their place.

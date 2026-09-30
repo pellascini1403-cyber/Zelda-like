@@ -1,0 +1,17 @@
+[
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_lake_0", "waters": "lake", "pos": [-268, 94], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_lake_1", "waters": "lake", "pos": [-299, 160], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_lake_2", "waters": "lake", "pos": [-471, -42], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_lake_3", "waters": "lake", "pos": [-506, 164], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_sea_0", "waters": "sea", "pos": [141, 802], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_sea_1", "waters": "sea", "pos": [327, 781], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "fishing_spot", "id": "fish_sea_2", "waters": "sea", "pos": [-605, 548], "float": true, "lift": 0.05},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_0", "pos": [-282.0, 26.0], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_1", "pos": [-286.4, 25.2], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_2", "pos": [-290.9, 22.6], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_3", "pos": [-295.3, 19.2], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_4", "pos": [-299.7, 16.9], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_5", "pos": [-304.1, 16.3], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_6", "pos": [-308.6, 15.2], "float": true, "lift": 0.0},
+  {"kind": "feature", "feature": "storm_buoy", "id": "buoy_7", "pos": [-313.0, 12.4], "float": true, "lift": 0.0}
+]

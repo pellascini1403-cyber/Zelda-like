@@ -1,0 +1,76 @@
+{
+ "waters": {
+  "lake": [
+   {
+    "item": "mirror_perch",
+    "weight": 6,
+    "period": "day"
+   },
+   {
+    "item": "mirror_perch",
+    "weight": 2,
+    "period": "night"
+   },
+   {
+    "item": "reed_pike",
+    "weight": 4,
+    "hours": [
+     5,
+     8
+    ]
+   },
+   {
+    "item": "reed_pike",
+    "weight": 4,
+    "hours": [
+     17,
+     20
+    ]
+   },
+   {
+    "item": "moon_carp",
+    "weight": 1.5,
+    "period": "night"
+   },
+   {
+    "item": "stormfin",
+    "weight": 5,
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "item": "raw_fish",
+    "weight": 1
+   }
+  ],
+  "sea": [
+   {
+    "item": "silverback",
+    "weight": 6
+   },
+   {
+    "item": "reef_glint",
+    "weight": 1,
+    "hours": [
+     10,
+     15
+    ],
+    "weather": [
+     "clear"
+    ]
+   },
+   {
+    "item": "stormfin",
+    "weight": 2,
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "item": "raw_fish",
+    "weight": 2
+   }
+  ]
+ }
+}

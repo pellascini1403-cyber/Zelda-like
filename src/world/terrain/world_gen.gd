@@ -82,6 +82,11 @@ static func from_world_data(world: Dictionary) -> WorldGen:
 		if poi.has("flatten"):
 			var p: Array = poi["pos"]
 			pads.append([Vector2(p[0], p[1]), float(poi["flatten"]), float(poi.get("pad_height", NAN))])
+			# "pit": [radius, depth] — a hollow sunk into the pad (the Hollow
+			# Tree's root heart), applied after the pad so it wins.
+			if poi.has("pit") and poi.has("pad_height"):
+				var pit: Array = poi["pit"]
+				pads.append([Vector2(p[0], p[1]), float(pit[0]), float(poi["pad_height"]) - float(pit[1])])
 	var g := WorldGen.new(int(world.get("seed", 1337)), pads)
 	for f in world.get("falls", []):
 		var b: Array = f["bottom"]
