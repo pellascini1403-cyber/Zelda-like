@@ -63,6 +63,8 @@ static func divider(ci: CanvasItem, a: Vector2, b: Vector2, col: Color) -> void:
 
 
 static func diamond(ci: CanvasItem, c: Vector2, r: float, col: Color, filled: bool = true) -> void:
+	if not (c.is_finite() and is_finite(r)) or r < 0.5:
+		return
 	var pts := PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0)])
 	if filled:
 		ci.draw_colored_polygon(pts, col)
@@ -85,8 +87,11 @@ static func brush_bar(ci: CanvasItem, r: Rect2, ratio: float, col: Color, trail:
 
 
 static func _brush(ci: CanvasItem, r: Rect2, ratio: float, col: Color) -> void:
+	# NaN ratios (x / 0) slip past every comparison: refuse them outright.
+	if not is_finite(ratio) or not r.position.is_finite() or not r.size.is_finite():
+		return
 	var w := r.size.x * clampf(ratio, 0.0, 1.0)
-	if w < 1.0:
+	if w < 1.0 or r.size.y < 1.0:
 		return
 	if w < 4.0:
 		# Too short to taper: a degenerate stroke would fail to triangulate.
@@ -106,7 +111,7 @@ static func _brush(ci: CanvasItem, r: Rect2, ratio: float, col: Color) -> void:
 ## Radial cooldown veil over a disc (0 = ready).
 static func cooldown(ci: CanvasItem, c: Vector2, r: float, ratio: float) -> void:
 	# A sliver of arc (or a closed full circle) makes a degenerate polygon.
-	if ratio <= 0.02:
+	if not is_finite(ratio) or not c.is_finite() or r < 1.0 or ratio <= 0.02:
 		return
 	if ratio >= 0.995:
 		ci.draw_circle(c, r, Color(0, 0, 0, 0.55))

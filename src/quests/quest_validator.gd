@@ -37,6 +37,9 @@ static func validate(db: Node) -> PackedStringArray:
 		for k in ["beacon", "flag", "cabin_gate"]:
 			if poi.has(k):
 				settable[String(poi[k])] = true
+		# A great fog bell sets its line's flag when the whole line was rung.
+		if poi.has("bell") and (poi["bell"] as Dictionary).has("line_flag"):
+			settable[String(poi["bell"]["line_flag"])] = true
 	# People who appear with a wonder (the castaway at dusk) live there.
 	for d in db.discoveries.values():
 		for sp in d.get("spawns", []):

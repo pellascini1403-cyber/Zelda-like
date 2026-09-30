@@ -100,6 +100,23 @@ func play_at(id: StringName, pos: Vector3, volume_db: float = 0.0, pitch_var: fl
 	p.global_position = pos
 	p.volume_db = volume_db
 	p.pitch_scale = 1.0 + randf_range(-pitch_var, pitch_var)
+	p.max_distance = 60.0
+	p.play()
+
+
+## A tuned sound that carries far (fog bells: each has its own pitch and is
+## heard well beyond sight in the mist).
+func play_tone(id: StringName, pos: Vector3, pitch: float, volume_db: float = 0.0, max_distance: float = 220.0) -> void:
+	var s := _get_stream(id)
+	if s == null:
+		return
+	var p := _pool3d[_pool_idx]
+	_pool_idx = (_pool_idx + 1) % _pool3d.size()
+	p.stream = s
+	p.global_position = pos
+	p.volume_db = volume_db
+	p.pitch_scale = pitch
+	p.max_distance = max_distance
 	p.play()
 
 

@@ -1334,5 +1334,41 @@
     1
    ]
   }
+ ],
+ "drop_mist_dweller": [
+  {
+   "id": "mist_pearl",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.6,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_rip_finback": [
+  {
+   "id": "rip_scale",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "finback_tooth",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  }
  ]
 }

@@ -130,6 +130,10 @@ func _build_type(poi: Dictionary, root: Node3D) -> Array:
 		"wreck": return SeaBuilder.new(self).wreck(poi, root)
 		"castaway_camp": return SeaBuilder.new(self).castaway_camp(poi, root)
 		"tide_cave": return SeaBuilder.new(self).tide_cave(poi, root)
+		"bell_shrine": return SeaBuilder.new(self).bell_shrine(poi, root)
+		"sea_cave": return SeaBuilder.new(self).sea_cave(poi, root)
+		"standing_wreck": return SeaBuilder.new(self).standing_wreck(poi, root)
+		"split_wreck": return SeaBuilder.new(self).split_wreck(poi, root)
 	push_warning("StructureBuilder: unknown POI type " + kind)
 	return []
 

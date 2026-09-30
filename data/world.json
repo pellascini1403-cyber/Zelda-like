@@ -1410,6 +1410,127 @@
           "count": 1
         }
       ]
+    },
+    {
+      "id": "bell_sanctuary",
+      "type": "bell_shrine",
+      "name_key": "POI_BELL_SANCTUARY",
+      "pos": [
+        -1255,
+        30
+      ],
+      "flatten": 10,
+      "pad_height": 4.5,
+      "clear_radius": 14,
+      "discover_radius": 26,
+      "loot": "chest_rare",
+      "reward": [
+        {
+          "id": "mistwalker_lantern",
+          "count": 1
+        }
+      ],
+      "bell": {
+        "id": "mist_bell_great",
+        "big": true,
+        "pitch": 0.6,
+        "line_flag": "mist_bells_answered",
+        "line": [
+          "mist_bell_1",
+          "mist_bell_2",
+          "mist_bell_3",
+          "mist_bell_4"
+        ]
+      }
+    },
+    {
+      "id": "echo_cave",
+      "type": "sea_cave",
+      "name_key": "POI_ECHO_CAVE",
+      "pos": [
+        -790,
+        36
+      ],
+      "flatten": 11,
+      "pad_height": -3.0,
+      "clear_radius": 14,
+      "discover_radius": 10,
+      "length": 8.0,
+      "loot": "chest_rare",
+      "gather": "echo_shell",
+      "reward": [
+        {
+          "id": "mist_pearl",
+          "count": 1
+        },
+        {
+          "id": "echo_shell",
+          "count": 2
+        }
+      ],
+      "guardians": [
+        [
+          "ENEMY_CAVE_WEAVER",
+          2.0,
+          6.0,
+          3.0
+        ]
+      ]
+    },
+    {
+      "id": "the_lance",
+      "type": "standing_wreck",
+      "name_key": "POI_THE_LANCE",
+      "pos": [
+        -1031,
+        -190
+      ],
+      "clear_radius": 8,
+      "discover_radius": 12,
+      "above": 9.0,
+      "tilt": 12.0,
+      "loot": "chest_rare",
+      "reward": [
+        {
+          "id": "mist_pearl",
+          "count": 1
+        },
+        {
+          "id": "abyssal_pearl",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "broken_pact",
+      "type": "split_wreck",
+      "name_key": "POI_BROKEN_PACT",
+      "pos": [
+        1061,
+        772
+      ],
+      "clear_radius": 10,
+      "discover_radius": 18,
+      "yaw": 180.0,
+      "stern_yaw": 0.0,
+      "stern": [
+        0,
+        -11.0,
+        30
+      ],
+      "loot": "chest_rare",
+      "log_item": "pact_log",
+      "log_line": "LINE_PACT_LOG",
+      "reward": [
+        {
+          "id": "abyssal_pearl",
+          "count": 1
+        },
+        {
+          "id": "storm_glass",
+          "count": 2
+        }
+      ]
     }
   ],
   "falls": [
@@ -1832,6 +1953,106 @@
       "radius": 30,
       "height": -18.0,
       "shape": "shelf"
+    },
+    {
+      "id": "teeth_wall",
+      "pos": [
+        -1010,
+        -190
+      ],
+      "radius": 16,
+      "height": 26.0,
+      "shape": "stack"
+    },
+    {
+      "id": "teeth_1",
+      "pos": [
+        -985,
+        -148
+      ],
+      "radius": 8,
+      "height": 18.0,
+      "shape": "stack"
+    },
+    {
+      "id": "teeth_2",
+      "pos": [
+        -962,
+        -205
+      ],
+      "radius": 7,
+      "height": 13.0,
+      "shape": "stack"
+    },
+    {
+      "id": "teeth_3",
+      "pos": [
+        -1043,
+        -128
+      ],
+      "radius": 8,
+      "height": 20.0,
+      "shape": "stack"
+    },
+    {
+      "id": "teeth_4",
+      "pos": [
+        -972,
+        -108
+      ],
+      "radius": 6,
+      "height": 11.0,
+      "shape": "stack"
+    },
+    {
+      "id": "bell_knoll",
+      "pos": [
+        -1255,
+        30
+      ],
+      "radius": 22,
+      "height": 5.0,
+      "shape": "mound"
+    },
+    {
+      "id": "isla_paso",
+      "pos": [
+        1060,
+        760
+      ],
+      "radius": 26,
+      "height": 4.0,
+      "shape": "mound"
+    },
+    {
+      "id": "paso_ledge",
+      "pos": [
+        1062,
+        815
+      ],
+      "radius": 16,
+      "height": -11.0,
+      "shape": "shelf"
+    },
+    {
+      "id": "wind_rock",
+      "pos": [
+        1300,
+        830
+      ],
+      "radius": 11,
+      "height": 26.0,
+      "shape": "stack"
+    },
+    {
+      "id": "high_isle",
+      "pos": [
+        1345,
+        880
+      ],
+      "radius": 30,
+      "height": 30.0,
+      "shape": "mesa"
     }
   ]
 }

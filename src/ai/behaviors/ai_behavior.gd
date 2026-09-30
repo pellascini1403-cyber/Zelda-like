@@ -19,6 +19,8 @@ extends RefCounted
 ##   swarm         packs orbit the target and strike one at a time
 ##   storm_charged in storms: electric attacks, sparks, more damage
 ##   surfacer      big swimmers rise to breathe (spout), then sink
+##   stalker       keeps its distance in the mist, closes in when you stop
+##   current_rider rides sea currents to reposition, strikes downstream
 
 var b: AIBrain
 var c: Creature
@@ -88,9 +90,11 @@ static func make(name: String, brain: AIBrain) -> AIBehavior:
 		"swarm": return SwarmBehavior.new(brain)
 		"storm_charged": return StormChargedBehavior.new(brain)
 		"surfacer": return SurfacerBehavior.new(brain)
+		"stalker": return StalkerBehavior.new(brain)
+		"current_rider": return CurrentRiderBehavior.new(brain)
 	push_warning("AIBehavior: unknown behaviour " + name)
 	return null
 
 
 const KNOWN := ["ambush", "swoop", "front_armor", "submerge", "burrow", "drop_from_above", "phase", "steal",
-	"ignite", "fire_shy", "swarm", "storm_charged", "surfacer"]
+	"ignite", "fire_shy", "swarm", "storm_charged", "surfacer", "stalker", "current_rider"]

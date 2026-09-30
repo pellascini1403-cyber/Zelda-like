@@ -128,6 +128,42 @@
      "storm"
     ]
    }
+  ],
+  "mist": [
+   {
+    "item": "mistfin",
+    "weight": 6,
+    "hours": [
+     18,
+     10
+    ]
+   },
+   {
+    "item": "silverback",
+    "weight": 3
+   },
+   {
+    "item": "raw_fish",
+    "weight": 2
+   }
+  ],
+  "rip": [
+   {
+    "item": "rip_mackerel",
+    "weight": 6
+   },
+   {
+    "item": "bluewater_runner",
+    "weight": 2,
+    "period": "day"
+   },
+   {
+    "item": "stormfin",
+    "weight": 3,
+    "weather": [
+     "storm"
+    ]
+   }
   ]
  }
 }

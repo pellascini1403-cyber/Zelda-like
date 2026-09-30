@@ -73,6 +73,9 @@ static func world_ok(c: Dictionary) -> bool:
 		return false
 	if c.has("tide") and not QuestSpawner._tide_ok(String(c["tide"])):
 		return false
+	# Tidal currents: "strong" on the flood/ebb, "slack" at the turn.
+	if c.has("flow") and (Tide.is_slack() if String(c["flow"]) == "strong" else not Tide.is_slack()):
+		return false
 	return true
 
 
@@ -95,6 +98,8 @@ static func player_ok(c: Dictionary, p: Player) -> bool:
 	if c.has("min_y") and p.global_position.y < float(c["min_y"]):
 		return false
 	if c.has("max_y") and p.global_position.y > float(c["max_y"]):
+		return false
+	if c.get("mist", false) and MistBank.density_at(p.global_position, p.get_tree()) < 0.4:
 		return false
 	return true
 
@@ -139,6 +144,10 @@ static func condition_text(d: Dictionary) -> String:
 			"fog": parts.append(TranslationServer.translate("COND_FOG"))
 	if c.has("tide"):
 		parts.append(TranslationServer.translate("TIDE_LOW" if String(c["tide"]) == "low" else "TIDE_HIGH"))
+	if c.get("mist", false):
+		parts.append(TranslationServer.translate("COND_MIST"))
+	if c.has("flow"):
+		parts.append(TranslationServer.translate("COND_FLOW_STRONG" if String(c["flow"]) == "strong" else "COND_SLACK"))
 	if c.has("vehicle"):
 		parts.append(TranslationServer.translate("COND_BY_BOAT"))
 	if c.has("min_y"):

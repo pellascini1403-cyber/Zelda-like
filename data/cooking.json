@@ -42,6 +42,16 @@
       ],
       "item": "deepwater_broth",
       "potency": 1.0
+    },
+    {
+      "id": "clearsight_tea",
+      "ingredients": [
+        "mistfin",
+        "echo_shell",
+        "frostmint"
+      ],
+      "item": "clearsight_tea",
+      "potency": 1.0
     }
   ]
 }

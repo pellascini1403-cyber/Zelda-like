@@ -149,8 +149,10 @@ static func habitat_of(pos: Vector3, nrm: Vector3) -> StringName:
 
 ## Spawn-table entry conditions: habitat, period, hours, weather.
 ##   {"entity", "weight", "group", "habitat": land|water|deep|cliff,
-##    "period": day|night, "hours": [from, to], "weather": [ids]}
-static func entry_ok(e: Dictionary, hab: StringName = &"land") -> bool:
+##    "period": day|night, "hours": [from, to], "weather": [ids],
+##    "tide": low|high, "area": [x, z, radius] (only there), "mist": true
+##    (only inside a thick sea-mist bank)}
+static func entry_ok(e: Dictionary, hab: StringName = &"land", pos: Vector3 = Vector3.INF) -> bool:
 	if StringName(e.get("habitat", "land")) != hab:
 		return false
 	var period: String = e.get("period", "any")
@@ -168,6 +170,13 @@ static func entry_ok(e: Dictionary, hab: StringName = &"land") -> bool:
 		return false
 	if e.has("tide") and not QuestSpawner._tide_ok(String(e["tide"])):
 		return false
+	if e.has("area"):
+		var ar: Array = e["area"]
+		if pos == Vector3.INF or Vector2(pos.x - float(ar[0]), pos.z - float(ar[1])).length() > float(ar[2]):
+			return false
+	if e.get("mist", false):
+		if pos == Vector3.INF or MistBank.density_at(pos, Engine.get_main_loop() as SceneTree) < 0.4:
+			return false
 	return true
 
 
@@ -176,7 +185,7 @@ func _spawn_group(table: Array, pos: Vector3, id: String, roll: float, hab: Stri
 	var options: Array = []
 	var total := 0.0
 	for e in table:
-		if not entry_ok(e, hab):
+		if not entry_ok(e, hab, pos):
 			continue
 		options.append(e)
 		total += float(e["weight"])

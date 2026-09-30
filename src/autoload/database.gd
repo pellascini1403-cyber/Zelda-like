@@ -8,7 +8,7 @@ const DATA_DIR := "res://data/"
 ## POI types StructureBuilder knows how to build.
 const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
 	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry", "depot",
-	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine", "lighthouse", "sea_spire", "wreck", "castaway_camp", "tide_cave"]
+	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine", "lighthouse", "sea_spire", "wreck", "castaway_camp", "tide_cave", "bell_shrine", "sea_cave", "standing_wreck", "split_wreck"]
 
 var items: Dictionary = {}          # StringName -> ItemData
 var entities: Dictionary = {}       # StringName -> EntityType

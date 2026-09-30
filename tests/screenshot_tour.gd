@@ -99,6 +99,17 @@ const SHOTS := [
 	["72_electrified_buoys", 760.0, 1262.0, 87.1, -6.0, 16.0, "storm", "sea:buoys"],
 	["73_sea_combat", 640.0, 1320.0, -135.0, -14.0, 13.0, "clear", "sea:combat"],
 	["74_atlas_sea", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "sea:atlas"],
+	# Phase 4.5: the far seas (west: mist, east: currents)
+	["75_west_sea_day", -772.0, 0.0, 54.5, -2.0, 14.5, "clear", "sea:none"],
+	["76_west_mist", -955.0, -50.0, 47.0, -2.0, 6.2, "clear", "sea:swim"],
+	["77_fog_bells", -866.0, -44.0, 108.0, 2.0, 19.2, "clear", "sea:bell"],
+	["78_sea_cave", -785.0, 36.0, 90.0, -6.0, 11.0, "clear", "sea:cave"],
+	["79_standing_wreck", -1060.0, -205.0, -117.0, -8.0, 14.0, "clear", "sea:swim"],
+	["80_east_sea", 1190.0, 588.0, -155.6, -4.0, 10.0, "clear", "sea:none"],
+	["81_tidal_current", 1100.0, 652.0, -92.0, -10.0, 9.0, "clear", "sea:swim"],
+	["82_spout_glide", 1286.0, 812.0, 45.0, -8.0, 15.0, "clear", "sea:glide"],
+	["83_dawn_mirage", -1080.0, -210.0, 53.1, 0.0, 5.6, "clear", "sea:swim"],
+	["84_atlas_far_seas", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "sea:atlas2"],
 ]
 
 const LINEUPS := {
@@ -269,7 +280,7 @@ func _shot(s: Array) -> void:
 			w.hud.cooking._chosen = [&"emberroot", &"cap_mushroom"]
 			w.hud.cooking._refresh()
 			await get_tree().create_timer(0.4, true, false, true).timeout
-	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water", "sea:sail", "sea:hold"]:
+	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water", "sea:sail", "sea:hold", "sea:glide"]:
 		rig.yaw = s[3]
 	rig.pitch = s[4]
 	if not s[7] in ["reward"]:
@@ -574,7 +585,14 @@ func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
 		"sunset":
 			WorldState.flags["lighthouse_lit"] = true
 			await get_tree().create_timer(1.0).timeout
-		"swim", "fauna", "storm", "buoys", "combat":
+		"none", "swim", "fauna", "storm", "buoys", "combat":
+			# Clear the view of stray hostiles (the shot is of the place).
+			for c in get_tree().get_nodes_in_group(&"creatures"):
+				if (c as Creature).kind_is_hostile() and (c as Node3D).global_position.distance_to(p.global_position) < 45.0 and (c as Creature).group_id != "tour":
+					c.queue_free()
+			if kind == "none":
+				await get_tree().create_timer(1.0).timeout
+				return
 			if kind == "storm":
 				# Wading on the reef shelf.
 				p.global_position.y = w.gen.height(p.global_position.x, p.global_position.z) + 0.3
@@ -668,6 +686,55 @@ func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
 			p.global_position.y = WorldGen.SEA_LEVEL - 9.0
 			await get_tree().create_timer(2.5).timeout
 			w.hud.visible = true
+		"bell":
+			p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+			p.change_state(&"swim")
+			await get_tree().create_timer(1.5).timeout
+			w.hud.visible = true
+			for b in get_tree().get_nodes_in_group(&"fog_bells"):
+				if (b as FogBell).feature_id == "mist_bell_1":
+					(b as FogBell).interact(p)
+			await get_tree().create_timer(0.3).timeout
+		"cave":
+			# On the dry ledge at the back of the chamber, looking out at the throat.
+			p.change_state(&"air")
+			p.global_position = Vector3(-784.8, WorldGen.SEA_LEVEL + 1.3, 36.0)
+			p.velocity = Vector3.ZERO
+			w.hud.visible = true
+			await get_tree().create_timer(1.5).timeout
+		"glide":
+			# Leave the Bellhull at the spout's foot, ride the burst and the updraft.
+			p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+			p.change_state(&"swim")
+			await get_tree().create_timer(0.3).timeout
+			PlayerData.equip_vehicle(&"bellhull")
+			w.vehicles.summon(p)
+			await get_tree().create_timer(0.8).timeout
+			var boat := w.vehicles.active
+			if boat:
+				boat.global_position = Vector3(1274.0, boat.global_position.y, 806.0)
+			PlayerData.inventory.add(&"vela_glider")
+			p.global_position = Vector3(1296.0, WorldGen.SEA_LEVEL + 40.0, 824.0)
+			p.velocity = Vector3.ZERO
+			p.facing_yaw = deg_to_rad(-139.0)
+			p.change_state(&"glide")
+			for sp in get_tree().get_nodes_in_group(&"spouts"):
+				(sp as Spout).burst()
+			await get_tree().create_timer(0.7).timeout
+			rig.yaw = -150.0
+		"atlas2":
+			for id in [&"mist_teeth", &"mist_bells", &"mist_sanctuary", &"mist_mirage", &"rip_great", &"rip_high_isle", &"rip_whirlpool"]:
+				WorldState.flags["disc:" + String(id)] = true
+			w.hud.visible = true
+			w.hud.menu.open(PauseMenu.TAB_JOURNAL)
+			var jp2: JournalPanel = null
+			for n in w.hud.menu.find_children("*", "JournalPanel", true, false):
+				jp2 = n
+			if jp2:
+				jp2._show_atlas = true
+				jp2._selected = &"atlas:mist_mirage"
+				jp2.refresh()
+			await get_tree().create_timer(0.5, true, false, true).timeout
 		"atlas":
 			for id in [&"sea_tidewarden_light", &"sea_vigil_top", &"sea_gulls_promise", &"sea_leviathan", &"sea_crystal_reef", &"sea_vanishing_bar", &"sea_lantern_squid"]:
 				WorldState.flags["disc:" + String(id)] = true

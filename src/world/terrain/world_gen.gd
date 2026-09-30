@@ -47,7 +47,8 @@ var _pools: Array = []
 var _paths: Array = []
 ## Sea islets and reefs: [Vector2 center, radius, peak height, shape]
 ## shape: "mound" (rounded island), "shelf" (flat reef just under the
-## surface), "bar" (a long low sandbank; radius = half length, along x).
+## surface), "bar" (a long low sandbank; radius = half length, along x),
+## "stack" (near-vertical sea pillar), "mesa" (cliff-sided flat-top isle).
 var _islets: Array = []
 
 
@@ -199,6 +200,14 @@ func height(x: float, z: float) -> float:
 				var q := p - c
 				var e2 := Vector2(q.x / r, q.y / (r * 0.18)).length() + _detail.get_noise_2d(x * 2.0, z * 2.0) * 0.15
 				h = maxf(h, lerpf(h, peak, smoothstep(1.3, 0.7, e2)))
+			"stack":
+				# Sea stack: near-vertical rock pillar, a silhouette in the mist.
+				var e3 := dd / r + _detail.get_noise_2d(x * 2.5, z * 2.5) * 0.08
+				h = maxf(h, lerpf(h, peak + _detail.get_noise_2d(x * 4.0, z * 4.0) * 1.2, smoothstep(1.12, 0.88, e3)))
+			"mesa":
+				# Flat-topped isle with cliff sides and a thin beach skirt.
+				var skirt := lerpf(h, 0.8, smoothstep(1.5, 1.15, edge))
+				h = maxf(h, lerpf(skirt, peak + _detail.get_noise_2d(x * 3.0, z * 3.0) * 0.6, smoothstep(1.08, 0.94, edge)))
 			_:
 				var k := smoothstep(1.35, 0.0, edge)
 				h = maxf(h, lerpf(h, peak + _detail.get_noise_2d(x, z) * 1.5, pow(k, 0.7)))

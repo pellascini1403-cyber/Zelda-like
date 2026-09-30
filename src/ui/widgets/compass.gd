@@ -87,6 +87,10 @@ func _draw() -> void:
 
 func _marker(world: Vector3, ppos: Vector3, heading: float, kind: String, col: Color) -> void:
 	var to := world - ppos
+	# A marker not placeable yet (Vector3.INF) has no bearing: drawing it at
+	# NaN is what made the canvas fail to triangulate.
+	if not (is_finite(to.x) and is_finite(to.z)):
+		return
 	var d := Vector2(to.x, to.z).length()
 	if (d > RANGE and kind == "dot") or d < 8.0:
 		return

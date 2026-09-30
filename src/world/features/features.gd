@@ -2,11 +2,13 @@ class_name Features
 extends RefCounted
 ## World features that discoveries and quests can place (QuestSpawner kind
 ## "feature"): the forest's glowcaps and bellcaps, bramble walls, ribbon
-## trail markers, fishing spots, air vents and storm buoys.
+## trail markers, fishing spots, air vents and storm buoys; the sea's
+## currents, tide bars, surf, kelp, fog bells, spouts, whirlpools, mist
+## banks and the dawn mirage.
 ##   {"kind": "feature", "feature": "<type>", "id": ..., "pos": [...], ...}
 
 const TYPES := ["glowcap", "bellcap", "bramble", "ribbon", "fishing_spot", "air_vent", "storm_buoy", "storm_spire",
-	"current", "tide_bar", "surf", "kelp"]
+	"current", "tide_bar", "surf", "kelp", "fog_bell", "spout", "whirlpool", "mist_bank", "mirage"]
 
 
 static func make(e: Dictionary) -> Node3D:
@@ -30,7 +32,10 @@ static func make(e: Dictionary) -> Node3D:
 		"storm_spire":
 			return StormBuoy.create(id, true)
 		"current":
-			return SeaCurrent.create(float(e.get("length", 120.0)), float(e.get("width", 16.0)), float(e.get("strength", 3.5)))
+			var sc := SeaCurrent.create(float(e.get("length", 120.0)), float(e.get("width", 16.0)), float(e.get("strength", 3.5)))
+			sc.tidal = bool(e.get("tidal", false))
+			sc.glows = bool(e.get("glows", false))
+			return sc
 		"tide_bar":
 			var tb: Array = e.get("size", [4.0, 1.0, 4.0])
 			return TideBar.create(Vector3(tb[0], tb[1], tb[2]))
@@ -39,6 +44,16 @@ static func make(e: Dictionary) -> Node3D:
 		"surf":
 			var yaw := deg_to_rad(float(e.get("yaw", 0.0)))
 			return Surf.create(float(e.get("radius", 5.0)), Vector3(-sin(yaw), 0, -cos(yaw)))
+		"fog_bell":
+			return FogBell.create(e)
+		"spout":
+			return Spout.create(float(e.get("radius", 2.6)), float(e.get("period", 7.0)))
+		"whirlpool":
+			return Whirlpool.create(float(e.get("radius", 18.0)), float(e.get("strength", 3.0)))
+		"mist_bank":
+			return MistBank.create(float(e.get("radius", 300.0)), float(e.get("edge", 70.0)), e.get("pockets", []))
+		"mirage":
+			return MirageShip.new()
 	return null
 
 

@@ -13,5 +13,7 @@
   {"id": "echo_storm", "slot": "afterimage", "name_key": "COS_ECHO_STORM", "color": "#8fb8ff"},
   {"id": "ribbon_moon", "slot": "glider_trail", "name_key": "COS_RIBBON_MOON", "color": "#bfe8ff"},
   {"id": "ribbon_heron", "slot": "glider_trail", "name_key": "COS_RIBBON_HERON", "color": "#f4f4ec"},
-  {"id": "ribbon_tide", "slot": "glider_trail", "name_key": "COS_RIBBON_TIDE", "color": "#3fd6c0"}
+  {"id": "ribbon_tide", "slot": "glider_trail", "name_key": "COS_RIBBON_TIDE", "color": "#3fd6c0"},
+  {"id": "ribbon_bell", "slot": "glider_trail", "name_key": "COS_RIBBON_BELL", "color": "#d8c68a"},
+  {"id": "ribbon_current", "slot": "glider_trail", "name_key": "COS_RIBBON_CURRENT", "color": "#39e0c8"}
 ]

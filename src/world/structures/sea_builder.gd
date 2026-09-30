@@ -280,3 +280,244 @@ func tide_cave(poi: Dictionary, root: Node3D) -> Array:
 	root.add_child(vent)
 	vent.position = Vector3(-r - 1.5, g - 1.0, 0)
 	return []
+
+
+# --- Bell sanctuary (Mist Sea) ------------------------------------------------------------------------------
+## A drowned belfry on a knoll in the heart of the mist: a ring of broken
+## pillars round the great bell that answers the fog bells. When the whole
+## line has been rung, the stone lid of the altar niche grinds aside.
+## Found by following the bells, or on a clear afternoon when the mist lifts.
+func bell_shrine(poi: Dictionary, root: Node3D) -> Array:
+	var id: String = poi["id"]
+	var k := StructureKit.new(hash(id))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(id)
+	var g := _g(root, 0, 0)
+	for i in 7:
+		var a := TAU * i / 7.0
+		var p := Vector3(cos(a) * 7.5, 0, sin(a) * 7.5)
+		p.y = _g(root, p.x, p.z)
+		var h := rng.randf_range(1.8, 5.0)
+		k.pillar(p, h, 0.45, LIME, 6)
+		if i % 3 == 0:
+			k.block(p + Vector3(0.6, 0.3, 0.8), Vector3(1.0, 0.6, 2.2), LIME * 0.9, a)
+	# Worn flagstones and the altar with its niche (the lid is a FlagGate).
+	k.block(Vector3(0, g + 0.1, 0), Vector3(9.0, 0.3, 9.0), ROCK)
+	k.block(Vector3(0, g + 0.7, -3.4), Vector3(3.0, 1.0, 1.6), LIME)
+	k.build(root, "BellShrine", 1500.0)
+	var b: Dictionary = poi.get("bell", {})
+	if not b.is_empty():
+		var bell := FogBell.create(b)
+		root.add_child(bell)
+		bell.position = Vector3(0, g + 0.2, 0)
+	var chest := Chest.create(id + ":altar", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
+	root.add_child(chest)
+	chest.position = Vector3(0, g + 1.25, -3.4)
+	var lid_flag := String(b.get("line_flag", ""))
+	if lid_flag != "":
+		var lid := FlagGate.create(lid_flag, Vector3(1.8, 1.4, 1.4), ROCK_DARK)
+		root.add_child(lid)
+		lid.position = Vector3(0, g + 1.2, -3.4)
+	return []
+
+
+# --- Sea cave (reusable) ---------------------------------------------------------------------------------------
+## A small sea cave in a coastal bluff: from the open water a rock arch
+## narrows to a low throat whose roof dips under the surface (dive through;
+## an air vent bubbles in the throat), then a dark chamber — water, a dry
+## ledge at the back, shells to gather, something living in the roof — and
+## a chimney to a high shelf where the cave keeps its secret. Opens to local
+## -x (the sea side). Params: "length" of the throat.
+func sea_cave(poi: Dictionary, root: Node3D) -> Array:
+	var id: String = poi["id"]
+	var k := StructureKit.new(hash(id))
+	var s := WorldGen.SEA_LEVEL - root.global_position.y
+	var throat := float(poi.get("length", 8.0))
+	# Outer arch (-x): high roof over open water.
+	for i in 4:
+		var x := -10.0 - throat - i * 2.5
+		for sz in [-1.0, 1.0]:
+			k.rock(Vector3(x, s + 1.0, sz * 4.2), Vector3(3.0, 9.0, 2.2), ROCK)
+		k.rock(Vector3(x, s + 6.2, 0), Vector3(3.0, 1.6, 10.0), ROCK_DARK)
+	# The throat: side walls and a roof that dips below the waterline.
+	for i in int(throat / 2.0):
+		var x := -10.0 - i * 2.0
+		for sz in [-1.0, 1.0]:
+			k.rock(Vector3(x, s - 1.0, sz * 3.2), Vector3(2.2, 9.0, 1.8), ROCK_DARK)
+		k.rock(Vector3(x, s + 0.6, 0), Vector3(2.2, 3.4, 7.0), ROCK_DARK)
+	# The chamber: a ring wall, a roof, a dry ledge at the back.
+	for i in 12:
+		var a := TAU * i / 12.0
+		if absf(wrapf(a - PI, -PI, PI)) < 0.4:
+			continue   # the throat (-x)
+		k.rock(Vector3(cos(a) * 8.5, s + 1.5, sin(a) * 7.0), Vector3(3.6, 12.0, 3.2), ROCK)
+	for i in 4:
+		k.rock(Vector3(-4.5 + i * 3.2, s + 7.6, 0), Vector3(3.6, 1.8, 15.0), ROCK_DARK)
+	k.block(Vector3(5.2, s + 0.4, 0), Vector3(4.0, 1.0, 9.0), ROCK)
+	# Chimney shelf (the secret): a step of ledges up the back wall.
+	for i in 3:
+		k.block(Vector3(6.5 - i * 0.6, s + 2.2 + i * 1.6, -4.5 + i * 1.3), Vector3(1.6, 0.4, 1.4), ROCK_DARK)
+	k.block(Vector3(5.6, s + 6.4, -1.2), Vector3(2.4, 0.4, 2.4), ROCK_DARK)
+	k.build(root, "SeaCave", 800.0)
+	# Glowing moss on the chamber roof: the only light inside.
+	var moss := StandardMaterial3D.new()
+	moss.albedo_color = Color(0.3, 0.8, 0.6)
+	moss.emission_enabled = true
+	moss.emission = Color(0.25, 0.9, 0.65)
+	moss.emission_energy_multiplier = 2.0
+	var mparts: Array = []
+	for i in 7:
+		var a := TAU * i / 7.0
+		mparts.append([ShapeKit.sphere(0.35, 6), Transform3D(Basis().scaled(Vector3(1.4, 0.4, 1.0)), Vector3(cos(a) * 5.5, s + 6.6, sin(a) * 4.5))])
+	var mm := MeshInstance3D.new()
+	mm.mesh = ShapeKit.merged(mparts)
+	mm.material_override = moss
+	mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(mm)
+	var glow := OmniLight3D.new()
+	glow.light_color = Color(0.4, 0.95, 0.75)
+	glow.light_energy = 1.2
+	glow.omni_range = 11.0
+	glow.shadow_enabled = false
+	glow.position = Vector3(1.0, s + 4.5, 0)
+	root.add_child(glow)
+	var vent := AirVent.new()
+	root.add_child(vent)
+	vent.position = Vector3(-10.0 - throat * 0.5, s - 3.0, 0)
+	for i in 3:
+		var shell := QuestObject.create({"id": "%s:shell_%d" % [id, i], "look": "scroll", "item": String(poi.get("gather", "echo_shell")), "count": 2,
+			"prompt": "PROMPT_TAKE", "radius": 1.4, "sound": "grab", "element": "water"})
+		root.add_child(shell)
+		shell.position = Vector3(4.2 + i * 0.7, s + 0.95, -3.0 + i * 3.0)
+	var chest := Chest.create(id + ":shelf", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
+	root.add_child(chest)
+	chest.position = Vector3(5.6, s + 6.65, -1.2)
+	var spawns: Array = []
+	var gi := 0
+	for gd in poi.get("guardians", []):
+		spawns.append(_spawn_at(root, String(gd[0]), Vector3(gd[1], s + float(gd[2]), gd[3]), id, gi))
+		gi += 1
+	return spawns
+
+
+# --- Standing wreck (wreck variant) ---------------------------------------------------------------------------
+## A ship that went down bow-first against a sea wall and stayed standing:
+## a wooden tower from the sea bed to a few metres above the water. The only
+## dry way in is the broken bow at the top; inside, a shaft straight down in
+## the dark — dive, keep your bearings by the light from above, catch your
+## breath at the vent half-way, find the strongbox on the bottom and leave by
+## the split in the keel. Params: "tilt" (deg, toward local +x), "height".
+func standing_wreck(poi: Dictionary, root: Node3D) -> Array:
+	var id: String = poi["id"]
+	var s := WorldGen.SEA_LEVEL - root.global_position.y
+	var bed := _g(root, 0, 0)
+	var top := s + float(poi.get("above", 4.0))
+	var H := top - bed
+	var holder := Node3D.new()
+	holder.name = "StandingWreck"
+	root.add_child(holder)
+	holder.position = Vector3(0, bed, 0)
+	holder.rotation.z = -deg_to_rad(float(poi.get("tilt", 12.0)))
+	var k := StructureKit.new(hash(id))
+	var W := 4.6
+	var D := 3.2
+	var n := int(H / 2.0)
+	for i in n:
+		var y := 1.0 + i * 2.0
+		var shade := 0.85 + 0.15 * (i % 2)
+		for sx in [-1.0, 1.0]:
+			k.block(Vector3(sx * W * 0.5, y, 0), Vector3(0.3, 2.0, D), HULL * shade)
+		# The keel split at the bottom (-z face open for 2 m): the way out.
+		if i > 0:
+			k.block(Vector3(0, y, -D * 0.5), Vector3(W, 2.0, 0.3), HULL_DARK * shade)
+		k.block(Vector3(0, y, D * 0.5), Vector3(W, 2.0, 0.3), HULL * shade)
+		if i % 3 == 1:
+			k.block(Vector3(0, y, 0), Vector3(W * 0.9, 0.2, 0.25), HULL_DARK, 0.0, false)
+	# Broken bow sprit sticking out at the top.
+	k.block(Vector3(0.6, H + 1.2, 0), Vector3(0.3, 3.0, 0.3), HULL_DARK, 0.4, false)
+	k.build(holder, "WreckShaft", 1200.0)
+	var vent := AirVent.new()
+	holder.add_child(vent)
+	vent.position = Vector3(0, H * 0.5, 0)
+	var chest := Chest.create(id + ":strongbox", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
+	holder.add_child(chest)
+	chest.position = Vector3(0, 0.6, 0)
+	return []
+
+
+# --- Split wreck (wreck variant) -------------------------------------------------------------------------------
+## A ship broken in two. The bow lies aground on the shore, tilted up, dry
+## and easy — its log says the stern went down with the strongbox. The
+## stern sits on a ledge offshore under the water. What ties them is the
+## anchor chain, paid out from the bow's hawse down along the bed to the
+## stern: follow it and you find the other half. Params: "stern" [x, y, z]
+## local offset of the stern half (y: depth below the water), "yaw" (deg,
+## bow: its broken end faces local +z of the hull), "stern_yaw" (deg).
+func split_wreck(poi: Dictionary, root: Node3D) -> Array:
+	var id: String = poi["id"]
+	var s := WorldGen.SEA_LEVEL - root.global_position.y
+	var yaw := deg_to_rad(float(poi.get("yaw", 0.0)))
+	var st: Array = poi.get("stern", [0, -11, 30])
+	# Bow half: aground, nose up.
+	var bow := Node3D.new()
+	bow.name = "WreckBow"
+	root.add_child(bow)
+	bow.position = Vector3(0, _g(root, 0, 0) + 1.2, 0)
+	bow.rotation = Vector3(deg_to_rad(-14.0), yaw, deg_to_rad(8.0))
+	var kb := StructureKit.new(hash(id + "b"))
+	_hull_half(kb, 12.0, 6.0, true)
+	kb.build(bow, "BowHalf", 1400.0)
+	var log_page := QuestObject.create({"id": id + ":log", "look": "scroll", "item": String(poi.get("log_item", "")), "radius": 1.6,
+		"prompt": "PROMPT_READ", "lines": [String(poi.get("log_line", ""))], "speaker": String(poi["name_key"]), "sound": "grab"})
+	bow.add_child(log_page)
+	log_page.position = Vector3(0, 0.35, 6.0)
+	var bchest := Chest.create(id + ":bow", &"chest_common", [])
+	bow.add_child(bchest)
+	bchest.position = Vector3(0.8, 0.2, 8.5)
+	# Stern half: on the offshore ledge, broken end facing the bow.
+	var stern_local := Vector3(float(st[0]), 0, float(st[2]))
+	var stern := Node3D.new()
+	stern.name = "WreckStern"
+	root.add_child(stern)
+	var sy := maxf(_g(root, stern_local.x, stern_local.z) + 3.6, s + float(st[1]))
+	stern.position = Vector3(stern_local.x, sy, stern_local.z)
+	stern.rotation = Vector3(deg_to_rad(4.0), deg_to_rad(float(poi.get("stern_yaw", 0.0))), deg_to_rad(-16.0))
+	var ks := StructureKit.new(hash(id + "s"))
+	_hull_half(ks, 13.0, 6.4, false)
+	ks.build(stern, "SternHalf", 1400.0)
+	var vent := AirVent.new()
+	stern.add_child(vent)
+	vent.position = Vector3(-1.2, -3.3, 3.0)
+	var chest := Chest.create(id + ":strongbox", StringName(poi.get("loot", "chest_rare")), poi.get("reward", []), true)
+	stern.add_child(chest)
+	chest.position = Vector3(0.8, -3.35, 7.5)
+	# The anchor chain from the bow's hawse down the bed to the stern.
+	var kc := StructureKit.new(hash(id + "c"))
+	var a := bow.global_transform * Vector3(0, -2.0, 0.6) - root.global_position
+	var b := stern.global_transform * Vector3(0, -3.0, 0.6) - root.global_position
+	var links := int(a.distance_to(b) / 1.1)
+	for i in links:
+		var t := float(i) / maxf(links - 1, 1)
+		var p := a.lerp(b, t)
+		p.y = maxf(minf(p.y, lerpf(a.y, b.y, t) - sin(t * PI) * 2.0), _g(root, p.x, p.z) + 0.15)
+		kc.block(p, Vector3(0.18, 0.18, 0.7), Color(0.22, 0.2, 0.19), yaw + (0.0 if i % 2 == 0 else PI * 0.5), false)
+	kc.build(root, "AnchorChain", 400.0)
+	return []
+
+
+## Half a hull (length L along +z), open at its broken end (z = 0 side for
+## the bow's aft end / the stern's fore end). Deck at y = 0.
+func _hull_half(k: StructureKit, L: float, B: float, is_bow: bool) -> void:
+	var n := int(L / 2.0)
+	for i in n:
+		var z := (i + 0.5) * L / n
+		var t := z / L if is_bow else 0.2
+		var w := B * 0.5 * (1.0 - pow(t, 2.2) * (0.8 if is_bow else 0.2))
+		var jag := 1.0 if i > 0 else 0.55   # the broken edge is ragged
+		for sx in [-1.0, 1.0]:
+			k.block(Vector3(sx * w, -1.9 * jag, z), Vector3(0.35, 3.8 * jag, L / n), HULL * (0.9 + 0.1 * (i % 2)))
+		k.block(Vector3(0, -3.7, z), Vector3(w * 2.0, 0.35, L / n), HULL_DARK)
+		if i > 0 and i != n / 2:
+			k.block(Vector3(0, 0.0, z), Vector3(w * 2.0, 0.25, L / n), PLANK * (0.85 + 0.15 * (i % 2)))
+	# Closed far end (bow stem / stern transom).
+	k.block(Vector3(0, -1.9, L), Vector3(B * (0.35 if is_bow else 0.9), 3.8, 0.35), HULL_DARK)

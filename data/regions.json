@@ -648,6 +648,50 @@
     "weather": [
      "storm"
     ]
+   },
+   {
+    "entity": "ENEMY_MIST_DWELLER",
+    "weight": 8,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "deep",
+    "mist": true,
+    "area": [
+     -1100,
+     -60,
+     330
+    ]
+   },
+   {
+    "entity": "ENEMY_MIST_DWELLER",
+    "weight": 4,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "water",
+    "mist": true,
+    "area": [
+     -1100,
+     -60,
+     330
+    ]
+   },
+   {
+    "entity": "ENEMY_RIP_FINBACK",
+    "weight": 6,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "deep",
+    "area": [
+     1200,
+     860,
+     330
+    ]
    }
   ],
   "animal_spawns": [

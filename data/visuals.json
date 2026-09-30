@@ -66,5 +66,7 @@
  {"id": "ENEMY_HULL_LURKER", "family": "enemy", "rank": "elite", "species": "crab", "features": ["pincers", "back_plates"], "scale": 1.3},
  {"id": "ANIMAL_DRIFT_WHALE", "family": "wildlife", "species": "whale", "features": [], "scale": 1.0},
  {"id": "NPC_TIDEKEEPER", "family": "human", "role": "tidekeeper", "build": "slim", "age": "adult", "hair": "ponytail", "headwear": "bandana", "outfit": "coat", "accessories": ["rope", "lantern", "scarf"]},
- {"id": "NPC_CASTAWAY", "family": "human", "role": "castaway", "build": "average", "age": "elder", "hair": "wild", "headwear": "hat_wide", "outfit": "cloak", "accessories": ["rod", "gourd"]}
+ {"id": "NPC_CASTAWAY", "family": "human", "role": "castaway", "build": "average", "age": "elder", "hair": "wild", "headwear": "hat_wide", "outfit": "cloak", "accessories": ["rod", "gourd"]},
+ {"id": "ENEMY_MIST_DWELLER", "family": "enemy", "rank": "elite", "species": "serpent", "features": [], "scale": 1.2},
+ {"id": "ENEMY_RIP_FINBACK", "family": "enemy", "rank": "elite", "species": "finback", "features": []}
 ]

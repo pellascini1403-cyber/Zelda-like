@@ -1345,5 +1345,115 @@
     "duration": 240
    }
   ]
+ },
+ {
+  "id": "mistfin",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 12,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 10
+   }
+  ],
+  "cook": {
+   "heal": 1.5
+  },
+  "tags": [
+   "fish"
+  ],
+  "rarity": 2
+ },
+ {
+  "id": "rip_mackerel",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 12,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 12
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "swift": 1.0
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "echo_shell",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 14
+ },
+ {
+  "id": "mist_pearl",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 80,
+  "rarity": 2
+ },
+ {
+  "id": "rip_scale",
+  "category": "material",
+  "icon": "res://assets/icons/mat_hide.svg",
+  "value": 22,
+  "rarity": 2
+ },
+ {
+  "id": "mistwalker_lantern",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_accessory.svg",
+  "value": 120,
+  "rarity": 3,
+  "armor": {
+   "slot": "accessory",
+   "defense": 0,
+   "mist_sight": 0.5
+  }
+ },
+ {
+  "id": "riptide_anklet",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_accessory.svg",
+  "value": 110,
+  "rarity": 2,
+  "armor": {
+   "slot": "accessory",
+   "defense": 0,
+   "current_ride": 0.6
+  }
+ },
+ {
+  "id": "pact_log",
+  "category": "key",
+  "icon": "res://assets/icons/key_journal.svg",
+  "max_stack": 1
+ },
+ {
+  "id": "clearsight_tea",
+  "category": "food",
+  "icon": "res://assets/icons/food_dish.svg",
+  "use_action": "eat",
+  "value": 36,
+  "rarity": 2,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 15
+   },
+   {
+    "type": "buff",
+    "buff": "mist_sight",
+    "amount": 1,
+    "duration": 300
+   }
+  ]
  }
 ]

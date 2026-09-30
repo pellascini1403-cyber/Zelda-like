@@ -56,7 +56,7 @@ func _run() -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	await seconds(1.0)
-	# --only <section>: run one section (quests, vehicles, ecosystems, forest, lake, sea).
+	# --only <section>: run one section (quests, vehicles, ecosystems, forest, lake, sea, far).
 	var oi := OS.get_cmdline_user_args().find("--only")
 	if oi >= 0:
 		match OS.get_cmdline_user_args()[oi + 1]:
@@ -65,6 +65,7 @@ func _run() -> void:
 			"forest": await _forest(w, p)
 			"lake": await _lake(w, p)
 			"sea": await _sea(w, p)
+			"far": await _far_seas(w, p)
 			"quests": await _quest_content(w, p)
 		# Store sandbox state lives in user:// — never leak it into the next run.
 		Platform.backend.clear_owned()
@@ -223,7 +224,14 @@ func _run() -> void:
 	# --- Coast and sea (expansion phase 4) --------------------------------------------------------
 	await _sea(w, p)
 
+	# --- The far seas: mist (west) and currents (east) (phase 4.5) --------------------------------
+	await _far_seas(w, p)
+
 	# --- World event -----------------------------------------------------------------------------------
+	# Isolation: the director may have rolled a random beacon event during the
+	# long run; only one beacon exists at a time, so close it first.
+	if w.events.beacon_position() != null:
+		w.events._end_beacon()
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
 	var bp: Variant = w.events.beacon_position()
 	check(bp != null, "event beacon placed")
@@ -265,6 +273,7 @@ func _run() -> void:
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
 	check(PlayerData.owns_vehicle(&"longwake") and PlayerData.owns_vehicle(&"sparrow") and PlayerData.owns_vehicle(&"bellhull"), "vehicles restored from the save")
 	check(DiscoveryDirector.is_found(&"forest_moon_gate") and WorldState.flags.has("moon_gate_open") and BrambleWall.burned("hollow_tree:door") and WorldState.flags.has("sunken_bells"), "discoveries, burned brambles and opened gates restored from the save")
+	check(WorldState.flags.has("mist_bells_answered") and DiscoveryDirector.is_found(&"rip_high_isle") and DiscoveryDirector.is_found(&"mist_mirage") and WorldState.flags.has("bell:mist_bell_1"), "far-sea bells, wonders and flags restored from the save")
 	check(DiscoveryDirector.is_found(&"sea_vanishing_bar") and WorldState.flags.has("lighthouse_lit") and WorldState.flags.has("gulls_cabin_open") and Quests.is_active(&"dq_sea_vanishing_isle"), "sea discoveries, the lit lamp, the opened cabin and sea quests restored from the save")
 	# Store entitlements belong to the account: a brand-new game gets them back.
 	PlayerData.reset_new_game()
@@ -415,6 +424,18 @@ func _quest_content(w: GameWorld, p: Player) -> void:
 	# Emergent encounter: a traveller under attack.
 	await teleport(120.0, 220.0)
 	await seconds(1.0)
+	# Isolation: the director runs one encounter at a time and never starts one
+	# mid-fight; a random roll earlier in the run (or a roaming pack nearby)
+	# must not decide this check.
+	if w.events._encounter and is_instance_valid(w.events._encounter):
+		w.events._encounter.queue_free()
+		w.events._encounter = null
+	for c in get_tree().get_nodes_in_group(&"creatures"):
+		if (c as Creature).kind_is_hostile() and (c as Node3D).global_position.distance_to(p.global_position) < 80.0:
+			(c as Creature).dead = true
+			c.queue_free()
+	Game.clear_aggro()
+	await frames(2)
 	check(w.events.trigger(&"traveler_attacked"), "a traveller-under-attack event triggers")
 	var ev: QuestEncounter = w.events._encounter
 	check(ev != null, "the emergent encounter is placed nearby")
@@ -1260,3 +1281,310 @@ func _sea(w: GameWorld, p: Player) -> void:
 	check(needs_boat.is_empty(), "no main or sea quest needs a vehicle %s" % [needs_boat])
 	check(DiscoveryDirector.found_count("coast") >= 8, "the Atlas records the sea (%d coast wonders)" % DiscoveryDirector.found_count("coast"))
 	Debug.peaceful = false
+
+
+func _bell(id: String) -> FogBell:
+	return FogBell.find(id, get_tree())
+
+
+func _env_ctrl() -> EnvironmentController:
+	var ec := get_tree().root.find_children("*", "EnvironmentController", true, false)
+	return ec[0] as EnvironmentController if not ec.is_empty() else null
+
+
+## The far seas (phase 4.5): the Mist Sea (west) and the Current Sea (east).
+func _far_seas(w: GameWorld, p: Player) -> void:
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(6.0)
+	_clear_hostiles(p.global_position, 99999.0)
+	PlayerData.inventory.add(&"vela_glider")
+	# --- Terrain: stacks, a mesa, an islet with a ledge -----------------------------------------------
+	check(w.gen.height(-1010, -190) > 22.0 and w.gen.height(-1031, -190) < -18.0, "the Wall: a sea stack rising sheer from the deep")
+	check(w.gen.height(1345, 880) > 27.0 and w.gen.height(1320, 860) < 4.0, "the High Isle: a flat top on cliff sides")
+	check(w.gen.height(1061, 766) > 0.5 and absf(w.gen.height(1061, 805) + 11.0) < 1.5, "Isla del Paso and its offshore ledge")
+	# --- Mist: edges, pockets, a clock ------------------------------------------------------------------
+	check(MistBank.intensity(6.0) > 0.95 and MistBank.intensity(14.0) < 0.15 and MistBank.intensity(21.0) > 0.95, "the mist is thick from dusk to morning and lifts on clear afternoons")
+	Weather.set_weather(&"storm", true)
+	check(MistBank.intensity(6.0) < 0.5, "storm winds tear the mist thin")
+	Weather.set_weather(&"clear", true)
+	await _swim_at(-955.0, -50.0)
+	await seconds(1.0)
+	check(get_tree().get_nodes_in_group(&"mist_banks").size() == 1, "the Mist Sea's bank is placed (seen from far)")
+	check(MistBank.density_at(Vector3(-1100, 0, -60), get_tree()) > 0.9, "the heart of the bank is thick at dawn")
+	check(MistBank.density_at(Vector3(-1255, 0, 30), get_tree()) < 0.15, "a clear eye around the sanctuary")
+	check(MistBank.density_at(Vector3(-700, 0, -60), get_tree()) == 0.0 and MistBank.density_at(Vector3(-1100, 60, -60), get_tree()) < 0.1, "the bank has edges: clear outside, clear above it")
+	var ec := _env_ctrl()
+	await seconds(2.5)
+	check(ec != null and ec.mist > 0.6 and ec.env.fog_density > 0.02, "inside the bank the view closes in (fog %.3f)" % (ec.env.fog_density if ec else 0.0))
+	var dens := MistBank.seen_density(p.global_position, get_tree())
+	PlayerData.inventory.add(&"mistwalker_lantern", 1)
+	PlayerData.equip(PlayerData.inventory.find_first(&"mistwalker_lantern"))
+	check(MistBank.seen_density(p.global_position, get_tree()) < dens * 0.6, "the Mistwalker's lantern halves the mist you see")
+	Clock.set_time(14.0)
+	await seconds(3.0)
+	check(ec != null and ec.mist < 0.2, "on a clear afternoon the mist lifts (%.2f)" % (ec.mist if ec else -1.0))
+	Clock.set_time(6.0)
+	# --- Fog bells: ring one, the next answers; the whole line wakes the great bell ---------------------
+	for i in 4:
+		check(_bell("mist_bell_%d" % (i + 1)) != null, "fog bell %d stands in the mist" % (i + 1))
+	var b1 := _bell("mist_bell_1")
+	var b2 := _bell("mist_bell_2")
+	var b4 := _bell("mist_bell_4")
+	if b1 and b2 and b4:
+		await _swim_at(-1160.0, 12.0)
+		await seconds(1.0)
+		b4.interact(p)
+		await seconds(2.2)
+		var great := _bell("mist_bell_great")
+		check(great != null, "the sanctuary's great bell hangs in its frame")
+		check(not WorldState.flags.has("mist_bells_answered"), "ringing out of turn: the great bell answers, nothing opens")
+		await _swim_at(-872.0, -40.0)
+		await seconds(0.5)
+		b1 = _bell("mist_bell_1")
+		b2 = _bell("mist_bell_2")
+		b1.interact(p)
+		await seconds(1.9)
+		check(b2 != null and b2._flare > 0.2, "ringing a bell makes the next one answer (a toll and a flare)")
+	if b1:
+		# The bell posts double as resting places for swimmers in the mist.
+		p.change_state(&"air")
+		p.global_position = b1.global_position + Vector3(1.0, 1.6, 0.4)
+		p.velocity = Vector3.ZERO
+		p.vitals.stamina = 20.0
+		await seconds(1.5)
+		check(p.state_name() == &"ground" and p.vitals.stamina > 20.0, "a swimmer can climb out on a bell's plinth and rest (%s)" % p.state_name())
+		for i in [2, 3, 4]:
+			var bb := _bell("mist_bell_%d" % i)
+			if bb:
+				p.global_position = bb.global_position + Vector3(3, -1.2, 0)
+				await seconds(0.4)
+				bb.interact(p)
+				await seconds(0.5)
+		await seconds(2.2)
+		check(WorldState.flags.has("mist_bells_answered"), "the whole line rung: the great bell opens the altar")
+		check(DiscoveryDirector.is_found(&"mist_bells"), "Voices in the Mist is found")
+	await _swim_at(-1240.0, 30.0)
+	await seconds(2.0)
+	check(DiscoveryDirector.is_found(&"mist_sanctuary"), "the Sanctuary of the Bells is found")
+	var lid_open := false
+	for g in _nodes_near(&"flag_gates", Vector3(-1255, 5, 30), 20.0):
+		if (g as FlagGate).flag == "mist_bells_answered":
+			lid_open = (g as FlagGate)._open
+	check(lid_open, "the altar's stone lid has slid aside")
+	# --- The Teeth, the Lance (standing wreck), the Echo Cave -------------------------------------------
+	await _swim_at(-1000.0, -140.0)
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"mist_teeth"), "the Teeth are found")
+	await _swim_at(-1034.0, -194.0)
+	await seconds(1.5)
+	check(_nodes_near(&"air_vents", Vector3(-1031, -9, -190), 12.0).size() >= 1, "an air vent half-way down the Lance's shaft")
+	p.global_position = Vector3(-1031.5, WorldGen.SEA_LEVEL - 12.0, -190.0)
+	p.change_state(&"dive")
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"mist_lance"), "diving down inside the Lance is a discovery")
+	var strongbox := false
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "the_lance:strongbox":
+			strongbox = (c as Node3D).global_position.y < WorldGen.SEA_LEVEL - 15.0
+	check(strongbox, "the strongbox lies at the bottom of the shaft")
+	p.change_state(&"swim")
+	await _swim_at(-800.0, 36.0, 1.0)
+	await seconds(1.5)
+	p.global_position = Vector3(-785.0, WorldGen.SEA_LEVEL - 0.8, 36.0)
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"mist_echo_cave"), "the Echo Cave's chamber is found")
+	var shells := 0
+	for o in _nodes_near(&"quest_objects", Vector3(-785, 0, 36), 12.0):
+		if String((o as QuestObject).object_id).contains(":shell_"):
+			shells += 1
+	check(shells == 3, "echo shells to gather on the dry ledge")
+	check(_nodes_near(&"air_vents", Vector3(-800, -3, 36), 10.0).size() >= 1, "an air vent in the drowned throat")
+	var shelf := false
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "echo_cave:shelf":
+			shelf = (c as Node3D).global_position.y > WorldGen.SEA_LEVEL + 5.0
+	check(shelf, "the cave's secret: a chest on the high shelf up the chimney")
+	# --- The pale ship: dawn, mist, gone when you reach it ----------------------------------------------
+	Clock.set_time(5.6)
+	await _swim_at(-1105.0, -228.0)
+	await seconds(1.0)
+	check(get_tree().get_nodes_in_group(&"mirages").size() == 1 and MirageShip.showing(Vector3(-1120, 0, -240), get_tree()), "at dawn, in the mist, the pale ship shows")
+	await seconds(1.0)
+	check(DiscoveryDirector.is_found(&"mist_mirage"), "reaching it at dawn in the mist is a discovery (with a recipe)")
+	Clock.set_time(14.0)
+	check(not MirageShip.showing(Vector3(-1120, 0, -240), get_tree()), "in the afternoon there is no ship")
+	# --- The mist dweller: follows, closes in when you stop, fades with the mist ------------------------
+	Clock.set_time(6.0)
+	await _swim_at(-1000.0, -40.0)
+	await seconds(1.0)
+	var dweller := _spawn_test(w, &"ENEMY_MIST_DWELLER", p.global_position + Vector3(24, -0.5, 0))
+	var stalked := false
+	var t0 := Time.get_ticks_msec()
+	while is_instance_valid(dweller) and Time.get_ticks_msec() - t0 < 6000:
+		await frames(4)
+		if not is_instance_valid(dweller):
+			break
+		if dweller.brain.state_name() == &"stalk" and dweller.global_position.distance_to(p.global_position) > 10.0:
+			stalked = true
+		if dweller.brain.state_name() == &"chase":
+			break
+	check(stalked, "a mist dweller keeps its distance and follows")
+	var closed := false
+	t0 = Time.get_ticks_msec()
+	while is_instance_valid(dweller) and Time.get_ticks_msec() - t0 < 8000:
+		await frames(4)
+		if is_instance_valid(dweller) and dweller.brain.state_name() in [&"chase", &"attack"]:
+			closed = true
+			break
+	check(closed, "stand still and it closes in")
+	# Isolation: a random weather roll (rain thickens the mist) must not
+	# keep the bank up while we wait for it to lift.
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(14.0)
+	await seconds(7.0)
+	check(not is_instance_valid(dweller) or dweller.dead, "when the mist lifts the dweller fades with it")
+	Clock.set_time(9.0)
+	# --- The Current Sea: tidal roads -------------------------------------------------------------------
+	await _swim_at(1100.0, 652.0)
+	await seconds(1.0)
+	var rip: SeaCurrent = SeaCurrent.current_at(p.global_position, get_tree())
+	check(rip != null and rip.tidal, "the Great Rip runs under the desert cliffs")
+	if rip:
+		var flood := rip.strength_now()
+		Clock.set_time(12.0)
+		var slack := rip.strength_now()
+		check(flood > slack * 3.0, "tidal: hard on the flood (%.1f), slack at the turn (%.1f)" % [flood, slack])
+		Clock.set_time(9.0)
+	var r0 := p.global_position
+	await seconds(3.0)
+	check(p.global_position.x - r0.x > 10.0, "idle in the Rip, the sea carries you east (%.1f m)" % (p.global_position.x - r0.x))
+	var plain_d := SeaCurrent.player_drift(p.global_position, Vector3.RIGHT, get_tree()).length()
+	PlayerData.inventory.add(&"riptide_anklet", 1)
+	PlayerData.equip(PlayerData.inventory.find_first(&"riptide_anklet"))
+	var ride_d := SeaCurrent.player_drift(p.global_position, Vector3.RIGHT, get_tree()).length()
+	var fight_d := SeaCurrent.player_drift(p.global_position, Vector3.LEFT, get_tree()).length()
+	check(ride_d > plain_d * 1.4 and fight_d < plain_d * 0.7, "the riptide anklet: ride harder, fight less")
+	p.global_position = Vector3(1395.0, WorldGen.SEA_LEVEL - 1.2, 662.0)
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"rip_great"), "riding the Rip to its end is a discovery")
+	# The Rip finback comes down the current.
+	await _swim_at(1150.0, 655.0)
+	await seconds(1.0)
+	var rf := _spawn_test(w, &"ENEMY_RIP_FINBACK", Vector3(1150.0, WorldGen.SEA_LEVEL - 3.0, 690.0))
+	var rode := false
+	t0 = Time.get_ticks_msec()
+	while is_instance_valid(rf) and Time.get_ticks_msec() - t0 < 10000:
+		await frames(4)
+		if is_instance_valid(rf) and rf.brain.state_name() == &"ride":
+			rode = true
+			break
+	check(rode, "a rip finback slips into the current upstream of you to come down on you")
+	if is_instance_valid(rf):
+		rf.queue_free()
+	# The whirlpool keeps what the sea loses.
+	await _swim_at(1195.0, 940.0)
+	await seconds(1.0)
+	var wp := get_tree().get_nodes_in_group(&"whirlpools")
+	check(wp.size() == 1 and SeaCurrent.drift_at(Vector3(1195, -1, 940), get_tree()).length() > 1.0, "the whirlpool spins and draws you in")
+	p.global_position = Vector3(1180.5, WorldGen.SEA_LEVEL - 14.0, 940.5)
+	p.change_state(&"dive")
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"rip_whirlpool"), "diving its eye finds what it took")
+	var hoard := false
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "lost_eye:hoard":
+			hoard = true
+	check(hoard, "the hoard lies on the bed under the eye")
+	p.change_state(&"swim")
+	# The spout: a swimmer flies, a boat only rocks.
+	await _swim_at(1288.0, 818.0)
+	await seconds(1.0)
+	var spouts := get_tree().get_nodes_in_group(&"spouts")
+	check(spouts.size() == 1, "the Wind Rock's spout")
+	if spouts.size() == 1:
+		var spt := spouts[0] as Spout
+		p.global_position = Vector3(spt.global_position.x, WorldGen.SEA_LEVEL - 1.0, spt.global_position.z)
+		p.change_state(&"swim")
+		await frames(2)
+		spt.burst()
+		await frames(2)
+		check(p.state_name() == &"air" and p.velocity.y > 15.0, "the spout throws a swimmer out of the sea")
+		var lift := 0.0
+		for z in get_tree().get_nodes_in_group(&"updraft"):
+			lift = maxf(lift, z.lift_at(Vector3(spt.global_position.x + 1.0, 20.0, spt.global_position.z + 2.0)))
+		check(lift > 5.0, "and the wind over the rock keeps a glider rising")
+		await seconds(2.0)
+		if not PlayerData.owns_vehicle(&"bellhull"):
+			Platform.backend.sandbox = true
+			Platform.purchase("vehicle_bellhull")
+		await _swim_at(1288.0, 818.0)
+		var boat := await _summon_and_enter(p, &"bellhull")
+		if boat:
+			for i in 40:
+				await frames(1)
+			boat.global_position = Vector3(spt.global_position.x, boat.global_position.y, spt.global_position.z)
+			await frames(2)
+			spt.burst()
+			await frames(3)
+			check(p.vehicle == boat, "the Bellhull only rocks on it: to fly you leave the capsule")
+			p.exit_vehicle(false)
+			VehicleManager.instance.put_away()
+	# The High Isle (by spout and glide, or by climbing).
+	var top := _top_at(1348.0, 884.0)
+	p.global_position = Vector3(1345.0, top + 1.0, 880.0)
+	p.change_state(&"air")
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"rip_high_isle"), "standing on the High Isle is a discovery")
+	var cache := false
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "high_isle:cache":
+			cache = (c as Node3D).global_position.y > 25.0
+	check(cache, "its cache sits on the table-top")
+	# The broken ship: bow aground, the chain down to the stern.
+	await teleport(1061.0, 764.0, 1.0)
+	await seconds(1.5)
+	check(_qobject("broken_pact:log") != null and get_tree().root.find_child("AnchorChain", true, false) != null, "the bow's log and the anchor chain")
+	await _swim_at(1061.0, 800.0)
+	p.global_position = Vector3(1061.0, WorldGen.SEA_LEVEL - 9.0, 807.0)
+	p.change_state(&"dive")
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"rip_split_wreck"), "following the chain down finds the stern")
+	var stern_box := false
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "broken_pact:strongbox":
+			stern_box = (c as Node3D).global_position.y < WorldGen.SEA_LEVEL - 5.0
+	check(stern_box, "the strongbox is in the drowned stern")
+	p.change_state(&"swim")
+	# Night, running tide: the eddy glows.
+	Clock.set_time(21.0)
+	await _swim_at(1220.0, 1040.0)
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"rip_luminous"), "at night on the running tide, the glowing eddy")
+	Clock.set_time(18.0)
+	check(DiscoveryDirector.condition_text(DB.discoveries[&"rip_luminous"]).length() > 0 and DiscoveryDirector.condition_text(DB.discoveries[&"mist_mirage"]).length() > 0, "the Atlas says when (tide, night, mist, dawn)")
+	# --- Quests: two, both doable without the Bellhull -------------------------------------------------
+	var far_q := 0
+	for q in DB.quests:
+		if String(q["id"]) in ["sq_mist_voices", "sq_rip_road"]:
+			far_q += 1
+	check(far_q == 2, "two far-sea quests")
+	await teleport(1012.0, 304.0, 1.0)
+	var nomad: Creature = null
+	for i in 20:
+		await seconds(0.25)
+		nomad = _npc(&"NPC_NOMAD")
+		if nomad:
+			break
+	await _talk(&"NPC_NOMAD", p)
+	check(nomad != null and Quests.is_active(&"sq_rip_road"), "the nomad offers the Road in the Sea")
+	var far_found := 0
+	for d in far_seas_ids():
+		if DiscoveryDirector.is_found(d):
+			far_found += 1
+	check(far_found == 11, "the Atlas holds all eleven far-sea wonders (%d)" % far_found)
+	Debug.peaceful = false
+
+
+func far_seas_ids() -> Array:
+	return [&"mist_teeth", &"mist_bells", &"mist_sanctuary", &"mist_echo_cave", &"mist_lance", &"mist_mirage",
+		&"rip_great", &"rip_whirlpool", &"rip_split_wreck", &"rip_high_isle", &"rip_luminous"]

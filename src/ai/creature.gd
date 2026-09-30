@@ -41,10 +41,12 @@ var sink := 0.0
 var scripted := false
 ## Walks the sea bed as if it were land (wreck crabs): water does not stop it.
 var _amphibious := false
-## Born of the storm (storm rays): once the sky clears it fades back into
-## the spray — no corpse, no loot.
-var _storm_only := false
+## Born of the weather ("storm": storm rays, "mist": mist dwellers): once
+## the sky clears or the mist lifts it fades back — no corpse, no loot.
+var _born_of := ""
 var _calm_time := 0.0
+## Swimmers that let sea currents carry them (0 = ignore currents).
+var _current_ride := 0.0
 
 var _collision: CollisionShape3D
 var _stuck_time := 0.0
@@ -104,8 +106,12 @@ func _build() -> void:
 	collision_layer = 1 << 2
 	sink = float(type.ai_value("swim_depth", 1.0)) if type.is_aquatic() else 0.0
 	_amphibious = bool(type.ai_value("amphibious", false))
-	_storm_only = bool(type.ai_value("storm_only", false))
+	_born_of = String(type.ai_value("born_of", "storm" if bool(type.ai_value("storm_only", false)) else ""))
 	_calm_time = 0.0
+	_current_ride = float(type.ai_value("current_ride", 0.0))
+	# Weather-born creatures watch the sky even when their AI is dormant
+	# (off-screen, far): otherwise one could outlive its storm or mist.
+	set_process(_born_of != "")
 	brain = _make_brain()
 	global_position = home
 	facing_yaw = randf() * TAU
@@ -133,10 +139,6 @@ func ai_tick(delta: float) -> void:
 	if type.is_aquatic() and global_position.y < WorldGen.SEA_LEVEL:
 		# Always soaked: lightning and shock arrows hit swimmers twice as hard.
 		health.add_status(&"wet", 1.0)
-	if _storm_only and not dead:
-		_calm_time = _calm_time + delta if Weather.storm < 0.15 else 0.0
-		if _calm_time > 4.0:
-			_fade_with_storm()
 	if not dead:
 		perception.update(delta)
 		brain.tick(delta)
@@ -164,6 +166,10 @@ func _move(delta: float) -> void:
 	var hv := Vector3(velocity.x, 0, velocity.z).move_toward(desired, 20.0 * delta)
 	velocity.x = hv.x + knockback.x
 	velocity.z = hv.z + knockback.z
+	if _current_ride > 0.0 and not dead:
+		var drift := SeaCurrent.drift_at(global_position, get_tree()) * _current_ride
+		velocity.x += drift.x
+		velocity.z += drift.z
 	if type.flying:
 		# Over water, flyers hover above the surface, not the sea bed.
 		var ground := maxf(_ground_height(), WorldGen.SEA_LEVEL)
@@ -406,7 +412,16 @@ func _on_died(_info: DamageInfo) -> void:
 		queue_free()
 
 
-func _fade_with_storm() -> void:
+func _process(delta: float) -> void:
+	if _born_of == "" or dead:
+		return
+	var calm := Weather.storm < 0.15 if _born_of == "storm" else MistBank.density_at(global_position, get_tree()) < 0.15
+	_calm_time = _calm_time + delta if calm else 0.0
+	if _calm_time > 4.0:
+		_fade_with_weather()
+
+
+func _fade_with_weather() -> void:
 	dead = true
 	_collision.set_deferred("disabled", true)
 	Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, ArtStyle.vfx_color(type), 0.5)

@@ -38,7 +38,7 @@ func physics(delta: float) -> StringName:
 	var move := p.move_dir()
 	var dashing := p.wants_sprint() and move != Vector3.ZERO and p.vitals.stamina > 0.0
 	var gear := 1.0 + PlayerData.armor_bonus("swim_speed")
-	p.apply_horizontal(move * (DASH if dashing else SPEED) * gear + SeaCurrent.drift_at(p.global_position, p.get_tree()), 4.0, delta)
+	p.apply_horizontal(move * (DASH if dashing else SPEED) * gear + SeaCurrent.player_drift(p.global_position, move, p.get_tree()), 4.0, delta)
 	var vy := -SINK
 	if Input.is_action_pressed("jump"):
 		vy = RISE * gear

@@ -1,0 +1,209 @@
+[
+ {
+  "id": "sq_mist_voices",
+  "type": "side",
+  "category": "exploration",
+  "region": "coast",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_MIST_VOICES_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "Q_SQ_MIST_VOICES_S1_O0_A0"
+      ],
+      "pos": [
+       -878,
+       -40
+      ],
+      "radius": 10.0,
+      "marker": [
+       -878,
+       -40
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "mist_bells_answered",
+      "text_key": "QO_T_RING",
+      "text_args": [
+       "Q_SQ_MIST_VOICES_S2_O0_A0"
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_MIST_VOICES_S2_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "bell_sanctuary:altar",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_SQ_MIST_VOICES_S3_O0_A0"
+      ],
+      "marker": [
+       -1255,
+       30
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_MIST_VOICES_S4_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_MIST_VOICES",
+  "desc_key": "Q_SQ_MIST_VOICES_DESC",
+  "rewards": {
+   "glimmer": 60,
+   "jade": 2
+  },
+  "start": "talk:NPC_TIDEKEEPER",
+  "requires": [
+   "sq_sea_first_crossing"
+  ],
+  "offer_lines": [
+   "Q_SQ_MIST_VOICES_OF0"
+  ]
+ },
+ {
+  "id": "sq_rip_road",
+  "type": "side",
+  "category": "traversal",
+  "region": "desert",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_NOMAD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_RIP_ROAD_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "DISC_RIP_GREAT"
+      ],
+      "pos": [
+       1395,
+       662
+      ],
+      "radius": 30.0,
+      "marker": [
+       1395,
+       662
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_RIP_ROAD_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "DISC_RIP_HIGH_ISLE"
+      ],
+      "pos": [
+       1345,
+       880
+      ],
+      "radius": 24.0,
+      "min_y": 26.0,
+      "marker": [
+       1345,
+       880
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_RIP_ROAD_S2_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_NOMAD",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_NOMAD"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_RIP_ROAD_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_RIP_ROAD",
+  "desc_key": "Q_SQ_RIP_ROAD_DESC",
+  "rewards": {
+   "glimmer": 60,
+   "jade": 2,
+   "items": [
+    {
+     "id": "rip_mackerel",
+     "count": 2
+    }
+   ]
+  },
+  "start": "talk:NPC_NOMAD",
+  "offer_lines": [
+   "Q_SQ_RIP_ROAD_OF0"
+  ]
+ }
+]

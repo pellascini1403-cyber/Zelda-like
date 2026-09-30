@@ -163,8 +163,27 @@ func _process(delta: float) -> void:
 	env.fog_height = 30.0 + dawn * 25.0
 	env.fog_height_density += dawn * 0.008
 
-	# Under the surface: teal murk, short sight, a tint over everything.
 	var cam := get_viewport().get_camera_3d()
+	# Sea mist banks: the view closes in to a few tens of metres, pale and
+	# soft; out of the bank the air clears again (MistBank has edges).
+	var mist_target: float = MistBank.seen_density(cam.global_position, get_tree()) if cam else 0.0
+	mist = move_toward(mist, mist_target, delta * 0.6)
+	if mist > 0.0:
+		# Pearl grey, not sky-tinted: aerial perspective would blend the mist
+		# into the sky colour and it would stop reading as a wall.
+		var pearl := Color(0.8, 0.82, 0.83) * clampf(daylight + 0.3, 0.5, 1.0)
+		env.fog_light_color = env.fog_light_color.lerp(pearl, mist * 0.9)
+		env.fog_density += mist * 0.035
+		env.fog_height_density += mist * 0.02
+		env.fog_sun_scatter = lerpf(0.45, 0.1, mist)
+		env.fog_aerial_perspective = lerpf(0.55, 0.0, mist)
+		env.fog_sky_affect = lerpf(0.55, 0.92, mist)
+	else:
+		env.fog_sun_scatter = 0.45
+		env.fog_aerial_perspective = 0.55
+		env.fog_sky_affect = 0.55
+
+	# Under the surface: teal murk, short sight, a tint over everything.
 	var under_target := 1.0 if cam and cam.global_position.y < WorldGen.SEA_LEVEL - 0.1 else 0.0
 	underwater = move_toward(underwater, under_target, delta * 4.0)
 	if underwater > 0.0:
@@ -196,6 +215,7 @@ func _process(delta: float) -> void:
 
 
 var underwater := 0.0
+var mist := 0.0
 var _overlay: ColorRect
 
 

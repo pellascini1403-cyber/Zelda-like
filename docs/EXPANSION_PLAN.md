@@ -276,3 +276,117 @@ Still empty: west and east seas, the southern horizon past the Leviathan,
 highland verticality, the Veil. Next: exploration/diving depth (sea caves,
 multi-room interiors), then highlands.
 
+
+* Phase 4.5 ("Fase 4.5"): the far seas are done (docs/FAR_SEAS.md).
+  * The west became the **Mist Sea**:
+    * a mist bank with edges, clear pockets and its own clock;
+    * the Teeth (sea stacks);
+    * four fog bells that answer each other out to a hidden sanctuary;
+    * the Lance, a wreck variant standing on end;
+    * the Echo Cave, a reusable sea cave;
+    * the dawn mirage ship;
+    * mist dwellers that follow and close in when you stop.
+  * The east became the **Current Sea**:
+    * tidal currents: the Great Rip, a spur and a glowing night eddy;
+    * a whirlpool whose eye hides a hoard;
+    * the Wind Rock spout plus an updraft, leading to the High Isle mesa (leave the Bellhull, fly);
+    * the Broken Pact, a wreck variant split in two and joined by its anchor chain;
+    * rip finbacks that ride currents onto you.
+  * Terrain shapes `stack` and `mesa`. Atlas conditions `mist` and `flow`. Spawn conditions `area` and `mist`. Mistwalker's lantern, riptide anklet, clearsight tea.
+  * Fixed on the way:
+    * the Wind Rock updraft was rooted on the sea bed;
+    * currents only showed foam near their head (no particle preprocess);
+    * compass markers at an unplaceable position were drawn at NaN;
+    * UI brush bars, diamonds and cooldown veils refused NaN or zero sizes;
+    * fog-bell posts gained stone plinths, so a swimmer can rest between bells;
+    * weather-born creatures (storm rays, mist dwellers) now check the sky in their own `_process`: in a dormant AI tier (off-screen) they used to outlive their storm or mist;
+    * test isolation: the "wind rift event triggers" check failed whenever the director had rolled a random beacon earlier. It was also flaky on the phase 3 commit (3 of 6 runs). The existing beacon is now closed before triggering; the traveller-event check likewise clears a leftover event encounter and nearby aggro; and the mist-lift check pins clear weather.
+  * Still open, pre-existing: the canvas "triangulation failed" warning (2–6 per systems run; no crash, no visible effect; the obvious sources are guarded).
+  * Tests: unit 564, smoke 36, systems 295 green (three consecutive full runs, no crash).
+  * Captures: docs/captures/far_seas/ (10).
+
+### Mini-audit after the far seas (phase 4.5)
+
+**Coverage (same method as phase 4):** water sampled every 16 m; "purposeful" means within 80 m or 150 m of a POI, islet, site, current strip or discovery.
+
+| Area | Water | < 80 m before → after | < 150 m before → after |
+|---|---|---|---|
+| **All sea** | 6.8 km² | 7 % → **13 %** | 16 % → **26 %** |
+| West band (x < −600, z ≤ 700) | 1.97 km² | 2 % → 10 % | 5 % → **20 %** |
+| South band (z > 700) | 2.49 km² | 14 % → 21 % | 30 % → **42 %** |
+| East band (x > 900, z ≤ 700) | 0.91 km² | 1 % → 8 % | 6 % → 13 % |
+| Inland waters | 1.42 km² | 5 % → 6 % | 12 % → 13 % |
+| *Mist Sea zone (r 330 m)* | 0.33 km² | 0 % → 50 % | 3 % → **84 %** |
+| *Current Sea zone (x 900–1450, z 600–1150)* | 0.29 km² | 0 % → 75 % | 1 % → **98 %** |
+
+The old "east band" is mostly the water *north* of the desert island. The Current Sea lies south of it, so its gain shows in the south band.
+
+**Counts (new in this phase):**
+- places: 4 POIs (sanctuary, Echo Cave, the Lance, the Broken Pact) and 10 terrain islets/shapes, of which 5 are Teeth stacks;
+- features:
+  - west: 1 mist bank, 4 fog bells, 1 mirage, 1 kelp bed;
+  - east: 3 tidal currents, 1 whirlpool, 1 spout + updraft;
+  - 5 fishing spots across both seas;
+- discoveries: 11 (Atlas 23 → 34);
+- creatures: 1 enemy (mist dweller) and 1 variant (rip finback);
+- fish species: 2;
+- rewards: 9 items (2 pieces of gear that change how you explore, 1 recipe dish, 3 materials, 2 fish, 1 key item), 2 cosmetics, 1 buff;
+- new interactions: 8 (bell answering chain, mist navigation, spout launch, whirlpool pull, tidal flow, following a chain between wreck halves, a cave throat dive, the mirage);
+- quests: 2 (88 → 90);
+- 9 of the 11 wonders need no quest.
+
+**Totals:** POIs 53 → 57, items 113 → 122, entities 68 → 70, sites 59 → 77.
+
+**Cost (quality 2, 1280×720):**
+- draw calls per capture: west 194–397, east 116–312 (Atlas UI 523);
+- primitives: 124k–368k;
+- the forest core is 219–578 draw calls and 352k–576k primitives, so no far-sea scene costs more than the forest.
+- Particles:
+  - currents: up to 110 CPU quads per long current (scaled by quality);
+  - spout: 18 + 40;
+  - whirlpool: 28;
+  - updraft: 40.
+- Mist: 16 transparent wall quads for the whole bank, plus fog parameters (no volumetrics). Water: unchanged (one plane).
+- Fauna: one mist dweller or rip finback per spawn group.
+
+**The 8 questions:**
+
+1. **Does the west have an identity of its own?** Yes. It is navigation by ear and silhouette in a mist that comes and goes with the hour: bells, stacks, a standing wreck, a cave, a dawn mirage and a creature that stalks. None of it exists in the south.
+2. **Does the east?** Yes, a different one: the sea as roads that open and close with the tide, a whirlpool, and a chain of current → spout → updraft → glide. It shares no mechanic with the Mist Sea.
+3. **Are there still large, completely empty sea areas?** Yes. 74 % of all water is still more than 150 m from anything. The largest empty areas are:
+   - the sea north of the desert island and around the Veil island (the east band is still 13 %);
+   - the north-west beyond the mist bank;
+   - the far south past the Leviathan.
+4. **Too much repetition?** Less. The two new wrecks prove variants (standing, split) rather than a third lever-and-chest hull. Still repeated:
+   - chests remain the payoff of most places;
+   - three "hum → strike" storm loops in the south;
+   - the mist bells and the lake bells are cousins, though here they answer each other across distance.
+5. **Does the Bellhull have more uses without being required?** Yes:
+   - currents carry it;
+   - it fishes the mist and rip waters from its hatch;
+   - mist dwellers stalk it;
+   - it ferries you to the Wind Rock.
+   It cannot fly, so the spout makes you leave it. Every place can also be reached by swimming (bell plinths are resting posts about 100 m apart, currents cut the stamina cost), walking the west shore or gliding. No quest has a vehicle condition (tested).
+6. **Enough reasons to come back?** Yes, and they are tied to time and weather:
+   - dawn: the mirage and the thickest mist;
+   - clear afternoons: the Teeth are visible and the sanctuary shows;
+   - running tide versus slack: the Rip, the whirlpool, the finback routes;
+   - night: the glowing eddy;
+   - fishing spots refill;
+   - clearsight tea for the mist.
+7. **Which sea experiences are still missing?**
+   - weather-driven navigation hazards beyond storms (rogue waves);
+   - underwater caves with more than one chamber;
+   - sea birds as a real cue (only rumours and lights exist so far);
+   - boat-only water that a swimmer can reach but not survive;
+   - a creature to follow rather than fight.
+8. **What can be reused for the highlands?**
+   - MistBank (valley fog banks, cloud seas under peaks);
+   - tidal flow → wind flow (currents in the air for gliding);
+   - Spout → geysers or vents that launch you;
+   - FogBell answering chains (horns or beacons across valleys);
+   - stack/mesa terrain shapes (spires, tablelands);
+   - the stalker module (snow leopards following climbers);
+   - `current_rider` (flyers riding wind corridors);
+   - the standing and split wreck ideas (a collapsed tower, a broken bridge joined by a rope);
+   - the sea cave (mountain caves with a flooded throat).

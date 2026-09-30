@@ -11,6 +11,17 @@ static func level(hour: float = -1.0) -> float:
 	return 0.5 + 0.5 * cos((h - 6.0) / 12.0 * TAU)
 
 
+## How fast the water is moving (0 = slack at high/low water, 1 = full
+## flood or ebb around 3, 9, 15 and 21 h). Tidal currents follow it.
+static func flow(hour: float = -1.0) -> float:
+	var h := Clock.hour if hour < 0.0 else hour
+	return absf(sin((h - 6.0) / 12.0 * TAU))
+
+
+static func is_slack(hour: float = -1.0) -> bool:
+	return flow(hour) < 0.3
+
+
 static func is_low(hour: float = -1.0) -> bool:
 	return level(hour) < 0.25
 

@@ -25,12 +25,13 @@ import world  # noqa: E402
 import ecology  # noqa: E402
 import wilds  # noqa: E402
 import seas  # noqa: E402
+import far_seas  # noqa: E402
 from loc_common import COMMON  # noqa: E402
 
 # Module -> output file. The numeric prefix fixes load order: the main
 # line first (journal order, and who speaks first when an NPC has several).
 MODULES = [("q_main", "00_main"), ("q_valley", "10_valley"), ("q_forest", "20_forest"),
-           ("q_highlands", "30_highlands"), ("q_water", "40_water"), ("q_sea", "45_sea"), ("q_desert", "50_desert"),
+           ("q_highlands", "30_highlands"), ("q_water", "40_water"), ("q_sea", "45_sea"), ("q_far_seas", "46_far_seas"), ("q_desert", "50_desert"),
            ("q_veil", "60_veil"), ("q_misc", "70_misc"), ("q_bounty", "80_bounty"),
            ("q_vehicles", "90_vehicles")]
 
@@ -73,14 +74,17 @@ def main():
     loc = {}
     ents = load("entities.json")
     new = []
-    for d, l in world.NPCS + world.CREATURES + ecology.ENTITIES + wilds.ENTITIES + seas.NPCS + seas.ENTITIES:
+    for d, l in world.NPCS + world.CREATURES + ecology.ENTITIES + wilds.ENTITIES + seas.NPCS + seas.ENTITIES + far_seas.ENTITIES:
         new.append(d)
         loc.update(strings(l))
     upsert(ents, new)
     for e in ents:
-        for patches in (wilds.ENTITY_PATCHES, seas.ENTITY_PATCHES):
+        for patches in (wilds.ENTITY_PATCHES, seas.ENTITY_PATCHES, far_seas.ENTITY_PATCHES):
             for k, v in patches.get(e["id"], {}).items():
                 e[k] = dict(e.get(k, {}), **v) if isinstance(v, dict) else v
+    for e in ents:
+        if e["id"] == "NPC_TIDEKEEPER":
+            e["dialogue"]["rumors"] = e["dialogue"]["rumors"] + far_seas.TIDEKEEPER_EXTRA_RUMORS
     clash = world.color_check(ents, {d["id"] for d in new})
     if clash:
         raise SystemExit("placeholder colours too close: " + "; ".join(clash))
@@ -88,7 +92,7 @@ def main():
 
     items = load("items.json")
     new = []
-    for d, l in world.ITEMS + ecology.ITEMS + wilds.ITEMS + seas.ITEMS:
+    for d, l in world.ITEMS + ecology.ITEMS + wilds.ITEMS + seas.ITEMS + far_seas.ITEMS:
         new.append(d)
         loc.update(strings(l))
     upsert(items, new)
@@ -99,10 +103,11 @@ def main():
     loot.update(ecology.LOOT)
     loot.update(wilds.LOOT)
     loot.update(seas.LOOT)
+    loot.update(far_seas.LOOT)
     dump("loot.json", loot, 1)
 
     visuals = load("visuals.json")
-    upsert(visuals, ecology.VISUALS + wilds.VISUALS + seas.VISUALS)
+    upsert(visuals, ecology.VISUALS + wilds.VISUALS + seas.VISUALS + far_seas.VISUALS)
     with open(data("visuals.json"), "w", encoding="utf-8") as f:
         f.write("[\n" + ",\n".join(" " + json.dumps(e, ensure_ascii=True) for e in visuals) + "\n]\n")
 
@@ -110,31 +115,35 @@ def main():
     for r in regions:
         for k, v in dict(ecology.REGION_SPAWNS.get(r["id"], {}), **wilds.REGION_SPAWNS.get(r["id"], {}), **seas.REGION_SPAWNS.get(r["id"], {})).items():
             r[k] = v
+        for k, v in far_seas.REGION_SPAWN_EXTRA.get(r["id"], {}).items():
+            r[k] = r.get(k, []) + v
     dump("regions.json", regions, 1)
 
     cos = load("cosmetics.json")
-    upsert(cos, [d for d, _l in wilds.COSMETICS + seas.COSMETICS])
-    for _d, l in wilds.COSMETICS + seas.COSMETICS:
+    upsert(cos, [d for d, _l in wilds.COSMETICS + seas.COSMETICS + far_seas.COSMETICS])
+    for _d, l in wilds.COSMETICS + seas.COSMETICS + far_seas.COSMETICS:
         loc.update(strings(l))
     dump_lines("cosmetics.json", cos)
     cook = load("cooking.json")
     specials = cook.get("specials", [])
-    upsert(specials, wilds.SPECIALS + seas.SPECIALS)
+    upsert(specials, wilds.SPECIALS + seas.SPECIALS + far_seas.SPECIALS)
     cook["specials"] = specials
     dump("cooking.json", cook, 2)
     buffs = load("buffs.json")
     buffs.update(wilds.BUFFS)
     buffs.update(seas.BUFFS)
+    buffs.update(far_seas.BUFFS)
     with open(data("buffs.json"), "w", encoding="utf-8") as f:
         f.write("{\n" + ",\n".join("  %s: %s" % (json.dumps(k), json.dumps(v)) for k, v in buffs.items()) + "\n}\n")
-    fishing = {"waters": dict(wilds.FISHING["waters"], **seas.FISHING)}
+    fishing = {"waters": dict(wilds.FISHING["waters"], **seas.FISHING, **far_seas.FISHING)}
     dump("fishing.json", fishing, 1)
-    dump_lines("sites.json", wilds.SITES + seas.SITES)
+    dump_lines("sites.json", wilds.SITES + seas.SITES + far_seas.SITES)
     loc.update(strings(wilds.STRINGS))
     loc.update(strings(seas.STRINGS))
+    loc.update(strings(far_seas.STRINGS))
 
     discs = []
-    for d, l in ecology.DISCOVERIES + wilds.DISCOVERIES + seas.DISCOVERIES:
+    for d, l in ecology.DISCOVERIES + wilds.DISCOVERIES + seas.DISCOVERIES + far_seas.DISCOVERIES:
         discs.append(d)
         loc.update(strings(l))
     dump_lines("discoveries.json", discs)
@@ -143,7 +152,7 @@ def main():
 
     w = load("world.json")
     new = []
-    for d, l in world.NEW_POIS + wilds.POIS + seas.POIS:
+    for d, l in world.NEW_POIS + wilds.POIS + seas.POIS + far_seas.POIS:
         new.append(d)
         loc.update(strings(l))
     upsert(w["pois"], new)
@@ -151,7 +160,7 @@ def main():
         for p in w["pois"]:
             if p["id"] == pid:
                 p.update(patch)
-    w["islets"] = seas.ISLETS
+    w["islets"] = seas.ISLETS + far_seas.ISLETS
     dump("world.json", w, 2)
 
     bosses = load("bosses.json")
