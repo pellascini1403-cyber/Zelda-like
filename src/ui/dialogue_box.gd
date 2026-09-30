@@ -15,11 +15,14 @@ var _trade_npc: Node3D = null
 func _ready() -> void:
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	# HUD palette: black-20 % panel, celeste speaker, white outlined text.
+	add_theme_stylebox_override("panel", UITheme.box(HudArt.SHADE, 12))
 	var v := VBoxContainer.new()
 	add_child(v)
-	_speaker = UITheme.title("", 22, UITheme.ACCENT)
+	_speaker = HudArt.label("", 22, true)
+	_speaker.add_theme_color_override("font_color", HudArt.CELESTE)
 	v.add_child(_speaker)
-	_text = UITheme.label("", 24)
+	_text = HudArt.label("", 24)
 	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_text.custom_minimum_size = Vector2(760, 90)
 	v.add_child(_text)
@@ -27,12 +30,18 @@ func _ready() -> void:
 	v.add_child(row)
 	_trade = UITheme.button(tr("BTN_TRADE"), 52)
 	_trade.custom_minimum_size.x = 160
+	for st in ["normal", "hover", "focus"]:
+		_trade.add_theme_stylebox_override(st, UITheme.box(HudArt.SHADE, 12))
+	_trade.add_theme_stylebox_override("pressed", UITheme.box(HudArt.CELESTE, 12))
+	for fc in ["font_color", "font_hover_color", "font_focus_color"]:
+		_trade.add_theme_color_override(fc, HudArt.WHITE)
+	_trade.add_theme_color_override("font_pressed_color", HudArt.BLACK)
 	_trade.visible = false
 	_trade.pressed.connect(func() -> void:
 		visible = false
 		EventBus.station_opened.emit(&"shop", _trade_npc))
 	row.add_child(_trade)
-	var hint := UITheme.label(tr("DIALOGUE_TAP"), 16, UITheme.TEXT_DIM)
+	var hint := HudArt.label(tr("DIALOGUE_TAP"), 16)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(hint)
@@ -99,6 +108,3 @@ func offer_trade(npc: Node3D) -> void:
 	_trade_npc = npc
 	_trade.visible = true
 
-
-func _draw() -> void:
-	UIArt.corners(self, Rect2(Vector2(6, 6), size - Vector2(12, 12)), 16.0, Color(UIArt.GOLD, 0.7))

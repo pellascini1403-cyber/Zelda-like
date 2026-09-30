@@ -297,42 +297,36 @@ func _draw() -> void:
 		if not b.visible:
 			continue
 		var r := b.radius * (0.92 if b.pressed else 1.0)
-		UIArt.disc(self, b.center, r, b.accent, b.pressed, b.alpha)
-		var ink := Color(UIArt.PAPER, 0.95 * b.alpha)
+		HudArt.disc(self, b.center, r, b.pressed, b.alpha)
+		var ink := Color(HudArt.WHITE, b.alpha)
 		if b.action == "ability" and p and p.abilities:
 			var d: Dictionary = DB.abilities.get(p.abilities.selected, {})
 			UIArt.glyph(self, String(d.get("glyph", "")), b.center, r * 1.05, ink)
-			UIArt.cooldown(self, b.center, r * 0.94, p.abilities.cooldown_ratio(p.abilities.selected))
+			HudArt.cooldown(self, b.center, r, p.abilities.cooldown_ratio(p.abilities.selected))
 		elif b.action == "interact" or (b.action == "jump" and b.label_key != "BTN_JUMP"):
 			# Contextual verbs stay words (engraved face), everything else is a glyph.
 			var text := tr(b.label_key)
 			var fsz := int(clampf(r * 0.34, 13, 26))
 			var tw := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, fsz).x
-			draw_string(_font, b.center + Vector2(-tw * 0.5, fsz * 0.35), text, HORIZONTAL_ALIGNMENT_CENTER, -1, fsz, ink)
+			HudArt.text(self, _font, b.center + Vector2(-tw * 0.5, fsz * 0.35), text, fsz, b.alpha)
 		else:
 			UIArt.glyph(self, GLYPHS.get(b.action, ""), b.center, r * (0.95 if b.action != "attack" else 0.85), ink)
 		if b.badge != "":
 			var bp := b.center + Vector2(b.radius * 0.7, -b.radius * 0.7)
-			draw_circle(bp, 14 * k, UITheme.DANGER if b.badge == "!" else Color(UIArt.INK, 0.95))
-			draw_arc(bp, 14 * k, 0, TAU, 20, Color(UIArt.GOLD, 0.8), 1.2, true)
+			draw_circle(bp, 14 * k, HudArt.CELESTE if b.badge == "!" else HudArt.BLACK)
 			var bw := _font.get_string_size(b.badge, HORIZONTAL_ALIGNMENT_CENTER, -1, 17).x
-			draw_string(_font, bp + Vector2(-bw * 0.5, 6), b.badge, HORIZONTAL_ALIGNMENT_CENTER, -1, 17, Color.WHITE)
+			draw_string(_font, bp + Vector2(-bw * 0.5, 6), b.badge, HORIZONTAL_ALIGNMENT_CENTER, -1, 17, HudArt.BLACK if b.badge == "!" else HudArt.WHITE)
 	# Joystick
 	var r := JOY_RADIUS * k
 	if _joy_finger >= 0:
 		var sprint := InputRouter.touch_sprint
-		draw_circle(_joy_origin, r, Color(0, 0, 0, 0.22))
-		draw_arc(_joy_origin, r, 0, TAU, 48, Color(UITheme.STAMINA, 0.9) if sprint else Color(UIArt.GOLD, 0.5), 3.0 if sprint else 1.6, true)
-		for i in 8:
-			var a := TAU * i / 8.0
-			UIArt.diamond(self, _joy_origin + Vector2(cos(a), sin(a)) * r, 3.0, Color(UIArt.GOLD, 0.55))
+		HudArt.disc(self, _joy_origin, r, sprint)
 		var knob := _joy_origin + (_joy_pos - _joy_origin).limit_length(r)
-		UIArt.disc(self, knob, r * 0.42, true, sprint, 0.9)
+		HudArt.disc(self, knob, r * 0.42, sprint)
 	else:
 		# Hint where the stick lives
 		var m := UITheme.safe_margins(get_viewport())
 		var hint := Vector2(m["left"] + r * 1.4, get_viewport_rect().size.y - m["bottom"] - r * 1.4)
 		if Settings.get_value("left_handed"):
 			hint.x = get_viewport_rect().size.x - hint.x
-		draw_arc(hint, r, 0, TAU, 48, Color(UIArt.GOLD, 0.16), 1.5, true)
-		draw_circle(hint, r * 0.42, Color(UIArt.JADE, 0.12))
+		draw_circle(hint, r, HudArt.SHADE)

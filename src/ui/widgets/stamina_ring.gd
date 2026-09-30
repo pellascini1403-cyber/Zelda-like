@@ -1,7 +1,7 @@
 class_name StaminaRing
 extends Control
-## Stamina: a jade ring beside the character inside a thin gold hoop; hidden
-## when full. Turns cinnabar and pulses while exhausted.
+## Stamina: a celeste ring on a black-20 % track beside the character;
+## hidden when full. Turns white and pulses while exhausted.
 
 var _ratio := 1.0
 var _exhausted := false
@@ -35,10 +35,7 @@ func _draw() -> void:
 	if _alpha <= 0.01:
 		return
 	var r := 26.0 + _pulse * 6.0
-	var col := UITheme.DANGER if _exhausted else UITheme.STAMINA
-	col.a = _alpha
-	draw_circle(_screen_pos, r + 5, Color(0, 0, 0, 0.32 * _alpha))
-	draw_arc(_screen_pos, r + 6.5, 0, TAU, 48, Color(UIArt.GOLD, 0.55 * _alpha), 1.4, true)
-	draw_arc(_screen_pos, r, 0, TAU, 48, Color(0, 0, 0, 0.35 * _alpha), 8.0, true)
-	draw_arc(_screen_pos, r, -PI * 0.5, -PI * 0.5 + TAU * _ratio, 48, col, 8.0, true)
-	UIArt.diamond(self, _screen_pos + Vector2(0, -r - 6.5), 3.0, Color(UIArt.GOLD, _alpha))
+	var col := Color(HudArt.WHITE if _exhausted else HudArt.CELESTE, _alpha)
+	draw_arc(_screen_pos, r, 0, TAU, 48, Color(HudArt.SHADE, HudArt.SHADE.a * _alpha), 8.0, true)
+	if _ratio > 0.005:
+		draw_arc(_screen_pos, r, -PI * 0.5, -PI * 0.5 + TAU * _ratio, 48, col, 8.0, true)

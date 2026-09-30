@@ -1,7 +1,7 @@
 class_name BossPlate
 extends Control
-## Boss health plate at the bottom of the screen: engraved name, epithet,
-## long brush bar with phase notches and scroll ornaments. Appears on
+## Boss health plate at the bottom of the screen: name, epithet, a long
+## HUD bar with phase notches. Appears on
 ## engagement, fades out on defeat or disengage.
 
 var boss: Boss = null
@@ -44,16 +44,11 @@ func _draw() -> void:
 	var name := tr(boss.type.name_key)
 	var sub := tr(boss.def.get("title_key", ""))
 	var nsz := UITheme.fs(28)
-	draw_string_outline(_tf, Vector2(x0, y - 16), name, HORIZONTAL_ALIGNMENT_LEFT, -1, nsz, 6, Color(0, 0, 0, 0.6 * a))
-	draw_string(_tf, Vector2(x0, y - 16), name, HORIZONTAL_ALIGNMENT_LEFT, -1, nsz, Color(UIArt.PAPER, a))
+	HudArt.text(self, _tf, Vector2(x0, y - 16), name, nsz, a)
 	var nw := _tf.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, nsz).x
-	draw_string(_bf, Vector2(x0 + nw + 14, y - 18), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, UITheme.fs(18), Color(UIArt.GOLD, 0.85 * a))
-	var bar := Rect2(Vector2(x0, y - 4), Vector2(w, 20))
-	UIArt.brush_bar(self, bar, boss.health.ratio(), Color(UIArt.CINNABAR, a), _trail)
-	draw_line(Vector2(x0 - 16, y + 22), Vector2(x0 + w + 16, y + 22), Color(UIArt.GOLD, 0.6 * a), 1.2)
-	UIArt.scroll_corner(self, Vector2(x0 - 16, y + 22), 14, Vector2(1, -1), Color(UIArt.GOLD, 0.8 * a))
-	UIArt.scroll_corner(self, Vector2(x0 + w + 16, y + 22), 14, Vector2(-1, -1), Color(UIArt.GOLD, 0.8 * a))
+	HudArt.text(self, _bf, Vector2(x0 + nw + 14, y - 18), sub, UITheme.fs(18), a)
+	HudArt.bar(self, Rect2(Vector2(x0, y - 4), Vector2(w, 20)), boss.health.ratio(), a)
 	for ph in boss.def.get("phases", []):
 		var at := float(ph.get("at", 1.0))
 		if at < 0.999:
-			UIArt.diamond(self, Vector2(x0 + w * at, y + 6), 5.0, Color(UIArt.GOLD, a))
+			draw_line(Vector2(x0 + w * at, y - 4), Vector2(x0 + w * at, y + 16), Color(HudArt.BLACK, a), 2.0)

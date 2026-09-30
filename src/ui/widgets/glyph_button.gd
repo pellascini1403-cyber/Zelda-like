@@ -1,18 +1,18 @@
 class_name GlyphButton
 extends Button
-## Round lacquer button showing a procedural glyph (map, bag, pause...).
-## Presses with a small scale "bow".
+## Round HUD button drawn with its definitive PNG (map, journal, bag,
+## pause). Presses with a small scale "bow".
 
 var glyph := ""
-var accent := false
 
 
-static func make(glyph_name: String, diameter: float = 58.0) -> GlyphButton:
+static func make(glyph_name: String, diameter: float = HudArt.BUTTON_D) -> GlyphButton:
 	var b := GlyphButton.new()
 	b.glyph = glyph_name
 	b.custom_minimum_size = Vector2(diameter, diameter)
 	b.focus_mode = Control.FOCUS_NONE
 	b.flat = true
+	b.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	var empty := StyleBoxEmpty.new()
 	for st in ["normal", "hover", "pressed", "focus", "disabled"]:
 		b.add_theme_stylebox_override(st, empty)
@@ -25,7 +25,9 @@ static func make(glyph_name: String, diameter: float = 58.0) -> GlyphButton:
 
 
 func _draw() -> void:
-	var c := size * 0.5
-	var r := minf(size.x, size.y) * 0.5 - 2.0
-	UIArt.disc(self, c, r, accent, is_pressed())
-	UIArt.glyph(self, glyph, c, r * 1.1, UIArt.PAPER if not is_hovered() else UIArt.GOLD)
+	var tex: Texture2D = HudArt.BUTTONS.get(glyph)
+	if tex == null:
+		return
+	var d := minf(size.x, size.y)
+	var s := HudArt.fit(tex, d)
+	draw_texture_rect(tex, Rect2((size - s) * 0.5, s), false)

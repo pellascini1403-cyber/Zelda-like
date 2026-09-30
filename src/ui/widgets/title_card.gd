@@ -1,7 +1,7 @@
 class_name TitleCard
 extends Control
 ## Big centred card for discoveries, quests, bosses and learned abilities:
-## engraved title between ornamental rules, subtitle below. Queued so cards
+## title on a black-20 % band, subtitle below in celeste. Queued so cards
 ## never overlap; fades in, holds, fades out.
 
 var _queue: Array = []
@@ -53,19 +53,8 @@ func _draw() -> void:
 	var tsz := UITheme.fs(52)
 	var ssz := UITheme.fs(24)
 	var tw := _tf.get_string_size(_title, HORIZONTAL_ALIGNMENT_CENTER, -1, tsz).x
-	# Soft ink band behind the text
-	var band := Rect2(Vector2(0, cy - tsz * 1.2), Vector2(vs.x, tsz * 2.4))
-	for i in 8:
-		var k := float(i) / 8.0
-		draw_rect(Rect2(band.position + Vector2(0, band.size.y * k), Vector2(vs.x, band.size.y / 8.0)), Color(0, 0, 0, 0.28 * a * (1.0 - absf(k - 0.45) * 2.0)))
-	var spread := clampf(_t / (IN + 0.4), 0.0, 1.0)
-	var half := (tw * 0.5 + 60.0) * (0.6 + 0.4 * spread)
-	var col := Color(UIArt.GOLD, a)
-	UIArt.divider(self, Vector2(vs.x * 0.5 - half, cy - tsz * 0.95), Vector2(vs.x * 0.5 + half, cy - tsz * 0.95), col)
-	UIArt.divider(self, Vector2(vs.x * 0.5 - half, cy + tsz * 0.45), Vector2(vs.x * 0.5 + half, cy + tsz * 0.45), col)
-	draw_string_outline(_tf, Vector2(vs.x * 0.5 - tw * 0.5, cy), _title, HORIZONTAL_ALIGNMENT_LEFT, -1, tsz, 8, Color(0, 0, 0, 0.5 * a))
-	draw_string(_tf, Vector2(vs.x * 0.5 - tw * 0.5, cy), _title, HORIZONTAL_ALIGNMENT_LEFT, -1, tsz, Color(UIArt.PAPER, a))
+	draw_rect(Rect2(Vector2(0, cy - tsz * 1.1), Vector2(vs.x, tsz * 2.3)), Color(HudArt.SHADE, HudArt.SHADE.a * a))
+	HudArt.text(self, _tf, Vector2(vs.x * 0.5 - tw * 0.5, cy), _title, tsz, a)
 	if _sub != "":
 		var sw := _bf.get_string_size(_sub, HORIZONTAL_ALIGNMENT_CENTER, -1, ssz).x
-		draw_string_outline(_bf, Vector2(vs.x * 0.5 - sw * 0.5, cy + tsz * 1.0), _sub, HORIZONTAL_ALIGNMENT_LEFT, -1, ssz, 6, Color(0, 0, 0, 0.5 * a))
-		draw_string(_bf, Vector2(vs.x * 0.5 - sw * 0.5, cy + tsz * 1.0), _sub, HORIZONTAL_ALIGNMENT_LEFT, -1, ssz, Color(UIArt.GOLD, a))
+		HudArt.text(self, _bf, Vector2(vs.x * 0.5 - sw * 0.5, cy + tsz * 0.95), _sub, ssz, a, HudArt.CELESTE)

@@ -2,6 +2,8 @@ class_name QuestTracker
 extends Control
 ## Tracked quest under the top-right buttons: title in the engraved face,
 ## current objectives with progress. Briefly glows when it updates.
+## Each pending objective carries the celeste quest diamond (the delivered
+## PNG); a finished one keeps the diamond in black at 20 %.
 
 var _title: Label
 var _lines: VBoxContainer
@@ -14,10 +16,8 @@ func _ready() -> void:
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_theme_constant_override("separation", 2)
 	add_child(v)
-	_title = UITheme.title("", 21, UITheme.ACCENT)
+	_title = HudArt.label("", 21, true)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
-	_title.add_theme_constant_override("outline_size", 6)
 	v.add_child(_title)
 	_lines = VBoxContainer.new()
 	_lines.add_theme_constant_override("separation", 0)
@@ -45,17 +45,30 @@ func refresh() -> void:
 	for o in Quests.objective_lines(id):
 		if o["optional"] and o["done"]:
 			continue
-		var t: String = ("◆ " if not o["done"] else "◇ ") + (tr("JOURNAL_BONUS") + " " if o["optional"] else "") + o["text"]
+		var t: String = (tr("JOURNAL_BONUS") + " " if o["optional"] else "") + o["text"]
 		if int(o["need"]) > 1:
 			t += "  %d/%d" % [o["count"], o["need"]]
-		var l := UITheme.label(t, 18, UITheme.TEXT if not o["done"] else UITheme.TEXT_DIM)
+		var row := HBoxContainer.new()
+		row.alignment = BoxContainer.ALIGNMENT_END
+		row.add_theme_constant_override("separation", 4)
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var mark := TextureRect.new()
+		mark.texture = HudArt.QUEST_DIAMOND
+		mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		mark.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		mark.custom_minimum_size = HudArt.fit(HudArt.QUEST_DIAMOND, HudArt.DIAMOND_W)
+		mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		if o["done"]:
+			mark.modulate = HudArt.SHADE
+		row.add_child(mark)
+		var l := HudArt.label(t, 18)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
-		l.add_theme_constant_override("outline_size", 5)
-		_lines.add_child(l)
+		row.add_child(l)
+		_lines.add_child(row)
 
 
 func _process(delta: float) -> void:
 	if _glow > 0.0:
 		_glow = maxf(_glow - delta * 0.8, 0.0)
-		_title.modulate = Color(1, 1, 1).lerp(Color(1.4, 1.3, 1.0), _glow)
+		_title.modulate.a = 1.0 - 0.35 * sin(_glow * PI)

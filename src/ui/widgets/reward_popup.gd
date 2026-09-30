@@ -1,6 +1,6 @@
 class_name RewardPopup
 extends Control
-## Lacquer card that slides in on the left when anything pays out (quest,
+## Black-20 % card that slides in on the left when anything pays out (quest,
 ## bounty, challenge, discovery, encounter): one line per reward. Queued so
 ## back-to-back rewards never overlap; tiny item pickups stay in the feed.
 
@@ -52,13 +52,9 @@ func _draw() -> void:
 	var off := (1.0 - slide) * -size.x
 	var a := slide
 	var r := Rect2(Vector2(off, 0), size)
-	draw_rect(r, Color(UIArt.INK, 0.78 * a))
-	draw_rect(Rect2(r.position, Vector2(5, r.size.y)), Color(UIArt.CINNABAR, a))
-	UIArt.corners(self, r.grow(-4), 12.0, Color(UIArt.GOLD, 0.7 * a))
+	draw_rect(r, Color(HudArt.SHADE, HudArt.SHADE.a * a))
 	var tf := UITheme.title_font()
 	var f := UITheme.font()
-	draw_string(tf, r.position + Vector2(22, 34), _heading, HORIZONTAL_ALIGNMENT_LEFT, size.x - 30, UITheme.fs(22), Color(UIArt.GOLD, a))
+	HudArt.text(self, tf, r.position + Vector2(22, 34), _heading, UITheme.fs(22), a, HudArt.CELESTE, size.x - 30)
 	for i in _lines.size():
-		var y := 66 + i * 30
-		UIArt.diamond(self, r.position + Vector2(28, y - 7), 4.5, Color(UIArt.JADE_LIGHT, a))
-		draw_string(f, r.position + Vector2(42, y), _lines[i], HORIZONTAL_ALIGNMENT_LEFT, size.x - 50, UITheme.fs(19), Color(UIArt.PAPER, a))
+		HudArt.text(self, f, r.position + Vector2(22, 66 + i * 30), _lines[i], UITheme.fs(19), a, HudArt.WHITE, size.x - 30)
