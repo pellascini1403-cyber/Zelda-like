@@ -210,3 +210,7 @@ La jugabilidad (colisión, velocidades, arma, modos) está en `handling`, `colli
   - persistencia de propiedad;
   - la compra se reaplica a una partida nueva y lo ganado no.
 - **Revisión de arte**: `godot -- --studio <dir> [--water]` renderiza vistas de las tres máquinas; las tomas 36–41 del tour las muestran desde la cámara de juego.
+
+## 8. Builds de prueba: las tres máquinas ya en la cuenta
+
+Los presets de exportación que llevan la marca `preview` (hoy, **Web Preview**) activan la tienda simulada y marcan como propios los tres productos de vehículo (`PlatformServices._enable_preview_entitlements`). Sirve para probarlos sin conseguirlos. Solo en builds de depuración, solo en memoria (no se escribe la caché de compras) y sin efecto en el juego normal ni en los tests. La primera máquina aparece al empezar; el resto se equipan desde el Garaje (pausa → Garaje) y se invocan con Llamada Vantrel.
