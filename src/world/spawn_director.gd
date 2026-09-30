@@ -49,7 +49,7 @@ func on_sector_ready(chunk: TerrainChunk, slots: Array) -> void:
 			# swimmers and climbers of the region (and nothing else).
 			if WorldState.is_defeated(id):
 				continue
-			if roll < 0.2 * region.enemy_density + 0.05:
+			if roll < 0.12 * region.enemy_density + 0.02:
 				var far := Vector2(pos.x, pos.z).distance_to(spawn_pos) > SAFE_RADIUS_AROUND_SPAWN
 				if far:
 					spawned.append_array(_spawn_group(region.enemy_spawns, pos, id, s["roll2"], hab))

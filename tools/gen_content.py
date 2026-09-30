@@ -82,7 +82,7 @@ def main():
 
     items = load("items.json")
     new = []
-    for d, l in world.ITEMS:
+    for d, l in world.ITEMS + ecology.ITEMS:
         new.append(d)
         loc.update(strings(l))
     upsert(items, new)

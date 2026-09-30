@@ -876,5 +876,71 @@
   "category": "key",
   "max_stack": 1,
   "rarity": 3
+ },
+ {
+  "id": "gale_feather",
+  "category": "material",
+  "icon": "res://assets/icons/mat_filament.svg",
+  "value": 6
+ },
+ {
+  "id": "eel_scale",
+  "category": "material",
+  "icon": "res://assets/icons/mat_plate.svg",
+  "value": 6
+ },
+ {
+  "id": "weaver_silk",
+  "category": "material",
+  "icon": "res://assets/icons/mat_fiber.svg",
+  "value": 8
+ },
+ {
+  "id": "carapace_shard",
+  "category": "material",
+  "icon": "res://assets/icons/mat_plate.svg",
+  "value": 7,
+  "tags": [
+   "armor"
+  ]
+ },
+ {
+  "id": "cinder_ember",
+  "category": "material",
+  "icon": "res://assets/icons/mat_sap.svg",
+  "value": 7,
+  "tags": [
+   "flammable"
+  ]
+ },
+ {
+  "id": "hush_gel",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gland.svg",
+  "value": 16
+ },
+ {
+  "id": "lumen_antler",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 30,
+  "rarity": 2
+ },
+ {
+  "id": "raw_fish",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 3,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 12
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "swift": 0.5
+  }
  }
 ]

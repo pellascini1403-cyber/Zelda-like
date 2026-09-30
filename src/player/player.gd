@@ -402,8 +402,13 @@ func updraft_lift() -> float:
 
 
 func terrain_speed_mult() -> float:
-	# Deep snow slows you down a little.
-	return 0.85 if global_position.y > _world_gen.snow_line() else 1.0
+	# Deep snow slows you down a little; webs and cold slow you more.
+	var m := 0.85 if global_position.y > _world_gen.snow_line() else 1.0
+	if health.has_status(&"webbed"):
+		m *= 0.5
+	elif health.has_status(&"chilled"):
+		m *= 0.8
+	return m
 
 
 func emit_noise(radius: float) -> void:

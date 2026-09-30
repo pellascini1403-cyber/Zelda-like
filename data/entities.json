@@ -2386,5 +2386,905 @@
   },
   "attacks": [],
   "loot_table": "drop_gilded"
+ },
+ {
+  "id": "ENEMY_GALE_KITE",
+  "kind": "ENEMY",
+  "name_key": "NAME_GALE_KITE",
+  "placeholder_color": "#add9d0",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.55,
+   "height": 0.9
+  },
+  "stats": {
+   "max_health": 45,
+   "poise": 10,
+   "walk_speed": 3.0,
+   "run_speed": 7.5,
+   "turn_speed": 6,
+   "mass": 30
+  },
+  "ai": {
+   "sight_range": 32,
+   "fov": 360,
+   "hearing": 1.2,
+   "leash": 60,
+   "wander_radius": 14,
+   "respawn_hours": 48,
+   "hover": 5.0,
+   "behaviors": [
+    "swoop"
+   ],
+   "swoop_height": 9,
+   "swoop_every": 5.5,
+   "swoop_recover": 1.6
+  },
+  "attacks": [
+   {
+    "id": "swoop",
+    "type": "module",
+    "windup": 0.9,
+    "damage": 14,
+    "knockback": 9,
+    "charge_speed": 22,
+    "poise_damage": 18,
+    "element": "wind"
+   },
+   {
+    "id": "gust",
+    "type": "projectile",
+    "range_min": 6,
+    "range_max": 18,
+    "windup": 0.7,
+    "recovery": 0.8,
+    "cooldown": 3.5,
+    "damage": 7,
+    "element": "wind",
+    "projectile_speed": 18
+   }
+  ],
+  "loot_table": "drop_gale_kite",
+  "element_mult": {
+   "electric": 1.5
+  },
+  "locomotion": "flying"
+ },
+ {
+  "id": "ENEMY_MIRE_EEL",
+  "kind": "ENEMY",
+  "name_key": "NAME_MIRE_EEL",
+  "placeholder_color": "#3f7644",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.5,
+   "height": 0.7
+  },
+  "stats": {
+   "max_health": 50,
+   "poise": 12,
+   "walk_speed": 2.2,
+   "run_speed": 5.5,
+   "turn_speed": 5,
+   "mass": 50
+  },
+  "ai": {
+   "sight_range": 22,
+   "fov": 300,
+   "hearing": 1.5,
+   "leash": 40,
+   "wander_radius": 10,
+   "respawn_hours": 48,
+   "behaviors": [
+    "submerge"
+   ],
+   "surface_range": 13,
+   "surface_time": 4.5,
+   "deep_depth": 2.6,
+   "swim_depth": 0.6
+  },
+  "attacks": [
+   {
+    "id": "snap",
+    "type": "lunge",
+    "range_min": 0,
+    "range_max": 4.5,
+    "windup": 0.45,
+    "active": 0.3,
+    "recovery": 0.8,
+    "cooldown": 1.6,
+    "damage": 12,
+    "knockback": 6,
+    "reach": 1.6,
+    "arc": 50,
+    "lunge_speed": 11
+   },
+   {
+    "id": "jet",
+    "type": "projectile",
+    "range_min": 4,
+    "range_max": 15,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 2.8,
+    "damage": 8,
+    "element": "water",
+    "projectile_speed": 17
+   }
+  ],
+  "loot_table": "drop_mire_eel",
+  "element_mult": {
+   "electric": 1.3,
+   "fire": 0.5
+  },
+  "locomotion": "aquatic"
+ },
+ {
+  "id": "ENEMY_CRAG_WEAVER",
+  "kind": "ENEMY",
+  "name_key": "NAME_CRAG_WEAVER",
+  "placeholder_color": "#644242",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.7,
+   "height": 0.9
+  },
+  "stats": {
+   "max_health": 55,
+   "poise": 14,
+   "walk_speed": 2.4,
+   "run_speed": 6.2,
+   "turn_speed": 8,
+   "mass": 45
+  },
+  "ai": {
+   "sight_range": 22,
+   "fov": 300,
+   "hearing": 1.4,
+   "leash": 45,
+   "wander_radius": 10,
+   "respawn_hours": 72,
+   "behaviors": [
+    "drop_from_above"
+   ],
+   "drop_radius": 6
+  },
+  "attacks": [
+   {
+    "id": "bite",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.0,
+    "windup": 0.4,
+    "recovery": 0.6,
+    "cooldown": 1.1,
+    "damage": 10,
+    "knockback": 3,
+    "reach": 1.5,
+    "arc": 55,
+    "weight": 2
+   },
+   {
+    "id": "web",
+    "type": "projectile",
+    "range_min": 4,
+    "range_max": 16,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 4.5,
+    "damage": 3,
+    "element": "web",
+    "projectile_speed": 15
+   },
+   {
+    "id": "drop",
+    "type": "module",
+    "windup": 0.6,
+    "damage": 16,
+    "radius": 2.3
+   }
+  ],
+  "loot_table": "drop_weaver",
+  "element_mult": {
+   "fire": 1.6
+  },
+  "locomotion": "climber"
+ },
+ {
+  "id": "ENEMY_BRAMBLE_CARAPACE",
+  "kind": "ENEMY",
+  "name_key": "NAME_BRAMBLE_CARAPACE",
+  "placeholder_color": "#5e8422",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.8,
+   "height": 1.1
+  },
+  "stats": {
+   "max_health": 70,
+   "defense": 1,
+   "poise": 30,
+   "walk_speed": 1.6,
+   "run_speed": 4.2,
+   "turn_speed": 3.2,
+   "mass": 140
+  },
+  "ai": {
+   "sight_range": 18,
+   "fov": 150,
+   "hearing": 1.0,
+   "leash": 35,
+   "wander_radius": 6,
+   "respawn_hours": 72,
+   "behaviors": [
+    "front_armor"
+   ],
+   "armor_arc": 70,
+   "armor_mult": 0.1,
+   "flipped_time": 3.2
+  },
+  "attacks": [
+   {
+    "id": "horn",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.4,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 1.4,
+    "damage": 12,
+    "knockback": 6,
+    "reach": 2.0,
+    "arc": 45,
+    "weight": 2
+   },
+   {
+    "id": "roll",
+    "type": "charge",
+    "range_min": 5,
+    "range_max": 16,
+    "windup": 0.9,
+    "active": 1.1,
+    "recovery": 1.2,
+    "cooldown": 5.0,
+    "damage": 16,
+    "knockback": 10,
+    "reach": 16,
+    "charge_speed": 13,
+    "poise_damage": 25
+   }
+  ],
+  "loot_table": "drop_carapace",
+  "element_mult": {
+   "fire": 1.4
+  }
+ },
+ {
+  "id": "ENEMY_CINDER_IMP",
+  "kind": "ENEMY",
+  "name_key": "NAME_CINDER_IMP",
+  "placeholder_color": "#ff7a00",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.0
+  },
+  "stats": {
+   "max_health": 28,
+   "poise": 6,
+   "walk_speed": 2.6,
+   "run_speed": 7.0,
+   "turn_speed": 10,
+   "mass": 25
+  },
+  "ai": {
+   "sight_range": 22,
+   "fov": 180,
+   "hearing": 1.3,
+   "leash": 40,
+   "wander_radius": 10,
+   "respawn_hours": 48,
+   "behaviors": [
+    "ignite"
+   ],
+   "ignite_every": 3.5
+  },
+  "attacks": [
+   {
+    "id": "claw",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 1.8,
+    "windup": 0.35,
+    "recovery": 0.5,
+    "cooldown": 0.9,
+    "damage": 7,
+    "knockback": 3,
+    "reach": 1.3,
+    "arc": 60,
+    "element": "fire",
+    "weight": 2
+   },
+   {
+    "id": "ember",
+    "type": "projectile",
+    "range_min": 4,
+    "range_max": 14,
+    "windup": 0.5,
+    "recovery": 0.7,
+    "cooldown": 2.6,
+    "damage": 6,
+    "element": "fire",
+    "projectile_speed": 15
+   }
+  ],
+  "loot_table": "drop_imp",
+  "element_mult": {
+   "fire": 0.0,
+   "water": 2.0,
+   "ice": 2.0
+  }
+ },
+ {
+  "id": "ENEMY_DUNE_BURROWER",
+  "kind": "ENEMY",
+  "name_key": "NAME_DUNE_BURROWER",
+  "placeholder_color": "#f2c171",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.6,
+   "height": 0.9
+  },
+  "stats": {
+   "max_health": 60,
+   "defense": 1,
+   "poise": 20,
+   "walk_speed": 2.0,
+   "run_speed": 6.5,
+   "turn_speed": 6,
+   "mass": 80
+  },
+  "ai": {
+   "sight_range": 14,
+   "fov": 360,
+   "hearing": 2.0,
+   "leash": 45,
+   "wander_radius": 12,
+   "respawn_hours": 48,
+   "behaviors": [
+    "burrow"
+   ],
+   "hear_range": 26,
+   "still_time": 1.5,
+   "surface_time": 5.0
+  },
+  "attacks": [
+   {
+    "id": "bite",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.4,
+    "windup": 0.5,
+    "recovery": 0.7,
+    "cooldown": 1.3,
+    "damage": 12,
+    "knockback": 5,
+    "reach": 2.0,
+    "arc": 60
+   },
+   {
+    "id": "erupt",
+    "type": "module",
+    "windup": 0.8,
+    "damage": 16,
+    "knockback": 9,
+    "radius": 2.4
+   }
+  ],
+  "loot_table": "drop_burrower",
+  "element_mult": {
+   "ice": 1.6
+  },
+  "locomotion": "burrower"
+ },
+ {
+  "id": "ENEMY_HUSH_DRIFTER",
+  "kind": "ENEMY",
+  "name_key": "NAME_HUSH_DRIFTER",
+  "placeholder_color": "#fdcdff",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.7,
+   "height": 1.6
+  },
+  "stats": {
+   "max_health": 48,
+   "poise": 10,
+   "walk_speed": 1.4,
+   "run_speed": 3.2,
+   "turn_speed": 4,
+   "mass": 20
+  },
+  "ai": {
+   "sight_range": 22,
+   "fov": 360,
+   "hearing": 1.0,
+   "leash": 40,
+   "wander_radius": 10,
+   "respawn_hours": 48,
+   "hover": 1.4,
+   "behaviors": [
+    "phase"
+   ],
+   "phase_on": 4.0,
+   "phase_off": 2.5
+  },
+  "attacks": [
+   {
+    "id": "hush",
+    "type": "pulse",
+    "range_min": 0,
+    "range_max": 3.2,
+    "windup": 0.9,
+    "recovery": 1.0,
+    "cooldown": 3.5,
+    "damage": 12,
+    "radius": 3.2,
+    "knockback": 5,
+    "element": "still",
+    "blockable": false
+   },
+   {
+    "id": "mote",
+    "type": "projectile",
+    "range_min": 4,
+    "range_max": 16,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 2.4,
+    "damage": 8,
+    "element": "still",
+    "projectile_speed": 11
+   }
+  ],
+  "loot_table": "drop_drifter",
+  "element_mult": {
+   "fire": 1.8,
+   "electric": 0.8
+  },
+  "locomotion": "flying"
+ },
+ {
+  "id": "ENEMY_GLINT_THIEF",
+  "kind": "ENEMY",
+  "name_key": "NAME_GLINT_THIEF",
+  "placeholder_color": "#bdc234",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.0
+  },
+  "stats": {
+   "max_health": 26,
+   "poise": 6,
+   "walk_speed": 2.4,
+   "run_speed": 7.6,
+   "turn_speed": 10,
+   "mass": 25
+  },
+  "ai": {
+   "sight_range": 24,
+   "fov": 200,
+   "hearing": 1.5,
+   "leash": 80,
+   "wander_radius": 12,
+   "respawn_hours": 96,
+   "behaviors": [
+    "steal"
+   ],
+   "steal_amount": 15,
+   "escape_distance": 60
+  },
+  "attacks": [
+   {
+    "id": "snatch",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 1.8,
+    "windup": 0.3,
+    "recovery": 0.4,
+    "cooldown": 1.0,
+    "damage": 4,
+    "knockback": 2,
+    "reach": 1.4,
+    "arc": 70
+   }
+  ],
+  "loot_table": "drop_thief"
+ },
+ {
+  "id": "ENEMY_DUSKWING",
+  "kind": "ENEMY",
+  "name_key": "NAME_DUSKWING",
+  "placeholder_color": "#140a1e",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.3,
+   "height": 0.5
+  },
+  "stats": {
+   "max_health": 14,
+   "poise": 3,
+   "walk_speed": 3.5,
+   "run_speed": 8.0,
+   "turn_speed": 10,
+   "mass": 6
+  },
+  "ai": {
+   "sight_range": 24,
+   "fov": 360,
+   "hearing": 2.0,
+   "leash": 50,
+   "wander_radius": 8,
+   "respawn_hours": 24,
+   "hover": 2.5,
+   "behaviors": [
+    "swarm",
+    "fire_shy"
+   ],
+   "fire_fear": 7
+  },
+  "attacks": [
+   {
+    "id": "nip",
+    "type": "lunge",
+    "range_min": 0,
+    "range_max": 4,
+    "windup": 0.35,
+    "active": 0.3,
+    "recovery": 0.6,
+    "cooldown": 1.6,
+    "damage": 4,
+    "knockback": 2,
+    "reach": 1.2,
+    "arc": 60,
+    "lunge_speed": 12
+   }
+  ],
+  "loot_table": "drop_duskwing",
+  "element_mult": {
+   "fire": 2.0
+  },
+  "locomotion": "flying",
+  "active_period": "night"
+ },
+ {
+  "id": "ENEMY_RIME_THORNLING",
+  "variant_of": "ENEMY_THORNLING",
+  "name_key": "NAME_RIME_THORNLING",
+  "placeholder_color": "#d7fbe3",
+  "stats": {
+   "max_health": 38,
+   "run_speed": 6.2
+  },
+  "ai": {
+   "sleeps_at_night": false
+  },
+  "attacks": [
+   {
+    "id": "frost_bite",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 1.9,
+    "windup": 0.4,
+    "active": 0.1,
+    "recovery": 0.5,
+    "cooldown": 1.0,
+    "damage": 9,
+    "knockback": 3,
+    "reach": 1.4,
+    "arc": 55,
+    "element": "cold",
+    "weight": 2
+   },
+   {
+    "id": "pounce",
+    "type": "lunge",
+    "range_min": 3,
+    "range_max": 7,
+    "windup": 0.55,
+    "active": 0.35,
+    "recovery": 0.8,
+    "cooldown": 3.5,
+    "damage": 12,
+    "knockback": 5,
+    "reach": 1.4,
+    "arc": 60,
+    "lunge_speed": 13
+   }
+  ],
+  "loot_table": "drop_rime",
+  "element_mult": {
+   "fire": 1.8
+  }
+ },
+ {
+  "id": "ENEMY_STORM_BULWARK",
+  "variant_of": "ENEMY_BULWARK",
+  "name_key": "NAME_STORM_BULWARK",
+  "placeholder_color": "#6780bc",
+  "stats": {
+   "max_health": 130
+  },
+  "ai": {
+   "behaviors": [
+    "storm_charged"
+   ],
+   "discharge_every": 6.0
+  },
+  "loot_table": "drop_storm_bulwark",
+  "element_mult": {
+   "electric": 0.2,
+   "water": 1.0
+  }
+ },
+ {
+  "id": "ENEMY_TIDE_SPITTER",
+  "variant_of": "ENEMY_SPITTER",
+  "name_key": "NAME_TIDE_SPITTER",
+  "placeholder_color": "#20a0a0",
+  "ai": {
+   "behaviors": [
+    "ambush"
+   ],
+   "ambush_range": 7,
+   "preferred_range": 9
+  },
+  "attacks": [
+   {
+    "id": "brine",
+    "type": "projectile",
+    "range_min": 3,
+    "range_max": 18,
+    "windup": 0.6,
+    "active": 0.1,
+    "recovery": 0.8,
+    "cooldown": 2.0,
+    "damage": 9,
+    "element": "water",
+    "projectile_speed": 16
+   }
+  ],
+  "loot_table": "drop_tide_spitter",
+  "element_mult": {
+   "fire": 1.0,
+   "electric": 1.6
+  }
+ },
+ {
+  "id": "ENEMY_CAVE_WEAVER",
+  "variant_of": "ENEMY_CRAG_WEAVER",
+  "name_key": "NAME_CAVE_WEAVER",
+  "placeholder_color": "#27306a",
+  "stats": {
+   "max_health": 45
+  },
+  "ai": {
+   "behaviors": [
+    "ambush",
+    "fire_shy"
+   ],
+   "ambush_range": 5,
+   "fire_fear": 5,
+   "sight_range": 12
+  },
+  "loot_table": "drop_weaver",
+  "element_mult": {
+   "fire": 2.0
+  },
+  "locomotion": "ground"
+ },
+ {
+  "id": "ENEMY_VEIL_WEAVER",
+  "variant_of": "ENEMY_CRAG_WEAVER",
+  "name_key": "NAME_VEIL_WEAVER",
+  "placeholder_color": "#7e2cb0",
+  "stats": {
+   "max_health": 60
+  },
+  "ai": {
+   "behaviors": [
+    "drop_from_above",
+    "phase"
+   ],
+   "phase_on": 5.0,
+   "phase_off": 2.0
+  },
+  "loot_table": "drop_veil_weaver",
+  "element_mult": {
+   "fire": 1.4,
+   "still": 0.0
+  }
+ },
+ {
+  "id": "ENEMY_SHELLBACK",
+  "variant_of": "ENEMY_BRAMBLE_CARAPACE",
+  "name_key": "NAME_SHELLBACK",
+  "placeholder_color": "#d88a7a",
+  "stats": {
+   "max_health": 95,
+   "defense": 2,
+   "poise": 40,
+   "mass": 190
+  },
+  "collider": {
+   "radius": 1.0,
+   "height": 1.3
+  },
+  "ai": {
+   "armor_mult": 0.05,
+   "flipped_time": 4.0
+  },
+  "loot_table": "drop_shellback",
+  "element_mult": {
+   "fire": 1.0,
+   "electric": 1.5
+  }
+ },
+ {
+  "id": "ANIMAL_CRAG_GOAT",
+  "kind": "ANIMAL",
+  "name_key": "NAME_CRAG_GOAT",
+  "placeholder_color": "#a88570",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.45,
+   "height": 1.1
+  },
+  "stats": {
+   "max_health": 22,
+   "poise": 6,
+   "walk_speed": 1.6,
+   "run_speed": 7.0,
+   "turn_speed": 8,
+   "mass": 45
+  },
+  "ai": {
+   "sight_range": 26,
+   "fov": 300,
+   "hearing": 1.5,
+   "skittish": 0.25,
+   "wander_radius": 12,
+   "respawn_hours": 48
+  },
+  "loot_table": "drop_goat",
+  "locomotion": "climber"
+ },
+ {
+  "id": "ANIMAL_REED_HERON",
+  "kind": "ANIMAL",
+  "name_key": "NAME_REED_HERON",
+  "placeholder_color": "#8b6491",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.3,
+   "height": 1.3
+  },
+  "stats": {
+   "max_health": 10,
+   "poise": 2,
+   "walk_speed": 0.9,
+   "run_speed": 6.0,
+   "turn_speed": 6,
+   "mass": 5
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 330,
+   "hearing": 2.2,
+   "skittish": 0.02,
+   "wander_radius": 6,
+   "respawn_hours": 24
+  },
+  "loot_table": "drop_heron"
+ },
+ {
+  "id": "ANIMAL_TIDE_CRAB",
+  "kind": "ANIMAL",
+  "name_key": "NAME_TIDE_CRAB",
+  "placeholder_color": "#df5b51",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.4,
+   "height": 0.5
+  },
+  "stats": {
+   "max_health": 12,
+   "poise": 4,
+   "walk_speed": 1.2,
+   "run_speed": 4.5,
+   "turn_speed": 10,
+   "mass": 8
+  },
+  "ai": {
+   "sight_range": 14,
+   "fov": 360,
+   "hearing": 1.2,
+   "skittish": 0.4,
+   "wander_radius": 6,
+   "respawn_hours": 24
+  },
+  "loot_table": "drop_crab"
+ },
+ {
+  "id": "ANIMAL_DUNE_FOX",
+  "kind": "ANIMAL",
+  "name_key": "NAME_DUNE_FOX",
+  "placeholder_color": "#ff875c",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.3,
+   "height": 0.6
+  },
+  "stats": {
+   "max_health": 14,
+   "poise": 3,
+   "walk_speed": 2.0,
+   "run_speed": 9.0,
+   "turn_speed": 12,
+   "mass": 8
+  },
+  "ai": {
+   "sight_range": 24,
+   "fov": 330,
+   "hearing": 2.2,
+   "skittish": 0.1,
+   "wander_radius": 14,
+   "respawn_hours": 24
+  },
+  "loot_table": "drop_fox",
+  "active_period": "night"
+ },
+ {
+  "id": "ANIMAL_LUMEN_STAG",
+  "kind": "ANIMAL",
+  "name_key": "NAME_LUMEN_STAG",
+  "placeholder_color": "#80ffd0",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.55,
+   "height": 1.8
+  },
+  "stats": {
+   "max_health": 30,
+   "poise": 8,
+   "walk_speed": 1.2,
+   "run_speed": 8.5,
+   "turn_speed": 6,
+   "mass": 110
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 300,
+   "hearing": 1.6,
+   "skittish": 0.1,
+   "wander_radius": 16,
+   "respawn_hours": 72
+  },
+  "loot_table": "drop_lumen_stag"
  }
 ]

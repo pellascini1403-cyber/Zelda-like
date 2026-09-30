@@ -684,5 +684,535 @@
     1
    ]
   }
+ ],
+ "drop_gale_kite": [
+  {
+   "id": "gale_feather",
+   "chance": 0.9,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "raw_meat",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_mire_eel": [
+  {
+   "id": "eel_scale",
+   "chance": 0.9,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.6,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_weaver": [
+  {
+   "id": "weaver_silk",
+   "chance": 0.9,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "fiber",
+   "chance": 0.4,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_veil_weaver": [
+  {
+   "id": "weaver_silk",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "shade_essence",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_carapace": [
+  {
+   "id": "carapace_shard",
+   "chance": 0.9,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "amber_sap",
+   "chance": 0.4,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_shellback": [
+  {
+   "id": "carapace_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "eel_scale",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 0.5,
+   "count": [
+    1,
+    3
+   ]
+  }
+ ],
+ "drop_imp": [
+  {
+   "id": "cinder_ember",
+   "chance": 0.9,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "emberroot",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_burrower": [
+  {
+   "id": "scuttler_chitin",
+   "chance": 0.8,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "glass_shard",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_drifter": [
+  {
+   "id": "hush_gel",
+   "chance": 0.85,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_thief": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    4
+   ]
+  }
+ ],
+ "drop_duskwing": [
+  {
+   "id": "beast_hide",
+   "chance": 0.25,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_rime": [
+  {
+   "id": "thorn_fang",
+   "chance": 0.8,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "frostmint",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_storm_bulwark": [
+  {
+   "id": "bulwark_plate",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "glimmer_shard",
+   "chance": 0.6,
+   "count": [
+    2,
+    4
+   ]
+  }
+ ],
+ "drop_tide_spitter": [
+  {
+   "id": "spitter_gland",
+   "chance": 0.8,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_goat": [
+  {
+   "id": "raw_meat",
+   "chance": 1.0,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "beast_hide",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_heron": [
+  {
+   "id": "gale_feather",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_crab": [
+  {
+   "id": "raw_fish",
+   "chance": 0.6,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_fox": [
+  {
+   "id": "beast_hide",
+   "chance": 0.7,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_lumen_stag": [
+  {
+   "id": "lumen_antler",
+   "chance": 0.6,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "raw_meat",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@forest": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    5
+   ]
+  },
+  {
+   "id": "amber_sap",
+   "chance": 0.6,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "cap_mushroom",
+   "chance": 0.6,
+   "count": [
+    2,
+    4
+   ]
+  },
+  {
+   "id": "glowmoss",
+   "chance": 0.4,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "weaver_silk",
+   "chance": 0.2,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@coast": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    3,
+    6
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "eel_scale",
+   "chance": 0.4,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "resin_bomb",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "carapace_shard",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@lakeshore": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    5
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.6,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "fiber",
+   "chance": 0.5,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "eel_scale",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@highlands": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    5
+   ]
+  },
+  {
+   "id": "iron_ore",
+   "chance": 0.7,
+   "count": [
+    1,
+    3
+   ]
+  },
+  {
+   "id": "frostmint",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "gale_feather",
+   "chance": 0.3,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "whetstone",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@desert": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    3,
+    6
+   ]
+  },
+  {
+   "id": "glass_shard",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "scuttler_chitin",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "cinder_ember",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "chest_common@veil": [
+  {
+   "id": "glimmer_shard",
+   "chance": 1.0,
+   "count": [
+    4,
+    7
+   ]
+  },
+  {
+   "id": "hush_gel",
+   "chance": 0.5,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "shade_essence",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "wisp_filament",
+   "chance": 0.4,
+   "count": [
+    1,
+    1
+   ]
+  }
  ]
 }

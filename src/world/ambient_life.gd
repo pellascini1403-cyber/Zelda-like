@@ -306,7 +306,7 @@ func _mesh(kind: String) -> Mesh:
 		"crab":
 			m = ShapeKit.box(Vector3(0.22, 0.08, 0.16))
 		_:
-			m = ShapeKit.sphere(0.05, 4)
+			m = ShapeKit.sphere(0.08, 4)
 	_meshes[kind] = m
 	return m
 
@@ -321,6 +321,8 @@ func _mat(hex: String, glow: bool) -> Material:
 	m.roughness = 0.8
 	if glow:
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		m.albedo_color = Color(hex) * 1.8
+		m.emission_enabled = true
+		m.emission = Color(hex)
+		m.emission_energy_multiplier = 3.5
 	_mats[k] = m
 	return m

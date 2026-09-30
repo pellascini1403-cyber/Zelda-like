@@ -56,8 +56,12 @@ func apply_damage(info: DamageInfo) -> float:
 				add_status(&"burning", 4.0)
 		&"electric":
 			add_status(&"shocked", 0.8)
-		&"cold":
+		&"cold", &"ice":
 			add_status(&"chilled", 4.0)
+		&"web":
+			add_status(&"webbed", 2.5)
+		&"water":
+			add_status(&"wet", 6.0)
 	damaged.emit(info)
 	if health <= 0.0:
 		health = 0.0

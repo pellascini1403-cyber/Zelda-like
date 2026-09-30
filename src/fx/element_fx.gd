@@ -16,6 +16,9 @@ const COLORS := {
 	&"still": Color(0.85, 0.45, 1.0),
 	&"thorn": Color(0.75, 1.0, 0.35),
 	&"jade": Color(0.4, 1.0, 0.7),
+	&"web": Color(0.92, 0.9, 0.85),
+	&"water": Color(0.45, 0.7, 1.0),
+	&"cold": Color(0.7, 0.9, 1.0),
 }
 
 static var _pool: Array[ElementFX] = []

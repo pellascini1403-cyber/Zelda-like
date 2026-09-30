@@ -71,7 +71,7 @@ fish, bird).
 8. Tests: variant merge, locomotion constraints, behaviour registration,
    spawn routing, discovery conditions and one-time rewards, fauna tiers.
 
-## Phase 2 — Ecosystems `[ ]`
+## Phase 2 — Ecosystems `[x]`
 
 New families (ids provisional) — each changes how you fight or move:
 
@@ -137,3 +137,12 @@ Reward frequency, density, repetition audit, performance tour on low tier.
 ## Progress log
 
 * Phase 1 — architecture done: variants, locomotion (aquatic/climber/burrower/flyer lift), 12 behaviour modules, habitat spawn routing, AmbientLife (13 fauna groups, tiered), discoveries + Atlas, regional loot hook, zone spawn kind. Tests: unit 375 / smoke 36 / systems 102 green.
+* Phase 2 — ecosystems done (see docs/ECOSYSTEMS.md): 9 new families
+  (15 total), 6 data-driven variants, 5 wildlife species, 13 ambient fauna
+  groups, 7 regional materials + raw fish, regional chest flavours for 6
+  regions, web/cold/water statuses. Every region now has its own mix
+  (lake and sea have swimmers, cliffs have climbers). Fixed on the way:
+  projectiles from a freed shooter, square fire particles.
+  Metrics: enemy entities 6 -> 21 (15 families), animals 3 -> 8,
+  items 75 -> 83, loot tables 34 -> 59. Tests: unit 497 / smoke 36 /
+  systems 124 green. Captures: docs/captures/ecosystems/.

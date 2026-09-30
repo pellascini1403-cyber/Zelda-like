@@ -25,6 +25,12 @@ static func build_enemy(v: EntityVisual, h: float, r: float) -> void:
 			_beast(v, h, r, c, sp)
 		"scorpion", "crab", "spider":
 			_crawler(v, h, r, c, sp)
+		"beetle":
+			_beetle(v, h, r, c)
+		"bat":
+			_bat(v, h, r, c)
+		"jelly":
+			_jelly(v, h, r, c)
 		"toad":
 			_toad(v, h, r, c)
 		"wisp":
@@ -264,6 +270,66 @@ static func _crawler(v: EntityVisual, h: float, r: float, c: Dictionary, sp: Str
 	_mouth(v, head, Vector3(0, 0, -hs))
 
 
+## Armoured beetle: a high domed shell that hides the head from the front
+## (the front_armor read), a ram horn, stubby legs. Belly glows when flipped.
+static func _beetle(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
+	var rig := _rig(v, &"legged")
+	var leg := h * 0.3
+	var torso := v._part("torso", ShapeKit.sphere(r * 1.0, FACETS + 2), c["b"], rig, Vector3(0, leg + r * 0.35, 0))
+	(torso.get_child(0) as Node3D).scale = Vector3(1.05, 0.72, 1.25)
+	# Shell plates: two wing cases split down the back.
+	for sx: int in [-1, 1]:
+		v.deco(torso, ShapeKit.sphere(r * 0.9, FACETS), c["b"], Vector3(sx * r * 0.35, r * 0.35, r * 0.1), Vector3(0, 0, sx * 8.0), Vector3(0.62, 0.55, 1.3))
+	v.deco(torso, ShapeKit.box(Vector3(r * 0.06, r * 0.08, r * 2.0)), c["e"], Vector3(0, r * 0.72, r * 0.1), Vector3.ZERO, Vector3.ONE, true)
+	# Front shield + horn.
+	var head := v._part("head", ShapeKit.sphere(r * 0.45, FACETS), c["b"], torso, Vector3(0, -r * 0.05, -r * 1.05))
+	v.deco(head, ShapeKit.box(Vector3(r * 1.5, r * 0.9, r * 0.14)), c["b"], Vector3(0, r * 0.15, -r * 0.15), Vector3(-12, 0, 0))
+	v.deco(head, ShapeKit.cone(r * 0.2, r * 1.1, 4), c["b"], Vector3(0, r * 0.5, -r * 0.45), Vector3(-55, 0, 0))
+	_eyes(v, head, Vector3(0, -r * 0.05, -r * 0.3), r * 0.28, r * 0.08, c)
+	v.deco(torso, ShapeKit.sphere(r * 0.6, FACETS), c["e"], Vector3(0, -r * 0.55, 0), Vector3.ZERO, Vector3(1.2, 0.2, 1.4), true)
+	if _has(v, "back_spikes"):
+		_spikes(v, torso, Vector3(0, r * 0.7, -r * 0.5), Vector3(0, r * 0.6, r * 0.9), _n(c, 4), r * 0.5, 30.0, c["b"])
+	var i := 0
+	for k in 3:
+		var fz := lerpf(-r * 0.6, r * 0.7, k / 2.0)
+		for sx: int in [-1, 1]:
+			var lg := v._part("leg_%d" % i, ShapeKit.capsule(h * 0.06, leg * 1.4), c["b"], rig, Vector3(sx * r * 0.85, leg * 0.9, fz), Vector3(0, -leg * 0.55, 0))
+			lg.rotation.z = sx * deg_to_rad(40.0)
+			v.legs.append(lg)
+			i += 1
+	_mouth(v, head, Vector3(0, 0, -r * 0.5))
+
+
+## Bat: a small hunched body under two huge ragged wings, ears, fangs.
+static func _bat(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
+	var rig := _rig(v, &"float")
+	var torso := v._part("torso", ShapeKit.capsule(r * 0.45, r * 1.3), c["b"], rig, Vector3(0, h * 0.5, 0))
+	var hs := r * 0.42
+	var head := v._part("head", ShapeKit.sphere(hs, FACETS), c["b"], torso, Vector3(0, r * 0.75, -r * 0.2))
+	for sx: int in [-1, 1]:
+		v.deco(head, ShapeKit.cone(hs * 0.3, hs * 1.3, 3), c["b"], Vector3(sx * hs * 0.5, hs * 0.9, 0), Vector3(0, 0, -sx * 20))
+		v.deco(head, ShapeKit.cone(hs * 0.08, hs * 0.4, 4), c["b"], Vector3(sx * hs * 0.2, -hs * 0.7, -hs * 0.6), Vector3(-170, 0, 0))
+	_eyes(v, head, Vector3(0, hs * 0.1, -hs * 0.8), hs * 0.4, hs * 0.16, c)
+	_wings(v, torso, Vector3(0, r * 0.4, 0), h * 1.5, c)
+	_mouth(v, head, Vector3(0, -hs * 0.3, -hs))
+
+
+## Veil jelly: a translucent bell, a violet core and hanging tendrils that
+## sway. Reads as calm and wrong at the same time.
+static func _jelly(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
+	var rig := _rig(v, &"float")
+	var bell := v._part("torso", ShapeKit.sphere(r * 1.0, FACETS + 4), c["b"], rig, Vector3(0, h * 0.72, 0))
+	bell.scale = Vector3(1.0, 0.62, 1.0)
+	v.deco(bell, ShapeKit.sphere(r * 0.42, FACETS), c["e"], Vector3(0, -r * 0.1, 0), Vector3.ZERO, Vector3.ONE, true)
+	var head := v._part("head", ShapeKit.torus(r * 0.75, r * 1.0), c["b"], bell, Vector3(0, -r * 0.35, 0))
+	_eyes(v, bell, Vector3(0, -r * 0.05, -r * 0.92), r * 0.3, r * 0.1, c)
+	for k in 6:
+		var a := TAU * k / 6.0
+		var tend := v.sway_part(bell, "tend_%d" % k, Vector3(cos(a) * r * 0.6, -r * 0.5, sin(a) * r * 0.6))
+		v.deco(tend, ShapeKit.cone(r * 0.07, h * 0.55, 3), c["b"] if k % 2 == 0 else c["e"], Vector3(0, -h * 0.27, 0), Vector3(180, 0, 0), Vector3.ONE, k % 2 == 1)
+	_mouth(v, head, Vector3(0, -r * 0.5, 0))
+
+
 ## Squat spitter: toad-like sac with a spout, back spikes, glowing throat.
 static func _toad(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
 	var rig := _rig(v, &"float")
@@ -399,6 +465,10 @@ static func _biped(v: EntityVisual, h: float, r: float, c: Dictionary, sp: Strin
 				v.deco(torso, ShapeKit.cone(sw * 0.16, sw * 0.8, 4), c["b"], Vector3(sx * sw * (0.85 + k * 0.12), tl * (0.95 - k * 0.15), k * sw * 0.2), Vector3(15, 0, -sx * (35 + k * 20)))
 	if _has(v, "wings"):
 		_wings(v, torso, Vector3(0, tl * 0.8, sw * 0.6), h * 0.8, c)
+	if _has(v, "sack"):
+		# A bulging loot sack: thieves read as thieves from afar.
+		v.deco(torso, ShapeKit.sphere(sw * 0.9, FACETS), c["b"], Vector3(0, tl * 0.75, sw * 0.95), Vector3.ZERO, Vector3(1.0, 1.1, 0.9))
+		v.deco(torso, ShapeKit.sphere(sw * 0.25, FACETS), c["e"], Vector3(0, tl * 1.25, sw * 0.9), Vector3.ZERO, Vector3.ONE, true)
 	if _has(v, "cracks"):
 		v.deco(torso, ShapeKit.sphere(sw * 0.3, FACETS), c["e"], Vector3(0, tl * 0.62, -sw * 0.6), Vector3.ZERO, Vector3(1, 1.2, 0.35), true)
 	for side: int in [-1, 1]:
@@ -440,6 +510,13 @@ static func build_wildlife(v: EntityVisual, h: float, r: float) -> void:
 	var main := ArtStyle.solid(c)
 	var dark := ArtStyle.solid(c.darkened(0.35))
 	var eye := ArtStyle.solid(ArtStyle.palette("wildlife_eye"))
+	var sp := String(t.visual.get("species", "grazer"))
+	if sp == "wader":
+		_wader(v, h, r, main, dark, eye)
+		return
+	if sp == "shellfolk":
+		_shellfolk(v, h, r, main, dark, eye)
+		return
 	var rig := _rig(v, &"legged")
 	var leg := h * 0.45
 	var body_len := r * 2.6
@@ -459,6 +536,21 @@ static func build_wildlife(v: EntityVisual, h: float, r: float) -> void:
 	if _has(v, "curled_horns"):
 		for sx: int in [-1, 1]:
 			v.deco(head, ShapeKit.torus(hs * 0.28, hs * 0.5), dark, Vector3(sx * hs * 0.8, hs * 0.4, hs * 0.1), Vector3(0, 0, 90))
+	if _has(v, "antlers"):
+		# Veil creatures carry the light in their antlers, not on the body.
+		var am: Material = ArtStyle.solid(c.lightened(0.55)) if _has(v, "veil") else dark
+		for sx: int in [-1, 1]:
+			var base := Vector3(sx * hs * 0.4, hs * 0.7, hs * 0.1)
+			v.deco(head, ShapeKit.capsule(hs * 0.07, hs * 1.6), am, base + Vector3(sx * hs * 0.3, hs * 0.6, 0), Vector3(0, 0, -sx * 25), Vector3.ONE, _has(v, "veil"))
+			for k in 3:
+				v.deco(head, ShapeKit.capsule(hs * 0.05, hs * 0.7), am, base + Vector3(sx * hs * (0.35 + k * 0.18), hs * (0.55 + k * 0.35), -hs * 0.1), Vector3(-20, 0, -sx * 70))
+	if _has(v, "shimmer") and not _has(v, "veil"):
+		v.deco(body, ShapeKit.sphere(h * 0.1, 8), ArtStyle.solid(c.lightened(0.5)), Vector3(0, h * 0.28, 0), Vector3.ZERO, Vector3(1.4, 0.5, 2.0), true)
+	if _has(v, "beard"):
+		v.deco(head, ShapeKit.cone(hs * 0.2, hs * 0.7, 5), dark, Vector3(0, -hs * 0.75, -hs * 0.45), Vector3(180, 0, 0))
+	if _has(v, "big_ears"):
+		for sx: int in [-1, 1]:
+			v.deco(head, ShapeKit.cone(hs * 0.35, hs * 1.0, 4), main, Vector3(sx * hs * 0.5, hs * 0.85, hs * 0.1), Vector3(0, 0, -sx * 18))
 	if _has(v, "fleece"):
 		for k in 5:
 			v.deco(body, ShapeKit.sphere(h * 0.2, 8), main, Vector3((k % 2 - 0.5) * h * 0.2, h * 0.22, -body_len * 0.35 + k * body_len * 0.17))
@@ -473,3 +565,44 @@ static func build_wildlife(v: EntityVisual, h: float, r: float) -> void:
 			v.legs.append(v._part("leg_%d" % i, ShapeKit.capsule(h * 0.07, leg), main, rig, Vector3(sx * h * 0.2, leg, fz * body_len * 0.32), Vector3(0, -leg * 0.5, 0)))
 			i += 1
 	_mouth(v, head, Vector3(0, 0, -hs))
+
+
+## Wading bird (herons): stilt legs, a long S neck, a dagger beak.
+static func _wader(v: EntityVisual, h: float, r: float, main: Material, dark: Material, eye: Material) -> void:
+	var rig := _rig(v, &"legged")
+	var leg := h * 0.48
+	var body := v._part("torso", ShapeKit.capsule(r * 0.55, r * 1.9), main, rig, Vector3(0, leg + r * 0.3, 0))
+	(body.get_child(0) as Node3D).rotation_degrees = Vector3(70, 0, 0)
+	v.deco(body, ShapeKit.capsule(h * 0.05, h * 0.38), main, Vector3(0, r * 0.7, -r * 0.55), Vector3(-15, 0, 0))
+	var hs := h * 0.07
+	var head := v._part("head", ShapeKit.sphere(hs, 10), main, body, Vector3(0, r * 0.7 + h * 0.2, -r * 0.7))
+	v.deco(head, ShapeKit.cone(hs * 0.35, hs * 3.2, 5), dark, Vector3(0, -hs * 0.1, -hs * 1.8), Vector3(-90, 0, 0))
+	for sx: int in [-1, 1]:
+		v.deco(head, ShapeKit.sphere(hs * 0.2, 6), eye, Vector3(sx * hs * 0.6, hs * 0.2, -hs * 0.4))
+	var tail := v.sway_part(body, "tail", Vector3(0, 0, r * 0.95))
+	v.deco(tail, ShapeKit.cone(r * 0.35, r * 0.8, 4), dark, Vector3(0, 0, r * 0.3), Vector3(100, 0, 0), Vector3(1, 1, 0.3))
+	for sx: int in [-1, 1]:
+		v.legs.append(v._part("leg_%d" % (0 if sx < 0 else 1), ShapeKit.capsule(h * 0.022, leg), dark, rig, Vector3(sx * r * 0.2, leg, 0), Vector3(0, -leg * 0.5, 0)))
+	_mouth(v, head, Vector3(0, 0, -hs * 3.0))
+
+
+## Shore crabs (wildlife, not corrupted): round shell, raised eyes, one big
+## claw — comic, not threatening.
+static func _shellfolk(v: EntityVisual, h: float, r: float, main: Material, dark: Material, eye: Material) -> void:
+	var rig := _rig(v, &"legged")
+	var shell := v._part("torso", ShapeKit.sphere(r * 0.9, 12), main, rig, Vector3(0, h * 0.45, 0))
+	(shell.get_child(0) as Node3D).scale = Vector3(1.35, 0.55, 1.0)
+	var head := v._part("head", ShapeKit.sphere(r * 0.1, 6), main, shell, Vector3(0, r * 0.2, -r * 0.7))
+	for sx: int in [-1, 1]:
+		v.deco(head, ShapeKit.capsule(r * 0.04, r * 0.35), dark, Vector3(sx * r * 0.18, r * 0.15, 0))
+		v.deco(head, ShapeKit.sphere(r * 0.07, 6), eye, Vector3(sx * r * 0.18, r * 0.35, 0))
+		var big := 1.6 if sx > 0 else 0.9
+		v.deco(shell, ShapeKit.sphere(r * 0.22 * big, 8), dark, Vector3(sx * r * 0.95, 0, -r * 0.55), Vector3.ZERO, Vector3(1, 0.7, 1.3))
+	var i := 0
+	for k in 3:
+		for sx: int in [-1, 1]:
+			var lg := v._part("leg_%d" % i, ShapeKit.capsule(h * 0.05, h * 0.5), dark, rig, Vector3(sx * r * 0.9, h * 0.35, lerpf(-r * 0.3, r * 0.4, k / 2.0)), Vector3(0, -h * 0.2, 0))
+			lg.rotation.z = sx * deg_to_rad(55.0)
+			v.legs.append(lg)
+			i += 1
+	_mouth(v, head, Vector3(0, 0, -r * 0.2))

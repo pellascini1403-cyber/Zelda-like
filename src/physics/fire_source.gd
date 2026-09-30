@@ -143,6 +143,7 @@ func _flames() -> CPUParticles3D:
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	m.vertex_color_use_as_albedo = true
+	m.albedo_texture = _dot()
 	quad.material = m
 	p.mesh = quad
 	var g := Gradient.new()
@@ -156,6 +157,16 @@ func _flames() -> CPUParticles3D:
 	curve.add_point(Vector2(1, 0.2))
 	p.scale_amount_curve = curve
 	return p
+
+
+## Soft round sprite shared by every fire (no square particles).
+static var _dot_tex: Texture2D
+
+
+static func _dot() -> Texture2D:
+	if _dot_tex == null:
+		_dot_tex = ArtStyle._soft_dot()
+	return _dot_tex
 
 
 func _smoke_fx() -> CPUParticles3D:
@@ -177,6 +188,7 @@ func _smoke_fx() -> CPUParticles3D:
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.vertex_color_use_as_albedo = true
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_texture = _dot()
 	quad.material = m
 	p.mesh = quad
 	var g := Gradient.new()

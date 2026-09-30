@@ -87,6 +87,9 @@ func reflect(new_owner: Node3D) -> void:
 
 
 func _impact(pos: Vector3, collider: Object) -> void:
+	# The thrower may have died (or dissolved) while this was in flight.
+	if not is_instance_valid(owner_body):
+		owner_body = null
 	var dmg := damage * (vs_boss if collider is Boss else 1.0)
 	var info := DamageInfo.make(dmg, owner_body, velocity.normalized() * 4.0, element)
 	info.kind = &"projectile"

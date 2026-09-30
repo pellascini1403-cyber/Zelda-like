@@ -43,6 +43,7 @@ func _run() -> void:
 	test_boss_data()
 	test_abilities_data()
 	test_ecology_architecture()
+	test_ecosystems()
 	print("==== UNIT: %d checks, %d failed ====" % [_count, _fails])
 	get_tree().quit(1 if _fails > 0 else 0)
 
@@ -780,4 +781,66 @@ func test_ecology_architecture() -> void:
 	WorldState.flags.erase("disc:test_disc")
 	PlayerData.glimmer = g0
 	# Regional loot: falls back to the plain table when no flavour exists.
-	ok(DB.regional_table(&"chest_common", Vector3(9999, 0, 9999)) == &"chest_common", "regional loot falls back to the base table")
+	ok(DB.regional_table(&"chest_rare", Vector3(0, 0, 0)) == &"chest_rare", "regional loot falls back to the base table")
+
+
+## Expansion phase 2: enough families, each one a different fight; every
+## region its own mix; water and cliffs inhabited; fauna everywhere.
+func test_ecosystems() -> void:
+	var families := {}
+	var variants := 0
+	for e: EntityType in DB.entities.values():
+		if e.kind != EntityType.Kind.ENEMY:
+			continue
+		if e.variant_of != &"":
+			variants += 1
+		else:
+			families[e.id] = e
+	ok(families.size() >= 14, "at least 14 enemy families (%d)" % families.size())
+	ok(variants >= 5, "data-driven variants exist (%d)" % variants)
+	var old := [&"ENEMY_THORNLING", &"ENEMY_BULWARK", &"ENEMY_SPITTER", &"ENEMY_WISP", &"ENEMY_SCUTTLER", &"ENEMY_SHADE"]
+	for id in families:
+		var e: EntityType = families[id]
+		if id in old:
+			continue
+		ok(not e.behaviors.is_empty() or e.locomotion != &"ground", "%s changes the fight (behaviour or locomotion)" % id)
+	for id in DB.entities:
+		var e: EntityType = DB.entities[id]
+		if e.kind == EntityType.Kind.ENEMY and e.variant_of != &"":
+			var base: EntityType = DB.entities[e.variant_of]
+			var differs := e.behaviors != base.behaviors or e.locomotion != base.locomotion or e.element_mult != base.element_mult or e.attacks.size() != base.attacks.size() or e.attacks[0].element != base.attacks[0].element
+			ok(differs, "variant %s is more than a recolour" % id)
+	var locos := {}
+	for e: EntityType in DB.entities.values():
+		if e.kind in [EntityType.Kind.ENEMY, EntityType.Kind.ANIMAL]:
+			locos[e.locomotion] = true
+	for l in [&"ground", &"flying", &"aquatic", &"climber", &"burrower"]:
+		ok(locos.has(l), "some creature uses %s locomotion" % l)
+	var sets := {}
+	var habitats := {}
+	for r: RegionData in DB.regions.values():
+		var ids := {}
+		for sp in r.enemy_spawns:
+			ids[String(sp["entity"])] = true
+			habitats["%s:%s" % [r.id, sp.get("habitat", "land")]] = true
+		ok(ids.size() >= 3, "region %s has at least 3 enemy kinds (%d)" % [r.id, ids.size()])
+		ok(not r.animal_spawns.is_empty(), "region %s has wildlife" % r.id)
+		sets[r.id] = ids
+	for a in sets:
+		var own := 0
+		for id in sets[a]:
+			var elsewhere := 0
+			for b in sets:
+				if b != a and sets[b].has(id):
+					elsewhere += 1
+			if elsewhere <= 1:
+				own += 1
+		ok(own >= 1, "region %s has an enemy that is (nearly) its own" % a)
+	ok(habitats.has("lakeshore:water") and habitats.has("coast:water"), "lake and sea have swimmers")
+	ok(habitats.has("highlands:cliff"), "highland cliffs have climbers")
+	var fauna_regions := {}
+	for f in DB.fauna:
+		for rg in f.get("regions", []):
+			fauna_regions[rg] = true
+	for r in DB.regions:
+		ok(fauna_regions.has(String(r)), "region %s has ambient fauna" % r)

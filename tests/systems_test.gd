@@ -196,6 +196,9 @@ func _run() -> void:
 	# --- Premium vehicles ---------------------------------------------------------------------------
 	await _vehicles(w, p)
 
+	# --- Ecosystems (expansion phase 2) ------------------------------------------------------------
+	await _ecosystems(w, p)
+
 	# --- World event -----------------------------------------------------------------------------------
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
 	var bp: Variant = w.events.beacon_position()
@@ -553,3 +556,143 @@ func _finish() -> void:
 	print("==== %d checks, %d failed ====" % [_log.size(), _failures.size()])
 	SaveSystem.delete_save()
 	get_tree().quit(1 if _failures.size() > 0 else 0)
+
+
+func _spawn_test(w: GameWorld, id: StringName, pos: Vector3) -> Creature:
+	var c := w.spawner.spawn_creature(id, pos, "", "t_" + String(id))
+	return c
+
+
+## A point near `center` whose terrain height lies in [lo, hi] (m).
+func _find_height(w: GameWorld, center: Vector2, r0: float, r1: float, lo: float, hi: float, steep: bool = false) -> Variant:
+	for ri in 24:
+		var r := lerpf(r0, r1, ri / 23.0)
+		for k in 32:
+			var a := TAU * k / 32.0
+			var x := center.x + cos(a) * r
+			var z := center.y + sin(a) * r
+			var h := w.gen.height(x, z)
+			if h >= lo and h <= hi and (not steep or w.gen.normal(x, z).y < 0.7):
+				return Vector3(x, h, z)
+	return null
+
+
+func _ecosystems(w: GameWorld, p: Player) -> void:
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(11.0)
+	# Lake: a swimmer stays in the water, cannot be hit while deep, surfaces to strike.
+	var shore: Variant = _find_height(w, Vector2(-400, 70), 60.0, 190.0, -0.7, 0.2)
+	check(shore != null, "lake shallows found")
+	if shore != null:
+		var sh: Vector3 = shore
+		await teleport(sh.x, sh.z, 0.5)
+		var deep: Variant = _find_height(w, Vector2(sh.x, sh.z), 5.0, 14.0, -30.0, -2.5)
+		check(deep != null, "deep water near the shallows")
+		if deep != null:
+			var eel := _spawn_test(w, &"ENEMY_MIRE_EEL", Vector3((deep as Vector3).x, -1.5, (deep as Vector3).z))
+			await seconds(1.0)
+			check(eel.global_position.y < WorldGen.SEA_LEVEL and eel.hidden, "eel waits deep and hidden (y %.1f)" % eel.global_position.y)
+			var hp := eel.health.health
+			eel.take_damage(DamageInfo.make(40, p))
+			check(eel.health.health == hp, "a submerged eel cannot be hit")
+			var surfaced := false
+			for i in 40:
+				await seconds(0.25)
+				if not eel.hidden:
+					surfaced = true
+					break
+			check(surfaced, "eel surfaces to strike at a player in the water")
+			check(eel.health.has_status(&"wet"), "swimmers are always soaked (double shock)")
+			var land := true
+			for i in 12:
+				await seconds(0.25)
+				land = land and w.gen.height(eel.global_position.x, eel.global_position.z) < WorldGen.SEA_LEVEL - 0.3
+			check(land, "eel never leaves the water")
+			eel.queue_free()
+		await seconds(2.5)
+		check(w.ambient.live_count() > 0, "ambient fauna around the lake (%s)" % ", ".join(w.ambient.live_ids()))
+		check(w.ambient.live_count() <= int(Quality.current()["ambient_groups"]), "ambient fauna within the quality budget")
+		var swimmers := 0
+		for c in get_tree().get_nodes_in_group(&"creatures"):
+			if (c as Creature).type.is_aquatic():
+				swimmers += 1
+		check(swimmers > 0, "water slots now hold swimmers (%d)" % swimmers)
+	# Desert: the burrower travels hidden and only erupts to be hit.
+	await teleport(1100.0, 250.0)
+	var bur := _spawn_test(w, &"ENEMY_DUNE_BURROWER", p.global_position + Vector3(9, 0.5, 0))
+	await seconds(0.8)
+	check(bur.hidden and bur.brain.state_name() == &"burrowing", "burrower travels under the sand")
+	bur.brain.change(&"erupt")
+	await seconds(1.4)
+	check(not bur.hidden, "burrower is exposed after it erupts")
+	bur.queue_free()
+	# Front armour: hits from the front glance off, hits from behind land.
+	var cara := _spawn_test(w, &"ENEMY_BRAMBLE_CARAPACE", p.global_position + Vector3(0, 0.5, -4))
+	await seconds(0.3)
+	cara.facing_yaw = atan2(-(p.global_position.x - cara.global_position.x), -(p.global_position.z - cara.global_position.z))
+	var h0 := cara.health.health
+	cara.take_damage(DamageInfo.make(20, p))
+	var front_loss := h0 - cara.health.health
+	var behind := Node3D.new()
+	add_child(behind)
+	behind.global_position = cara.global_position - cara.facing_dir() * 3.0
+	h0 = cara.health.health
+	cara.take_damage(DamageInfo.make(20, behind))
+	var back_loss := h0 - cara.health.health
+	check(front_loss < back_loss * 0.4, "carapace shrugs off frontal hits (%.1f front vs %.1f behind)" % [front_loss, back_loss])
+	cara.brain.on_stagger(1.0)
+	await frames(3)
+	check(cara.brain.state_name() == &"flipped", "a staggered carapace flips over")
+	behind.queue_free()
+	cara.queue_free()
+	# Fire imp: burning ground in dry weather, doused in rain.
+	var imp := _spawn_test(w, &"ENEMY_CINDER_IMP", p.global_position + Vector3(6, 0.5, 6))
+	imp.perception.alert(p.global_position)
+	imp.brain.change(&"chase")
+	var fires0 := FireSource.active_count
+	await seconds(3.5)
+	check(FireSource.active_count > fires0 or imp.dead, "cinder imp leaves burning ground")
+	var ign: IgniteBehavior = null
+	for m in imp.brain.behaviors:
+		if m is IgniteBehavior:
+			ign = m
+	var rain0 := Weather.rain
+	Weather.rain = 1.0
+	check(ign != null and ign.doused(), "rain douses the imp")
+	Weather.rain = rain0
+	imp.queue_free()
+	# Thief: snatches glimmer, runs, pays it back with interest when caught.
+	PlayerData.glimmer = 100
+	var thief := _spawn_test(w, &"ENEMY_GLINT_THIEF", p.global_position + Vector3(-3, 0.5, 0))
+	await frames(3)
+	thief.brain.notify_hit(p)
+	check(PlayerData.glimmer == 85, "thief snatches glimmer")
+	thief.brain.change(&"chase")
+	await frames(3)
+	check(thief.brain.state_name() == &"thief_flee", "thief runs with the loot")
+	thief.take_damage(DamageInfo.make(999, p))
+	await frames(3)
+	check(PlayerData.glimmer == 103, "catching the thief returns it with interest (%d)" % PlayerData.glimmer)
+	# Highlands: a climber clings to the cliff face.
+	var cliff: Variant = _find_height(w, Vector2(-60, -560), 120.0, 330.0, 20.0, 200.0, true)
+	check(cliff != null, "a highland cliff found")
+	if cliff != null:
+		var cf: Vector3 = cliff
+		await teleport(cf.x + 12.0, cf.z, 3.0)
+		var wv := _spawn_test(w, &"ENEMY_CRAG_WEAVER", cf + Vector3.UP * 0.5)
+		await seconds(2.0)
+		var g := w.gen.height(wv.global_position.x, wv.global_position.z)
+		check(absf(wv.global_position.y - g) < 1.2, "weaver clings to the terrain surface (off by %.2f)" % (wv.global_position.y - g))
+		wv.queue_free()
+		# Flyer: circles high, then commits to a telegraphed dive.
+		var kite := _spawn_test(w, &"ENEMY_GALE_KITE", p.global_position + Vector3(10, 4, 0))
+		kite.perception.alert(p.global_position)
+		kite.brain.change(&"chase")
+		var swooped := false
+		for i in 40:
+			await seconds(0.25)
+			if kite.brain.state_name() == &"swoop":
+				swooped = true
+				break
+		check(swooped, "gale kite swoops")
+		kite.queue_free()

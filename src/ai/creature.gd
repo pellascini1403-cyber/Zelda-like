@@ -91,14 +91,17 @@ func _build() -> void:
 	health.staggered.connect(_on_staggered)
 	health.damaged.connect(_on_damaged)
 	perception = Perception.new(self)
+	# Body controls first: behaviour modules set them from the brain's
+	# initial state (a swimmer starts deep, a burrower underground).
+	lift = 0.0
+	hidden = false
+	collision_layer = 1 << 2
+	sink = float(type.ai_value("swim_depth", 1.0)) if type.is_aquatic() else 0.0
 	brain = _make_brain()
 	global_position = home
 	facing_yaw = randf() * TAU
 	var floats := type.flying or type.is_aquatic() or type.is_climber()
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING if floats else CharacterBody3D.MOTION_MODE_GROUNDED
-	lift = 0.0
-	hidden = false
-	sink = float(type.ai_value("swim_depth", 1.0)) if type.is_aquatic() else 0.0
 	if Debug.show_entity_debug:
 		enable_debug_label(true)
 	_on_built()
@@ -142,7 +145,7 @@ func _move(delta: float) -> void:
 		if not type.flying:
 			to.y = 0.0
 		if to.length() > 0.3:
-			desired = _avoid(to.normalized()) * move_speed
+			desired = _avoid(to.normalized()) * move_speed * (0.65 if health.has_status(&"chilled") else 1.0)
 			face_towards(desired, delta)
 	knockback = knockback.move_toward(Vector3.ZERO, 18.0 * delta)
 	var hv := Vector3(velocity.x, 0, velocity.z).move_toward(desired, 20.0 * delta)

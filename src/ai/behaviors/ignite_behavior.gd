@@ -17,7 +17,7 @@ func pre_tick(delta: float) -> StringName:
 	if _t <= 0.0 and c.tier == Creature.Tier.FULL and b.current.id() in [&"chase", &"patrol", &"attack"]:
 		_t = float(param("ignite_every", 3.0))
 		if not doused() and c.global_position.y > WorldGen.SEA_LEVEL + 0.2:
-			FireSource.ignite_at(c.get_parent(), c.global_position - c.facing_dir() * 0.8, 5.0)
+			FireSource.ignite_at(c.get_parent(), c.global_position - c.facing_dir() * 0.8, 4.0)
 	return &""
 
 

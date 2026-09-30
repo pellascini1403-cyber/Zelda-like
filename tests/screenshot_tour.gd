@@ -62,6 +62,15 @@ const SHOTS := [
 	["40_vantrel_depot", 1052.0, 448.0, -146.0, -4.0, 16.0, "clear", "vehicles:none"],
 	["41_vehicles_night", 1100.0, 250.0, -90.0, -10.0, 22.5, "clear", "vehicles:drive_longwake"],
 	["33_lineup_wildlife", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:wildlife"],
+	# Ecosystems expansion
+	["42_eco_families_a", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:eco_a"],
+	["42b_eco_families_b", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:eco_b"],
+	["43_eco_variants", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:eco_variants"],
+	["44_eco_wildlife", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:wildlife2"],
+	["45_eco_fireflies", 470.0, 230.0, -30.0, -2.0, 22.5, "clear", "eco:none"],
+	["46_eco_eel_surfacing", -262.0, 70.0, 95.0, -14.0, 11.0, "clear", "eco:eel"],
+	["47_eco_kite_swoop", 40.0, 60.0, 14.0, 4.0, 12.0, "clear", "eco:kite"],
+	["48_eco_burning_imp", 700.0, -100.0, 30.0, -10.0, 13.0, "clear", "eco:imp"],
 ]
 
 const LINEUPS := {
@@ -73,6 +82,10 @@ const LINEUPS := {
 	"minibosses": [["BOSS_THORN_CHIEF", "BOSS_GLASS_STALKER", "BOSS_HOLLOW_SHADE", "BOSS_STONEWARD", "BOSS_CRAG_HARRIER"], 11.0],
 	"bosses": [["BOSS_THORNBACK", "BOSS_GLASS_MATRIARCH", "BOSS_STILLWAKE_WARDEN"], 22.0],
 	"species": [["spider", "dragon", "serpent", "goblin", "ENEMY_THORNLING"], 8.0],
+	"eco_a": [["ENEMY_GALE_KITE", "ENEMY_MIRE_EEL", "ENEMY_CRAG_WEAVER", "ENEMY_BRAMBLE_CARAPACE", "ENEMY_CINDER_IMP"], 8.0],
+	"eco_b": [["ENEMY_DUNE_BURROWER", "ENEMY_HUSH_DRIFTER", "ENEMY_GLINT_THIEF", "ENEMY_DUSKWING", "ENEMY_SHELLBACK"], 8.0],
+	"eco_variants": [["ENEMY_RIME_THORNLING", "ENEMY_STORM_BULWARK", "ENEMY_TIDE_SPITTER", "ENEMY_CAVE_WEAVER", "ENEMY_VEIL_WEAVER"], 8.0],
+	"wildlife2": [["ANIMAL_CRAG_GOAT", "ANIMAL_REED_HERON", "ANIMAL_TIDE_CRAB", "ANIMAL_DUNE_FOX", "ANIMAL_LUMEN_STAG"], 8.0],
 	"wildlife": [["ANIMAL_WOOLHORN", "ANIMAL_BURROWHOP", "ANIMAL_GILDED_HOP", "MOUNT_WINDSTRIDER", "ENEMY_THORNLING"], 8.0],
 }
 
@@ -179,6 +192,8 @@ func _shot(s: Array) -> void:
 		await get_tree().create_timer(0.8).timeout
 	if String(s[7]).begins_with("vehicles:"):
 		await _vehicle_shot(String(s[7]).trim_prefix("vehicles:"), p, w)
+	if String(s[7]).begins_with("eco:"):
+		await _eco_shot(String(s[7]).trim_prefix("eco:"), p, w)
 	if s[7] == "title":
 		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
 		await get_tree().create_timer(1.2).timeout
@@ -247,6 +262,40 @@ func _shot(s: Array) -> void:
 	if p.vehicle:
 		p.exit_vehicle(false)
 	w.vehicles.put_away()
+
+
+## Ecosystem captures: creatures doing their thing in their place.
+func _eco_shot(kind: String, p: Player, w: GameWorld) -> void:
+	var fwd := p.facing_dir()
+	match kind:
+		"eel":
+			# First deep spot ahead of the shore.
+			var at := p.global_position + fwd * 10.0
+			for k in 30:
+				var q := p.global_position + fwd * (6.0 + k) + fwd.cross(Vector3.UP) * 3.5
+				if w.gen.height(q.x, q.z) < -1.3:
+					at = q
+					break
+			var eel := w.spawner.spawn_creature(&"ENEMY_MIRE_EEL", Vector3(at.x, -1.0, at.z), "", "tour")
+			await get_tree().create_timer(0.5).timeout
+			eel.brain.change(&"surface")
+			await get_tree().create_timer(1.1).timeout
+			eel.brain.change(&"idle")
+			eel.face_towards(p.global_position - eel.global_position, 1.0)
+		"kite":
+			for i in 3:
+				var k := w.spawner.spawn_creature(&"ENEMY_GALE_KITE", p.global_position + fwd * (9.0 + i * 5.0) + Vector3(i * 3.0 - 3.0, 6.0 + i * 2.0, 0), "", "tour")
+				k.perception.alert(p.global_position)
+				k.brain.change(&"chase")
+			await get_tree().create_timer(2.6).timeout
+		"imp":
+			for i in 2:
+				var imp := w.spawner.spawn_creature(&"ENEMY_CINDER_IMP", p.global_position + fwd * (7.0 + i * 3.0) + Vector3(i * 2.0, 0.5, 0), "", "tour")
+				imp.perception.alert(p.global_position)
+				imp.brain.change(&"chase")
+			await get_tree().create_timer(3.0).timeout
+		_:
+			await get_tree().create_timer(2.5).timeout
 
 
 ## Vehicle captures: parked lineup, driving, jumping, floating, garage.

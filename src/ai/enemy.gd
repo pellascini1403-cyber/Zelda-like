@@ -6,7 +6,8 @@ extends Creature
 
 func _on_built() -> void:
 	add_to_group(&"creatures")
-	add_to_group(&"enemies")
+	if not hidden:
+		add_to_group(&"enemies")
 	respawn_hours = float(type.ai_value("respawn_hours", 72.0))
 	if not EventBus.time_period_changed.is_connected(_on_period):
 		EventBus.time_period_changed.connect(_on_period)

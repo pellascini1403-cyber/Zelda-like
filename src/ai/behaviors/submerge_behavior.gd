@@ -40,7 +40,6 @@ class SubmergedState:
 	func enter() -> void:
 		c.set_hidden(true)
 		c.sink = float(c.type.ai_value("deep_depth", 2.4))
-		c.visual.set_fade(0.55)
 		point = random_point_near(c.home, float(c.type.ai_value("wander_radius", 10.0)))
 		c.go_to(point, c.type.walk_speed)
 
@@ -71,7 +70,8 @@ class SurfaceState:
 
 	func enter() -> void:
 		c.stop()
-		c.sink = 0.35
+		# Rise until the head and back break the surface.
+		c.sink = -0.15
 		Telegraph.disc(c, c.global_position, c.type.collider_radius + 1.2, 0.8, Color(0.6, 0.85, 1.0))
 		Effects.splash(c, Vector3(c.global_position.x, WorldGen.SEA_LEVEL, c.global_position.z))
 
@@ -79,7 +79,6 @@ class SurfaceState:
 		if t < 0.8:
 			return &""
 		c.set_hidden(false)
-		c.visual.set_fade(0.0)
 		since = Time.get_ticks_msec()
 		b.set_cooldown(&"surface", 6.0)
 		Audio.play_at(&"splash", c.global_position, -2.0)

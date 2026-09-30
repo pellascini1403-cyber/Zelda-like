@@ -32,6 +32,40 @@
     ]
    },
    {
+    "entity": "ENEMY_CINDER_IMP",
+    "weight": 0.8,
+    "group": [
+     1,
+     2
+    ],
+    "weather": [
+     "clear",
+     "cloudy",
+     "windy"
+    ],
+    "period": "day"
+   },
+   {
+    "entity": "ENEMY_GLINT_THIEF",
+    "weight": 0.5,
+    "group": [
+     1,
+     1
+    ],
+    "period": "day"
+   },
+   {
+    "entity": "ENEMY_STORM_BULWARK",
+    "weight": 1.2,
+    "group": [
+     1,
+     1
+    ],
+    "weather": [
+     "storm"
+    ]
+   },
+   {
     "entity": "ENEMY_WISP",
     "weight": 2,
     "group": [
@@ -39,6 +73,24 @@
      2
     ],
     "period": "night"
+   },
+   {
+    "entity": "ENEMY_DUSKWING",
+    "weight": 1.2,
+    "group": [
+     3,
+     5
+    ],
+    "period": "night"
+   },
+   {
+    "entity": "ENEMY_GALE_KITE",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "cliff"
    }
   ],
   "animal_spawns": [
@@ -106,8 +158,16 @@
   "animal_density": 0.5,
   "enemy_spawns": [
    {
+    "entity": "ENEMY_BRAMBLE_CARAPACE",
+    "weight": 2.5,
+    "group": [
+     1,
+     2
+    ]
+   },
+   {
     "entity": "ENEMY_SPITTER",
-    "weight": 3,
+    "weight": 2,
     "group": [
      1,
      2
@@ -115,7 +175,7 @@
    },
    {
     "entity": "ENEMY_THORNLING",
-    "weight": 2,
+    "weight": 1,
     "group": [
      2,
      3
@@ -123,12 +183,30 @@
    },
    {
     "entity": "ENEMY_WISP",
-    "weight": 2,
+    "weight": 1.5,
     "group": [
      1,
      2
     ],
     "period": "night"
+   },
+   {
+    "entity": "ENEMY_DUSKWING",
+    "weight": 2,
+    "group": [
+     3,
+     5
+    ],
+    "period": "night"
+   },
+   {
+    "entity": "ENEMY_CRAG_WEAVER",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "cliff"
    }
   ],
   "animal_spawns": [
@@ -193,6 +271,32 @@
   "animal_density": 0.35,
   "enemy_spawns": [
    {
+    "entity": "ENEMY_RIME_THORNLING",
+    "weight": 3,
+    "group": [
+     2,
+     3
+    ],
+    "weather": [
+     "snow",
+     "cloudy",
+     "windy"
+    ]
+   },
+   {
+    "entity": "ENEMY_THORNLING",
+    "weight": 1.5,
+    "group": [
+     2,
+     3
+    ],
+    "weather": [
+     "clear",
+     "rain",
+     "fog"
+    ]
+   },
+   {
     "entity": "ENEMY_BULWARK",
     "weight": 1,
     "group": [
@@ -201,11 +305,22 @@
     ]
    },
    {
-    "entity": "ENEMY_THORNLING",
+    "entity": "ENEMY_STORM_BULWARK",
     "weight": 2,
     "group": [
-     2,
-     3
+     1,
+     1
+    ],
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "entity": "ENEMY_GALE_KITE",
+    "weight": 1.5,
+    "group": [
+     1,
+     2
     ]
    },
    {
@@ -216,16 +331,60 @@
      1
     ],
     "period": "night"
+   },
+   {
+    "entity": "ENEMY_DUSKWING",
+    "weight": 1,
+    "group": [
+     3,
+     4
+    ],
+    "period": "night"
+   },
+   {
+    "entity": "ENEMY_CRAG_WEAVER",
+    "weight": 3,
+    "group": [
+     1,
+     2
+    ],
+    "habitat": "cliff"
+   },
+   {
+    "entity": "ENEMY_GALE_KITE",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "cliff"
    }
   ],
   "animal_spawns": [
    {
     "entity": "ANIMAL_WOOLHORN",
-    "weight": 2,
+    "weight": 1.5,
     "group": [
      2,
      3
     ]
+   },
+   {
+    "entity": "ANIMAL_CRAG_GOAT",
+    "weight": 1,
+    "group": [
+     2,
+     3
+    ]
+   },
+   {
+    "entity": "ANIMAL_CRAG_GOAT",
+    "weight": 3,
+    "group": [
+     2,
+     4
+    ],
+    "habitat": "cliff"
    }
   ],
   "resources": [
@@ -264,11 +423,20 @@
   "enemy_spawns": [
    {
     "entity": "ENEMY_SPITTER",
-    "weight": 3,
+    "weight": 2,
     "group": [
      1,
      2
     ]
+   },
+   {
+    "entity": "ENEMY_GLINT_THIEF",
+    "weight": 0.4,
+    "group": [
+     1,
+     1
+    ],
+    "period": "day"
    },
    {
     "entity": "ENEMY_WISP",
@@ -278,23 +446,40 @@
      2
     ],
     "period": "night"
+   },
+   {
+    "entity": "ENEMY_MIRE_EEL",
+    "weight": 3,
+    "group": [
+     1,
+     2
+    ],
+    "habitat": "water"
    }
   ],
   "animal_spawns": [
    {
-    "entity": "ANIMAL_WOOLHORN",
-    "weight": 1,
+    "entity": "ANIMAL_REED_HERON",
+    "weight": 3,
     "group": [
-     2,
-     3
+     1,
+     2
     ]
    },
    {
     "entity": "ANIMAL_BURROWHOP",
-    "weight": 2,
+    "weight": 1.5,
     "group": [
      1,
      2
+    ]
+   },
+   {
+    "entity": "ANIMAL_WOOLHORN",
+    "weight": 0.7,
+    "group": [
+     2,
+     3
     ]
    }
   ],
@@ -333,26 +518,77 @@
   "animal_density": 0.3,
   "enemy_spawns": [
    {
-    "entity": "ENEMY_SPITTER",
-    "weight": 2,
+    "entity": "ENEMY_TIDE_SPITTER",
+    "weight": 2.5,
     "group": [
      1,
      2
     ]
    },
    {
-    "entity": "ENEMY_THORNLING",
+    "entity": "ENEMY_SHELLBACK",
+    "weight": 1.2,
+    "group": [
+     1,
+     1
+    ]
+   },
+   {
+    "entity": "ENEMY_GALE_KITE",
     "weight": 1,
+    "group": [
+     1,
+     2
+    ]
+   },
+   {
+    "entity": "ENEMY_GLINT_THIEF",
+    "weight": 0.5,
+    "group": [
+     1,
+     1
+    ],
+    "period": "day"
+   },
+   {
+    "entity": "ENEMY_THORNLING",
+    "weight": 0.7,
     "group": [
      2,
      2
     ]
+   },
+   {
+    "entity": "ENEMY_MIRE_EEL",
+    "weight": 2,
+    "group": [
+     1,
+     2
+    ],
+    "habitat": "water"
+   },
+   {
+    "entity": "ENEMY_GALE_KITE",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "cliff"
    }
   ],
   "animal_spawns": [
    {
+    "entity": "ANIMAL_TIDE_CRAB",
+    "weight": 3,
+    "group": [
+     2,
+     4
+    ]
+   },
+   {
     "entity": "ANIMAL_BURROWHOP",
-    "weight": 1,
+    "weight": 0.6,
     "group": [
      1,
      2
@@ -401,8 +637,25 @@
     ]
    },
    {
-    "entity": "ENEMY_SPITTER",
+    "entity": "ENEMY_DUNE_BURROWER",
+    "weight": 2.5,
+    "group": [
+     1,
+     1
+    ]
+   },
+   {
+    "entity": "ENEMY_CINDER_IMP",
     "weight": 1,
+    "group": [
+     1,
+     2
+    ],
+    "period": "day"
+   },
+   {
+    "entity": "ENEMY_SPITTER",
+    "weight": 0.5,
     "group": [
      1,
      1
@@ -420,8 +673,17 @@
   ],
   "animal_spawns": [
    {
+    "entity": "ANIMAL_DUNE_FOX",
+    "weight": 2,
+    "group": [
+     1,
+     2
+    ],
+    "period": "night"
+   },
+   {
     "entity": "ANIMAL_BURROWHOP",
-    "weight": 1,
+    "weight": 0.8,
     "group": [
      1,
      2
@@ -459,7 +721,7 @@
    "storm": 0.5
   },
   "enemy_density": 0.55,
-  "animal_density": 0.05,
+  "animal_density": 0.25,
   "enemy_spawns": [
    {
     "entity": "ENEMY_SHADE",
@@ -470,15 +732,49 @@
     ]
    },
    {
+    "entity": "ENEMY_HUSH_DRIFTER",
+    "weight": 2.5,
+    "group": [
+     1,
+     2
+    ]
+   },
+   {
+    "entity": "ENEMY_VEIL_WEAVER",
+    "weight": 1.5,
+    "group": [
+     1,
+     1
+    ]
+   },
+   {
     "entity": "ENEMY_WISP",
-    "weight": 2,
+    "weight": 1.5,
     "group": [
      2,
      3
     ]
+   },
+   {
+    "entity": "ENEMY_VEIL_WEAVER",
+    "weight": 2,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "cliff"
    }
   ],
-  "animal_spawns": [],
+  "animal_spawns": [
+   {
+    "entity": "ANIMAL_LUMEN_STAG",
+    "weight": 1,
+    "group": [
+     1,
+     2
+    ]
+   }
+  ],
   "resources": [
    {
     "node": "glowmoss",
