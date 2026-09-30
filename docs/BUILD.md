@@ -21,6 +21,10 @@ godot --headless --export-release "iOS" build/ios/VELA.ipa      # genera el proy
 
 Versión: `application/config/version` (project.godot) + `version/code` (Android) / `application/version` (iOS). Súbelas en cada entrega a las tiendas.
 
+## Preview en navegador (Claude Code)
+`.claude/launch.json` define el servidor `game-web-preview`: ejecuta `tools/preview.sh`, que sirve `build/web` en el puerto 8080 (o el que asigne Claude) y, si aún no hay build, la exporta con el preset **Web Preview** (descarga solo las plantillas Web necesarias con `tools/fetch_export_templates.py`). `REBUILD=1 bash tools/preview.sh` fuerza una exportación nueva tras cambiar el proyecto.
+El export Web usa el renderer *Compatibility* y hilos desactivados: sirve para probar mecánicas, cámara y UI, no para medir rendimiento (para eso, la build de Android). Limitaciones conocidas: el audio empieza tras el primer clic, y Godot avisa de que hay demasiadas instancias con variables de shader por instancia (solo afecta al destello de daño).
+
 ## Generadores (cuando cambian textos o placeholders)
 ```bash
 python3 tools/gen_localization.py   # localization/strings.csv
