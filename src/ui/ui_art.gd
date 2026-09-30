@@ -88,6 +88,10 @@ static func _brush(ci: CanvasItem, r: Rect2, ratio: float, col: Color) -> void:
 	var w := r.size.x * clampf(ratio, 0.0, 1.0)
 	if w < 1.0:
 		return
+	if w < 4.0:
+		# Too short to taper: a degenerate stroke would fail to triangulate.
+		ci.draw_rect(Rect2(r.position + Vector2(0, r.size.y * 0.2), Vector2(w, r.size.y * 0.6)), col)
+		return
 	var h := r.size.y
 	var x0 := r.position.x
 	var y0 := r.position.y
@@ -101,7 +105,11 @@ static func _brush(ci: CanvasItem, r: Rect2, ratio: float, col: Color) -> void:
 
 ## Radial cooldown veil over a disc (0 = ready).
 static func cooldown(ci: CanvasItem, c: Vector2, r: float, ratio: float) -> void:
-	if ratio <= 0.001:
+	# A sliver of arc (or a closed full circle) makes a degenerate polygon.
+	if ratio <= 0.02:
+		return
+	if ratio >= 0.995:
+		ci.draw_circle(c, r, Color(0, 0, 0, 0.55))
 		return
 	var pts := PackedVector2Array([c])
 	var steps := 32

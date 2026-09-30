@@ -3391,5 +3391,388 @@
   "ai": {
    "respawn_hours": 999999
   }
+ },
+ {
+  "id": "NPC_TIDEKEEPER",
+  "kind": "NPC",
+  "name_key": "NAME_TIDEKEEPER",
+  "placeholder_color": "#44a57b",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      0,
+      0
+     ]
+    ],
+    [
+     6,
+     [
+      4,
+      6
+     ]
+    ],
+    [
+     12,
+     [
+      -3,
+      2
+     ]
+    ],
+    [
+     18,
+     [
+      0,
+      0
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_TIDEKEEPER_1"
+   ],
+   "night": [
+    "DLG_TIDEKEEPER_NIGHT"
+   ],
+   "rumors": [
+    "RUMOR_TIDEKEEPER_1",
+    "RUMOR_TIDEKEEPER_2",
+    "RUMOR_TIDEKEEPER_3",
+    "RUMOR_TIDEKEEPER_4",
+    "RUMOR_TIDEKEEPER_5"
+   ]
+  }
+ },
+ {
+  "id": "NPC_CASTAWAY",
+  "kind": "NPC",
+  "name_key": "NAME_CASTAWAY",
+  "placeholder_color": "#bfb370",
+  "placeholder_shape": "humanoid",
+  "model": "",
+  "collider": {
+   "radius": 0.35,
+   "height": 1.72
+  },
+  "stats": {
+   "walk_speed": 1.3,
+   "run_speed": 3.0,
+   "turn_speed": 5
+  },
+  "ai": {
+   "schedule": [
+    [
+     0,
+     [
+      0,
+      0
+     ]
+    ]
+   ]
+  },
+  "dialogue": {
+   "default": [
+    "DLG_CASTAWAY_1"
+   ]
+  }
+ },
+ {
+  "id": "ENEMY_FINBACK",
+  "kind": "ENEMY",
+  "name_key": "NAME_FINBACK",
+  "placeholder_color": "#0c70b9",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.7,
+   "height": 0.9
+  },
+  "stats": {
+   "max_health": 70,
+   "poise": 18,
+   "walk_speed": 2.6,
+   "run_speed": 6.8,
+   "turn_speed": 4,
+   "mass": 90
+  },
+  "ai": {
+   "sight_range": 26,
+   "fov": 300,
+   "hearing": 1.8,
+   "leash": 60,
+   "wander_radius": 16,
+   "respawn_hours": 48,
+   "behaviors": [
+    "submerge"
+   ],
+   "surface_range": 9,
+   "surface_time": 3.0,
+   "deep_depth": 3.2,
+   "fin_depth": 0.55,
+   "swim_depth": 0.6
+  },
+  "attacks": [
+   {
+    "id": "maul",
+    "type": "lunge",
+    "range_min": 0,
+    "range_max": 5.5,
+    "windup": 0.55,
+    "active": 0.35,
+    "recovery": 0.9,
+    "cooldown": 2.0,
+    "damage": 16,
+    "knockback": 8,
+    "reach": 2.0,
+    "arc": 45,
+    "lunge_speed": 13
+   }
+  ],
+  "loot_table": "drop_finback",
+  "element_mult": {
+   "electric": 1.4,
+   "fire": 0.5
+  },
+  "locomotion": "aquatic"
+ },
+ {
+  "id": "ENEMY_NEEDLEFIN",
+  "kind": "ENEMY",
+  "name_key": "NAME_NEEDLEFIN",
+  "placeholder_color": "#82c3bf",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.25,
+   "height": 0.35
+  },
+  "stats": {
+   "max_health": 10,
+   "poise": 2,
+   "walk_speed": 3.0,
+   "run_speed": 7.5,
+   "turn_speed": 12,
+   "mass": 4
+  },
+  "ai": {
+   "sight_range": 18,
+   "fov": 360,
+   "hearing": 2.0,
+   "leash": 40,
+   "wander_radius": 8,
+   "respawn_hours": 24,
+   "swim_depth": 1.0,
+   "behaviors": [
+    "swarm"
+   ]
+  },
+  "attacks": [
+   {
+    "id": "dart",
+    "type": "lunge",
+    "range_min": 0,
+    "range_max": 3.5,
+    "windup": 0.35,
+    "active": 0.25,
+    "recovery": 0.6,
+    "cooldown": 1.6,
+    "damage": 3,
+    "knockback": 1,
+    "reach": 1.0,
+    "arc": 60,
+    "lunge_speed": 12
+   }
+  ],
+  "loot_table": "drop_needlefin",
+  "element_mult": {
+   "electric": 2.0
+  },
+  "locomotion": "aquatic"
+ },
+ {
+  "id": "ENEMY_STORM_RAY",
+  "kind": "ENEMY",
+  "name_key": "NAME_STORM_RAY",
+  "placeholder_color": "#4723a5",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.8,
+   "height": 0.6
+  },
+  "stats": {
+   "max_health": 55,
+   "poise": 12,
+   "walk_speed": 3.5,
+   "run_speed": 8.5,
+   "turn_speed": 5,
+   "mass": 40
+  },
+  "ai": {
+   "sight_range": 30,
+   "fov": 360,
+   "hearing": 1.5,
+   "leash": 70,
+   "wander_radius": 20,
+   "respawn_hours": 12,
+   "hover": 1.6,
+   "storm_only": true,
+   "behaviors": [
+    "swoop",
+    "storm_charged"
+   ],
+   "swoop_height": 6,
+   "swoop_every": 6.0
+  },
+  "attacks": [
+   {
+    "id": "swoop",
+    "type": "module",
+    "windup": 0.8,
+    "damage": 12,
+    "knockback": 7,
+    "charge_speed": 20,
+    "element": "electric"
+   },
+   {
+    "id": "arc",
+    "type": "projectile",
+    "range_min": 5,
+    "range_max": 18,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 3.0,
+    "damage": 8,
+    "element": "electric",
+    "projectile_speed": 22
+   }
+  ],
+  "loot_table": "drop_storm_ray",
+  "element_mult": {
+   "electric": 0.0,
+   "fire": 1.3
+  },
+  "locomotion": "flying"
+ },
+ {
+  "id": "ENEMY_HULL_LURKER",
+  "kind": "ENEMY",
+  "name_key": "NAME_HULL_LURKER",
+  "placeholder_color": "#a42b4a",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 0.9,
+   "height": 1.0
+  },
+  "stats": {
+   "max_health": 90,
+   "defense": 2,
+   "poise": 40,
+   "walk_speed": 1.6,
+   "run_speed": 3.8,
+   "turn_speed": 3.5,
+   "mass": 180
+  },
+  "ai": {
+   "sight_range": 10,
+   "fov": 200,
+   "hearing": 1.4,
+   "leash": 20,
+   "wander_radius": 3,
+   "respawn_hours": 96,
+   "amphibious": true,
+   "behaviors": [
+    "ambush",
+    "front_armor"
+   ],
+   "ambush_range": 4.5,
+   "armor_arc": 70,
+   "armor_mult": 0.15,
+   "flipped_time": 3.5
+  },
+  "attacks": [
+   {
+    "id": "pinch",
+    "type": "melee",
+    "range_min": 0,
+    "range_max": 2.6,
+    "windup": 0.6,
+    "recovery": 0.8,
+    "cooldown": 1.4,
+    "damage": 14,
+    "knockback": 6,
+    "reach": 2.2,
+    "arc": 55,
+    "weight": 2
+   },
+   {
+    "id": "slam",
+    "type": "slam",
+    "range_min": 0,
+    "range_max": 3.2,
+    "windup": 1.1,
+    "recovery": 1.2,
+    "cooldown": 5.0,
+    "damage": 18,
+    "radius": 3.2,
+    "knockback": 9,
+    "blockable": false
+   }
+  ],
+  "loot_table": "drop_hull_lurker",
+  "element_mult": {
+   "electric": 1.6
+  }
+ },
+ {
+  "id": "ANIMAL_DRIFT_WHALE",
+  "kind": "ANIMAL",
+  "name_key": "NAME_DRIFT_WHALE",
+  "placeholder_color": "#7e446e",
+  "placeholder_shape": "quadruped",
+  "model": "",
+  "collider": {
+   "radius": 2.2,
+   "height": 2.2
+  },
+  "stats": {
+   "max_health": 400,
+   "poise": 200,
+   "walk_speed": 1.6,
+   "run_speed": 3.2,
+   "turn_speed": 1.2,
+   "mass": 3000
+  },
+  "ai": {
+   "sight_range": 20,
+   "fov": 300,
+   "hearing": 1.0,
+   "skittish": 0.9,
+   "wander_radius": 60,
+   "respawn_hours": 48,
+   "swim_depth": 2.5,
+   "behaviors": [
+    "surfacer"
+   ],
+   "breathe_every": 14,
+   "breathe_time": 5
+  },
+  "attacks": [],
+  "loot_table": "drop_whale",
+  "locomotion": "aquatic"
  }
 ]

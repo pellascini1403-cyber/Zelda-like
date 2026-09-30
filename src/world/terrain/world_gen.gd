@@ -45,6 +45,10 @@ var _pads: Array = []
 var _pools: Array = []
 ## Trails between places: Array of PackedVector2Array polylines
 var _paths: Array = []
+## Sea islets and reefs: [Vector2 center, radius, peak height, shape]
+## shape: "mound" (rounded island), "shelf" (flat reef just under the
+## surface), "bar" (a long low sandbank; radius = half length, along x).
+var _islets: Array = []
 
 
 func _init(seed_value: int = 1337, pads: Array = []) -> void:
@@ -91,6 +95,9 @@ static func from_world_data(world: Dictionary) -> WorldGen:
 	for f in world.get("falls", []):
 		var b: Array = f["bottom"]
 		g._pools.append([Vector2(b[0], b[1]), float(f.get("pool_radius", 9.0)), float(f["pool_y"]) - 1.6])
+	for isl in world.get("islets", []):
+		var ip: Array = isl["pos"]
+		g._islets.append([Vector2(ip[0], ip[1]), float(isl["radius"]), float(isl["height"]), String(isl.get("shape", "mound"))])
 	var poi_pos := {}
 	for poi in world.get("pois", []):
 		poi_pos[poi["id"]] = Vector2(poi["pos"][0], poi["pos"][1])
@@ -175,6 +182,26 @@ func height(x: float, z: float) -> float:
 	if rd < 40.0:
 		var carve := smoothstep(40.0, 7.0, rd)
 		h = lerpf(h, minf(h, -3.5), carve)
+
+	# --- Sea islets and reefs --------------------------------------------------
+	for isl in _islets:
+		var c: Vector2 = isl[0]
+		var r: float = isl[1]
+		var dd := p.distance_to(c)
+		if dd > r * 1.6:
+			continue
+		var edge := dd / r + _detail.get_noise_2d(x * 1.7, z * 1.7) * 0.18
+		var peak: float = isl[2]
+		match String(isl[3]):
+			"shelf":
+				h = maxf(h, lerpf(h, peak + _detail.get_noise_2d(x * 3.0, z * 3.0) * 0.5, smoothstep(1.4, 0.8, edge)))
+			"bar":
+				var q := p - c
+				var e2 := Vector2(q.x / r, q.y / (r * 0.18)).length() + _detail.get_noise_2d(x * 2.0, z * 2.0) * 0.15
+				h = maxf(h, lerpf(h, peak, smoothstep(1.3, 0.7, e2)))
+			_:
+				var k := smoothstep(1.35, 0.0, edge)
+				h = maxf(h, lerpf(h, peak + _detail.get_noise_2d(x, z) * 1.5, pow(k, 0.7)))
 
 	# --- POI pads (village, ruins, camps) --------------------------------------
 	for pad in _pads:

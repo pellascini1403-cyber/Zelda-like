@@ -8,7 +8,7 @@ const DATA_DIR := "res://data/"
 ## POI types StructureBuilder knows how to build.
 const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
 	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry", "depot",
-	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine"]
+	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine", "lighthouse", "sea_spire", "wreck", "castaway_camp", "tide_cave"]
 
 var items: Dictionary = {}          # StringName -> ItemData
 var entities: Dictionary = {}       # StringName -> EntityType
@@ -285,7 +285,7 @@ func validate() -> PackedStringArray:
 
 
 const LOCOMOTIONS := ["ground", "flying", "aquatic", "climber", "burrower"]
-const HABITATS := ["land", "water", "cliff"]
+const HABITATS := ["land", "water", "deep", "cliff"]
 const FAUNA_KINDS := ["flock", "school", "motes", "skitter"]
 
 
@@ -318,7 +318,9 @@ func _validate_ecology() -> PackedStringArray:
 			var e: EntityType = entities.get(StringName(sp["entity"]))
 			if e == null:
 				continue
-			if (hab == "water") != e.is_aquatic():
+			if hab in ["water", "deep"] and not (e.is_aquatic() or e.flying):
+				errors.append("region '%s': '%s' habitat %s needs a swimmer or a flyer" % [r.id, e.id, hab])
+			if hab == "land" and e.is_aquatic():
 				errors.append("region '%s': '%s' habitat %s does not fit locomotion %s" % [r.id, e.id, hab, e.locomotion])
 			if hab == "cliff" and not (e.is_climber() or e.flying):
 				errors.append("region '%s': '%s' on cliffs must climb or fly" % [r.id, e.id])

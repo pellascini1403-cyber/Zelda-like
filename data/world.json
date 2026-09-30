@@ -288,6 +288,13 @@
       "guards": [
         "ENEMY_SPITTER",
         "ENEMY_SPITTER"
+      ],
+      "npcs": [
+        [
+          "NPC_TIDEKEEPER",
+          -9,
+          -7
+        ]
       ]
     },
     {
@@ -1151,6 +1158,258 @@
           "count": 1
         }
       ]
+    },
+    {
+      "id": "tidewarden_light",
+      "type": "lighthouse",
+      "name_key": "POI_TIDEWARDEN_LIGHT",
+      "pos": [
+        150,
+        1000
+      ],
+      "flatten": 9,
+      "pad_height": 8.5,
+      "clear_radius": 14,
+      "discover_radius": 30,
+      "flag": "lighthouse_lit",
+      "discovery": "sea_tidewarden_light",
+      "reveals": [
+        {
+          "pos": [
+            30,
+            1250
+          ],
+          "radius": 3
+        },
+        {
+          "pos": [
+            720,
+            1260
+          ],
+          "radius": 3
+        },
+        {
+          "pos": [
+            -420,
+            1060
+          ],
+          "radius": 3
+        }
+      ],
+      "reward": [
+        {
+          "id": "tidewarden_chart",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "vigil_rock",
+      "type": "sea_spire",
+      "name_key": "POI_VIGIL_ROCK",
+      "pos": [
+        -60,
+        1160
+      ],
+      "flatten": 8,
+      "pad_height": 7.0,
+      "clear_radius": 14,
+      "discover_radius": 40,
+      "height": 44.0,
+      "reward": [
+        {
+          "id": "driftwood_charm",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "gulls_promise",
+      "type": "wreck",
+      "name_key": "POI_GULLS_PROMISE",
+      "pos": [
+        30,
+        1250
+      ],
+      "clear_radius": 22,
+      "discover_radius": 36,
+      "length": 26.0,
+      "beam": 7.0,
+      "sunk": 0.3,
+      "pitch": 6.0,
+      "yaw": 35.0,
+      "roll": 14.0,
+      "mast": 8.0,
+      "breach": 3,
+      "cabin_gate": "gulls_cabin_open",
+      "loot": "chest_rare",
+      "reward": [
+        {
+          "id": "lake_pearl",
+          "count": 1
+        }
+      ],
+      "guardians": [
+        [
+          "ENEMY_HULL_LURKER",
+          0.5,
+          -3.0,
+          -6.0
+        ]
+      ],
+      "pages": [
+        {
+          "id": "gulls_log",
+          "look": "scroll",
+          "at": [
+            1.2,
+            0.3,
+            9.6
+          ],
+          "item": "gulls_log",
+          "prompt": "PROMPT_TAKE",
+          "radius": 1.6,
+          "lines": [
+            "LINE_GULLS_LOG"
+          ],
+          "speaker": "POI_GULLS_PROMISE"
+        },
+        {
+          "id": "keel_bell",
+          "look": "bell",
+          "at": [
+            -1.5,
+            -3.3,
+            2.0
+          ],
+          "radius": 2.0,
+          "hide_used": false,
+          "sound": "chime",
+          "element": "wind"
+        }
+      ]
+    },
+    {
+      "id": "iron_leviathan",
+      "type": "wreck",
+      "name_key": "POI_IRON_LEVIATHAN",
+      "pos": [
+        720,
+        1260
+      ],
+      "clear_radius": 30,
+      "discover_radius": 30,
+      "length": 34.0,
+      "beam": 9.0,
+      "sunk": -15.0,
+      "pitch": -3.0,
+      "yaw": -50.0,
+      "roll": -9.0,
+      "mast": 16.5,
+      "breach": 5,
+      "cabin_gate": "leviathan_cabin_open",
+      "loot": "chest_rare",
+      "reward": [
+        {
+          "id": "deepwater_mask",
+          "count": 1
+        },
+        {
+          "id": "abyssal_pearl",
+          "count": 1
+        }
+      ],
+      "guardians": [
+        [
+          "ENEMY_HULL_LURKER",
+          -1.0,
+          -3.0,
+          4.0
+        ],
+        [
+          "ENEMY_HULL_LURKER",
+          1.5,
+          -3.0,
+          -8.0
+        ]
+      ]
+    },
+    {
+      "id": "smugglers_skiff",
+      "type": "wreck",
+      "name_key": "POI_SMUGGLERS_SKIFF",
+      "pos": [
+        -835,
+        262
+      ],
+      "clear_radius": 10,
+      "discover_radius": 14,
+      "length": 12.0,
+      "beam": 4.0,
+      "sunk": -5.0,
+      "pitch": 2.0,
+      "yaw": 80.0,
+      "roll": 25.0,
+      "mast": 5.0,
+      "breach": 1,
+      "vent": false,
+      "loot": "chest_common",
+      "reward": [
+        {
+          "id": "resin_bomb",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "castaway_islet",
+      "type": "castaway_camp",
+      "name_key": "POI_CASTAWAY_ISLET",
+      "pos": [
+        -420,
+        1060
+      ],
+      "flatten": 12,
+      "pad_height": 5.0,
+      "clear_radius": 18,
+      "discover_radius": 36,
+      "loot": "chest_common",
+      "reward": [
+        {
+          "id": "castaway_compass",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "tide_isle",
+      "type": "tide_cave",
+      "name_key": "POI_TIDE_ISLE",
+      "pos": [
+        -800,
+        300
+      ],
+      "flatten": 12,
+      "pad_height": 1.4,
+      "clear_radius": 16,
+      "discover_radius": 30,
+      "loot": "chest_common",
+      "reward": [
+        {
+          "id": "lake_pearl",
+          "count": 1
+        }
+      ],
+      "storm_reward": [
+        {
+          "id": "storm_glass",
+          "count": 2
+        },
+        {
+          "id": "abyssal_pearl",
+          "count": 1
+        }
+      ]
     }
   ],
   "falls": [
@@ -1481,6 +1740,98 @@
         110
       ],
       "count": 3
+    }
+  ],
+  "islets": [
+    {
+      "id": "lighthouse_rock",
+      "pos": [
+        150,
+        1000
+      ],
+      "radius": 20,
+      "height": 9.0,
+      "shape": "mound"
+    },
+    {
+      "id": "vigil_rock",
+      "pos": [
+        -60,
+        1160
+      ],
+      "radius": 22,
+      "height": 7.0,
+      "shape": "mound"
+    },
+    {
+      "id": "promise_shoal",
+      "pos": [
+        30,
+        1250
+      ],
+      "radius": 30,
+      "height": -4.0,
+      "shape": "shelf"
+    },
+    {
+      "id": "castaway_islet",
+      "pos": [
+        -420,
+        1060
+      ],
+      "radius": 32,
+      "height": 6.0,
+      "shape": "mound"
+    },
+    {
+      "id": "crystal_reef",
+      "pos": [
+        560,
+        1020
+      ],
+      "radius": 55,
+      "height": -0.9,
+      "shape": "shelf"
+    },
+    {
+      "id": "vanishing_bar",
+      "pos": [
+        320,
+        1280
+      ],
+      "radius": 36,
+      "height": -0.9,
+      "shape": "bar"
+    },
+    {
+      "id": "tide_isle",
+      "pos": [
+        -800,
+        300
+      ],
+      "radius": 24,
+      "height": 7.0,
+      "shape": "mound"
+    },
+    {
+      "id": "skiff_shoal",
+      "pos": [
+        -835,
+        262
+      ],
+      "radius": 16,
+      "height": -7.0,
+      "shape": "shelf"
+    },
+    {
+      "id": "leviathan_bed",
+      "pos": [
+        720,
+        1260
+      ],
+      "radius": 30,
+      "height": -18.0,
+      "shape": "shelf"
     }
   ]
 }

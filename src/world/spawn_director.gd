@@ -137,6 +137,9 @@ func _spawn_resource(root: Node3D, region: RegionData, slot: Dictionary) -> void
 
 ## Where a slot sits: open water (deep enough to swim), a steep face, or land.
 static func habitat_of(pos: Vector3, nrm: Vector3) -> StringName:
+	# Open sea: far below the surface (the shelf drops to -22 m).
+	if pos.y < WorldGen.SEA_LEVEL - 14.0:
+		return &"deep"
 	if pos.y < WorldGen.SEA_LEVEL - 1.2:
 		return &"water"
 	if nrm.y < 0.78 and pos.y > WorldGen.SEA_LEVEL + 0.5:
@@ -145,7 +148,7 @@ static func habitat_of(pos: Vector3, nrm: Vector3) -> StringName:
 
 
 ## Spawn-table entry conditions: habitat, period, hours, weather.
-##   {"entity", "weight", "group", "habitat": land|water|cliff,
+##   {"entity", "weight", "group", "habitat": land|water|deep|cliff,
 ##    "period": day|night, "hours": [from, to], "weather": [ids]}
 static func entry_ok(e: Dictionary, hab: StringName = &"land") -> bool:
 	if StringName(e.get("habitat", "land")) != hab:
@@ -162,6 +165,8 @@ static func entry_ok(e: Dictionary, hab: StringName = &"land") -> bool:
 		if not inside:
 			return false
 	if e.has("weather") and not String(Weather.target) in e["weather"]:
+		return false
+	if e.has("tide") and not QuestSpawner._tide_ok(String(e["tide"])):
 		return false
 	return true
 
@@ -192,7 +197,7 @@ func _spawn_group(table: Array, pos: Vector3, id: String, roll: float, hab: Stri
 		var off := Vector3(rng.randf_range(-4, 4), 0, rng.randf_range(-4, 4))
 		var p := pos + off
 		p.y = gen.height(p.x, p.z) + 0.2
-		if hab == &"water":
+		if hab == &"water" or hab == &"deep":
 			p.y = minf(p.y + 0.5, WorldGen.SEA_LEVEL - 1.0)
 		var c := spawn_creature(StringName(chosen["entity"]), p, id if i == 0 else "%s:%d" % [id, i], id)
 		if c:

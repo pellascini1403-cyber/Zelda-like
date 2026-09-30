@@ -581,15 +581,6 @@
     ]
    },
    {
-    "entity": "ENEMY_MIRE_EEL",
-    "weight": 2,
-    "group": [
-     1,
-     2
-    ],
-    "habitat": "water"
-   },
-   {
     "entity": "ENEMY_GALE_KITE",
     "weight": 1,
     "group": [
@@ -597,6 +588,66 @@
      1
     ],
     "habitat": "cliff"
+   },
+   {
+    "entity": "ENEMY_NEEDLEFIN",
+    "weight": 3,
+    "group": [
+     4,
+     6
+    ],
+    "habitat": "water"
+   },
+   {
+    "entity": "ENEMY_FINBACK",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "water"
+   },
+   {
+    "entity": "ENEMY_FINBACK",
+    "weight": 3,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "deep"
+   },
+   {
+    "entity": "ENEMY_NEEDLEFIN",
+    "weight": 1,
+    "group": [
+     5,
+     7
+    ],
+    "habitat": "deep"
+   },
+   {
+    "entity": "ENEMY_STORM_RAY",
+    "weight": 6,
+    "group": [
+     1,
+     2
+    ],
+    "habitat": "deep",
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "entity": "ENEMY_STORM_RAY",
+    "weight": 2,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "water",
+    "weather": [
+     "storm"
+    ]
    }
   ],
   "animal_spawns": [
@@ -615,6 +666,15 @@
      1,
      2
     ]
+   },
+   {
+    "entity": "ANIMAL_DRIFT_WHALE",
+    "weight": 1,
+    "group": [
+     1,
+     1
+    ],
+    "habitat": "deep"
    }
   ],
   "resources": [

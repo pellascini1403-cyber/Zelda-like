@@ -91,7 +91,7 @@ Variants: Rime Thornling (cold, highlands), Stormcaller Bulwark (storm),
 Tidepool Spitter (coast). Fauna: Crag Goat (climbs), Reed Heron, Tide Crab,
 Dune Fox (night), Lumen Stag (Veil) + AmbientLife groups.
 
-## Phase 3 — Weak regions (in order) `[~]` (forest + lake done, see docs/FOREST_AND_LAKE.md)
+## Phase 3 — Weak regions (in order) `[~]` (forest + lake done, see docs/FOREST_AND_LAKE.md; coast + sea done, see docs/COAST_AND_SEA.md)
 
 Forest → Lake → Coast/Sea → Diving → Highlands → Veil. Each gets its own
 enemy/fauna mix, 2-4 unique places with a mechanic, weather/night content,
@@ -183,3 +183,96 @@ Reward frequency, density, repetition audit, performance tour on low tier.
   every other region needs 4-6.
 * Liveliness: foxes at night, herons/white heron at the lake, fish rings,
   roosting swarms, weavers on decks, fireflies, gulls — noticeably more.
+
+* Coast & sea ("Fase 4 — Costa y mar") done (docs/COAST_AND_SEA.md).
+  Tides (sandbars, surf, HUD), currents (swimmers, divers and the Bellhull
+  drift), 9 terrain islets/shelves, 7 sea places from 5 new builders
+  (lighthouse, sea spire, reusable wreck ×3, castaways' camp, tide cave),
+  storm spires on the Crystal Reef + squall buoys around the Leviathan,
+  kelp beds, 4 sea fishing waters, fishing from the Bellhull, deep habitat,
+  storm-only creatures, breath buff. 11 Atlas wonders, 5 quests, 2 NPCs
+  (Sabel, Maren) with rumours. Fixed on the way: POI people sharing spawn
+  ids with the builder's guards (a killed guard kept Sabel from ever
+  appearing), creatures spawned before their chunk's collider falling out
+  of the world and being recorded as defeated forever (now held on the
+  height field), storm buoys double-hitting hulls and shocking the driver
+  inside, the wreck cabin gate standing in front of a solid wall; UI
+  cooldown slivers and tiny brush bars no longer build degenerate
+  polygons. Open (pre-existing, also on the phase 3 commit): an
+  intermittent "triangulation failed" canvas warning (2D, no visible
+  effect) — not yet isolated.
+  Also fixed a pre-existing test crash: the systems test called into a
+  quest encounter the spawner had freed during an `await` (engine
+  SIGSEGV in ~10 % of runs, also on the phase 3 commit).
+  Tests: unit 548 / smoke 36 / systems 233 green. Captures:
+  docs/captures/coast_sea/ (13).
+
+### Mini-audit after coast + sea
+
+Counts (new in this phase): places 7 POIs + 9 islets/shelves (6 with an
+identity of their own); discoveries 11 (Atlas 12 → 23); creatures 5 (4
+enemies: finback, needlefin, storm ray, hull lurker; 1 animal: drift
+whale); NPCs 2; fish species 4 new (7 in sea waters: silverback, stormfin,
+reef glint, glass shrimp, bluewater runner, lantern squid, wreck grouper);
+rewards 13 items (2 gear that change diving/swimming, 1 breath broth, 3 key
+items, 3 materials, 4 fish) + 1 cosmetic + 1 buff + the Bellhull storm
+lining + 3 map reveals; interactions 11 kinds (tide bars, surf, currents,
+lighthouse lamp, wreck lever/gate, pages, fishing from the hatch, storm
+spires, squall buoys, storm blowhole updraft, leave/re-enter the capsule
+at sea); quests 5; activities outside quests: sea fishing in 4 waters,
+wreck and reef diving, stormglass harvesting, tide walking, whale
+watching, 11 wonders. Totals: POIs 46 → 53, items 100 → 113, entities
+61 → 68, sites 15 → 59, quests 83 → 88.
+
+Draw calls (quality 2, 1280×720, per capture): coast 163–172, open sea
+121–153, wreck exterior 205, wreck cabin 333, dive at the Leviathan 362,
+fauna 266, fishing from the Bellhull 263, storm reef 150, squall buoys 339,
+sea combat 339 (Atlas UI over the world 458). Primitives 112k–282k. The
+sea is cheaper than the forest (219–578 draw calls) because there is
+little to draw: kelp is one MultiMesh per bed, spires are merged meshes.
+
+Playable sea (sampled every 16 m): 6.8 km² of water, 6.4 km² of it deep.
+Within 80 m of something with a purpose: 7 %; within 150 m: 16 %. By
+area: south sea 30 %, west 5 %, inland waters 12 %, east 6 %.
+
+1. **Does the sea have its own identity?** Yes, in the south: a clock
+   (tides), roads (currents), weather that changes the map (storm reef,
+   squall buoys), its own fauna and a lighthouse that lights it at night.
+   The west coast has one place (Tide Isle); the east has none.
+2. **Does the Bellhull have a real reason to exist?** Yes, without being
+   required: fishing from the hatch on the deep grounds, riding currents
+   dry, a safe base to start dives from, long routes to the castaways and
+   the Leviathan, and its own storm upgrade. Everything is still reachable
+   by swimming with the currents or gliding from Vigil Rock.
+3. **Reasons to leave the coast?** Things seen from the shore: the
+   lighthouse beam, the Gull's Promise mast, the whale's spout, Vigil
+   Rock's silhouette, foam lines; plus Sabel's rumours and the chart's
+   map reveals.
+4. **Reasons to come back after the quests?** Yes: tides (the bar only at
+   low water), storms (stormglass only on the reef in a storm), night
+   (lantern squid), dusk (the whale, Maren), fishing spots that rest and
+   refill, the deep-water broth loop.
+5. **Experiences that do not exist on land?** Fins shadowing you before a
+   strike, a creature born and dissolved with the storm, drifting on a
+   current, walking a road that exists two hours a day, shocked water
+   around a struck spire, a whale surfacing, fishing from a capsule,
+   diving into a hull.
+6. **Still kilometres of water without purpose?** Yes. 84 % of the water
+   is more than 150 m from anything. The south sea is now a region; the
+   west and east seas and the far south beyond the Leviathan are empty.
+7. **Reusable for other regions:** Tide/TideBar (any timed path: Veil
+   phases, highland thaw), SeaCurrent (wind corridors for gliding, river
+   rapids), the wreck builder (any sunken or listing structure), storm
+   spires (lightning rods on highland peaks), storm-only creatures (any
+   weather-born enemy), surfacer (burrowers, sky whales), fishing waters
+   by hour/weather, the deep habitat (caves), shared-id-safe POI people.
+8. **What is still repetitive?** Chests as the payoff of most places;
+   the three wrecks share one silhouette language (listing hull + mast);
+   levers as the only wreck puzzle; the storm-buoy "hum → strike" loop
+   appears in the lake and twice at sea; encounter quests are still
+   "survive N seconds".
+
+Still empty: west and east seas, the southern horizon past the Leviathan,
+highland verticality, the Veil. Next: exploration/diving depth (sea caves,
+multi-room interiors), then highlands.
+

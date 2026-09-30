@@ -56,7 +56,7 @@ func _run() -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	await seconds(1.0)
-	# --only <section>: run one section (vehicles, ecosystems, forest, lake).
+	# --only <section>: run one section (quests, vehicles, ecosystems, forest, lake, sea).
 	var oi := OS.get_cmdline_user_args().find("--only")
 	if oi >= 0:
 		match OS.get_cmdline_user_args()[oi + 1]:
@@ -64,6 +64,8 @@ func _run() -> void:
 			"ecosystems": await _ecosystems(w, p)
 			"forest": await _forest(w, p)
 			"lake": await _lake(w, p)
+			"sea": await _sea(w, p)
+			"quests": await _quest_content(w, p)
 		# Store sandbox state lives in user:// — never leak it into the next run.
 		Platform.backend.clear_owned()
 		Platform.backend.sandbox = false
@@ -218,6 +220,9 @@ func _run() -> void:
 	await _forest(w, p)
 	await _lake(w, p)
 
+	# --- Coast and sea (expansion phase 4) --------------------------------------------------------
+	await _sea(w, p)
+
 	# --- World event -----------------------------------------------------------------------------------
 	check(w.events.trigger(&"wind_rift"), "wind rift event triggers")
 	var bp: Variant = w.events.beacon_position()
@@ -260,6 +265,7 @@ func _run() -> void:
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
 	check(PlayerData.owns_vehicle(&"longwake") and PlayerData.owns_vehicle(&"sparrow") and PlayerData.owns_vehicle(&"bellhull"), "vehicles restored from the save")
 	check(DiscoveryDirector.is_found(&"forest_moon_gate") and WorldState.flags.has("moon_gate_open") and BrambleWall.burned("hollow_tree:door") and WorldState.flags.has("sunken_bells"), "discoveries, burned brambles and opened gates restored from the save")
+	check(DiscoveryDirector.is_found(&"sea_vanishing_bar") and WorldState.flags.has("lighthouse_lit") and WorldState.flags.has("gulls_cabin_open") and Quests.is_active(&"dq_sea_vanishing_isle"), "sea discoveries, the lit lamp, the opened cabin and sea quests restored from the save")
 	# Store entitlements belong to the account: a brand-new game gets them back.
 	PlayerData.reset_new_game()
 	Platform.apply_entitlements()
@@ -319,7 +325,9 @@ func _quest_content(w: GameWorld, p: Player) -> void:
 	var t0 := Time.get_ticks_msec()
 	while enc and is_instance_valid(enc) and enc.phase != QuestEncounter.Phase.DONE and Time.get_ticks_msec() - t0 < 40000:
 		await seconds(0.5)
-		if enc.is_active():
+		# The spawner may free the encounter during the wait (stage done):
+		# never call into a freed node.
+		if is_instance_valid(enc) and enc.is_active():
 			_kill_near(enc.center, 40.0)
 	check(Quests.state[&"mq_thorn_road"]["stage"] >= 1, "protecting the hauler completes the stage")
 	await seconds(1.5)
@@ -928,3 +936,327 @@ func _lake(w: GameWorld, p: Player) -> void:
 	check(DiscoveryDirector.is_found(&"lake_storm_buoys"), "Storm Buoys discovered in a storm")
 	Weather.set_weather(&"clear", true)
 	p.change_state(&"ground")
+
+
+func _qobject(id: String) -> QuestObject:
+	for o in get_tree().get_nodes_in_group(&"quest_objects"):
+		if String((o as QuestObject).object_id) == id:
+			return o
+	return null
+
+
+func _creature_near(id: StringName, pos: Vector3, r: float) -> Creature:
+	for c in get_tree().get_nodes_in_group(&"creatures"):
+		var cr := c as Creature
+		if cr and cr.type and cr.type.id == id and not cr.dead and cr.global_position.distance_to(pos) < r:
+			return cr
+	return null
+
+
+func _swim_at(x: float, z: float, depth: float = 1.2) -> void:
+	await teleport(x, z, 0.0)
+	var p := Game.player as Player
+	p.global_position = Vector3(x, WorldGen.SEA_LEVEL - depth, z)
+	p.velocity = Vector3.ZERO
+	p.change_state(&"swim")
+	await frames(3)
+
+
+## Coast and sea (expansion phase 4): islets, tides, currents, the
+## Bellhull at sea, wrecks, diving, marine fauna, storms, sea fishing,
+## discoveries, sea quests.
+func _sea(w: GameWorld, p: Player) -> void:
+	Weather.set_weather(&"clear", true)
+	Clock.set_time(12.0)
+	_clear_hostiles(p.global_position, 99999.0)
+	if not PlayerData.inventory.has(&"fishing_rod"):
+		PlayerData.inventory.add(&"fishing_rod", 1)
+	# --- Terrain: islets out of the shelf, the open sea is deep --------------------------------------
+	check(w.gen.height(150, 1000) > WorldGen.SEA_LEVEL + 5.0 and w.gen.height(-60, 1160) > WorldGen.SEA_LEVEL + 4.0 and w.gen.height(-420, 1060) > WorldGen.SEA_LEVEL + 3.0, "islets stand out of the sea (light, Vigil, castaways)")
+	check(w.gen.height(560, 1020) > WorldGen.SEA_LEVEL - 2.0 and w.gen.height(560, 1020) < WorldGen.SEA_LEVEL, "the Crystal Reef is a wadeable shelf")
+	check(SpawnDirector.habitat_of(Vector3(380, w.gen.height(380, 1420), 1420), Vector3.UP) == &"deep", "open sea counts as the deep habitat")
+	check(w.gen.height(720, 1260) > w.gen.height(760, 1320) + 2.0, "the Iron Leviathan rests on a silt bed")
+	# --- Tides: the clock of the coast --------------------------------------------------------------
+	check(Tide.is_low(12.0) and Tide.is_low(0.0) and Tide.is_high(18.0) and not Tide.is_low(18.0), "tide: low at noon and midnight, high at dusk")
+	Clock.set_time(18.0)
+	await _swim_at(318.0, 1268.0)
+	await seconds(1.5)
+	var bars: Array = _nodes_near(&"tide_bars", Vector3(320, 0, 1280), 30.0)
+	check(bars.size() == 5, "the Vanishing Bar is five sandbars")
+	var drowned := bars.all(func(b: Node) -> bool: return (b as Node3D).global_position.y + 0.5 < WorldGen.SEA_LEVEL - 1.0)
+	check(drowned, "high tide: the bar is under water")
+	check(not DiscoveryDirector.is_found(&"sea_vanishing_bar"), "high tide: nothing to find on the bar")
+	Clock.set_time(12.0)
+	await seconds(7.0)
+	var dry := bars.all(func(b: Node) -> bool: return (b as Node3D).global_position.y + 0.5 > WorldGen.SEA_LEVEL)
+	check(dry, "low tide: the bar rises out of the sea")
+	check(DiscoveryDirector.is_found(&"sea_vanishing_bar"), "low tide: the Vanishing Bar is discovered")
+	var buried: Chest = null
+	for c in get_tree().get_nodes_in_group(&"chests"):
+		if (c as Chest).chest_id == "vanishing_bar:buried":
+			buried = c
+	check(buried != null, "low tide uncovers the buried chest")
+	check(DiscoveryDirector.condition_text(DB.discoveries[&"sea_vanishing_bar"]) != "", "the Atlas says when the bar appears")
+	# Surf at the Tide Isle mouth: high water throws you back.
+	Clock.set_time(18.0)
+	await _swim_at(-800.0, 314.0)
+	var s0 := p.global_position
+	await seconds(2.0)
+	check(Vector2(p.global_position.x - s0.x, p.global_position.z - s0.z).length() > 1.0, "high tide: the surf pushes you out of the cave mouth")
+	Clock.set_time(12.0)
+	# --- Currents: the sea swims for you -----------------------------------------------------------
+	await _swim_at(126.0, 900.0)
+	check(SeaCurrent.drift_at(p.global_position, get_tree()).length() > 2.0, "the Gull Current flows off the Dawn shore")
+	var c0 := p.global_position
+	await seconds(3.0)
+	check(p.global_position.z - c0.z > 4.0, "idle in the current, you drift toward the light (%.1f m)" % (p.global_position.z - c0.z))
+	# --- Tidewarden Light: relit only at night ------------------------------------------------------
+	await teleport(150.0, 1000.0, 1.0)
+	await seconds(1.5)
+	var lamp := _qobject("tidewarden_light:lamp")
+	check(lamp != null, "the lighthouse lamp lever is in the lamp room")
+	if lamp:
+		lamp.interact(p)
+		check(not WorldState.flags.has("lighthouse_lit"), "by day the lamp will not take")
+		Clock.set_time(22.0)
+		await frames(2)
+		lamp.interact(p)
+		await seconds(0.8)
+		check(WorldState.flags.has("lighthouse_lit") and DiscoveryDirector.is_found(&"sea_tidewarden_light"), "at night the lamp is relit: flag + discovery")
+		var lamps: Array = _nodes_near(&"lighthouse_lamps", Vector3(150, 20, 1000), 60.0)
+		check(lamps.size() == 1 and (lamps[0] as LighthouseLamp).lit(), "the beam sweeps the sea")
+	Clock.set_time(12.0)
+	# --- Vigil Rock: climb to the top, the launch point -------------------------------------------
+	var vt := _top_at(-58.0, 1161.0)
+	check(vt > 45.0, "Vigil Rock towers over the sea (%.0f m)" % vt)
+	p.global_position = Vector3(-58.0, vt + 0.8, 1161.0)
+	p.velocity = Vector3.ZERO
+	await seconds(1.2)
+	check(DiscoveryDirector.is_found(&"sea_vigil_top"), "standing on Vigil Rock's crown is a discovery")
+	# --- The Gull's Promise: a wreck with three ways in ----------------------------------------------
+	await _swim_at(28.0, 1240.0)
+	await seconds(2.0)
+	check(DiscoveryDirector.is_found(&"sea_gulls_promise"), "the Gull's Promise is discovered")
+	var lever := _qobject("gulls_promise:lever")
+	var gate: FlagGate = null
+	for g in _nodes_near(&"flag_gates", Vector3(30, 0, 1250), 30.0):
+		if (g as FlagGate).flag == "gulls_cabin_open":
+			gate = g
+	check(lever != null and gate != null, "a lever in the hold, a jammed cabin door")
+	var lurker := _creature_near(&"ENEMY_HULL_LURKER", Vector3(30, -2, 1250), 25.0)
+	check(lurker != null and lurker.global_position.y < WorldGen.SEA_LEVEL, "a hull lurker guards the hold, under water")
+	if lever and gate:
+		check(not gate._open, "the cabin is jammed")
+		lever.interact(p)
+		await seconds(0.8)
+		check(WorldState.flags.has("gulls_cabin_open") and gate._open, "pulling the lever in the hold opens the cabin")
+	var log_page := _qobject("gulls_log")
+	check(log_page != null, "the Gull's log lies in the cabin")
+	if log_page:
+		log_page.interact(p)
+		await seconds(0.6)
+		check(PlayerData.inventory.count_of(&"gulls_log") == 1, "the log is taken")
+	p.change_state(&"swim")
+	# --- The Iron Leviathan: deep dive, air vents, longer breath ------------------------------------
+	await _swim_at(724.0, 1256.0)
+	await seconds(1.5)
+	p.global_position = Vector3(724.0, WorldGen.SEA_LEVEL - 10.0, 1256.0)
+	p.change_state(&"dive")
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"sea_leviathan"), "diving down to the Leviathan discovers it")
+	check(_nodes_near(&"air_vents", Vector3(720, -15, 1260), 30.0).size() >= 1, "air still bubbles in the Leviathan's hold")
+	p.vitals.stamina = PlayerData.max_stamina
+	var b0 := p.vitals.stamina
+	await seconds(1.5)
+	var plain := b0 - p.vitals.stamina
+	PlayerData.apply_buff(&"breath", 1.0, 60.0)
+	p.vitals.stamina = PlayerData.max_stamina
+	b0 = p.vitals.stamina
+	await seconds(1.5)
+	var brothed := b0 - p.vitals.stamina
+	PlayerData.buffs.erase(&"breath")
+	check(plain > 0.0 and brothed < plain * 0.85, "deepwater broth: breath lasts longer (%.1f vs %.1f)" % [brothed, plain])
+	p.change_state(&"swim")
+	# --- Marine fauna: whale, finback, storm ray ----------------------------------------------------
+	await _swim_at(650.0, 1330.0)
+	var whale := _spawn_test(w, &"ANIMAL_DRIFT_WHALE", Vector3(662, WorldGen.SEA_LEVEL - 3.0, 1340))
+	await seconds(1.0)
+	var surf_b: SurfacerBehavior = null
+	if whale:
+		for m in whale.brain.behaviors:
+			if m is SurfacerBehavior:
+				surf_b = m
+	check(surf_b != null, "the drift whale is a surfacer")
+	if surf_b:
+		surf_b._t = 99.0
+		await seconds(2.5)
+		check(surf_b.breathing() and whale.global_position.y > WorldGen.SEA_LEVEL - 1.5, "the whale rises to breathe (spout seen from afar)")
+		check(whale.global_position.y < WorldGen.SEA_LEVEL + 0.8, "the whale never leaves the water")
+	if whale:
+		whale.queue_free()
+	var fin := _spawn_test(w, &"ENEMY_FINBACK", p.global_position + Vector3(16, -2.0, 0))
+	var saw_fin := false
+	var struck := false
+	var t0 := Time.get_ticks_msec()
+	while fin and is_instance_valid(fin) and Time.get_ticks_msec() - t0 < 12000:
+		await frames(4)
+		if not is_instance_valid(fin):
+			break
+		if absf(fin.sink - 0.55) < 0.01:
+			saw_fin = true
+		if fin.brain.state_name() in [&"surface", &"attack"]:
+			struck = true
+			break
+	check(saw_fin, "a finback's fin cuts the surface while it shadows you")
+	check(struck, "then it surfaces to strike")
+	if fin and is_instance_valid(fin):
+		fin.queue_free()
+	var ray := _spawn_test(w, &"ENEMY_STORM_RAY", p.global_position + Vector3(10, 3, 0))
+	await seconds(6.0)
+	check(not is_instance_valid(ray) or ray.dead, "clear sky: a storm ray fades back into the spray")
+	# --- The Bellhull at sea -------------------------------------------------------------------------
+	if not PlayerData.owns_vehicle(&"bellhull"):
+		Platform.backend.sandbox = true
+		Platform.purchase("vehicle_bellhull")
+	await _swim_at(126.0, 900.0)
+	var boat := await _summon_and_enter(p, &"bellhull")
+	check(boat != null, "the Bellhull can be called at sea")
+	if boat:
+		for i in 60:
+			await frames(1)
+		check(boat.mode == &"water_mode", "afloat: water mode")
+		var d0 := boat.global_position
+		await seconds(3.0)
+		check(boat.global_position.z - d0.z > 3.0, "the current carries the capsule too (%.1f m)" % (boat.global_position.z - d0.z))
+		# Fishing from the hatch over a wreck spot.
+		boat.global_position = Vector3(44.0, boat.global_position.y, 1232.0)
+		boat.velocity = Vector3.ZERO
+		boat.speed = 0.0
+		await seconds(1.5)
+		var ds := p.states[&"drive"] as DriveState
+		var spot := ds._fishing_spot_near(boat)
+		check(spot != null, "idling over fish, the hatch is a fishing seat")
+		if spot:
+			var catch0 := 0
+			for f in [&"wreck_grouper", &"silverback", &"stormfin"]:
+				catch0 += PlayerData.inventory.count_of(f)
+			spot.interact(p)
+			check(spot.phase == FishingSpot.Phase.WAITING and p.vehicle == boat, "cast from the capsule without climbing out")
+			for i in 60:
+				await seconds(0.2)
+				if spot.phase == FishingSpot.Phase.BITE:
+					break
+			spot.interact(p)
+			var catch1 := 0
+			for f in [&"wreck_grouper", &"silverback", &"stormfin"]:
+				catch1 += PlayerData.inventory.count_of(f)
+			check(catch1 == catch0 + 1, "a wreck-water catch landed from the Bellhull")
+		# Storm buoys shock hulls in the water - unless lined with stormglass.
+		boat.global_position = Vector3(752.0, boat.global_position.y, 1262.0)
+		await seconds(1.5)
+		var buoy: StormBuoy = null
+		for bb in _nodes_near(&"storm_buoys", Vector3(750, 0, 1260), 8.0):
+			buoy = bb
+		check(buoy != null, "squall buoys ring the Leviathan")
+		if buoy:
+			var h0 := boat.hull
+			buoy._strike()
+			await frames(2)
+			check(boat.hull < h0, "a lightning strike on a buoy shocks a hull in the water")
+			WorldState.flags["bellhull_stormproof"] = true
+			h0 = boat.hull
+			buoy._strike()
+			await frames(2)
+			check(is_equal_approx(boat.hull, h0), "stormglass lining: the strike slides off (%.1f -> %.1f)" % [h0, boat.hull])
+			WorldState.flags.erase("bellhull_stormproof")
+		# Out at sea: climb out into the water, and back in.
+		p.exit_vehicle(false)
+		await seconds(1.0)
+		check(p.vehicle == null and p.state_name() == &"swim", "leaving the capsule at sea puts you in the water")
+		p.enter_vehicle(boat)
+		await frames(3)
+		check(p.vehicle == boat and p.state_name() == &"drive", "and you climb back in from the water")
+		p.exit_vehicle(false)
+		VehicleManager.instance.put_away()
+	# --- Storms change the reef ----------------------------------------------------------------------
+	await _swim_at(548.0, 1030.0, 0.6)
+	await seconds(1.5)
+	check(DiscoveryDirector.is_found(&"sea_crystal_reef"), "the Crystal Reef is found in fair weather")
+	check(_nodes_near(&"storm_buoys", Vector3(560, 0, 1020), 45.0).size() >= 7, "crystal spires stand on the reef")
+	Weather.set_weather(&"storm", true)
+	var glass := false
+	for i in 100:
+		await seconds(0.25)
+		for pk in _nodes_near(&"pickups", Vector3(560, 0, 1020), 50.0):
+			if (pk as Pickup).item_id == &"storm_glass":
+				glass = true
+		if glass:
+			break
+	check(glass, "in a storm the reef spires drink lightning and grow stormglass")
+	check(DiscoveryDirector.is_found(&"sea_crystal_storm"), "the storm reef is its own discovery")
+	var ray2 := _spawn_test(w, &"ENEMY_STORM_RAY", p.global_position + Vector3(10, 3, 0))
+	await seconds(5.0)
+	check(is_instance_valid(ray2) and not ray2.dead, "storm rays hunt while the storm lasts")
+	if is_instance_valid(ray2):
+		ray2.queue_free()
+	Weather.set_weather(&"clear", true)
+	# --- Sea fishing tables ---------------------------------------------------------------------------
+	Clock.set_time(23.0)
+	check(Fishing.table("deep").any(func(e: Dictionary) -> bool: return e["item"] == "lantern_squid"), "lantern squid rise at night in deep water")
+	Clock.set_time(12.0)
+	check(not Fishing.table("deep").any(func(e: Dictionary) -> bool: return e["item"] == "lantern_squid") and Fishing.table("deep").any(func(e: Dictionary) -> bool: return e["item"] == "bluewater_runner"), "by day, bluewater runners instead")
+	check(Fishing.table("reef").any(func(e: Dictionary) -> bool: return e["item"] == "glass_shrimp"), "glass shrimp on the reef")
+	check(not Fishing.table("sea").any(func(e: Dictionary) -> bool: return e["item"] == "lantern_squid"), "shore water has no deep-sea fish")
+	Fishing.land(&"lantern_squid")
+	check(DiscoveryDirector.is_found(&"sea_lantern_squid"), "landing a lantern squid is a discovery (broth recipe)")
+	# --- Castaways' Islet, and a quest the tide opens -------------------------------------------------
+	Clock.set_time(18.0)
+	await teleport(-418.0, 1066.0, 1.0)
+	await seconds(2.0)
+	check(_npc(&"NPC_CASTAWAY") != null, "Maren rows back to the islet at dusk")
+	await _talk(&"NPC_CASTAWAY", p)
+	check(Quests.is_active(&"dq_sea_vanishing_isle"), "Maren asks you to dig on the Vanishing Bar")
+	await _swim_at(320.0, 1262.0)
+	await seconds(1.5)
+	check(Quests.state[&"dq_sea_vanishing_isle"]["stage"] == 0, "the bar is under water at high tide: not there yet")
+	Clock.set_time(12.0)
+	await seconds(1.5)
+	check(Quests.state[&"dq_sea_vanishing_isle"]["stage"] >= 1, "at low tide the objective is met")
+	await _swim_at(126.0, 900.0)
+	# --- Sea quests start from Sabel -------------------------------------------------------------------
+	await teleport(111.0, 799.0, 1.0)
+	var sabel: Creature = null
+	for i in 20:
+		await seconds(0.25)
+		sabel = _npc(&"NPC_TIDEKEEPER")
+		if sabel:
+			break
+	await _talk(&"NPC_TIDEKEEPER", p)
+	check(sabel != null and Quests.is_active(&"sq_sea_first_crossing"), "Sabel offers the First Crossing")
+	# A body that finds no collider under it (its chunk not streamed yet)
+	# is held on the height field instead of falling out of the world.
+	var crab_at := Vector3(118.0, w.gen.height(118.0, 792.0) - 20.0, 792.0)
+	var crab := _spawn_test(w, &"ANIMAL_TIDE_CRAB", crab_at)
+	await seconds(1.0)
+	check(is_instance_valid(crab) and not crab.dead and absf(crab.global_position.y - w.gen.height(crab.global_position.x, crab.global_position.z)) < 1.5, "creatures never fall through the terrain (spawned before its collider)")
+	check(not WorldState.is_defeated("dawn_wreck:npc:0"), "Sabel is never written off as defeated")
+	if is_instance_valid(crab):
+		crab.queue_free()
+	# The Bellhull is premium: no main quest and no sea quest may need it.
+	var sea_q := 0
+	var needs_boat: Array = []
+	for q in DB.quests:
+		var qid := String(q.get("id", ""))
+		if qid.begins_with("sq_sea_") or qid.begins_with("dq_sea_"):
+			sea_q += 1
+		if not (String(q.get("type", "")) == "main" or qid.begins_with("sq_sea_") or qid.begins_with("dq_sea_")):
+			continue
+		for st in q.get("stages", []):
+			for o in st.get("objectives", []):
+				var cond: Dictionary = o.get("conditions", {})
+				if String(cond.get("state", "")) in ["drive", "ride"] or cond.has("vehicle") or String(o.get("type", "")) == "mount":
+					needs_boat.append(qid)
+	check(sea_q == 5, "five sea quests (%d)" % sea_q)
+	check(needs_boat.is_empty(), "no main or sea quest needs a vehicle %s" % [needs_boat])
+	check(DiscoveryDirector.found_count("coast") >= 8, "the Atlas records the sea (%d coast wonders)" % DiscoveryDirector.found_count("coast"))
+	Debug.peaceful = false

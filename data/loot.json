@@ -1260,5 +1260,79 @@
     3
    ]
   }
+ ],
+ "drop_finback": [
+  {
+   "id": "finback_tooth",
+   "chance": 1.0,
+   "count": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "raw_fish",
+   "chance": 0.5,
+   "count": [
+    1,
+    2
+   ]
+  }
+ ],
+ "drop_needlefin": [
+  {
+   "id": "raw_fish",
+   "chance": 0.3,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_storm_ray": [
+  {
+   "id": "storm_glass",
+   "chance": 0.6,
+   "count": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "ray_wing",
+   "chance": 0.8,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_hull_lurker": [
+  {
+   "id": "carapace_shard",
+   "chance": 1.0,
+   "count": [
+    2,
+    3
+   ]
+  },
+  {
+   "id": "lake_pearl",
+   "chance": 0.25,
+   "count": [
+    1,
+    1
+   ]
+  }
+ ],
+ "drop_whale": [
+  {
+   "id": "raw_fish",
+   "chance": 0.0,
+   "count": [
+    1,
+    1
+   ]
+  }
  ]
 }

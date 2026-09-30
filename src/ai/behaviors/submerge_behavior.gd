@@ -51,9 +51,13 @@ class SubmergedState:
 			if d < float(c.type.ai_value("surface_range", 12.0)) and near_water and t > 1.5 and b.cooldown_ready(&"surface"):
 				return &"surface"
 			if d < 24.0 and near_water:
-				# Shadowing the target from below.
+				# Shadowing the target from below. Hunters with a fin
+				# ("fin_depth") rise just enough for it to cut the surface:
+				# the warning you get before the strike.
+				c.sink = float(c.type.ai_value("fin_depth", c.type.ai_value("deep_depth", 2.4)))
 				c.go_to(pl.global_position, c.type.walk_speed * 1.3)
 				return &""
+			c.sink = float(c.type.ai_value("deep_depth", 2.4))
 		if c.global_position.distance_to(point) < 2.0 or t > 10.0:
 			point = random_point_near(c.home, float(c.type.ai_value("wander_radius", 10.0)))
 			c.go_to(point, c.type.walk_speed)

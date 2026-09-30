@@ -6,5 +6,6 @@
   "speed_up": {"name_key": "BUFF_SPEED_UP"},
   "regen": {"name_key": "BUFF_REGEN"},
   "stamina_regen": {"name_key": "BUFF_STAMINA_REGEN"},
-  "stealth": {"name_key": "BUFF_STEALTH"}
+  "stealth": {"name_key": "BUFF_STEALTH"},
+  "breath": {"name_key": "BUFF_BREATH"}
 }

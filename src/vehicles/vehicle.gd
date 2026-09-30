@@ -256,6 +256,9 @@ func _integrate(delta: float) -> void:
 	var fwd := facing_dir()
 	var hv := Vector3(velocity.x, 0, velocity.z)
 	var want := fwd * speed
+	# Sea currents carry boats: with the flow is faster, against is a slog.
+	if mode == &"water_mode":
+		want += SeaCurrent.drift_at(global_position, get_tree()) * 1.2
 	# Grip: lateral velocity bleeds off (lower grip = the machine slides).
 	var g := _grip() if mode == &"land_mode" else 1.2
 	hv = hv.lerp(want, clampf(g * delta, 0.0, 1.0)) if grounded or mode == &"water_mode" else hv.lerp(want, clampf(0.8 * delta, 0.0, 1.0))

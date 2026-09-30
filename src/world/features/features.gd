@@ -5,7 +5,8 @@ extends RefCounted
 ## trail markers, fishing spots, air vents and storm buoys.
 ##   {"kind": "feature", "feature": "<type>", "id": ..., "pos": [...], ...}
 
-const TYPES := ["glowcap", "bellcap", "bramble", "ribbon", "fishing_spot", "air_vent", "storm_buoy"]
+const TYPES := ["glowcap", "bellcap", "bramble", "ribbon", "fishing_spot", "air_vent", "storm_buoy", "storm_spire",
+	"current", "tide_bar", "surf", "kelp"]
 
 
 static func make(e: Dictionary) -> Node3D:
@@ -26,6 +27,18 @@ static func make(e: Dictionary) -> Node3D:
 			return AirVent.new()
 		"storm_buoy":
 			return StormBuoy.create(id)
+		"storm_spire":
+			return StormBuoy.create(id, true)
+		"current":
+			return SeaCurrent.create(float(e.get("length", 120.0)), float(e.get("width", 16.0)), float(e.get("strength", 3.5)))
+		"tide_bar":
+			var tb: Array = e.get("size", [4.0, 1.0, 4.0])
+			return TideBar.create(Vector3(tb[0], tb[1], tb[2]))
+		"kelp":
+			return Kelp.create(float(e.get("radius", 10.0)), int(e.get("count", 36)))
+		"surf":
+			var yaw := deg_to_rad(float(e.get("yaw", 0.0)))
+			return Surf.create(float(e.get("radius", 5.0)), Vector3(-sin(yaw), 0, -cos(yaw)))
 	return null
 
 

@@ -85,6 +85,20 @@ const SHOTS := [
 	["59_storm_buoys", -276.0, 30.0, 60.0, -10.0, 16.0, "storm", "wild:storm"],
 	["60_forest_combat", 470.0, 230.0, -30.0, -10.0, 13.0, "clear", "wild:combat"],
 	["61_atlas", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "wild:atlas"],
+	# Phase 4: the coast and the sea
+	["62_coast_day", 112.0, 812.0, -168.6, 2.0, 10.0, "clear", "sea:none"],
+	["63_coast_sunset", 60.0, 810.0, 161.1, 3.0, 18.6, "clear", "sea:sunset"],
+	["64_bellhull_sailing", 126.0, 905.0, -165.8, -6.0, 11.0, "clear", "sea:sail"],
+	["65_remote_islet", -395.0, 1012.0, 152.5, -8.0, 17.6, "clear", "sea:swim"],
+	["66_wreck_exterior", 14.0, 1234.0, -135.0, -16.0, 11.0, "clear", "sea:swim"],
+	["67_wreck_interior", 30.0, 1250.0, 0.0, -38.0, 11.0, "clear", "sea:hold"],
+	["68_diving_leviathan", 700.0, 1276.0, -51.3, -12.0, 12.0, "clear", "sea:dive"],
+	["69_marine_fauna", 650.0, 1330.0, -135.0, -2.0, 16.5, "clear", "sea:fauna"],
+	["70_sea_fishing", 528.0, 1000.0, -158.2, -14.0, 9.0, "clear", "sea:fish"],
+	["71_storm_reef", 552.0, 1028.0, -94.1, -8.0, 15.0, "storm", "sea:storm"],
+	["72_electrified_buoys", 760.0, 1262.0, 87.1, -6.0, 16.0, "storm", "sea:buoys"],
+	["73_sea_combat", 640.0, 1320.0, -135.0, -14.0, 13.0, "clear", "sea:combat"],
+	["74_atlas_sea", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "sea:atlas"],
 ]
 
 const LINEUPS := {
@@ -154,7 +168,13 @@ func _shot(s: Array) -> void:
 	w.hud.visible = s[7] in ["touch", "combat", "boss", "title", "protect", "nest", "course", "captive", "reward"]
 	var pos := Vector3(s[1], 0, s[2])
 	pos.y = w.gen.height(pos.x, pos.z) + 1.0
+	# Sea shots start afloat: never fall through a sea bed still streaming in.
+	var afloat := String(s[7]).begins_with("sea:") and pos.y < WorldGen.SEA_LEVEL
+	if afloat:
+		pos.y = WorldGen.SEA_LEVEL - 1.2
 	p.global_position = pos
+	if afloat:
+		p.change_state(&"swim")
 	p.velocity = Vector3.ZERO
 	p.facing_yaw = deg_to_rad(s[3])
 	Clock.set_time(s[5])
@@ -210,6 +230,8 @@ func _shot(s: Array) -> void:
 		await _wild_shot(String(s[7]).trim_prefix("wild:"), p, w)
 	if String(s[7]).begins_with("eco:"):
 		await _eco_shot(String(s[7]).trim_prefix("eco:"), p, w)
+	if String(s[7]).begins_with("sea:"):
+		await _sea_shot(String(s[7]).trim_prefix("sea:"), p, w)
 	if s[7] == "title":
 		EventBus.title_card.emit(tr("POI_CLOUD_TEMPLE"), tr("REGION_HIGHLANDS"))
 		await get_tree().create_timer(1.2).timeout
@@ -247,7 +269,7 @@ func _shot(s: Array) -> void:
 			w.hud.cooking._chosen = [&"emberroot", &"cap_mushroom"]
 			w.hud.cooking._refresh()
 			await get_tree().create_timer(0.4, true, false, true).timeout
-	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water"]:
+	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water", "sea:sail", "sea:hold"]:
 		rig.yaw = s[3]
 	rig.pitch = s[4]
 	if not s[7] in ["reward"]:
@@ -539,3 +561,125 @@ func _quest_setup(kind: String, p: Player, w: GameWorld) -> void:
 			Rewards.grant({"jade": 3, "glimmer": 60, "items": [{"id": "stamina_bloom", "count": 1}], "cosmetic": "trail_jade"}, "quest:tour_reward:1")
 			EventBus.title_card.emit(tr("Q_MQ_CLOUD_TEMPLE"), tr("QUEST_COMPLETED"))
 			await get_tree().create_timer(0.9).timeout
+
+
+## Phase 4 captures: the coast and the sea.
+func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
+	var rig := Game.camera_rig as CameraRig
+	var fwd := p.facing_dir()
+	for id in DB.vehicles:
+		PlayerData.own_vehicle(id, "earned")
+	w.vehicles._unveil_pending = &""
+	match kind:
+		"sunset":
+			WorldState.flags["lighthouse_lit"] = true
+			await get_tree().create_timer(1.0).timeout
+		"swim", "fauna", "storm", "buoys", "combat":
+			if kind == "storm":
+				# Wading on the reef shelf.
+				p.global_position.y = w.gen.height(p.global_position.x, p.global_position.z) + 0.3
+				p.change_state(&"air")
+			else:
+				p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+				p.change_state(&"swim")
+			await get_tree().create_timer(1.2).timeout
+			if kind == "fauna":
+				var whale := w.spawner.spawn_creature(&"ANIMAL_DRIFT_WHALE", p.global_position + fwd * 16.0 + Vector3(0, -1.0, 0), "", "tour")
+				await get_tree().create_timer(0.3).timeout
+				for m in whale.brain.behaviors:
+					if m is SurfacerBehavior:
+						(m as SurfacerBehavior)._t = 99.0
+				for i in 6:
+					w.spawner.spawn_creature(&"ENEMY_NEEDLEFIN", p.global_position + fwd * 7.0 + Vector3(i * 0.9 - 2.5, -0.6, i % 2), "", "tour")
+				await get_tree().create_timer(2.4).timeout
+			if kind == "storm":
+				for i in 2:
+					var r := w.spawner.spawn_creature(&"ENEMY_STORM_RAY", p.global_position + fwd * (10.0 + i * 5.0) + Vector3(i * 4.0 - 2.0, 3.0, 0), "", "tour")
+					r.perception.alert(p.global_position)
+					r.brain.change(&"chase")
+			if kind in ["storm", "buoys"]:
+				for i in 60:
+					await get_tree().create_timer(0.25).timeout
+					var hot := false
+					for b in get_tree().get_nodes_in_group(&"storm_buoys"):
+						if (b as StormBuoy)._hum > 0.0 and (b as StormBuoy)._hum < 0.6 and (b as Node3D).global_position.distance_to(p.global_position) < 50.0:
+							hot = true
+					if hot:
+						break
+			if kind == "combat":
+				w.hud.visible = true
+				var fin := w.spawner.spawn_creature(&"ENEMY_FINBACK", p.global_position + fwd * 8.0 + fwd.cross(Vector3.UP) * 3.0 + Vector3(0, -0.5, 0), "", "tour")
+				await get_tree().create_timer(0.3).timeout
+				fin.brain.change(&"surface")
+				for i in 4:
+					var nf := w.spawner.spawn_creature(&"ENEMY_NEEDLEFIN", p.global_position + fwd * 5.0 + fwd.cross(Vector3.UP) * (i - 1.5) * 1.6 + Vector3(0, -0.6, 0), "", "tour")
+					nf.perception.alert(p.global_position)
+					nf.brain.change(&"chase")
+				await get_tree().create_timer(1.2).timeout
+				Input.action_press("attack")
+				await get_tree().create_timer(0.12).timeout
+				Input.action_release("attack")
+				await get_tree().create_timer(0.2).timeout
+		"sail", "fish":
+			p.global_position.y = WorldGen.SEA_LEVEL - 1.2
+			p.change_state(&"swim")
+			await get_tree().create_timer(0.3).timeout
+			PlayerData.equip_vehicle(&"bellhull")
+			w.vehicles.summon(p)
+			await get_tree().create_timer(0.6).timeout
+			var boat := w.vehicles.active
+			p.enter_vehicle(boat)
+			if kind == "sail":
+				InputRouter.touch_move = Vector2(0, 1)
+				await get_tree().create_timer(3.0).timeout
+				InputRouter.touch_move = Vector2.ZERO
+				rig.yaw = rad_to_deg(boat.heading) + 150.0
+			else:
+				await get_tree().create_timer(1.5).timeout
+				w.hud.visible = true
+				PlayerData.inventory.add(&"fishing_rod", 1)
+				for fs in get_tree().get_nodes_in_group(&"fishing_spots"):
+					if (fs as Node3D).global_position.distance_to(boat.global_position) < 10.0:
+						(fs as FishingSpot).interact(p)
+						break
+				await get_tree().create_timer(1.2).timeout
+		"hold":
+			# Inside the Gull's Promise: the stern cabin, door forced open,
+			# the log on the chart table, daylight through the stern windows.
+			WorldState.flags["gulls_cabin_open"] = true
+			var frame: Node3D = null
+			for n in get_tree().root.find_children("WreckFrame", "Node3D", true, false):
+				if (n as Node3D).global_position.distance_to(Vector3(30, 0, 1250)) < 20.0:
+					frame = n
+			if frame:
+				p.change_state(&"air")
+				p.global_position = frame.global_transform * Vector3(0.0, 0.6, 10.2)
+				p.velocity = Vector3.ZERO
+				p.facing_yaw = frame.global_rotation.y + PI
+				rig.yaw = rad_to_deg(frame.global_rotation.y)
+				rig.snap_to_target()
+			w.hud.visible = true
+			await get_tree().create_timer(1.2).timeout
+		"dive":
+			p.global_position = Vector3(p.global_position.x, WorldGen.SEA_LEVEL - 1.3, p.global_position.z)
+			p.change_state(&"swim")
+			await get_tree().create_timer(0.2).timeout
+			p.change_state(&"dive")
+			p.global_position.y = WorldGen.SEA_LEVEL - 9.0
+			await get_tree().create_timer(2.5).timeout
+			w.hud.visible = true
+		"atlas":
+			for id in [&"sea_tidewarden_light", &"sea_vigil_top", &"sea_gulls_promise", &"sea_leviathan", &"sea_crystal_reef", &"sea_vanishing_bar", &"sea_lantern_squid"]:
+				WorldState.flags["disc:" + String(id)] = true
+			w.hud.visible = true
+			w.hud.menu.open(PauseMenu.TAB_JOURNAL)
+			var jp: JournalPanel = null
+			for n in w.hud.menu.find_children("*", "JournalPanel", true, false):
+				jp = n
+			if jp:
+				jp._show_atlas = true
+				jp._selected = &"atlas:sea_vanishing_bar"
+				jp.refresh()
+			await get_tree().create_timer(0.5, true, false, true).timeout
+		_:
+			await get_tree().create_timer(2.0).timeout

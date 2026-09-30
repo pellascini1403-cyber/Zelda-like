@@ -32,10 +32,16 @@ static func validate(db: Node) -> PackedStringArray:
 		poi_ids[String(poi["id"])] = true
 		for n in poi.get("npcs", []):
 			npc_homes[String(n[0])] = true
-		# Beacons and anchors set their flags when the player uses them.
-		for k in ["beacon", "flag"]:
+		# Beacons, anchors and wreck levers (cabin_gate) set their flags
+		# when the player uses them.
+		for k in ["beacon", "flag", "cabin_gate"]:
 			if poi.has(k):
 				settable[String(poi[k])] = true
+	# People who appear with a wonder (the castaway at dusk) live there.
+	for d in db.discoveries.values():
+		for sp in d.get("spawns", []):
+			if String(sp.get("kind", "")) == "creature" and String(sp.get("entity", "")).begins_with("NPC_"):
+				npc_homes[String(sp["entity"])] = true
 	for q in quests:
 		if ids.has(String(q.get("id", ""))):
 			errors.append("quest '%s' duplicated" % q.get("id", ""))

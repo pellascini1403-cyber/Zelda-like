@@ -1,0 +1,500 @@
+[
+ {
+  "id": "sq_sea_first_crossing",
+  "type": "side",
+  "category": "exploration",
+  "region": "coast",
+  "difficulty": 2,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_TALK",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SEA_FIRST_CROSSING_S0_TL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "tidewarden_light",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_TIDEWARDEN_LIGHT"
+      ],
+      "marker": [
+       150,
+       1000
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_FIRST_CROSSING_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "lighthouse_lit",
+      "text_key": "QO_T_LIGHT",
+      "text_args": [
+       "POI_TIDEWARDEN_LIGHT"
+      ],
+      "marker": [
+       150,
+       1000
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_FIRST_CROSSING_S2_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SEA_FIRST_CROSSING_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SEA_FIRST_CROSSING",
+  "desc_key": "Q_SQ_SEA_FIRST_CROSSING_DESC",
+  "rewards": {
+   "glimmer": 40,
+   "items": [
+    {
+     "id": "deepwater_broth",
+     "count": 2
+    }
+   ]
+  },
+  "start": "talk:NPC_TIDEKEEPER",
+  "offer_lines": [
+   "Q_SQ_SEA_FIRST_CROSSING_OF0"
+  ]
+ },
+ {
+  "id": "sq_sea_gulls_promise",
+  "type": "side",
+  "category": "exploration",
+  "region": "coast",
+  "difficulty": 3,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "discover",
+      "target": "gulls_promise",
+      "text_key": "QO_T_FIND",
+      "text_args": [
+       "POI_GULLS_PROMISE"
+      ],
+      "marker": [
+       30,
+       1250
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_GULLS_PROMISE_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "gulls_cabin_open",
+      "text_key": "QO_T_USE",
+      "text_args": [
+       "Q_SQ_SEA_GULLS_PROMISE_S1_O0_A0"
+      ],
+      "marker": [
+       30,
+       1250
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_GULLS_PROMISE_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "collect",
+      "target": "gulls_log",
+      "text_key": "QO_T_TAKE",
+      "text_args": [
+       "ITEM_GULLS_LOG"
+      ],
+      "count": 1,
+      "marker": [
+       30,
+       1250
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "deliver",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_GIVE",
+      "text_args": [
+       "ITEM_GULLS_LOG",
+       "NAME_TIDEKEEPER"
+      ],
+      "item": "gulls_log"
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SEA_GULLS_PROMISE_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SEA_GULLS_PROMISE",
+  "desc_key": "Q_SQ_SEA_GULLS_PROMISE_DESC",
+  "rewards": {
+   "glimmer": 70,
+   "jade": 2,
+   "items": [
+    {
+     "id": "lake_pearl",
+     "count": 1
+    }
+   ]
+  },
+  "start": "talk:NPC_TIDEKEEPER",
+  "requires": [
+   "sq_sea_first_crossing"
+  ],
+  "offer_lines": [
+   "Q_SQ_SEA_GULLS_PROMISE_OF0"
+  ]
+ },
+ {
+  "id": "sq_sea_under_keel",
+  "type": "side",
+  "category": "exploration",
+  "region": "coast",
+  "difficulty": 4,
+  "duration": "long",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "cook",
+      "target": "deepwater_broth",
+      "text_key": "QO_T_COOK",
+      "text_args": [
+       "ITEM_DEEPWATER_BROTH"
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_UNDER_KEEL_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "flag",
+      "target": "leviathan_cabin_open",
+      "text_key": "QO_T_USE",
+      "text_args": [
+       "Q_SQ_SEA_UNDER_KEEL_S1_O0_A0"
+      ],
+      "marker": [
+       720,
+       1260
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_UNDER_KEEL_S1_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "iron_leviathan:captain",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_SQ_SEA_UNDER_KEEL_S2_O0_A0"
+      ],
+      "marker": [
+       720,
+       1260
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SEA_UNDER_KEEL_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SEA_UNDER_KEEL",
+  "desc_key": "Q_SQ_SEA_UNDER_KEEL_DESC",
+  "rewards": {
+   "glimmer": 90,
+   "jade": 3
+  },
+  "start": "talk:NPC_TIDEKEEPER",
+  "requires": [
+   "sq_sea_gulls_promise"
+  ],
+  "offer_lines": [
+   "Q_SQ_SEA_UNDER_KEEL_OF0"
+  ]
+ },
+ {
+  "id": "sq_sea_storm_night",
+  "type": "side",
+  "category": "combat",
+  "region": "coast",
+  "difficulty": 4,
+  "duration": "medium",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "DISC_SEA_CRYSTAL_REEF"
+      ],
+      "pos": [
+       560,
+       1020
+      ],
+      "radius": 45.0,
+      "marker": [
+       560,
+       1020
+      ],
+      "conditions": {
+       "weather": [
+        "storm"
+       ]
+      }
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_STORM_NIGHT_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "survive",
+      "target": "sea_reef_storm",
+      "text_key": "QO_T_SURVIVE",
+      "text_args": [
+       "DISC_SEA_CRYSTAL_REEF"
+      ],
+      "marker": [
+       560,
+       1020
+      ]
+     }
+    ],
+    "spawns": [
+     {
+      "kind": "encounter",
+      "id": "sea_reef_storm",
+      "mode": "survive",
+      "pos": [
+       560,
+       1020
+      ],
+      "radius": 24,
+      "duration": 60,
+      "interval": 8,
+      "max_alive": 4,
+      "trigger_radius": 30,
+      "element": "electric",
+      "title_key": "Q_SQ_SEA_STORM_NIGHT_S1_P0_BANNER",
+      "waves": [
+       {
+        "entity": "ENEMY_STORM_RAY",
+        "count": 2,
+        "dist": 18
+       },
+       {
+        "entity": "ENEMY_NEEDLEFIN",
+        "count": 3,
+        "dist": 10
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "collect",
+      "target": "storm_glass",
+      "text_key": "QO_T_GATHER",
+      "text_args": [
+       "ITEM_STORM_GLASS"
+      ],
+      "count": 3,
+      "marker": [
+       560,
+       1020
+      ]
+     }
+    ],
+    "hint_lines": [
+     "Q_SQ_SEA_STORM_NIGHT_S2_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_TIDEKEEPER",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_TIDEKEEPER"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_SQ_SEA_STORM_NIGHT_S3_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_SQ_SEA_STORM_NIGHT",
+  "desc_key": "Q_SQ_SEA_STORM_NIGHT_DESC",
+  "rewards": {
+   "glimmer": 80,
+   "jade": 2,
+   "items": [
+    {
+     "id": "abyssal_pearl",
+     "count": 1
+    }
+   ],
+   "flag": "bellhull_stormproof"
+  },
+  "start": "talk:NPC_TIDEKEEPER",
+  "requires": [
+   "sq_sea_first_crossing"
+  ],
+  "offer_lines": [
+   "Q_SQ_SEA_STORM_NIGHT_OF0"
+  ]
+ },
+ {
+  "id": "dq_sea_vanishing_isle",
+  "type": "discovery",
+  "category": "exploration",
+  "region": "coast",
+  "difficulty": 3,
+  "duration": "short",
+  "stages": [
+   {
+    "objectives": [
+     {
+      "type": "reach",
+      "text_key": "QO_T_REACH",
+      "text_args": [
+       "DISC_SEA_VANISHING_BAR"
+      ],
+      "pos": [
+       320,
+       1280
+      ],
+      "radius": 30.0,
+      "marker": [
+       320,
+       1280
+      ],
+      "conditions": {
+       "tide": "low"
+      }
+     }
+    ],
+    "hint_lines": [
+     "Q_DQ_SEA_VANISHING_ISLE_S0_HL0"
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "open_chest",
+      "target": "vanishing_bar:buried",
+      "text_key": "QO_T_OPEN",
+      "text_args": [
+       "Q_DQ_SEA_VANISHING_ISLE_S1_O0_A0"
+      ],
+      "marker": [
+       320,
+       1280
+      ]
+     }
+    ]
+   },
+   {
+    "objectives": [
+     {
+      "type": "talk",
+      "target": "NPC_CASTAWAY",
+      "text_key": "QO_T_RETURN",
+      "text_args": [
+       "NAME_CASTAWAY"
+      ]
+     }
+    ],
+    "talk_lines": [
+     "Q_DQ_SEA_VANISHING_ISLE_S2_TL0"
+    ]
+   }
+  ],
+  "title_key": "Q_DQ_SEA_VANISHING_ISLE",
+  "desc_key": "Q_DQ_SEA_VANISHING_ISLE_DESC",
+  "rewards": {
+   "glimmer": 50,
+   "jade": 1
+  },
+  "start": "talk:NPC_CASTAWAY",
+  "offer_lines": [
+   "Q_DQ_SEA_VANISHING_ISLE_OF0"
+  ]
+ }
+]

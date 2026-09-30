@@ -3,7 +3,8 @@ extends PlayerState
 ## Reduced diving: from the surface, dodge to dive. Move freely, sink
 ## gently, hold jump to rise; stamina is your breath (it drains, faster
 ## when dashing). Out of breath you start drowning — rise or find an air
-## vent (a bubble column) to refill. Breath gear ("breath" armour) and
+## vent (a bubble column) to refill. Breath gear ("breath" armour, the
+## deepwater broth buff) and
 ## swim gear ("swim_speed") make dives longer and faster.
 ## Same state for the lake, the coast and the sea.
 
@@ -37,7 +38,7 @@ func physics(delta: float) -> StringName:
 	var move := p.move_dir()
 	var dashing := p.wants_sprint() and move != Vector3.ZERO and p.vitals.stamina > 0.0
 	var gear := 1.0 + PlayerData.armor_bonus("swim_speed")
-	p.apply_horizontal(move * (DASH if dashing else SPEED) * gear, 4.0, delta)
+	p.apply_horizontal(move * (DASH if dashing else SPEED) * gear + SeaCurrent.drift_at(p.global_position, p.get_tree()), 4.0, delta)
 	var vy := -SINK
 	if Input.is_action_pressed("jump"):
 		vy = RISE * gear
@@ -55,7 +56,7 @@ func physics(delta: float) -> StringName:
 			p.vitals.exhausted = false
 		_drown = 0.0
 	else:
-		var drain := (DASH_DRAIN if dashing else BREATH_DRAIN) * clampf(1.0 - PlayerData.armor_bonus("breath"), 0.25, 1.0)
+		var drain := (DASH_DRAIN if dashing else BREATH_DRAIN) * clampf(1.0 - PlayerData.breath_bonus(), 0.25, 1.0)
 		p.vitals.drain(drain * delta)
 	if p.vitals.stamina <= 0.0:
 		_drown += delta

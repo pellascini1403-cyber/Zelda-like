@@ -41,7 +41,9 @@ func _people(poi: Dictionary, root: Node3D) -> Array:
 	var npcs: Array = poi.get("npcs", [])
 	for i in npcs.size():
 		var n: Array = npcs[i]
-		var sp := _spawn(root, n[0], Vector3(n[1], 0, n[2]), poi["id"], i, poi["id"])
+		# Own id space ("<poi>:npc:<i>"): a builder's guards use "<poi>:<i>",
+		# and a defeated guard must never keep a person from showing up.
+		var sp := _spawn(root, n[0], Vector3(n[1], 0, n[2]), poi["id"], i, poi["id"] + ":npc")
 		if n.size() > 3:
 			sp["flag"] = String(n[3])   # PoiManager spawns them once the flag is set
 		spawns.append(sp)
@@ -123,6 +125,11 @@ func _build_type(poi: Dictionary, root: Node3D) -> Array:
 		"hollow_tree": return SiteBuilder.new(self).hollow_tree(poi, root)
 		"moon_shrine": return SiteBuilder.new(self).moon_shrine(poi, root)
 		"sunken_shrine": return SiteBuilder.new(self).sunken_shrine(poi, root)
+		"lighthouse": return SeaBuilder.new(self).lighthouse(poi, root)
+		"sea_spire": return SeaBuilder.new(self).sea_spire(poi, root)
+		"wreck": return SeaBuilder.new(self).wreck(poi, root)
+		"castaway_camp": return SeaBuilder.new(self).castaway_camp(poi, root)
+		"tide_cave": return SeaBuilder.new(self).tide_cave(poi, root)
 	push_warning("StructureBuilder: unknown POI type " + kind)
 	return []
 

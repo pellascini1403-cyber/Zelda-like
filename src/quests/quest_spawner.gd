@@ -112,6 +112,20 @@ func _conditions_ok(e: Dictionary) -> bool:
 		return false
 	if c.has("not_flag") and WorldState.flags.has(String(c["not_flag"])):
 		return false
+	if c.has("tide") and not _tide_ok(String(c["tide"])):
+		return false
+	if c.has("hours"):
+		var hr: Array = c["hours"]
+		var h := Clock.hour
+		if not ((h >= float(hr[0]) and h < float(hr[1])) if float(hr[0]) <= float(hr[1]) else (h >= float(hr[0]) or h < float(hr[1]))):
+			return false
+	return true
+
+
+static func _tide_ok(t: String) -> bool:
+	match t:
+		"low": return Tide.is_low()
+		"high": return Tide.is_high()
 	return true
 
 

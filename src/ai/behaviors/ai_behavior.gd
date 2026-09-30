@@ -18,6 +18,7 @@ extends RefCounted
 ##   fire_shy      scatters away from fire and burning weapons
 ##   swarm         packs orbit the target and strike one at a time
 ##   storm_charged in storms: electric attacks, sparks, more damage
+##   surfacer      big swimmers rise to breathe (spout), then sink
 
 var b: AIBrain
 var c: Creature
@@ -86,9 +87,10 @@ static func make(name: String, brain: AIBrain) -> AIBehavior:
 		"fire_shy": return FireShyBehavior.new(brain)
 		"swarm": return SwarmBehavior.new(brain)
 		"storm_charged": return StormChargedBehavior.new(brain)
+		"surfacer": return SurfacerBehavior.new(brain)
 	push_warning("AIBehavior: unknown behaviour " + name)
 	return null
 
 
 const KNOWN := ["ambush", "swoop", "front_armor", "submerge", "burrow", "drop_from_above", "phase", "steal",
-	"ignite", "fire_shy", "swarm", "storm_charged"]
+	"ignite", "fire_shy", "swarm", "storm_charged", "surfacer"]

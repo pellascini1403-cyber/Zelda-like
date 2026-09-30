@@ -71,6 +71,8 @@ static func world_ok(c: Dictionary) -> bool:
 		return false
 	if c.has("not_flag") and WorldState.flags.has(String(c["not_flag"])):
 		return false
+	if c.has("tide") and not QuestSpawner._tide_ok(String(c["tide"])):
+		return false
 	return true
 
 
@@ -135,6 +137,10 @@ static func condition_text(d: Dictionary) -> String:
 			"rain": parts.append(TranslationServer.translate("COND_RAIN"))
 			"storm": parts.append(TranslationServer.translate("COND_STORM"))
 			"fog": parts.append(TranslationServer.translate("COND_FOG"))
+	if c.has("tide"):
+		parts.append(TranslationServer.translate("TIDE_LOW" if String(c["tide"]) == "low" else "TIDE_HIGH"))
+	if c.has("vehicle"):
+		parts.append(TranslationServer.translate("COND_BY_BOAT"))
 	if c.has("min_y"):
 		parts.append(TranslationServer.translate("COND_HIGH"))
 	if c.has("max_y"):

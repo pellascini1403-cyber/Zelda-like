@@ -39,6 +39,12 @@ var hidden := false
 var sink := 0.0
 ## A state moves the body itself this tick (dives, drops): no steering.
 var scripted := false
+## Walks the sea bed as if it were land (wreck crabs): water does not stop it.
+var _amphibious := false
+## Born of the storm (storm rays): once the sky clears it fades back into
+## the spray — no corpse, no loot.
+var _storm_only := false
+var _calm_time := 0.0
 
 var _collision: CollisionShape3D
 var _stuck_time := 0.0
@@ -97,6 +103,9 @@ func _build() -> void:
 	hidden = false
 	collision_layer = 1 << 2
 	sink = float(type.ai_value("swim_depth", 1.0)) if type.is_aquatic() else 0.0
+	_amphibious = bool(type.ai_value("amphibious", false))
+	_storm_only = bool(type.ai_value("storm_only", false))
+	_calm_time = 0.0
 	brain = _make_brain()
 	global_position = home
 	facing_yaw = randf() * TAU
@@ -124,6 +133,10 @@ func ai_tick(delta: float) -> void:
 	if type.is_aquatic() and global_position.y < WorldGen.SEA_LEVEL:
 		# Always soaked: lightning and shock arrows hit swimmers twice as hard.
 		health.add_status(&"wet", 1.0)
+	if _storm_only and not dead:
+		_calm_time = _calm_time + delta if Weather.storm < 0.15 else 0.0
+		if _calm_time > 4.0:
+			_fade_with_storm()
 	if not dead:
 		perception.update(delta)
 		brain.tick(delta)
@@ -152,7 +165,8 @@ func _move(delta: float) -> void:
 	velocity.x = hv.x + knockback.x
 	velocity.z = hv.z + knockback.z
 	if type.flying:
-		var ground := _ground_height()
+		# Over water, flyers hover above the surface, not the sea bed.
+		var ground := maxf(_ground_height(), WorldGen.SEA_LEVEL)
 		var hover := ground + float(type.ai_value("hover", 3.0)) + sin(Time.get_ticks_msec() * 0.002 + home.x) * 0.4
 		if move_target.y > ground + 1.0 and target:
 			hover = maxf(hover, move_target.y + 1.0)
@@ -190,6 +204,16 @@ func _move(delta: float) -> void:
 		else:
 			_stuck_time = 0.0
 	_last_pos = global_position
+	# Never below the height field, collider streamed in or not: a body
+	# spawned before its chunk's collision exists (a POI waking 100 m away)
+	# must not fall out of the world and count as defeated for good.
+	if not type.flying and not dead and not is_on_floor():
+		var gw := Game.world as GameWorld
+		if gw:
+			var floor_y := gw.gen.height(global_position.x, global_position.z)
+			if global_position.y < floor_y - 0.5:
+				global_position.y = floor_y
+				velocity.y = maxf(velocity.y, 0.0)
 	if global_position.y < -60.0:
 		_on_died(DamageInfo.make(0, null))
 
@@ -216,7 +240,7 @@ func _avoid(dir: Vector3) -> Vector3:
 		var g := space.intersect_ray(PhysicsRayQueryParameters3D.create(ahead, ahead + Vector3.DOWN * 8.0, 1))
 		if g.is_empty():
 			continue
-		if g["position"].y < WorldGen.SEA_LEVEL - 0.6:
+		if g["position"].y < WorldGen.SEA_LEVEL - 0.6 and not _amphibious:
 			continue
 		if g["position"].y < global_position.y - 3.5 and not type.is_climber():
 			continue
@@ -380,6 +404,15 @@ func _on_died(_info: DamageInfo) -> void:
 	if is_instance_valid(self):
 		Effects.dust(self, global_position, 1.0)
 		queue_free()
+
+
+func _fade_with_storm() -> void:
+	dead = true
+	_collision.set_deferred("disabled", true)
+	Effects.sparks(self, global_position + Vector3.UP * type.collider_height * 0.5, ArtStyle.vfx_color(type), 0.5)
+	var t := create_tween()
+	t.tween_property(visual, "scale", Vector3(0.05, 0.05, 0.05), 0.8).set_ease(Tween.EASE_IN)
+	t.tween_callback(queue_free)
 
 
 func enable_debug_label(on: bool) -> void:

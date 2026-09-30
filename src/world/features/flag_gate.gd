@@ -21,6 +21,7 @@ static func create(flag_id: String, gate_size: Vector3, col: Color, is_round: bo
 
 
 func _ready() -> void:
+	add_to_group(&"flag_gates")
 	collision_layer = 1
 	collision_mask = 0
 	var cs := CollisionShape3D.new()

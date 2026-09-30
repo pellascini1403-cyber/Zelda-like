@@ -41,6 +41,22 @@ func physics(delta: float) -> StringName:
 	p.facing_yaw = v.heading
 	p.velocity = v.velocity
 	if Input.is_action_just_pressed("interact") and time_in_state > 0.35:
+		# Afloat and idling over fish: fish from the hatch instead of
+		# climbing out (deep-water spots are the Bellhull's own).
+		var spot := _fishing_spot_near(v)
+		if spot:
+			spot.interact(p)
+			return &""
 		p.exit_vehicle(false)
 		return &""
 	return &""
+
+
+func _fishing_spot_near(v: Vehicle) -> FishingSpot:
+	if v.mode != &"water_mode" or absf(v.speed) > 1.5:
+		return null
+	for f in p.get_tree().get_nodes_in_group(&"fishing_spots"):
+		var fs := f as FishingSpot
+		if not fs.resting() and Vector2(fs.global_position.x - v.global_position.x, fs.global_position.z - v.global_position.z).length() < 6.0:
+			return fs
+	return null

@@ -74,10 +74,8 @@ heartwood, mist fox fur, stealth hood, rootgrip charm, pearls, stormglass,
 tide charm, cosmetics (moonlit ribbon, heron plume), a cooking recipe.
 Most are not quests: you find them, the Atlas records them, you move on.
 
-## Bellhull — prepared, not yet built (next phase: coast & sea)
+## Bellhull at sea — built in the coast & sea phase
 
-The water systems above are the Bellhull's content base: sea fishing spots
-reachable only by boat, storm-buoy fields and a storm isle out at sea,
-wreck dives (diving + air vents), eel/serpent fights from the deck (its
-gun), cargo recovery. `DiscoveryDirector.player_ok` already accepts
-`"vehicle": "bellhull"` and `state: ["drive"]` conditions.
+See docs/COAST_AND_SEA.md: the lake's water systems (fishing, diving,
+air vents, storm buoys, gates) now run the south sea, and the Bellhull
+fishes from its hatch, rides currents, starts dives and has a storm lining.

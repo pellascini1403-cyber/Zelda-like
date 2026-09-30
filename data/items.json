@@ -1181,5 +1181,169 @@
    "breath": 0.5,
    "swim_speed": 0.25
   }
+ },
+ {
+  "id": "bluewater_runner",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 10,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 18
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "swift": 1.0
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "lantern_squid",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 22,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 16
+   }
+  ],
+  "cook": {
+   "heal": 1.5,
+   "vigor": 1.0
+  },
+  "tags": [
+   "fish"
+  ],
+  "rarity": 2
+ },
+ {
+  "id": "wreck_grouper",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 14,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 26
+   }
+  ],
+  "cook": {
+   "heal": 2.0,
+   "stout": 1.0
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "glass_shrimp",
+  "category": "food",
+  "icon": "res://assets/icons/food_meat.svg",
+  "use_action": "eat",
+  "value": 9,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 8
+   }
+  ],
+  "cook": {
+   "heal": 1.0,
+   "cool": 1.0
+  },
+  "tags": [
+   "fish"
+  ]
+ },
+ {
+  "id": "finback_tooth",
+  "category": "material",
+  "icon": "res://assets/icons/mat_fang.svg",
+  "value": 12
+ },
+ {
+  "id": "ray_wing",
+  "category": "material",
+  "icon": "res://assets/icons/mat_hide.svg",
+  "value": 20,
+  "rarity": 2
+ },
+ {
+  "id": "abyssal_pearl",
+  "category": "material",
+  "icon": "res://assets/icons/mat_gem.svg",
+  "value": 120,
+  "rarity": 3
+ },
+ {
+  "id": "deepwater_mask",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_head.svg",
+  "value": 140,
+  "rarity": 3,
+  "armor": {
+   "slot": "head",
+   "defense": 1,
+   "breath": 0.4
+  }
+ },
+ {
+  "id": "driftwood_charm",
+  "category": "armor",
+  "icon": "res://assets/icons/armor_accessory.svg",
+  "value": 90,
+  "rarity": 2,
+  "armor": {
+   "slot": "accessory",
+   "defense": 0,
+   "swim_speed": 0.3,
+   "breath": 0.15
+  }
+ },
+ {
+  "id": "tidewarden_chart",
+  "category": "key",
+  "icon": "res://assets/icons/key_journal.svg",
+  "max_stack": 1
+ },
+ {
+  "id": "gulls_log",
+  "category": "key",
+  "icon": "res://assets/icons/key_journal.svg",
+  "max_stack": 1
+ },
+ {
+  "id": "castaway_compass",
+  "category": "key",
+  "icon": "res://assets/icons/key_seed.svg",
+  "max_stack": 1
+ },
+ {
+  "id": "deepwater_broth",
+  "category": "food",
+  "icon": "res://assets/icons/food_dish.svg",
+  "use_action": "eat",
+  "value": 40,
+  "rarity": 2,
+  "effects": [
+   {
+    "type": "heal",
+    "amount": 20
+   },
+   {
+    "type": "buff",
+    "buff": "breath",
+    "amount": 1,
+    "duration": 240
+   }
+  ]
  }
 ]

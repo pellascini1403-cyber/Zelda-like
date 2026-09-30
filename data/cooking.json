@@ -32,6 +32,16 @@
       ],
       "item": "hush_tea",
       "potency": 1.0
+    },
+    {
+      "id": "deepwater_broth",
+      "ingredients": [
+        "bluewater_runner",
+        "lantern_squid",
+        "frostmint"
+      ],
+      "item": "deepwater_broth",
+      "potency": 1.0
     }
   ]
 }

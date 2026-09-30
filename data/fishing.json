@@ -50,17 +50,6 @@
     "weight": 6
    },
    {
-    "item": "reef_glint",
-    "weight": 1,
-    "hours": [
-     10,
-     15
-    ],
-    "weather": [
-     "clear"
-    ]
-   },
-   {
     "item": "stormfin",
     "weight": 2,
     "weather": [
@@ -70,6 +59,74 @@
    {
     "item": "raw_fish",
     "weight": 2
+   }
+  ],
+  "reef": [
+   {
+    "item": "reef_glint",
+    "weight": 2,
+    "hours": [
+     10,
+     15
+    ],
+    "weather": [
+     "clear"
+    ]
+   },
+   {
+    "item": "glass_shrimp",
+    "weight": 4
+   },
+   {
+    "item": "glass_shrimp",
+    "weight": 6,
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "item": "silverback",
+    "weight": 3
+   }
+  ],
+  "deep": [
+   {
+    "item": "bluewater_runner",
+    "weight": 5,
+    "period": "day"
+   },
+   {
+    "item": "lantern_squid",
+    "weight": 4,
+    "period": "night"
+   },
+   {
+    "item": "stormfin",
+    "weight": 5,
+    "weather": [
+     "storm"
+    ]
+   },
+   {
+    "item": "silverback",
+    "weight": 1
+   }
+  ],
+  "wreck": [
+   {
+    "item": "wreck_grouper",
+    "weight": 5
+   },
+   {
+    "item": "silverback",
+    "weight": 2
+   },
+   {
+    "item": "stormfin",
+    "weight": 2,
+    "weather": [
+     "storm"
+    ]
    }
   ]
  }

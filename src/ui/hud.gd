@@ -222,6 +222,9 @@ func _process(delta: float) -> void:
 		status.append(tr("STATUS_" + String(s).to_upper()))
 	if PlayerData.carries_metal() and Weather.storm > 0.5 and not PlayerData.lightning_immune():
 		status.append(tr("STATUS_METAL_STORM"))
+	# On the coast the tide matters (sandbars, cave mouths): show it.
+	if p.region == &"coast":
+		status.append(tr(Tide.label_key()))
 	_status.text = "  ".join(status)
 	_status.add_theme_color_override("font_color", UITheme.DANGER if exp != 0 else UITheme.TEXT)
 	_update_buffs()

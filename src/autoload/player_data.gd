@@ -348,6 +348,11 @@ func glide_efficiency() -> float:
 	return base * (1.0 - upgrade_bonus(&"vela"))
 
 
+## Longer dives: breath gear + the deepwater broth buff (1 potency = -30 % drain).
+func breath_bonus() -> float:
+	return armor_bonus("breath") + buff_potency(&"breath") * 0.3
+
+
 func buff_potency(id: StringName) -> float:
 	return float(buffs[id]["potency"]) if buffs.has(id) else 0.0
 

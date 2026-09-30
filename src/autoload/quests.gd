@@ -374,7 +374,7 @@ func _matches(o: Dictionary, kind: StringName, target: StringName, group: String
 
 ## Conditions an objective may require at the moment it is met:
 ## {period: "night"|"day", weather: [ids], state: "glide"|"swim"|"climb"|"ride",
-##  min_y: metres, region: id}
+##  min_y: metres, region: id, tide: "low"|"high"}
 func _conditions_ok(o: Dictionary) -> bool:
 	var c: Dictionary = o.get("conditions", {})
 	if c.is_empty():
@@ -390,6 +390,8 @@ func _conditions_ok(o: Dictionary) -> bool:
 	if c.has("min_y") and (p == null or p.global_position.y < float(c["min_y"])):
 		return false
 	if c.has("region") and (p == null or p.region != StringName(c["region"])):
+		return false
+	if c.has("tide") and not QuestSpawner._tide_ok(String(c["tide"])):
 		return false
 	return true
 

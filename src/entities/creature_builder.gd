@@ -31,6 +31,10 @@ static func build_enemy(v: EntityVisual, h: float, r: float) -> void:
 			_bat(v, h, r, c)
 		"jelly":
 			_jelly(v, h, r, c)
+		"finback":
+			_finback(v, h, r, c)
+		"ray":
+			_ray(v, h, r, c)
 		"toad":
 			_toad(v, h, r, c)
 		"wisp":
@@ -330,6 +334,43 @@ static func _jelly(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
 	_mouth(v, head, Vector3(0, -r * 0.5, 0))
 
 
+## Sea hunter: a torpedo body, a tall dorsal fin (the part you see cutting
+## the water before it strikes), a crescent tail, a jaw of pale spikes.
+static func _finback(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
+	var rig := _rig(v, &"serpent")
+	var torso := v._part("torso", ShapeKit.capsule(r * 0.55, r * 3.2), c["b"], rig, Vector3(0, r * 0.6, 0))
+	(torso.get_child(0) as Node3D).rotation_degrees = Vector3(90, 0, 0)
+	(torso.get_child(0) as Node3D).scale = Vector3(0.85, 1.0, 1.0)
+	v.deco(torso, ShapeKit.cone(r * 0.45, r * 1.3, 3), c["b"], Vector3(0, r * 0.95, -r * 0.1), Vector3(-18, 0, 0), Vector3(0.25, 1, 1))
+	v.deco(torso, ShapeKit.cone(r * 0.12, r * 0.5, 3), c["e"], Vector3(0, r * 1.45, r * 0.05), Vector3(-18, 0, 0), Vector3(0.3, 1, 1), true)
+	for sx: int in [-1, 1]:
+		v.deco(torso, ShapeKit.cone(r * 0.3, r * 0.9, 3), c["b"], Vector3(sx * r * 0.55, -r * 0.1, -r * 0.4), Vector3(0, 0, sx * 100), Vector3(1, 1, 0.25))
+	var tail := v.sway_part(torso, "tail", Vector3(0, 0, r * 1.6))
+	for sy: int in [-1, 1]:
+		v.deco(tail, ShapeKit.cone(r * 0.35, r * 1.1, 3), c["b"], Vector3(0, sy * r * 0.35, r * 0.35), Vector3(-sy * 60, 0, 0), Vector3(0.25, 1, 1))
+	var head := v._part("head", ShapeKit.sphere(r * 0.5, FACETS), c["b"], torso, Vector3(0, 0, -r * 1.6))
+	head.scale = Vector3(0.9, 0.75, 1.2)
+	_eyes(v, head, Vector3(0, r * 0.12, -r * 0.35), r * 0.38, r * 0.09, c)
+	for i in 5:
+		v.deco(head, ShapeKit.cone(r * 0.05, r * 0.2, 4), c["e"], Vector3((i - 2) * r * 0.1, -r * 0.2, -r * 0.5), Vector3(180, 0, 0), Vector3.ONE, true)
+	_mouth(v, head, Vector3(0, -r * 0.1, -r * 0.6))
+
+
+## Storm ray: a flat diamond wing that skims the waves, a whip tail with a
+## crackling tip.
+static func _ray(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
+	var rig := _rig(v, &"float")
+	var torso := v._part("torso", ShapeKit.sphere(r * 0.6, FACETS), c["b"], rig, Vector3(0, h * 0.5, 0))
+	torso.scale = Vector3(1.0, 0.35, 1.2)
+	_wings(v, torso, Vector3(0, 0, 0), r * 2.2, c)
+	var head := v._part("head", ShapeKit.sphere(r * 0.3, FACETS), c["b"], torso, Vector3(0, r * 0.1, -r * 0.8))
+	_eyes(v, head, Vector3(0, r * 0.12, -r * 0.2), r * 0.25, r * 0.08, c)
+	var tail := v.sway_part(torso, "tail", Vector3(0, 0, r * 0.7))
+	v.deco(tail, ShapeKit.cone(r * 0.08, r * 2.4, 4), c["b"], Vector3(0, 0, r * 1.2), Vector3(90, 0, 0))
+	v.deco(tail, ShapeKit.sphere(r * 0.12, 6), c["e"], Vector3(0, 0, r * 2.4), Vector3.ZERO, Vector3.ONE, true)
+	_mouth(v, head, Vector3(0, 0, -r * 0.3))
+
+
 ## Squat spitter: toad-like sac with a spout, back spikes, glowing throat.
 static func _toad(v: EntityVisual, h: float, r: float, c: Dictionary) -> void:
 	var rig := _rig(v, &"float")
@@ -517,6 +558,9 @@ static func build_wildlife(v: EntityVisual, h: float, r: float) -> void:
 	if sp == "shellfolk":
 		_shellfolk(v, h, r, main, dark, eye)
 		return
+	if sp == "whale":
+		_whale(v, h, r, main, dark, eye)
+		return
 	var rig := _rig(v, &"legged")
 	var leg := h * 0.45
 	var body_len := r * 2.6
@@ -606,3 +650,23 @@ static func _shellfolk(v: EntityVisual, h: float, r: float, main: Material, dark
 			v.legs.append(lg)
 			i += 1
 	_mouth(v, head, Vector3(0, 0, -r * 0.2))
+
+
+
+## Drift whale: long, smooth and slow; pale belly, a broad fluke that
+## sways, small calm eyes. The biggest thing in the sea — and harmless.
+static func _whale(v: EntityVisual, h: float, r: float, main: Material, dark: Material, eye: Material) -> void:
+	var rig := _rig(v, &"serpent")
+	var body := v._part("torso", ShapeKit.capsule(r * 0.7, r * 4.2), main, rig, Vector3(0, r * 0.7, 0))
+	(body.get_child(0) as Node3D).rotation_degrees = Vector3(90, 0, 0)
+	v.deco(body, ShapeKit.capsule(r * 0.55, r * 3.2), ArtStyle.solid(Color(0.86, 0.86, 0.82)), Vector3(0, -r * 0.3, -r * 0.2), Vector3(90, 0, 0), Vector3(1.0, 1.0, 0.6))
+	var head := v._part("head", ShapeKit.sphere(r * 0.72, 12), main, body, Vector3(0, 0.05, -r * 1.9))
+	head.scale = Vector3(1.0, 0.85, 1.2)
+	for sx: int in [-1, 1]:
+		v.deco(head, ShapeKit.sphere(r * 0.07, 6), eye, Vector3(sx * r * 0.6, -r * 0.05, -r * 0.35))
+		v.deco(body, ShapeKit.capsule(r * 0.12, r * 1.3), dark, Vector3(sx * r * 0.85, -r * 0.35, -r * 0.8), Vector3(20, 0, sx * 70))
+	var tail := v.sway_part(body, "tail", Vector3(0, 0, r * 2.1))
+	v.deco(tail, ShapeKit.capsule(r * 0.3, r * 1.4), main, Vector3(0, 0, r * 0.5), Vector3(90, 0, 0))
+	for sx: int in [-1, 1]:
+		v.deco(tail, ShapeKit.sphere(r * 0.6, 8), dark, Vector3(sx * r * 0.55, 0, r * 1.2), Vector3(0, sx * 25, 0), Vector3(1.0, 0.12, 0.5))
+	_mouth(v, head, Vector3(0, -r * 0.2, -r * 0.7))

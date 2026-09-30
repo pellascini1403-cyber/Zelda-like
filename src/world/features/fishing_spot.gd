@@ -127,8 +127,9 @@ func interact(player: Player) -> void:
 			if PlayerData.inventory.count_of(&"fishing_rod") <= 0:
 				EventBus.toast.emit(tr("HINT_NEED_ROD"))
 				return
-			player.start_busy(&"interact", 0.6)
-			player.visual.play_action(&"attack_1", 0.6)
+			if player.vehicle == null:
+				player.start_busy(&"interact", 0.6)
+				player.visual.play_action(&"attack_1", 0.6)
 			phase = Phase.WAITING
 			_t = 0.0
 			_bite_at = wait_time()
@@ -148,8 +149,9 @@ func interact(player: Player) -> void:
 				EventBus.toast.emit(tr("FISH_ESCAPED"))
 				return
 			Fishing.land(fish)
-			player.start_busy(&"interact", 0.5)
-			player.visual.play_action(&"interact", 0.5)
+			if player.vehicle == null:
+				player.start_busy(&"interact", 0.5)
+				player.visual.play_action(&"interact", 0.5)
 			_catches += 1
 			if _catches >= CATCHES_BEFORE_REST:
 				_catches = 0
