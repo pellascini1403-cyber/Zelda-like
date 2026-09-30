@@ -12,13 +12,13 @@ extends RefCounted
 const QUEST_TYPES := ["main", "side", "discovery", "bounty", "challenge"]
 const CATEGORIES := ["story", "combat", "exploration", "puzzle", "gathering", "npc", "discovery", "boss", "challenge", "crafting", "traversal"]
 const DURATIONS := ["short", "medium", "long"]
-const SPAWN_KINDS := ["object", "nest", "creature", "actor", "encounter", "course", "chest", "cue", "puzzle"]
+const SPAWN_KINDS := ["object", "nest", "creature", "actor", "encounter", "course", "chest", "cue", "puzzle", "zone"]
 const ENC_MODES := ["protect", "survive", "escort"]
 const COURSE_MODES := ["glide", "run", "swim", "ride"]
 const STATES := ["glide", "swim", "climb", "ride", "ground", "air"]
 const HINTS := ["marked", "area", "none"]
 ## Flags set by systems rather than quest data.
-const SYSTEM_FLAG_PREFIXES := ["boss_", "puzzle_", "mount_", "gift_", "qo:", "qd:", "qe:", "poi:"]
+const SYSTEM_FLAG_PREFIXES := ["boss_", "puzzle_", "mount_", "gift_", "qo:", "qd:", "qe:", "poi:", "disc:"]
 
 
 static func validate(db: Node) -> PackedStringArray:
@@ -233,7 +233,12 @@ static func _check_spawn(sp: Dictionary, db: Node, poi_ids: Dictionary, where: S
 	if kind in ["object", "nest", "encounter", "course", "puzzle"] and String(sp.get("id", "")) == "":
 		errors.append("%s needs an id" % w)
 	match kind:
+		"zone":
+			if not String(sp.get("zone", "updraft")) in ["updraft", "levity"]:
+				errors.append("%s unknown zone '%s'" % [w, sp.get("zone", "")])
 		"object":
+			if sp.has("discover") and not db.discoveries.has(StringName(sp["discover"])):
+				errors.append("%s discovers unknown '%s'" % [w, sp["discover"]])
 			if not String(sp.get("look", "clue")) in QuestObject.KINDS:
 				errors.append("%s unknown object look '%s'" % [w, sp.get("look", "")])
 			for k in ["item", "needs_item"]:

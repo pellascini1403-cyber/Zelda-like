@@ -15,6 +15,7 @@ const PRESETS := {
 		"vegetation_density": 0.35, "vegetation_distance": 35.0,
 		"particles": 0.35, "fog": true, "glow": false, "msaa": 0,
 		"max_dynamic_lights": 2, "ai_full_distance": 40.0, "ai_reduced_distance": 90.0,
+		"ambient_groups": 2, "ambient_distance": 70.0,
 	},
 	Level.MEDIUM: {
 		"render_scale": 0.8, "shadow_distance": 55.0, "shadow_size": 2048, "shadows_vegetation": false,
@@ -22,6 +23,7 @@ const PRESETS := {
 		"vegetation_density": 0.6, "vegetation_distance": 45.0,
 		"particles": 0.6, "fog": true, "glow": true, "msaa": 0,
 		"max_dynamic_lights": 4, "ai_full_distance": 50.0, "ai_reduced_distance": 110.0,
+		"ambient_groups": 4, "ambient_distance": 90.0,
 	},
 	Level.HIGH: {
 		"render_scale": 0.9, "shadow_distance": 80.0, "shadow_size": 2048, "shadows_vegetation": true,
@@ -29,6 +31,7 @@ const PRESETS := {
 		"vegetation_density": 0.85, "vegetation_distance": 55.0,
 		"particles": 0.85, "fog": true, "glow": true, "msaa": 0,
 		"max_dynamic_lights": 6, "ai_full_distance": 60.0, "ai_reduced_distance": 130.0,
+		"ambient_groups": 6, "ambient_distance": 110.0,
 	},
 	Level.ULTRA: {
 		"render_scale": 1.0, "shadow_distance": 120.0, "shadow_size": 4096, "shadows_vegetation": true,
@@ -36,6 +39,7 @@ const PRESETS := {
 		"vegetation_density": 1.0, "vegetation_distance": 70.0,
 		"particles": 1.0, "fog": true, "glow": true, "msaa": 1,
 		"max_dynamic_lights": 8, "ai_full_distance": 70.0, "ai_reduced_distance": 150.0,
+		"ambient_groups": 8, "ambient_distance": 130.0,
 	},
 }
 

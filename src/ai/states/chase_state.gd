@@ -39,13 +39,13 @@ func tick(_delta: float) -> StringName:
 	var leash := float(c.type.ai_value("leash", 45.0))
 	if c.global_position.distance_to(c.home) > leash:
 		return &"search"
-	var goal := p.last_known
+	var goal := p.last_known + b.chase_offset
 	var d := c.global_position.distance_to(goal)
 	var preferred := float(c.type.ai_value("preferred_range", 0.0))
 	if preferred > 0.0 and d < preferred * 0.6:
 		return &"retreat"
 	var atk := b.pick_attack(d)
-	if atk and p.sees_player:
+	if atk and p.sees_player and not b.attack_blocked:
 		(b.states[&"attack"] as AttackState).attack = atk
 		return &"attack"
 	if preferred > 0.0 and d < preferred:

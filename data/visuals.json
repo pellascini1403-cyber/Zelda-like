@@ -18,7 +18,6 @@
  {"id": "NPC_CARAVAN", "family": "human", "role": "caravan master", "build": "stout", "age": "adult", "hair": "short", "headwear": "turban", "outfit": "coat", "accessories": ["big_pack", "lantern", "beard"]},
  {"id": "NPC_TRAVELER", "family": "human", "role": "traveller", "build": "average", "age": "young", "hair": "short", "headwear": "cap", "outfit": "cloak", "accessories": ["backpack", "staff"]},
  {"id": "NPC_MENTOR", "family": "human", "role": "warden", "build": "average", "age": "elder", "hair": "topknot", "headwear": "none", "outfit": "robe", "accessories": ["cape", "staff", "long_beard"], "scale": 1.04},
-
  {"id": "ENEMY_THORNLING", "family": "enemy", "rank": "common", "species": "beast", "features": ["snout", "ears", "spine_spikes", "tail", "claws"]},
  {"id": "ENEMY_SCUTTLER", "family": "enemy", "rank": "common", "species": "scorpion", "features": ["pincers", "stinger", "legs6", "back_plates"]},
  {"id": "ENEMY_SPITTER", "family": "enemy", "rank": "common", "species": "toad", "features": ["back_spikes", "sac_glow"]},
@@ -33,7 +32,6 @@
  {"id": "BOSS_THORNBACK", "family": "enemy", "rank": "boss", "species": "boar", "features": ["tusks", "spine_spikes", "mane_spikes", "horns", "tail", "cracks"]},
  {"id": "BOSS_GLASS_MATRIARCH", "family": "enemy", "rank": "boss", "species": "crab", "features": ["pincers", "legs6", "crown", "crystal_back", "cracks"]},
  {"id": "BOSS_STILLWAKE_WARDEN", "family": "enemy", "rank": "boss", "species": "demon", "features": ["horns", "crown", "halo", "shoulder_spikes", "long_claws", "wings", "cracks", "head_flame"]},
-
  {"id": "ANIMAL_WOOLHORN", "family": "wildlife", "species": "grazer", "features": ["curled_horns", "fleece"]},
  {"id": "ANIMAL_BURROWHOP", "family": "wildlife", "species": "hopper", "features": ["long_ears"]},
  {"id": "ANIMAL_GILDED_HOP", "family": "wildlife", "species": "hopper", "features": ["long_ears", "shimmer"]},

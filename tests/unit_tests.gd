@@ -42,6 +42,7 @@ func _run() -> void:
 	test_quest_content_goals()
 	test_boss_data()
 	test_abilities_data()
+	test_ecology_architecture()
 	print("==== UNIT: %d checks, %d failed ====" % [_count, _fails])
 	get_tree().quit(1 if _fails > 0 else 0)
 
@@ -708,3 +709,75 @@ func test_abilities_data() -> void:
 		if q.get("rewards", {}).has("ability"):
 			quest_abilities[q["rewards"]["ability"]] = true
 	ok(quest_abilities.size() >= 4, "abilities are earned through quests (%d)" % quest_abilities.size())
+
+
+## Expansion phase 1: variants, locomotion, behaviour modules, habitats,
+## discoveries, ambient fauna conditions, regional loot.
+func test_ecology_architecture() -> void:
+	# Variants: dictionaries merge, everything else replaces; visuals inherit.
+	var base := {"id": "E_BASE", "kind": "ENEMY", "placeholder_color": "#101010", "stats": {"max_health": 40, "run_speed": 5},
+		"ai": {"sight_range": 20, "behaviors": ["ambush"]}, "attacks": [{"id": "bite"}], "element_mult": {"fire": 1.5}}
+	var variant := {"id": "E_VAR", "variant_of": "E_BASE", "placeholder_color": "#fefefe", "stats": {"max_health": 90},
+		"ai": {"behaviors": ["swoop"]}, "attacks": [{"id": "claw"}, {"id": "swoop", "type": "module"}]}
+	var ents := DB.resolve_variants([base, variant])
+	var v: Dictionary = ents[1]
+	ok(int(v["stats"]["max_health"]) == 90 and int(v["stats"]["run_speed"]) == 5, "variant overrides one stat, keeps the rest")
+	ok(int(v["ai"]["sight_range"]) == 20 and (v["ai"]["behaviors"] as Array) == ["swoop"], "variant ai merges, lists replace")
+	ok((v["attacks"] as Array).size() == 2 and v["element_mult"]["fire"] == 1.5, "variant attacks replaced, resistances inherited")
+	ok(base["stats"]["max_health"] == 40, "base definition untouched by the merge")
+	var vis := DB.resolve_variants([{"id": "E_BASE", "family": "enemy", "species": "spider", "rank": "common"}], ents)
+	var vv: Dictionary = {}
+	for x in vis:
+		if x["id"] == "E_VAR":
+			vv = x
+	ok(vv.get("species", "") == "spider", "a variant without its own visual profile inherits its base's")
+	var et := EntityType.from_dict(v)
+	ok(et.variant_of == &"E_BASE" and et.has_behavior(&"swoop") and not et.has_behavior(&"ambush"), "EntityType reads variant + behaviours")
+	ok(EntityType.from_dict({"flying": true}).locomotion == &"flying" and EntityType.from_dict({"locomotion": "flying"}).flying, "flying flag and locomotion agree")
+	ok(EntityType.from_dict({"locomotion": "aquatic"}).is_aquatic(), "aquatic locomotion")
+	# Every documented behaviour module exists.
+	var brain_owner := Enemy.new()
+	brain_owner.type = EntityType.from_dict({"id": "T", "attacks": [{"id": "swoop", "type": "module"}]})
+	var br := AIBrain.new(brain_owner)
+	for name in AIBehavior.KNOWN:
+		var m := AIBehavior.make(name, br)
+		ok(m != null, "behaviour module '%s' exists" % name)
+	ok(br.pick_attack(1.0) == null, "module attacks are never picked by chase")
+	brain_owner.free()
+	# Habitats: water and cliff slots stop being wasted.
+	ok(SpawnDirector.habitat_of(Vector3(0, -3, 0), Vector3.UP) == &"water", "deep slot = water habitat")
+	ok(SpawnDirector.habitat_of(Vector3(0, 30, 0), Vector3(0.8, 0.5, 0).normalized()) == &"cliff", "steep slot = cliff habitat")
+	ok(SpawnDirector.habitat_of(Vector3(0, 30, 0), Vector3.UP) == &"land", "flat slot = land")
+	ok(not SpawnDirector.entry_ok({"entity": "X", "habitat": "water"}, &"land"), "swimmers never spawn on land")
+	var w0 := Weather.target
+	Weather.target = &"storm"
+	ok(SpawnDirector.entry_ok({"entity": "X", "weather": ["storm"]}), "storm-only entry spawns in storms")
+	Weather.target = &"clear"
+	ok(not SpawnDirector.entry_ok({"entity": "X", "weather": ["storm"]}), "storm-only entry absent in clear weather")
+	var h0 := Clock.hour
+	Clock.hour = 23.0
+	ok(SpawnDirector.entry_ok({"entity": "X", "hours": [21, 4]}), "hour windows wrap past midnight")
+	Clock.hour = 12.0
+	ok(not SpawnDirector.entry_ok({"entity": "X", "hours": [21, 4]}), "hour window closed at noon")
+	ok(DiscoveryDirector.world_ok({"hours": [10, 14]}) and not DiscoveryDirector.world_ok({"hours": [21, 4]}), "discovery hour conditions")
+	ok(not DiscoveryDirector.world_ok({"weather": ["fog"]}), "fog-only discovery hidden in clear weather")
+	ok(AmbientLife.conditions_ok({"period": "day"}) and not AmbientLife.conditions_ok({"period": "night"}), "fauna period conditions")
+	ok(not AmbientLife.conditions_ok({"not_weather": ["clear"]}), "fauna weather exclusions")
+	Clock.hour = h0
+	Weather.target = w0
+	# Discoveries: found once, paid once, persisted as a world flag.
+	DB.discoveries[&"test_disc"] = {"id": "test_disc", "region": "valley", "name_key": "X", "pos": [0, 0], "reward": {"glimmer": 7}}
+	DB.discovery_order.append(&"test_disc")
+	WorldState.flags.erase("disc:test_disc")
+	WorldState.flags.erase("rw:disc:test_disc")
+	var g0 := PlayerData.glimmer
+	ok(DiscoveryDirector.discover(&"test_disc"), "a discovery can be found")
+	ok(not DiscoveryDirector.discover(&"test_disc"), "a discovery cannot be found twice")
+	ok(PlayerData.glimmer == g0 + 7, "its reward is paid exactly once")
+	ok(DiscoveryDirector.is_found(&"test_disc") and WorldState.save_state().get("flags", {}).has("disc:test_disc"), "found state is saved with the world")
+	DB.discoveries.erase(&"test_disc")
+	DB.discovery_order.erase(&"test_disc")
+	WorldState.flags.erase("disc:test_disc")
+	PlayerData.glimmer = g0
+	# Regional loot: falls back to the plain table when no flavour exists.
+	ok(DB.regional_table(&"chest_common", Vector3(9999, 0, 9999)) == &"chest_common", "regional loot falls back to the base table")

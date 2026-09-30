@@ -31,6 +31,9 @@ var art_style: Dictionary = {}      # character art direction tokens (presentati
 var visuals: Dictionary = {}        # StringName -> visual profile (presentation only)
 var vehicles: Dictionary = {}       # StringName -> premium vehicle definition
 var products: Dictionary = {}       # StringName -> store product (monetization catalogue)
+var discoveries: Dictionary = {}    # StringName -> discovery (optional wonders, not quests)
+var discovery_order: Array = []     # ids in file order (Atlas)
+var fauna: Array = []               # ambient fauna groups (AmbientLife)
 
 
 func _ready() -> void:
@@ -44,12 +47,13 @@ func reload() -> void:
 	for d in _load_array("items.json"):
 		var it := ItemData.from_dict(d)
 		items[it.id] = it
-	for d in _load_array("entities.json"):
+	var raw_entities := resolve_variants(_load_array("entities.json"))
+	for d in raw_entities:
 		var e := EntityType.from_dict(d)
 		entities[e.id] = e
 	art_style = _load_dict("art_style.json")
 	visuals = {}
-	for v in _load_array("visuals.json"):
+	for v in resolve_variants(_load_array("visuals.json"), raw_entities):
 		visuals[StringName(v["id"])] = v
 	for e: EntityType in entities.values():
 		e.visual = visuals.get(e.id, {})
@@ -57,6 +61,7 @@ func reload() -> void:
 		var r := RegionData.from_dict(d)
 		regions[r.id] = r
 	loot_tables = _keyed(_load_dict("loot.json"))
+	_region_gen = null
 	crafting = {}
 	for d in _load_array("crafting.json"):
 		crafting[StringName(d["id"])] = d
@@ -104,6 +109,70 @@ func reload() -> void:
 	products = {}
 	for pr in _load_array("products.json"):
 		products[StringName(pr["id"])] = pr
+	discoveries = {}
+	discovery_order = []
+	for dd in _load_array("discoveries.json"):
+		var dv: Dictionary = dd
+		# Spawns without their own place use the discovery's.
+		for sp: Dictionary in dv.get("spawns", []):
+			if not sp.has("pos") and not sp.has("poi"):
+				if dv.has("poi"):
+					sp["poi"] = dv["poi"]
+				if dv.has("pos"):
+					sp["pos"] = dv["pos"]
+		discoveries[StringName(dv["id"])] = dv
+		discovery_order.append(StringName(dv["id"]))
+	fauna = _load_array("fauna.json")
+
+
+## Variants: an entry with "variant_of": "<base id>" is the base deep-merged
+## with its own keys (dictionaries merge, everything else replaces). Spider ->
+## Venom / Cave / Veil / Queen without copying definitions. A visual profile
+## with no entry of its own inherits the profile of its entity's base
+## (`entity_list` given): variants always look related unless overridden.
+static func resolve_variants(list: Array, entity_list: Array = []) -> Array:
+	var by_id := {}
+	for d in list:
+		by_id[String(d.get("id", ""))] = d
+	if not entity_list.is_empty():
+		for e in entity_list:
+			var eid := String(e.get("id", ""))
+			var base := String(e.get("variant_of", ""))
+			if base != "" and not by_id.has(eid):
+				var stub := {"id": eid, "variant_of": base}
+				list = list + [stub]
+				by_id[eid] = stub
+			elif base != "" and by_id.has(eid) and not by_id[eid].has("variant_of"):
+				by_id[eid]["variant_of"] = base
+	var out: Array = []
+	var cache := {}
+	for d in list:
+		out.append(_resolve_one(String(d.get("id", "")), by_id, cache, 0))
+	return out
+
+
+static func _resolve_one(id: String, by_id: Dictionary, cache: Dictionary, depth: int) -> Dictionary:
+	if cache.has(id):
+		return cache[id]
+	var d: Dictionary = by_id.get(id, {})
+	var base_id := String(d.get("variant_of", ""))
+	var out: Dictionary
+	if base_id == "" or not by_id.has(base_id) or depth > 4:
+		out = d.duplicate(true)
+	else:
+		out = _deep_merge(_resolve_one(base_id, by_id, cache, depth + 1), d)
+	cache[id] = out
+	return out
+
+
+static func _deep_merge(base: Dictionary, over: Dictionary) -> Dictionary:
+	var out := base.duplicate(true)
+	for k in over:
+		if over[k] is Dictionary and out.get(k) is Dictionary:
+			out[k] = _deep_merge(out[k], over[k])
+		else:
+			out[k] = over[k].duplicate(true) if (over[k] is Dictionary or over[k] is Array) else over[k]
+	return out
 
 
 # --- Accessors ----------------------------------------------------------------
@@ -121,6 +190,21 @@ func region(id: StringName) -> RegionData:
 
 func weather(id: StringName) -> Dictionary:
 	return weather_types.get(id, weather_types.get(&"clear", {}))
+
+
+## Loot that tells you where you are: "chest_common" opened in the forest
+## rolls "chest_common@forest" when that table exists (organic finds), on the
+## coast marine salvage, in the highlands ore and climbing gear...
+var _region_gen: WorldGen
+
+
+func regional_table(table_id: StringName, pos: Vector3) -> StringName:
+	if table_id == &"":
+		return table_id
+	if _region_gen == null:
+		_region_gen = WorldGen.from_world_data(world)
+	var regional := StringName("%s@%s" % [table_id, _region_gen.region_at(pos.x, pos.z)])
+	return regional if loot_tables.has(regional) else table_id
 
 
 ## Rolls a loot table. Returns Array of { "id": StringName, "count": int }.
@@ -191,6 +275,79 @@ func validate() -> PackedStringArray:
 	errors.append_array(_validate_progression())
 	errors.append_array(ArtStyle.validate(self))
 	errors.append_array(_validate_vehicles())
+	errors.append_array(_validate_ecology())
+	return errors
+
+
+const LOCOMOTIONS := ["ground", "flying", "aquatic", "climber", "burrower"]
+const HABITATS := ["land", "water", "cliff"]
+const FAUNA_KINDS := ["flock", "school", "motes", "skitter"]
+
+
+## Variants, locomotion, behaviour modules, habitat spawn tables,
+## discoveries and ambient fauna.
+func _validate_ecology() -> PackedStringArray:
+	var errors := PackedStringArray()
+	for e: EntityType in entities.values():
+		if e.variant_of != &"" and not entities.has(e.variant_of):
+			errors.append("entity '%s' is a variant of unknown '%s'" % [e.id, e.variant_of])
+		if not String(e.locomotion) in LOCOMOTIONS:
+			errors.append("entity '%s' unknown locomotion '%s'" % [e.id, e.locomotion])
+		for bname in e.behaviors:
+			if not bname in AIBehavior.KNOWN:
+				errors.append("entity '%s' unknown behaviour '%s'" % [e.id, bname])
+		for pair in [["swoop", "swoop_attack", "swoop"], ["burrow", "erupt_attack", "erupt"], ["drop_from_above", "drop_attack", "drop"]]:
+			if e.has_behavior(pair[0]):
+				var aid := String(e.ai.get(pair[1], pair[2]))
+				var found := false
+				for a in e.attacks:
+					found = found or String(a.id) == aid
+				if not found:
+					errors.append("entity '%s' behaviour %s needs attack '%s'" % [e.id, pair[0], aid])
+	for r: RegionData in regions.values():
+		for sp in r.enemy_spawns + r.animal_spawns:
+			var hab := String(sp.get("habitat", "land"))
+			if not hab in HABITATS:
+				errors.append("region '%s' spawn '%s' unknown habitat '%s'" % [r.id, sp["entity"], hab])
+				continue
+			var e: EntityType = entities.get(StringName(sp["entity"]))
+			if e == null:
+				continue
+			if (hab == "water") != e.is_aquatic():
+				errors.append("region '%s': '%s' habitat %s does not fit locomotion %s" % [r.id, e.id, hab, e.locomotion])
+			if hab == "cliff" and not (e.is_climber() or e.flying):
+				errors.append("region '%s': '%s' on cliffs must climb or fly" % [r.id, e.id])
+	var poi_ids := {}
+	for poi in world.get("pois", []):
+		poi_ids[String(poi["id"])] = true
+	for id: StringName in discovery_order:
+		var d: Dictionary = discoveries[id]
+		var w := "discovery '%s'" % id
+		if not regions.has(StringName(d.get("region", ""))):
+			errors.append("%s unknown region '%s'" % [w, d.get("region", "")])
+		if String(d.get("name_key", "")) == "":
+			errors.append("%s has no name_key" % w)
+		if d.has("poi") and not poi_ids.has(String(d["poi"])):
+			errors.append("%s unknown poi '%s'" % [w, d["poi"]])
+		if not d.has("pos") and not d.has("poi"):
+			errors.append("%s has no position" % w)
+		if not String(d.get("trigger", "reach")) in ["reach", "interact"]:
+			errors.append("%s unknown trigger" % w)
+		if String(d.get("trigger", "reach")) == "interact":
+			var has_obj := false
+			for sp in d.get("spawns", []):
+				has_obj = has_obj or String(sp.get("discover", "")) == String(id)
+			if not has_obj:
+				errors.append("%s is found by interaction but no spawn discovers it" % w)
+		errors.append_array(QuestValidator.check_reward(d.get("reward", {}), self, w))
+		for sp in d.get("spawns", []):
+			errors.append_array(QuestValidator._check_spawn(sp, self, poi_ids, w))
+	for f in fauna:
+		if not String(f.get("kind", "")) in FAUNA_KINDS:
+			errors.append("fauna '%s' unknown kind" % f.get("id", ""))
+		for rg in f.get("regions", []):
+			if not regions.has(StringName(rg)):
+				errors.append("fauna '%s' unknown region '%s'" % [f.get("id", ""), rg])
 	return errors
 
 

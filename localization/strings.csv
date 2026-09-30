@@ -37,6 +37,9 @@ ARMOR_HEAT_RESIST,Keeps you cool,Protege del calor,Protege do calor,Protège de 
 ARMOR_LIGHTNING_IMMUNE,Grounds lightning,Desvía los rayos,Desvia raios,Détourne la foudre,Leitet Blitze ab,雷を逃がす,번개를 흘려보냄,引开雷电
 ARMOR_SPEED,Faster movement,Movimiento más rápido,Movimento mais rápido,Déplacement plus rapide,Schnellere Bewegung,移動速度アップ,이동 속도 증가,移动加速
 ARMOR_STAMINA_REGEN,Faster stamina recovery,Aguante se recupera antes,Vigor recupera mais rápido,Endurance plus rapide,Schnellere Ausdauer,がんばり回復アップ,기력 회복 증가,耐力恢复加快
+ATLAS_FOUND,Wonder found,Maravilla descubierta,Maravilha descoberta,Merveille découverte,Wunder entdeckt,驚異を発見,경이 발견,发现奇景
+ATLAS_NO_HINT,No one has spoken of it yet.,Nadie ha hablado de ello todavía.,Ninguém falou disso ainda.,Personne n'en a encore parlé.,Noch hat niemand davon erzählt.,まだ誰もそれを語っていない。,아직 누구도 그것을 말하지 않았다.,还没有人提起过它。
+ATLAS_UNKNOWN,Something unfound,Algo sin descubrir,Algo não descoberto,Quelque chose d'inconnu,Etwas Unentdecktes,まだ見ぬもの,아직 찾지 못한 것,尚未发现之物
 BOARD_ACCEPT,Take it,Aceptar,Aceitar,Accepter,Annehmen,引き受ける,맡기,接下
 BOARD_EMPTY,Nothing posted today. Come back tomorrow.,Hoy no hay nada. Vuelve mañana.,Nada hoje. Volte amanhã.,Rien aujourd'hui. Revenez demain.,Heute nichts. Komm morgen wieder.,今日は何もない。明日また来よう。,오늘은 없다. 내일 다시 오자.,今天没有告示，明天再来。
 BOARD_HINT,"New notices every day. Take one, do it, come back richer.","Nuevos avisos cada día. Toma uno, cúmplelo y vuelve más rico.","Avisos novos todo dia. Pegue um, cumpra e volte mais rico.","Nouvelles annonces chaque jour. Prenez-en une, revenez plus riche.","Täglich neue Aushänge. Nimm einen, erledige ihn, komm reicher zurück.",毎日新しい依頼が貼られる。引き受けて、稼いでこい。,"매일 새 의뢰가 붙는다. 하나 맡고, 부자가 되어 돌아와라.",每天都有新告示。接一个，干完回来领赏。
@@ -204,6 +207,19 @@ EVENT_TRAVELER,A cry on the road,Un grito en el camino,Um grito na estrada,Un cr
 EVENT_VEIL_SURGE,The Veil surges! Shades take shape.,¡El Velo se agita! Las sombras toman forma.,O Véu se agita! Sombras tomam forma.,Le Voile déferle ! Des ombres prennent forme.,Der Schleier wogt! Schatten nehmen Gestalt an.,帳がうねる！影が形を成す。,장막이 요동친다! 그림자가 형체를 이룬다.,帷幕翻涌！暗影成形。
 EVENT_WIND_RIFT,A wind rift has opened nearby!,¡Se ha abierto una grieta de viento cerca!,Uma fenda de vento se abriu por perto!,Une faille de vent s'est ouverte non loin !,In der Nähe hat sich ein Windriss geöffnet!,近くに風の裂け目が開いた！,근처에 바람의 균열이 열렸다!,附近出现了风之裂隙！
 EVENT_WISP_LIGHTS,Lights drift between the trees,Luces flotan entre los árboles,Luzes flutuam entre as árvores,Des lueurs flottent entre les arbres,Lichter treiben zwischen den Bäumen,木々の間を灯りが漂う,나무 사이로 빛이 떠돈다,林间灯火飘荡
+FAUNA_BATS,Bats,Murciélagos,Morcegos,Chauves-souris,Fledermäuse,コウモリ,박쥐,蝙蝠
+FAUNA_BUTTERFLIES,Petalwings,Alapétalos,Asas-de-pétala,Ailes-pétales,Blütenflügler,花びら蝶,꽃잎나비,瓣翼蝶
+FAUNA_FIREFLIES,Fireflies,Luciérnagas,Vaga-lumes,Lucioles,Glühwürmchen,ホタル,반딧불이,萤火虫
+FAUNA_FISH_LAKE,Lake minnows,Pececillos del lago,Peixinhos do lago,Vairons du lac,Seeelritzen,湖の小魚,호수 피라미,湖中小鱼
+FAUNA_FISH_SEA,Silverbacks,Lomos de plata,Dorsos-de-prata,Dos-d'argent,Silberrücken,銀背魚,은등고기,银背鱼
+FAUNA_GULLS,Gulls,Gaviotas,Gaivotas,Mouettes,Möwen,カモメ,갈매기,海鸥
+FAUNA_RAVENS,Ravens,Cuervos,Corvos,Corbeaux,Raben,ワタリガラス,까마귀,渡鸦
+FAUNA_REEFGLINTS,Reefglints,Destellos del arrecife,Lampejos do recife,Éclats de récif,Riffglitzer,礁のきらめき,산호 반짝이,礁光鱼
+FAUNA_SAND_SKITTERS,Sand skitters,Correarenas,Corre-areias,Trotte-sable,Sandhuscher,砂走り,모래 종종이,沙窜虫
+FAUNA_SNOW_FINCHES,Snow finches,Pinzones de nieve,Tentilhões-da-neve,Niverolles,Schneefinken,ユキスズメ,눈되새,雪雀
+FAUNA_SPARROWS,Sparrows,Gorriones,Pardais,Moineaux,Spatzen,スズメ,참새,麻雀
+FAUNA_TIDE_CRABS,Tide crabs,Cangrejos de marea,Caranguejos-da-maré,Crabes des marées,Gezeitenkrabben,潮ガニ,조수 게,潮蟹
+FAUNA_VEIL_MOTES,Veil motes,Motas del Velo,Partículas do Véu,Poussières du Voile,Schleierfunken,帳の塵,장막의 티끌,帷幕微尘
 GARAGE_BENCH_HINT,"Machines are restored at the Vantrel Depot bench, deep in the desert.","Las máquinas se restauran en el banco del Depósito Vantrel, en el desierto profundo.","As máquinas são restauradas na bancada do Depósito Vantrel, no deserto profundo.","Les machines se restaurent à l'établi du Dépôt Vantrel, au fond du désert.",Maschinen werden an der Werkbank des Vantrel-Depots tief in der Wüste restauriert.,機械は砂漠の奥、ヴァントレル車庫の作業台で修復する。,기계는 사막 깊은 곳 반트렐 차고의 작업대에서 복원한다.,机器要在沙漠深处凡特雷尔车库的工作台上修复。
 GARAGE_BRAND,Vantrel Works,Vantrel Works,Vantrel Works,Vantrel Works,Vantrel Works,ヴァントレル工房,반트렐 공방,凡特雷尔工坊
 GARAGE_BUY,Get in store,Obtener en tienda,Obter na loja,Obtenir en boutique,Im Shop holen,ストアで入手,상점에서 받기,在商店获取
@@ -390,6 +406,7 @@ ITEM_WOOLEN_WRAP,Woolen Wrap,Manto de Lana,Manta de Lã,Châle de Laine,Wollumha
 ITEM_WOOLEN_WRAP_DESC,Thick woolhorn fleece. Warm in the highlands.,Vellón grueso de cuernolana. Abriga en las alturas.,Lã grossa de chifrelã. Aquece nas alturas.,Épaisse toison de cornelaine. Chaude en altitude.,Dickes Wollhornvlies. Warm im Hochland.,ウールホーンの厚い毛。高地で暖かい。,두툼한 양털뿔 털. 고원에서 따뜻하다.,厚实的绒角兽毛，在高地很暖和。
 JADE,jade,jade,jade,jade,Jade,翡翠,비취,翡翠
 JOURNAL_ACTIVE,In progress,En curso,Em andamento,En cours,Laufend,進行中,진행 중,进行中
+JOURNAL_ATLAS,Atlas of wonders,Atlas de maravillas,Atlas de maravilhas,Atlas des merveilles,Atlas der Wunder,驚異の地図帳,경이의 지도첩,奇景图志
 JOURNAL_BONUS,Bonus:,Extra:,Extra:,Bonus :,Bonus:,おまけ：,보너스:,额外：
 JOURNAL_BOUNTIES,Bounties & trials,Recompensas y pruebas,Recompensas e provas,Primes et épreuves,Kopfgelder & Prüfungen,賞金首と試練,현상금과 시련,悬赏与试炼
 JOURNAL_DISCOVERIES,Discoveries,Descubrimientos,Descobertas,Découvertes,Entdeckungen,発見,발견,发现
@@ -1087,9 +1104,11 @@ TOAST_NOTHING_TO_REPAIR,Your weapon doesn't need repair,Tu arma no necesita repa
 TOAST_NO_MOUNT,No mount answers yet.,Aún no responde ninguna montura.,Nenhuma montaria responde ainda.,Aucune monture ne répond encore.,Noch antwortet kein Reittier.,応える乗騎はまだいない。,아직 응답하는 탈것이 없다.,还没有坐骑回应。
 TOAST_NO_VEHICLE,No vehicle equipped.,No hay vehículo equipado.,Nenhum veículo equipado.,Aucun véhicule équipé.,Kein Fahrzeug ausgerüstet.,乗り物を装備していない。,장착한 탈것이 없다.,没有装备载具。
 TOAST_PUZZLE_SOLVED,The seal unravels.,El sello se deshace.,O selo se desfaz.,Le sceau se défait.,Das Siegel löst sich.,封印がほどけた。,봉인이 풀렸다.,封印解开了。
+TOAST_RECOVERED,Recovered %d glimmer,Recuperaste %d destellos,Recuperou %d brilhos,%d éclats récupérés,%d Schimmer zurückgeholt,%dグリマーを取り戻した,반짝이 %d개를 되찾았다,夺回%d微光
 TOAST_REPAIRED,Weapon repaired,Arma reparada,Arma reparada,Arme réparée,Waffe repariert,修理した,무기 수리 완료,武器已修复
 TOAST_RESTED,You feel rested,Te sientes descansado,Você se sente descansado,Vous êtes reposé,Du bist ausgeruht,よく休んだ,푹 쉬었다,休息好了
 TOAST_SAVED,Progress saved,Progreso guardado,Progresso salvo,Progression sauvegardée,Fortschritt gespeichert,セーブしました,저장됨,进度已保存
+TOAST_STOLEN,A thief snatched %d glimmer!,¡Un ladrón te robó %d destellos!,Um ladrão roubou %d brilhos!,Un voleur a pris %d éclats !,Ein Dieb hat %d Schimmer gestohlen!,盗人に%dグリマーを奪われた！,도둑이 반짝이 %d개를 훔쳤다!,小偷抢走了%d微光！
 TOAST_TAMING,Hold on! Keep your stamina up.,¡Aguanta! No te quedes sin aguante.,Segure firme! Não fique sem vigor.,Tenez bon ! Gardez de l'endurance.,Halt dich fest! Ausdauer bewahren.,しがみつけ！がんばりを切らすな。,버텨라! 기력을 유지해.,抓紧！别让耐力耗尽。
 TOAST_THROWN,Thrown off!,¡Te ha derribado!,Você foi derrubado!,Désarçonné·e !,Abgeworfen!,振り落とされた！,떨어졌다!,被甩下来了！
 TOAST_VEHICLE_BOSS,Machines stay out of this fight.,Las máquinas se quedan fuera de esta pelea.,As máquinas ficam fora desta luta.,Les machines restent hors de ce combat.,Maschinen bleiben aus diesem Kampf heraus.,この戦いに機械は持ち込めない。,이 싸움에 기계는 들일 수 없다.,这场战斗不能用机器。

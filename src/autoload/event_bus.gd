@@ -93,4 +93,5 @@ signal world_event_started(event_id: StringName, position: Vector3)
 signal world_event_ended(event_id: StringName)
 ## Big centred title card (discoveries, quests, bosses): title, subtitle.
 signal title_card(title: String, subtitle: String)
+signal discovery_made(discovery_id: StringName)
 signal quality_changed(level: int)

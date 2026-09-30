@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.join(HERE, "content"))
 import qdsl  # noqa: E402
 from qdsl import Loc  # noqa: E402
 import world  # noqa: E402
+import ecology  # noqa: E402
 from loc_common import COMMON  # noqa: E402
 
 # Module -> output file. The numeric prefix fixes load order: the main
@@ -70,7 +71,7 @@ def main():
     loc = {}
     ents = load("entities.json")
     new = []
-    for d, l in world.NPCS + world.CREATURES:
+    for d, l in world.NPCS + world.CREATURES + ecology.ENTITIES:
         new.append(d)
         loc.update(strings(l))
     upsert(ents, new)
@@ -89,7 +90,27 @@ def main():
 
     loot = load("loot.json")
     loot.update(world.LOOT)
+    loot.update(ecology.LOOT)
     dump("loot.json", loot, 1)
+
+    visuals = load("visuals.json")
+    upsert(visuals, ecology.VISUALS)
+    with open(data("visuals.json"), "w", encoding="utf-8") as f:
+        f.write("[\n" + ",\n".join(" " + json.dumps(e, ensure_ascii=True) for e in visuals) + "\n]\n")
+
+    regions = load("regions.json")
+    for r in regions:
+        for k, v in ecology.REGION_SPAWNS.get(r["id"], {}).items():
+            r[k] = v
+    dump("regions.json", regions, 1)
+
+    discs = []
+    for d, l in ecology.DISCOVERIES:
+        discs.append(d)
+        loc.update(strings(l))
+    dump_lines("discoveries.json", discs)
+    loc.update(strings(ecology.STRINGS))
+    loc.update(strings(ecology.FAUNA))
 
     w = load("world.json")
     new = []

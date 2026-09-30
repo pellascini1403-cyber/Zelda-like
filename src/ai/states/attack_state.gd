@@ -44,7 +44,7 @@ func _windup() -> float:
 
 
 func _show_telegraph() -> void:
-	var col: Color = ArtStyle.attack_color(c.type, attack.element)
+	var col: Color = ArtStyle.attack_color(c.type, b.attack_element(attack))
 	match attack.type:
 		&"slam", &"pulse":
 			var radius := attack.radius if attack.radius > 0.0 else attack.reach
@@ -111,7 +111,7 @@ func _strike() -> void:
 			var aim_node := c.threat_target()
 			var tgt := (aim_node.global_position if aim_node else c.global_position + _dir * 8.0) + Vector3.UP * 1.0
 			var vel := _ballistic(origin, tgt, attack.projectile_speed)
-			Projectile.spawn(c.get_parent(), origin, vel, attack.damage, attack.element, c, true)
+			Projectile.spawn(c.get_parent(), origin, vel, attack.damage, b.attack_element(attack), c, true)
 			Audio.play_at(&"spit", origin, -2.0)
 		&"slam":
 			anim_name = &"slam"
@@ -144,10 +144,11 @@ func _delayed_melee(delay: float) -> void:
 func _melee() -> void:
 	var tr := Transform3D(Basis(Vector3.UP, atan2(-_dir.x, -_dir.z)), c.global_position + Vector3.UP * c.type.collider_height * 0.5)
 	for body in CombatUtils.arc_query(c.get_world_3d(), tr, attack.reach + c.type.collider_radius, attack.arc, CombatUtils.PLAYER_MASK | CombatUtils.PROP_MASK, [c.get_rid()]):
-		var info := DamageInfo.make(attack.damage, c, _dir * attack.knockback, attack.element)
+		var info := DamageInfo.make(attack.damage, c, _dir * attack.knockback, b.attack_element(attack))
 		info.poise_damage = attack.poise_damage
 		info.blockable = attack.blockable
-		CombatUtils.deal(body, info)
+		if CombatUtils.deal(body, info):
+			b.notify_hit(body)
 	Audio.play_at(&"swing", c.global_position, -4.0, 0.2)
 
 
@@ -157,7 +158,7 @@ func _slam() -> void:
 	for body in CombatUtils.sphere_query(c.get_world_3d(), center, radius, CombatUtils.PLAYER_MASK | CombatUtils.PROP_MASK):
 		var to: Vector3 = body.global_position - center
 		to.y = 0.0
-		var info := DamageInfo.make(attack.damage, c, to.normalized() * attack.knockback + Vector3.UP * 3.0, attack.element)
+		var info := DamageInfo.make(attack.damage, c, to.normalized() * attack.knockback + Vector3.UP * 3.0, b.attack_element(attack))
 		info.kind = &"slam"
 		info.poise_damage = attack.poise_damage
 		info.blockable = attack.blockable
@@ -182,10 +183,11 @@ func _ballistic(from: Vector3, to: Vector3, speed: float) -> Vector3:
 func _charge_contact() -> void:
 	var center := c.global_position + Vector3.UP * c.type.collider_height * 0.5 + _dir * c.type.collider_radius
 	for body in CombatUtils.sphere_query(c.get_world_3d(), center, c.type.collider_radius + 0.8, CombatUtils.PLAYER_MASK | CombatUtils.PROP_MASK):
-		var info := DamageInfo.make(attack.damage, c, _dir * attack.knockback + Vector3.UP * 2.5, attack.element)
+		var info := DamageInfo.make(attack.damage, c, _dir * attack.knockback + Vector3.UP * 2.5, b.attack_element(attack))
 		info.poise_damage = attack.poise_damage
 		info.blockable = attack.blockable
 		if CombatUtils.deal(body, info) and body == Game.player:
+			b.notify_hit(body)
 			_hit_once = true
 			if Game.camera_rig:
 				Game.camera_rig.add_trauma(0.35)
@@ -201,7 +203,7 @@ func _volley() -> void:
 	for i in n:
 		var k := 0.0 if n == 1 else (float(i) / (n - 1) - 0.5)
 		var aim := origin + (tgt - origin).rotated(Vector3.UP, deg_to_rad(attack.spread) * k)
-		Projectile.spawn(c.get_parent(), origin, _ballistic(origin, aim, attack.projectile_speed), attack.damage, attack.element, c, true)
+		Projectile.spawn(c.get_parent(), origin, _ballistic(origin, aim, attack.projectile_speed), attack.damage, b.attack_element(attack), c, true)
 	Audio.play_at(&"spit", origin, 0.0)
 
 
@@ -211,7 +213,7 @@ func _eruptions() -> void:
 		return
 	var n := maxi(attack.count, 1)
 	var radius := attack.radius if attack.radius > 0.0 else 2.2
-	var col: Color = ArtStyle.attack_color(c.type, attack.element)
+	var col: Color = ArtStyle.attack_color(c.type, b.attack_element(attack))
 	var world := c.get_world_3d()
 	var parent := c.get_parent()
 	for i in n:
@@ -228,12 +230,12 @@ func _burst_later(world: World3D, parent: Node, p: Vector3, radius: float, wait:
 	if not is_instance_valid(c) or c.dead:
 		return
 	for body in CombatUtils.sphere_query(world, p, radius, CombatUtils.PLAYER_MASK | CombatUtils.PROP_MASK):
-		var info := DamageInfo.make(attack.damage, c, Vector3.UP * attack.knockback, attack.element)
+		var info := DamageInfo.make(attack.damage, c, Vector3.UP * attack.knockback, b.attack_element(attack))
 		info.kind = &"slam"
 		info.blockable = false
 		info.poise_damage = attack.poise_damage
 		CombatUtils.deal(body, info)
-	ElementFX.burst(parent, p, attack.element, radius)
+	ElementFX.burst(parent, p, b.attack_element(attack), radius)
 	Audio.play_at(&"slam", p, -3.0)
 
 
@@ -248,4 +250,4 @@ func _summon() -> void:
 		var m: Creature = dir.spawn_creature(attack.summon, p, "", c.group_id)
 		if m:
 			m.perception.alert(Game.player.global_position if Game.player else p)
-			ElementFX.burst(c.get_parent(), p, attack.element, 1.2)
+			ElementFX.burst(c.get_parent(), p, b.attack_element(attack), 1.2)

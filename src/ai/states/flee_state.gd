@@ -14,7 +14,10 @@ func anim() -> StringName:
 
 
 func enter() -> void:
-	if Game.player:
+	if b.flee_from != Vector3.INF:
+		threat = b.flee_from
+		b.flee_from = Vector3.INF
+	elif Game.player:
 		threat = Game.player.global_position
 
 

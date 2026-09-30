@@ -189,7 +189,7 @@ func break_apart() -> void:
 	Effects.leaves(self, global_position)
 	Effects.dust(self, global_position, 1.0)
 	Audio.play_at(&"break_wood", global_position, 0.0)
-	for drop in DB.roll_loot(loot_table):
+	for drop in DB.roll_loot(DB.regional_table(loot_table, global_position)):
 		Pickup.spawn(get_parent(), global_position + Vector3(randf_range(-0.4, 0.4), 0.5, randf_range(-0.4, 0.4)), drop["id"], drop["count"])
 	if persist_id != "":
 		WorldState.mark_harvested(persist_id, 72.0)

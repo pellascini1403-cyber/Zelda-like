@@ -20,6 +20,7 @@ var _track: Button
 var _restart: Button
 var _selected: StringName = &""
 var _show_done := false
+var _show_atlas := false
 
 
 func _ready() -> void:
@@ -81,7 +82,7 @@ func refresh() -> void:
 		c.queue_free()
 	var active := Quests.active_quests()
 	var rumors := Quests.rumors()
-	if _selected == &"" or not (Quests.is_active(_selected) or Quests.is_completed(_selected) or _selected in rumors):
+	if _selected == &"" or not (String(_selected).begins_with("atlas:") or Quests.is_active(_selected) or Quests.is_completed(_selected) or _selected in rumors):
 		_selected = Quests.tracked if Quests.tracked != &"" else (active[0] if not active.is_empty() else &"")
 	if active.is_empty():
 		_list.add_child(UITheme.label(tr("JOURNAL_NONE"), 18, UITheme.TEXT_DIM))
@@ -111,7 +112,56 @@ func refresh() -> void:
 		if _show_done:
 			for id in done:
 				_list.add_child(_entry(id, true))
+	_atlas_list()
 	_show(_selected)
+
+
+## Atlas: the optional wonders, found or only rumoured, by region.
+func _atlas_list() -> void:
+	if DB.discovery_order.is_empty():
+		return
+	var tog := UITheme.button(tr("JOURNAL_ATLAS") + "  (%d/%d)" % [DiscoveryDirector.found_count(), DB.discovery_order.size()] + ("  ▾" if _show_atlas else "  ▸"), 50)
+	tog.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	tog.pressed.connect(func() -> void:
+		_show_atlas = not _show_atlas
+		refresh())
+	_list.add_child(tog)
+	if not _show_atlas:
+		return
+	var by_region := {}
+	for id: StringName in DB.discovery_order:
+		var rg := String(DB.discoveries[id].get("region", ""))
+		if not by_region.has(rg):
+			by_region[rg] = []
+		by_region[rg].append(id)
+	for rg: String in by_region:
+		var reg := DB.region(StringName(rg))
+		_list.add_child(UITheme.label("%s  %d/%d" % [tr(reg.name_key) if reg else rg, DiscoveryDirector.found_count(rg), (by_region[rg] as Array).size()], 18, UITheme.ACCENT_2))
+		for id: StringName in by_region[rg]:
+			var found := DiscoveryDirector.is_found(id)
+			var b := UITheme.button(("✦ " + tr(String(DB.discoveries[id].get("name_key", "")))) if found else "· ？", 48)
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.toggle_mode = true
+			b.button_pressed = String(_selected) == "atlas:" + String(id)
+			if not found:
+				b.modulate = Color(1, 1, 1, 0.7)
+			b.pressed.connect(func() -> void:
+				_selected = StringName("atlas:" + String(id))
+				refresh())
+			_list.add_child(b)
+
+
+func _show_discovery(id: StringName) -> void:
+	var d: Dictionary = DB.discoveries.get(id, {})
+	var found := DiscoveryDirector.is_found(id)
+	var reg := DB.region(StringName(d.get("region", "")))
+	_title.text = tr(String(d.get("name_key", ""))) if found else tr("ATLAS_UNKNOWN")
+	_meta.text = (tr(reg.name_key) if reg else "") + "  ·  " + tr("JOURNAL_ATLAS")
+	_desc.text = tr(String(d.get("desc_key", ""))) if found else tr(String(d.get("hint_key", "ATLAS_NO_HINT")))
+	var parts := Rewards.describe(d.get("reward", {}))
+	_rewards.text = (tr("JOURNAL_REWARDS") + "  " + " · ".join(parts)) if found and not parts.is_empty() else ""
+	_track.visible = false
+	_restart.visible = false
 
 
 func _entry(id: StringName, done: bool, rumor: bool = false) -> Button:
@@ -141,6 +191,9 @@ func _show(id: StringName) -> void:
 		_rewards.text = ""
 		_track.visible = false
 		_restart.visible = false
+		return
+	if String(id).begins_with("atlas:"):
+		_show_discovery(StringName(String(id).trim_prefix("atlas:")))
 		return
 	var q: Dictionary = Quests.defs[id]
 	_title.text = tr(q.get("title_key", ""))

@@ -13,12 +13,29 @@ var current: AIState
 var cooldowns: Dictionary = {}
 var stagger_time := 0.0
 var aggro := false
+var behaviors: Array[AIBehavior] = []
+## Module hooks read by the stock states: a swarm member waiting its turn
+## may not start an attack; `chase_offset` shifts the chase goal (orbits);
+## `flee_from` (if finite) is what the next flee runs from.
+var attack_blocked := false
+var chase_offset := Vector3.ZERO
+var flee_from := Vector3.INF
 
 
 func _init(creature: Creature) -> void:
 	c = creature
 	_register()
-	current = states.get(_initial_state(), states.values()[0])
+	var start := _initial_state()
+	for name in c.type.behaviors:
+		var m := AIBehavior.make(name, self)
+		if m == null:
+			continue
+		behaviors.append(m)
+		for s: AIState in m.states():
+			states[s.id()] = s
+		if m.initial_state() != &"":
+			start = m.initial_state()
+	current = states.get(start, states.values()[0])
 	current.enter()
 
 
@@ -41,8 +58,18 @@ func tick(delta: float) -> void:
 			cooldowns.erase(k)
 	if stagger_time > 0.0:
 		stagger_time -= delta
-		if current.id() != &"react":
-			change(&"react")
+		if current.id() != &"react" and not current.id() in _stagger_states:
+			var alt := &""
+			for m in behaviors:
+				alt = m.on_stagger()
+				if alt != &"":
+					break
+			change(alt if alt != &"" else &"react")
+	for m in behaviors:
+		var forced := m.pre_tick(delta)
+		if forced != &"" and forced != current.id():
+			change(forced)
+			break
 	current.t += delta
 	var next := current.tick(delta)
 	if next != &"":
@@ -56,10 +83,38 @@ func change(next: StringName) -> void:
 	current = states[next]
 	current.t = 0.0
 	current.enter()
-	var is_aggro := next in [&"chase", &"attack", &"retreat"] and c.kind_is_hostile()
+	var is_aggro := next in [&"chase", &"attack", &"retreat", &"swoop", &"surface", &"burrowing", &"thief_flee"] and c.kind_is_hostile()
 	if is_aggro != aggro:
 		aggro = is_aggro
 		Game.register_aggro(c, aggro)
+
+
+var _stagger_states: Array[StringName] = [&"flipped"]
+
+
+func filter_damage(info: DamageInfo) -> void:
+	for m in behaviors:
+		m.filter_damage(info)
+
+
+func notify_hit(body: Node) -> void:
+	for m in behaviors:
+		m.on_hit(body)
+
+
+func attack_element(a: AttackData) -> StringName:
+	for m in behaviors:
+		var e := m.attack_element(a)
+		if e != &"":
+			return e
+	return a.element
+
+
+func has_module(script: Script) -> bool:
+	for m in behaviors:
+		if m.get_script() == script:
+			return true
+	return false
 
 
 func state_name() -> StringName:
@@ -71,7 +126,7 @@ func anim_state() -> StringName:
 
 
 func is_unaware() -> bool:
-	return current.id() in [&"idle", &"patrol", &"sleep"] and c.perception.awareness < 0.5
+	return current.id() in [&"idle", &"patrol", &"sleep", &"lurk", &"cling"] and c.perception.awareness < 0.5
 
 
 func is_sleeping() -> bool:
@@ -112,6 +167,8 @@ func pick_attack(dist: float) -> AttackData:
 	var options: Array[AttackData] = []
 	var total := 0.0
 	for a in c.type.attacks:
+		if a.type == &"module":
+			continue
 		if dist >= a.range_min and dist <= a.range_max and cooldown_ready(a.id):
 			options.append(a)
 			total += a.weight
@@ -123,6 +180,14 @@ func pick_attack(dist: float) -> AttackData:
 		if roll <= 0.0:
 			return a
 	return options[0]
+
+
+## A module-owned attack by id (type "module": never picked by chase).
+func attack_by_id(id: StringName) -> AttackData:
+	for a in c.type.attacks:
+		if a.id == id:
+			return a
+	return null
 
 
 func max_attack_range() -> float:

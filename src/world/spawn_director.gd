@@ -36,13 +36,28 @@ func on_sector_ready(chunk: TerrainChunk, slots: Array) -> void:
 	for s in slots:
 		var pos: Vector3 = s["pos"]
 		var nrm: Vector3 = s["normal"]
-		if pos.y < 0.8 or nrm.y < 0.78 or _in_poi(pos):
+		if _in_poi(pos):
 			continue
 		var region := DB.region(s["region"])
 		if region == null:
 			continue
 		var roll: float = s["roll"]
 		var id: String = s["id"]
+		var hab := habitat_of(pos, nrm)
+		if hab != &"land":
+			# Water and cliff slots used to be dropped: now they hold the
+			# swimmers and climbers of the region (and nothing else).
+			if WorldState.is_defeated(id):
+				continue
+			if roll < 0.2 * region.enemy_density + 0.05:
+				var far := Vector2(pos.x, pos.z).distance_to(spawn_pos) > SAFE_RADIUS_AROUND_SPAWN
+				if far:
+					spawned.append_array(_spawn_group(region.enemy_spawns, pos, id, s["roll2"], hab))
+			elif roll > 1.0 - 0.2 * region.animal_density:
+				spawned.append_array(_spawn_group(region.animal_spawns, pos, id, s["roll2"], hab))
+			continue
+		if pos.y < 0.8:
+			continue
 		var animal_cut := 0.62 + 0.14 * region.animal_density
 		var enemy_cut := animal_cut + 0.2 * region.enemy_density
 		if roll < 0.62:
@@ -120,15 +135,43 @@ func _spawn_resource(root: Node3D, region: RegionData, slot: Dictionary) -> void
 	node.global_position = slot["pos"]
 
 
-func _spawn_group(table: Array, pos: Vector3, id: String, roll: float) -> Array:
+## Where a slot sits: open water (deep enough to swim), a steep face, or land.
+static func habitat_of(pos: Vector3, nrm: Vector3) -> StringName:
+	if pos.y < WorldGen.SEA_LEVEL - 1.2:
+		return &"water"
+	if nrm.y < 0.78 and pos.y > WorldGen.SEA_LEVEL + 0.5:
+		return &"cliff"
+	return &"land"
+
+
+## Spawn-table entry conditions: habitat, period, hours, weather.
+##   {"entity", "weight", "group", "habitat": land|water|cliff,
+##    "period": day|night, "hours": [from, to], "weather": [ids]}
+static func entry_ok(e: Dictionary, hab: StringName = &"land") -> bool:
+	if StringName(e.get("habitat", "land")) != hab:
+		return false
+	var period: String = e.get("period", "any")
+	if period == "night" and not Clock.is_night():
+		return false
+	if period == "day" and Clock.is_night():
+		return false
+	if e.has("hours"):
+		var hr: Array = e["hours"]
+		var h := Clock.hour
+		var inside := (h >= float(hr[0]) and h < float(hr[1])) if float(hr[0]) <= float(hr[1]) else (h >= float(hr[0]) or h < float(hr[1]))
+		if not inside:
+			return false
+	if e.has("weather") and not String(Weather.target) in e["weather"]:
+		return false
+	return true
+
+
+func _spawn_group(table: Array, pos: Vector3, id: String, roll: float, hab: StringName = &"land") -> Array:
 	var out: Array = []
 	var options: Array = []
 	var total := 0.0
 	for e in table:
-		var period: String = e.get("period", "any")
-		if period == "night" and not Clock.is_night():
-			continue
-		if period == "day" and Clock.is_night():
+		if not entry_ok(e, hab):
 			continue
 		options.append(e)
 		total += float(e["weight"])
@@ -149,6 +192,8 @@ func _spawn_group(table: Array, pos: Vector3, id: String, roll: float) -> Array:
 		var off := Vector3(rng.randf_range(-4, 4), 0, rng.randf_range(-4, 4))
 		var p := pos + off
 		p.y = gen.height(p.x, p.z) + 0.2
+		if hab == &"water":
+			p.y = minf(p.y + 0.5, WorldGen.SEA_LEVEL - 1.0)
 		var c := spawn_creature(StringName(chosen["entity"]), p, id if i == 0 else "%s:%d" % [id, i], id)
 		if c:
 			out.append(c)

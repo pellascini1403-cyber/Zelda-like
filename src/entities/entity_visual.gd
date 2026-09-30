@@ -382,6 +382,14 @@ func set_flash(amount: float, color: Color = Color.WHITE) -> void:
 			g.set_instance_shader_parameter(&"flash_color", color)
 
 
+## 0 = solid, 1 = gone (phasing creatures, things under water).
+func set_fade(amount: float) -> void:
+	for g in _geoms:
+		if is_instance_valid(g):
+			g.transparency = clampf(amount, 0.0, 1.0)
+	visible = amount < 0.99
+
+
 func _play_clip(logical: StringName) -> void:
 	var clip := resolve_clip(logical)
 	if clip == "":

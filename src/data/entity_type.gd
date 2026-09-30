@@ -32,6 +32,12 @@ enum Kind { PLAYER, ENEMY, ANIMAL, NPC, BOSS }
 @export var collider_radius: float = 0.4
 @export var collider_height: float = 1.8
 @export var flying: bool = false
+## ground | flying | aquatic | climber | burrower. `flying: true` = flying.
+## Aquatic bodies never leave water, climbers walk steep faces, burrowers
+## travel hidden under the surface (see Creature._move).
+@export var locomotion: StringName = &"ground"
+## Base definition this one is a variant of ("" = not a variant).
+@export var variant_of: StringName = &""
 
 # --- Stats ---------------------------------------------------------------
 @export var max_health: float = 50.0
@@ -53,6 +59,9 @@ enum Kind { PLAYER, ENEMY, ANIMAL, NPC, BOSS }
 @export var dialogue: Dictionary = {}
 ## Rideable creatures: speeds, spur stamina, taming difficulty, seat height.
 @export var mount: Dictionary = {}
+## Behaviour modules (src/ai/behaviors): ambush, swoop, front_armor...
+## Parameters live in `ai` next to the other AI tuning values.
+@export var behaviors: PackedStringArray = []
 
 
 static func from_dict(d: Dictionary) -> EntityType:
@@ -71,6 +80,10 @@ static func from_dict(d: Dictionary) -> EntityType:
 	e.collider_radius = col.get("radius", 0.4)
 	e.collider_height = col.get("height", 1.8)
 	e.flying = d.get("flying", false)
+	e.locomotion = StringName(d.get("locomotion", "flying" if e.flying else "ground"))
+	if e.locomotion == &"flying":
+		e.flying = true
+	e.variant_of = StringName(d.get("variant_of", ""))
 	var s: Dictionary = d.get("stats", {})
 	e.max_health = s.get("max_health", 50.0)
 	e.defense = s.get("defense", 0.0)
@@ -87,7 +100,24 @@ static func from_dict(d: Dictionary) -> EntityType:
 	e.active_period = StringName(d.get("active_period", "any"))
 	e.dialogue = d.get("dialogue", {})
 	e.mount = d.get("mount", {})
+	e.behaviors = PackedStringArray(e.ai.get("behaviors", []))
 	return e
+
+
+func is_aquatic() -> bool:
+	return locomotion == &"aquatic"
+
+
+func is_climber() -> bool:
+	return locomotion == &"climber"
+
+
+func is_burrower() -> bool:
+	return locomotion == &"burrower"
+
+
+func has_behavior(b: StringName) -> bool:
+	return String(b) in behaviors
 
 
 func ai_value(key: String, default_value: Variant) -> Variant:

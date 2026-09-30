@@ -83,7 +83,7 @@ func interact(player: Player) -> void:
 	create_tween().tween_property(_lid, "rotation:x", -1.9, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	var items: Array = []
 	if fixed_items.is_empty():
-		items = DB.roll_loot(loot_table)
+		items = DB.roll_loot(DB.regional_table(loot_table, global_position))
 	else:
 		for f in fixed_items:
 			items.append({"id": StringName(f["id"]), "count": int(f.get("count", 1))})

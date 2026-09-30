@@ -19,7 +19,7 @@ extends Node3D
 
 const RANGE := {
 	"object": 170.0, "nest": 150.0, "creature": 110.0, "actor": 130.0, "encounter": 140.0,
-	"course": 320.0, "chest": 150.0, "cue": 900.0,
+	"course": 320.0, "chest": 150.0, "cue": 900.0, "zone": 260.0,
 }
 const MARGIN := 30.0
 const LINGER_DISTANCE := 45.0
@@ -81,6 +81,18 @@ func wanted() -> Dictionary:
 			for i in sspawns.size():
 				if _conditions_ok(sspawns[i]):
 					out["%s:s%d:%d" % [id, st, i]] = [sspawns[i], id]
+	# Discoveries: their things exist while waiting to be found (and after,
+	# if they persist) and only when their world conditions hold.
+	for did: StringName in DB.discovery_order:
+		var dd: Dictionary = DB.discoveries[did]
+		if DiscoveryDirector.is_found(did) and not dd.get("persist", false):
+			continue
+		if not DiscoveryDirector.world_ok(dd.get("conditions", {})):
+			continue
+		var ds: Array = dd.get("spawns", [])
+		for i in ds.size():
+			if _conditions_ok(ds[i]):
+				out["disc:%s:%d" % [did, i]] = [ds[i], &""]
 	return out
 
 
@@ -337,6 +349,27 @@ func _spawn(key: String, e: Dictionary, quest: StringName, kind: String) -> void
 					root.add_child(ch)
 					ch.global_position = seal.global_position + Vector3(0, 0.05, 0)
 			nodes.append(root)
+		"zone":
+			# Physics fields discoveries and quests can place: a thermal
+			# column, a low-gravity pocket.
+			var pos := place(e, xz)
+			if pos == Vector3.INF:
+				return
+			var z: Node3D
+			if String(e.get("zone", "updraft")) == "levity":
+				var lz := LevityZone.new()
+				lz.radius = float(e.get("radius", 20.0))
+				lz.gravity_scale = float(e.get("strength", 0.45))
+				z = lz
+			else:
+				var uz := UpdraftZone.new()
+				uz.radius = float(e.get("radius", 6.0))
+				uz.height = float(e.get("height", 60.0))
+				uz.strength = float(e.get("strength", 11.0))
+				z = uz
+			add_child(z)
+			z.global_position = pos
+			nodes.append(z)
 		"cue":
 			var pos := place(e, xz)
 			if pos == Vector3.INF:

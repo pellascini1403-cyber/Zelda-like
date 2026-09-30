@@ -30,6 +30,15 @@ var respawn_hours := 72.0
 ## Quest encounters (protect / escort / rescue) point attackers at an NPC
 ## or object instead of the player. Null = the player.
 var focus: Node3D = null
+## Behaviour-module controls (src/ai/behaviors). `lift`: extra height for
+## flyers (swoop), surfacing for swimmers. `hidden`: submerged, burrowed or
+## phased out — no collision with attacks, body drawn sunk/faded.
+var lift := 0.0
+var hidden := false
+## Swimmers keep this depth below the surface; burrowers sink this far.
+var sink := 0.0
+## A state moves the body itself this tick (dives, drops): no steering.
+var scripted := false
 
 var _collision: CollisionShape3D
 var _stuck_time := 0.0
@@ -85,7 +94,11 @@ func _build() -> void:
 	brain = _make_brain()
 	global_position = home
 	facing_yaw = randf() * TAU
-	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING if type.flying else CharacterBody3D.MOTION_MODE_GROUNDED
+	var floats := type.flying or type.is_aquatic() or type.is_climber()
+	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING if floats else CharacterBody3D.MOTION_MODE_GROUNDED
+	lift = 0.0
+	hidden = false
+	sink = float(type.ai_value("swim_depth", 1.0)) if type.is_aquatic() else 0.0
 	if Debug.show_entity_debug:
 		enable_debug_label(true)
 	_on_built()
@@ -105,11 +118,15 @@ func ai_tick(delta: float) -> void:
 	if type == null:
 		return
 	health.tick(delta)
+	if type.is_aquatic() and global_position.y < WorldGen.SEA_LEVEL:
+		# Always soaked: lightning and shock arrows hit swimmers twice as hard.
+		health.add_status(&"wet", 1.0)
 	if not dead:
 		perception.update(delta)
 		brain.tick(delta)
 	_move(delta)
 	visual.rotation.y = facing_yaw
+	_update_body_pose(delta)
 	var hs := Vector2(velocity.x, velocity.z).length()
 	visual.set_locomotion(hs / maxf(type.run_speed, 0.1), brain.anim_state() if not dead else &"idle")
 	if _debug_label:
@@ -117,6 +134,8 @@ func ai_tick(delta: float) -> void:
 
 
 func _move(delta: float) -> void:
+	if scripted and not dead:
+		return
 	var desired := Vector3.ZERO
 	if not dead and move_speed > 0.01:
 		var to := move_target - global_position
@@ -131,10 +150,22 @@ func _move(delta: float) -> void:
 	velocity.z = hv.z + knockback.z
 	if type.flying:
 		var ground := _ground_height()
-		var hover := ground + 3.0 + sin(Time.get_ticks_msec() * 0.002 + home.x) * 0.4
+		var hover := ground + float(type.ai_value("hover", 3.0)) + sin(Time.get_ticks_msec() * 0.002 + home.x) * 0.4
 		if move_target.y > ground + 1.0 and target:
 			hover = maxf(hover, move_target.y + 1.0)
-		velocity.y = (hover - global_position.y) * 3.0 + knockback.y
+		hover += lift
+		velocity.y = clampf((hover - global_position.y) * 3.0, -22.0, 14.0) + knockback.y
+	elif type.is_aquatic():
+		# Swim at depth under the single water plane, never above the bed.
+		var bed := _ground_height()
+		var y := WorldGen.SEA_LEVEL - sink + lift
+		y = maxf(y, bed + 0.3)
+		velocity.y = (y - global_position.y) * 4.0 + knockback.y
+	elif type.is_climber():
+		# Clings to the terrain surface whatever its slope (height field:
+		# no overhangs), so cliffs are just ground to a climber.
+		var ground := _ground_height()
+		velocity.y = (ground + lift - global_position.y) * 10.0 + knockback.y
 	elif is_on_floor():
 		velocity.y = -1.0 + knockback.y
 	else:
@@ -165,6 +196,8 @@ func _move(delta: float) -> void:
 func _avoid(dir: Vector3) -> Vector3:
 	if type.flying:
 		return dir
+	if type.is_aquatic():
+		return _avoid_water(dir)
 	var space := get_world_3d().direct_space_state
 	var origin := global_position + Vector3.UP * 0.6
 	for attempt in 5:
@@ -180,10 +213,57 @@ func _avoid(dir: Vector3) -> Vector3:
 		var g := space.intersect_ray(PhysicsRayQueryParameters3D.create(ahead, ahead + Vector3.DOWN * 8.0, 1))
 		if g.is_empty():
 			continue
-		if g["position"].y < global_position.y - 3.5 or g["position"].y < WorldGen.SEA_LEVEL - 0.6:
+		if g["position"].y < WorldGen.SEA_LEVEL - 0.6:
+			continue
+		if g["position"].y < global_position.y - 3.5 and not type.is_climber():
 			continue
 		return d
 	return Vector3.ZERO
+
+
+## Swimmers: the mirror of `_avoid` — refuse ground that rises out of water.
+func _avoid_water(dir: Vector3) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	for attempt in 5:
+		var angle: float = [0.0, 0.7, -0.7, 1.4, -1.4][attempt] * _avoid_sign
+		var d := dir.rotated(Vector3.UP, angle)
+		var ahead := global_position + d * (type.collider_radius + 2.0)
+		ahead.y = WorldGen.SEA_LEVEL + 4.0
+		var g := space.intersect_ray(PhysicsRayQueryParameters3D.create(ahead, ahead + Vector3.DOWN * 40.0, 1))
+		if not g.is_empty() and g["position"].y > WorldGen.SEA_LEVEL - 0.7:
+			continue
+		return d
+	return Vector3.ZERO
+
+
+## Sunk / faded body for hidden states, surface tilt for climbers.
+func _update_body_pose(delta: float) -> void:
+	var want := 0.0
+	if hidden and type.is_burrower():
+		want = -type.collider_height * 1.1
+	visual.position.y = move_toward(visual.position.y, want, delta * 6.0)
+	if type.is_climber() and not dead:
+		var n := _ground_normal()
+		var tilt := Basis(Quaternion(Vector3.UP, n)) if n.dot(Vector3.UP) < 0.999 else Basis()
+		visual.basis = (tilt.slerp(Basis(), 0.25) * Basis(Vector3.UP, facing_yaw)).scaled(visual.scale)
+
+
+func set_hidden(on: bool) -> void:
+	if on == hidden:
+		return
+	hidden = on
+	# Hidden bodies leave the creature layer: sword arcs and arrows pass.
+	collision_layer = 0 if on else 1 << 2
+	if on:
+		remove_from_group(&"enemies")
+	elif kind_is_hostile() and not dead:
+		add_to_group(&"enemies")
+
+
+func _ground_normal() -> Vector3:
+	var from := global_position + Vector3.UP * 2.0
+	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + Vector3.DOWN * 6.0, 1))
+	return hit["normal"] if not hit.is_empty() else Vector3.UP
 
 
 func _ground_height() -> float:
@@ -228,6 +308,11 @@ func distance_to_player() -> float:
 # --- Damage ---------------------------------------------------------------------------------------
 func take_damage(info: DamageInfo) -> void:
 	if dead:
+		return
+	if hidden:
+		return
+	brain.filter_damage(info)
+	if info.amount <= 0.0 and info.poise_damage <= 0.0:
 		return
 	health.apply_damage(info)
 	knockback += info.knockback * clampf(70.0 / type.mass, 0.15, 1.6)

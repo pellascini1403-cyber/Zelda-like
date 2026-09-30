@@ -107,6 +107,8 @@ func interact(player: Player) -> void:
 	EventBus.quest_object_used.emit(object_id, group)
 	if data.has("event"):
 		EventBus.quest_event.emit(StringName(data["event"]))
+	if data.has("discover"):
+		DiscoveryDirector.discover(StringName(data["discover"]))
 	if data.get("consume", data.get("once", true) and String(data.get("look", "")) in ["relic", "kite", "crate", "scroll", "flower", "chime"]):
 		var t := create_tween()
 		t.tween_property(self, "scale", Vector3(0.01, 0.01, 0.01), 0.3)

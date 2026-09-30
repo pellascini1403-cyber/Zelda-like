@@ -18,6 +18,8 @@ var vehicles: VehicleManager
 var events: WorldEventDirector
 var quest_content: QuestSpawner
 var ai: AIManager
+var ambient: AmbientLife
+var discoveries: DiscoveryDirector
 var environment_ctl: EnvironmentController
 var weather_fx: WeatherFX
 var water: WaterSurface
@@ -128,6 +130,13 @@ func _start() -> void:
 	ai = AIManager.new()
 	ai.name = "AIManager"
 	add_child(ai)
+	discoveries = DiscoveryDirector.new()
+	discoveries.name = "Discoveries"
+	add_child(discoveries)
+	ambient = AmbientLife.new()
+	ambient.name = "AmbientLife"
+	ambient.gen = gen
+	add_child(ambient)
 
 	# 5. Save data (global state) before the player exists
 	if Game.load_on_start and SaveSystem.read_save():
