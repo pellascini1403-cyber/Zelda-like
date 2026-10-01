@@ -18,7 +18,10 @@
 | Física dormida o congelada lejos (props a > 70 m), proyectiles por raycast (sin cuerpos) | `PhysicsProp`, `Projectile` |
 | Partículas con pool y cantidad por calidad | `Effects`, `WeatherFX`, `FireSource` |
 | Luces dinámicas limitadas (fuegos ≤ 4, luces nocturnas por grupo), sin sombras omni | `FireSource`, `EnvironmentController` |
-| Una sola luz direccional (sol ↔ luna), sombras PSSM de 2 cortes con distancia por calidad | `EnvironmentController` |
+| Una luz direccional con sombras (sol ↔ luna, PSSM de 2 cortes con distancia por calidad) y dos rellenos direccionales **sin sombra ni especular** (cielo y rebote del suelo) | `EnvironmentController` |
+| Sombra de dosel, manchas de sol, humedad y contacto con el suelo desde **dos texturas globales de 385²** (máscaras y alturas de la isla), sin buffers de profundidad | `IslandMap`, `world_light.gdshaderinc` |
+| Hojas de los árboles como **geometría opaca** (sin *alpha test*, que en GPUs TBDR anula la eliminación de superficies ocultas); 3 variantes por especie instanciadas por sector; densidad de hojas por calidad (0,55 / 0,75 / 1,0) | `TreeKit`, `leaf.gdshader` |
+| Sombra de contacto: 1 quad compartido por entidad, 1 rayo cada 1–3 frames, oculta a > 45 m | `BlobShadow` |
 | Cielo con radiancia incremental de 64 px; sin reflejos de cielo en LOW | `EnvironmentController` |
 | LOD visual de placeholders (extremidades ocultas a > 40 m) | `EntityVisual` |
 | **Lotes por sector**: todos los árboles simplificados (9 especies) en 1 malla, arbustos pequeños en 1 malla, horneados en el hilo de streaming; el shader `baked` conserva el balanceo y el tono por planta | `ChunkBuilder.bake_batch`, `foliage.gdshader` |
@@ -64,6 +67,20 @@ Renderer Mobile por software (llvmpipe). Los conteos son del frame completo, **s
 Formato: draw calls / primitivas. La etapa 2 añade arquitectura con aleros, 9 especies de árbol, bancos de niebla, cascadas, partículas de ambiente y jefes. El sobrecoste frente a la etapa 1 (+15–25 % en draw calls en la mayoría de escenas) se contuvo sin quitar detalle: lotes de vegetación por sector y por baldosa (−10 %), niebla en una malla y capas de partículas ociosas ocultas (−5 %). Los *objects* mayores que los draw calls en escenas con HUD corresponden a elementos 2D.
 
 Antes de las optimizaciones de HLOD y baldosas, la escena del bosque costaba 768 draw calls y 598k primitivas.
+
+### Etapa 3: pasada de entorno (árboles orgánicos, suelo vivo, luz y agua)
+
+| Escena | HIGH antes | HIGH después | MEDIUM antes | MEDIUM después | LOW después |
+|---|---|---|---|---|---|
+| Aldea, mañana | 557 / 508k | 557 / 764k | 475 / 418k | 482 / 543k | 455 / 409k |
+| Bosque (vista del suelo) | 333 / 438k | 342 / 1000k | 362 / 337k | 362 / 466k | 319 / 371k |
+| Vista a la montaña | 309 / 400k | 350 / 719k | — | — | — |
+| Combate en la aldea (HUD) | 680 / 473k | 682 / 627k | — | — | — |
+
+Formato: draw calls / primitivas, Mobile por software, 1600×900.
+- **Draw calls:** prácticamente iguales. Las variantes de árbol añaden como mucho 2 MultiMesh por especie y sector, compensados por los lotes.
+- **Primitivas:** suben entre un +30 y un +40 % en MEDIUM (el preset por defecto en móviles de gama media) y entre un +50 y un +130 % en HIGH dentro del bosque. Las causas son las hojas geométricas, las matas de hierba más llenas y los objetos nuevos del suelo.
+- **Palancas si un dispositivo no llega:** densidad de hojas por calidad (`TreeKit.detail_level`), `vegetation_density` y `vegetation_distance` del preset, y las hojas por mata de hierba (`MeshKit._grass`). Ninguna requiere tocar el diseño.
 
 **Pendiente de medir en dispositivos reales** (no hay hardware móvil en este entorno): FPS sostenido, tiempo de GPU y temperatura en un Android de gama baja (Adreno 610 / Mali-G52), un Android de gama media, un iPhone 12 o posterior y un iPad. Usa la consola de debug (`fps`) y el perfilador remoto del editor.
 

@@ -129,3 +129,31 @@ night_glow={
 "type": "float",
 "value": 0.0
 }
+world_height={
+"type": "sampler2D",
+"value": ""
+}
+world_masks={
+"type": "sampler2D",
+"value": ""
+}
+sun_fleck={
+"type": "vec4",
+"value": Vector4(0, 0, 0, 0)
+}
+sky_top={
+"type": "vec3",
+"value": Vector3(0.1, 0.25, 0.6)
+}
+sky_horizon={
+"type": "vec3",
+"value": Vector3(0.5, 0.7, 0.85)
+}
+compat_gamma={
+"type": "float",
+"value": 0.0
+}
+canopy_dark={
+"type": "float",
+"value": 1.0
+}

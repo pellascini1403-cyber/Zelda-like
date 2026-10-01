@@ -14,6 +14,10 @@ const CACHE_VERSION := 5
 var heights := PackedFloat32Array()
 var texture: ImageTexture
 var map_image: Image
+## Low-res world masks for every outdoor shader (global uniform world_masks):
+## R canopy (forest shade), G wetness. Same texel grid as `heights`.
+var masks_image: Image
+var masks_texture: ImageTexture
 
 
 ## The key includes a hash of everything in world data that shapes terrain
@@ -59,6 +63,11 @@ func finalize() -> void:
 			var v := (heights[j * RES + i] - HEIGHT_OFFSET) / HEIGHT_SCALE
 			img.set_pixel(i, j, Color(clampf(v, 0.0, 1.0), 0, 0))
 	texture = ImageTexture.create_from_image(img)
+	RenderingServer.global_shader_parameter_set(&"world_height", texture)
+	if masks_image:
+		masks_image.generate_mipmaps()
+		masks_texture = ImageTexture.create_from_image(masks_image)
+		RenderingServer.global_shader_parameter_set(&"world_masks", masks_texture)
 
 
 func height_at(x: float, z: float) -> float:
@@ -87,6 +96,16 @@ func _paint_map(gen: WorldGen) -> Image:
 	var rock := Color(0.58, 0.54, 0.48)
 	var snow := Color(0.94, 0.94, 0.92)
 	var span := WorldGen.WORLD_HALF * 2.0
+	masks_image = Image.create(RES, RES, false, Image.FORMAT_RGBA8)
+	for j in RES:
+		for i in RES:
+			var mx := -WorldGen.WORLD_HALF + span * i / (RES - 1)
+			var mz := -WorldGen.WORLD_HALF + span * j / (RES - 1)
+			var mh := heights[j * RES + i]
+			var canopy := 0.0
+			if mh > 1.8 and gen.desert_k(mx, mz) < 0.5 and gen.veil_k(mx, mz) < 0.5:
+				canopy = smoothstep(0.15, 0.75, gen.forest_density(mx, mz)) * (1.0 - smoothstep(110.0, 160.0, mh))
+			masks_image.set_pixel(i, j, Color(canopy, gen.wet_mask(mx, mz, mh), 0.0, 1.0))
 	for j in size:
 		for i in size:
 			var h := heights[j * RES + i]

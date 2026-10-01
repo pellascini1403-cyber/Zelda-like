@@ -8,6 +8,12 @@ extends Node3D
 ## look; height fog makes the mist bands between depth planes.
 
 var sun: DirectionalLight3D
+## Shadowless fills that turn the flat ambient into a hemisphere: a cool sky
+## fill from above (opposite the sun) and a warm-green bounce from the ground.
+## light_specular = 0 marks them as fills for the custom light() shaders
+## (terrain canopy dapple only touches the key light).
+var sky_fill: DirectionalLight3D
+var bounce: DirectionalLight3D
 var env: Environment
 var world_env: WorldEnvironment
 var sky_mat: ShaderMaterial
@@ -26,6 +32,20 @@ const KEYS := [
 ]
 
 
+## Look tunables (art direction, docs/ART_DIRECTION.md "Luz"). Kept in one
+## place so look-dev can audition variants without touching the code paths.
+var look := {
+	"exposure": 0.85,
+	"ambient_day": 0.8,        # flat ambient energy by day (clear sky)
+	"fill": 0.7,              # cool sky fill energy
+	"bounce": 0.14,            # warm ground bounce, fraction of the sun
+	"height_fog": 0.005,        # base height-fog density (valley mist)
+	"aerial": 0.75,            # aerial perspective (distance takes the sky colour)
+	"fog": 0.0014,             # base distance fog density
+	"contrast": 1.1,
+	"saturation": 0.95,
+}
+
 ## Supernatural tint applied while inside the Veil Reaches (0..1).
 var veil := 0.0
 var desert := 0.0
@@ -42,6 +62,8 @@ func _ready() -> void:
 	sun.directional_shadow_fade_start = 0.7
 	sun.light_angular_distance = 0.6
 	add_child(sun)
+	sky_fill = _fill_light("SkyFill")
+	bounce = _fill_light("GroundBounce")
 
 	sky_mat = ShaderMaterial.new()
 	sky_mat.shader = load("res://assets/shaders/sky.gdshader")
@@ -81,6 +103,7 @@ func _ready() -> void:
 	# Compatibility (Web, old GLES) applies height fog to everything below
 	# the camera and washes the image out: it keeps distance fog only.
 	_compat = RenderingServer.get_current_rendering_method() == "gl_compatibility"
+	RenderingServer.global_shader_parameter_set(&"compat_gamma", 1.0 if _compat else 0.0)
 	world_env = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
@@ -88,8 +111,20 @@ func _ready() -> void:
 	_apply_quality()
 
 
+func _fill_light(n: String) -> DirectionalLight3D:
+	var l := DirectionalLight3D.new()
+	l.name = n
+	l.shadow_enabled = false
+	l.light_specular = 0.0
+	l.sky_mode = DirectionalLight3D.SKY_MODE_LIGHT_ONLY
+	add_child(l)
+	return l
+
+
 func _apply_quality() -> void:
 	var q := Quality.current()
+	# Forest floor: real tree shadows on HIGH+, painted canopy shade below.
+	RenderingServer.global_shader_parameter_set(&"canopy_dark", 0.25 if Quality.shadows_for_vegetation() else 0.9)
 	sun.directional_shadow_max_distance = q["shadow_distance"]
 	env.glow_enabled = q["glow"]
 	# Reflections from the sky cost a radiance update: skip on LOW.
@@ -127,7 +162,8 @@ func _process(delta: float) -> void:
 
 	# Sun path: rises in the east (+X), sets in the west, tilted south.
 	var day_angle := (h - 6.0) / 24.0 * TAU
-	var sun_dir := Vector3(cos(day_angle), sin(day_angle), 0.35).normalized()
+	# Peak elevation ~55° (never overhead): side light models every form.
+	var sun_dir := Vector3(cos(day_angle), sin(day_angle) * 0.8, 0.55).normalized()
 	var moon_dir := -sun_dir
 	var daylight := Clock.daylight()
 	var light_dir := sun_dir if sun_dir.y > -0.05 else moon_dir
@@ -149,24 +185,39 @@ func _process(delta: float) -> void:
 		horizon = horizon.lerp(Color(0.85, 0.66, 0.44) * maxf(daylight, 0.2), Weather.sand)
 		light_energy *= lerpf(1.0, 0.55, Weather.sand)
 
+	env.tonemap_exposure = look.exposure
+	env.adjustment_contrast = look.contrast
+	env.adjustment_saturation = look.saturation
 	sun.light_color = light_col
 	sun.light_energy = light_energy
 	# Moonlight shadows are soft and translucent: night stays readable.
 	sun.shadow_opacity = lerpf(0.55, 1.0, smoothstep(0.1, 0.4, daylight))
 	sun.shadow_enabled = light_energy > 0.2
 	env.ambient_light_color = ambient.lerp(grey * 0.75, overcast * 0.5)
-	# Night keeps a readable moonlit fill (mobile screens are viewed in
-	# bright rooms): ambient rises as daylight falls.
-	env.ambient_light_energy = 1.0 + (1.0 - Clock.daylight()) * 0.9
+	# Flat ambient is kept low by day so the key light carves volume; the
+	# hemisphere fills carry the cool sky / warm ground split. Overcast days
+	# go back to soft, even light. Night keeps a readable moonlit fill
+	# (mobile screens are viewed in bright rooms).
+	env.ambient_light_energy = lerpf(look.ambient_day, 0.95, overcast) * daylight + (1.0 - daylight) * 1.9
+	var flat := Vector3(light_dir.x, 0.0, light_dir.z).normalized()
+	_aim(sky_fill, (Vector3.UP * 1.6 - flat).normalized())
+	sky_fill.light_color = sky_top.lerp(horizon, 0.45).lerp(Color(0.62, 0.76, 1.0), 0.4)
+	sky_fill.light_energy = daylight * lerpf(look.fill, 0.2, overcast)
+	_aim(bounce, (Vector3.DOWN * 1.2 - flat * 0.6).normalized())
+	bounce.light_color = Color(0.72, 0.68, 0.42).lerp(Color(0.9, 0.78, 0.6), desert)
+	bounce.light_energy = daylight * light_energy * look.bounce
 	env.fog_light_color = fog_col
-	env.fog_density = 0.0009 + Weather.fog * 0.018 + Weather.rain * 0.004 + overcast * 0.0012 + Weather.sand * 0.02 + veil * 0.002
-	env.fog_height_density = 0.01 + Weather.fog * 0.03 + Weather.rain * 0.01
+	env.fog_density = look.fog + Weather.fog * 0.018 + Weather.rain * 0.004 + overcast * 0.0012 + Weather.sand * 0.02 + veil * 0.002
+	env.fog_height_density = look.height_fog + Weather.fog * 0.03 + Weather.rain * 0.01
 	# Dawn mist settles in the valleys.
 	var dawn := smoothstep(4.5, 6.5, h) * (1.0 - smoothstep(7.5, 10.0, h))
 	env.fog_height = 30.0 + dawn * 25.0
 	env.fog_height_density += dawn * 0.008
 	if _compat:
+		# No aerial perspective in Compatibility: distance fog alone would
+		# bleach the far mountains, so it is kept thinner there.
 		env.fog_height_density = 0.0
+		env.fog_density *= 0.5
 
 	var cam := get_viewport().get_camera_3d()
 	# Sea mist banks: the view closes in to a few tens of metres, pale and
@@ -182,11 +233,11 @@ func _process(delta: float) -> void:
 		if not _compat:
 			env.fog_height_density += mist * 0.02
 		env.fog_sun_scatter = lerpf(0.45, 0.1, mist)
-		env.fog_aerial_perspective = lerpf(0.55, 0.0, mist)
+		env.fog_aerial_perspective = lerpf(look.aerial, 0.0, mist)
 		env.fog_sky_affect = lerpf(0.55, 0.92, mist)
 	else:
 		env.fog_sun_scatter = 0.45
-		env.fog_aerial_perspective = 0.55
+		env.fog_aerial_perspective = look.aerial
 		env.fog_sky_affect = 0.55
 
 	# Under the surface: teal murk, short sight, a tint over everything.
@@ -217,6 +268,13 @@ func _process(delta: float) -> void:
 	for l in get_tree().get_nodes_in_group(&"night_lights"):
 		(l as Light3D).light_energy = night_energy
 	RenderingServer.global_shader_parameter_set(&"night_glow", 1.0 - daylight)
+	var fleck := light_col.srgb_to_linear() * light_energy * smoothstep(0.25, 0.6, daylight) * (1.0 - overcast) * (1.0 - storm)
+	RenderingServer.global_shader_parameter_set(&"sun_fleck", Vector4(fleck.r, fleck.g, fleck.b, 1.0))
+	# Water reflects the live sky (linear colours, before fog).
+	var st := sky_top.srgb_to_linear()
+	var sh := horizon.srgb_to_linear()
+	RenderingServer.global_shader_parameter_set(&"sky_top", Vector3(st.r, st.g, st.b))
+	RenderingServer.global_shader_parameter_set(&"sky_horizon", Vector3(sh.r, sh.g, sh.b))
 	RenderingServer.global_shader_parameter_set(&"mist_color", Vector3(fog_col.r, fog_col.g, fog_col.b) * 1.04)
 
 
@@ -236,6 +294,11 @@ func _under_overlay() -> ColorRect:
 		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		layer.add_child(_overlay)
 	return _overlay
+
+
+## Points a light so it shines FROM `from_dir` (unit vector toward the light).
+func _aim(l: DirectionalLight3D, from_dir: Vector3) -> void:
+	l.look_at_from_position(Vector3.ZERO, -from_dir, Vector3.UP if absf(from_dir.y) < 0.99 else Vector3.FORWARD)
 
 
 func _sample(h: float) -> Array:

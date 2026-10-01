@@ -58,6 +58,7 @@ Cultura original de la isla, construida en torno al viento y las velas:
 - Torres escalonadas de 3 a 5 cuerpos abiertos (miradores), pabellones hexagonales, **puertas del viento** (pórticos de dos columnas con dintel de vela), puentes en arco.
 
 ### Luz y atmósfera
+- **Sol cálido y sombras frías, nunca negras.** El sol nunca está en el cénit (máximo unos 55°): siempre modela los volúmenes de lado. La luz de relleno es un hemisferio: cielo frío desde arriba y rebote cálido-verdoso del suelo, con poco ambiente plano.
 - Amanecer y atardecer muy cálidos con sombras frías. El mediodía es luminoso con ambiente jade. La noche es azul luna, con faroles cálidos y luciérnagas.
 - **Bandas de niebla**: niebla de altura + tarjetas de bruma en valles y al pie de las cascadas.
 - La perspectiva aérea lleva la roca lejana a azul pálido y funde los picos con el cielo.
@@ -73,10 +74,50 @@ El mundo es natural y fantástico: no hay vehículos ni tecnología moderna. Los
 ### UI: «laca y oro»
 Paneles de laca tinta con filete dorado, esquinas cortadas en chaflán, ornamento de nube-voluta en separadores, tipografía **Marcellus** (títulos) y **Philosopher** (texto), botones de acción circulares tipo disco de jade con glifo y animaciones cortas (escala y brillo al tocar).
 
-## 4. Regla de coste
+## 4. Pasada de entorno: lenguaje pictórico (referencias 666K Art / «Pilgrimage»)
+
+De las referencias se toma el **lenguaje**, no las escenas: sol cálido que se filtra entre las copas, sombras frías con color, hierba con sensación de trazo, flores dispersas, bruma que aclara y enfría la distancia, montañas que pierden contraste, agua brillante que refleja el cielo, paisajes monumentales y contraste entre zonas al sol y en sombra. No se copian personajes, poses ni composiciones.
+
+Todo comparte la **misma luz, la misma paleta y la misma atmósfera**. Las reglas por elemento son estas:
+
+| Elemento | Regla | Dónde |
+|---|---|---|
+| **Luz** | Sol bajo (≤ 55°), relleno de cielo frío sin sombra, rebote cálido del suelo, ambiente plano bajo de día. Los parámetros están juntos en `EnvironmentController.look` (exposición, ambiente, relleno, rebote, niebla, perspectiva aérea, contraste, saturación). | `environment_controller.gd` |
+| **Bosque** | El sotobosque es más oscuro y frío, con **manchas de sol** que se mueven despacio con las hojas. En HIGH+ las hojas recortan sombras reales; en LOW/MEDIUM una sombra de dosel pintada lo sustituye. El dosel sale de una máscara del mundo (`world_masks`, 8 m/texel). | `world_light.gdshaderinc` |
+| **Contacto** | Una sombra de contacto suave y fría bajo cada personaje o criatura, que se encoge al saltar o volar. La arquitectura se oscurece y se ensucia en el primer metro sobre el suelo. | `BlobShadow`, `architecture.gdshader` |
+| **Silueta** | Un *rim* suave en el material placeholder (solo iluminación, sin diseño). | `placeholder.gdshader` |
+| **Terreno** | Campos de tono a cuatro escalas (verde cálido / jade / verde frío / oro seco), trazos alargados de pincel cuya dirección deriva, tierra asomando, flores en **grupos**, guijarros con anillo de sombra, musgo y hojarasca bajo el bosque, humedad junto al agua y relieve de detalle procedural para que el sol bajo saque forma. | `terrain.gdshader` |
+| **Rocas** | Esferas cortadas por planos: **facetas grandes y aristas** que atrapan la luz, cara superior aclarada y con musgo, panza oscura. | `MeshKit._rock`, `_stone` |
+| **Árboles** | Crecen, no se ensamblan: tronco curvo con raíces, ramas principales y ramillas, y copa de racimos con normales suaves hacia el centro (oscura y fría dentro, cálida arriba). Las ramas de **hojas geométricas** deshilachan la silueta y filtran la luz. Hay **3 variantes por especie** (estructura, copa y tono), además de escala, inclinación y matiz por instancia. | `TreeKit` |
+| **Suelo vivo** | Hierba en matas suaves y agrupadas (zonas densas y claros), flores en campos, guijarros donde la hierba clarea, ramas caídas, troncos con musgo y helechos en el bosque y en hondonadas húmedas. | `ChunkBuilder`, `MeshKit` |
+| **Agua** | Color por profundidad (se ve el fondo en lo somero), reflejo del cielo vivo con Fresnel, **orillas reflejadas** (una muestra del mapa de alturas a lo largo del rayo reflejado), ondas en capas que se suavizan con la distancia, bandas de espuma hacia la orilla y destellos del sol. | `water.gdshader` |
+| **Profundidad** | Perspectiva aérea fuerte y bruma de valle suave: los planos lejanos pierden contraste, saturación y detalle y toman el color del cielo. Sin desenfoque en el juego. | `EnvironmentController.look` |
+| **Partículas** | Pocas y localizadas: hojas que caen bajo los árboles, pétalos en las arboledas en flor, motas al sol, luciérnagas de noche. Nunca una lluvia constante. | `WeatherFX` |
+| **Materiales** | Piedra en sillares con juntas, tono por bloque y cara superior blanqueada; madera con veta a lo largo de la pieza; laca satinada gastada hasta la madera; yeso con manchas y regueros; tela suave y translúcida a contraluz. Todo procedural, sin texturas. | `architecture.gdshader` |
+
+**Compatibility (Web):** ese renderer no convierte los uniformes `source_color` ni tiene perspectiva aérea. Una compensación global (`compat_gamma`) y una niebla más fina mantienen el mismo aspecto. Se valida con capturas en ambos renderers.
+
+**Validación de esta pasada:** se comparó un antes/después en seis ambientes (aldea, zona abierta, montaña, bosque, agua y combate), además de noche, lluvia, planeo, costa y puente, en Mobile y en Compatibility. Correcciones tras las capturas:
+- Sombras casi negras en el bosque → más relleno de cielo y un albedo del sotobosque más cálido.
+- Manchas de sol demasiado grandes y frecuentes → más pequeñas y escasas.
+- Copas con núcleo pálido → núcleo oscuro detrás de las hojas.
+- Hojas como tarjetas con recorte alfa → hojas geométricas. El *alpha test* cuesta caro en las GPU móviles de tipo TBDR y además colgaba el rasterizador de software de validación.
+- Matas de hierba puntiagudas → matas bajas y anchas del color del suelo.
+- Helechos en prados abiertos → solo en bosque y hondonadas.
+- Manchas de tierra repetitivas → más grandes y escasas.
+- Agua deslumbrante → menos destellos y Fresnel acotado.
+- Lavado en Compatibility → compensación de gamma y niebla.
+
+**Límites conocidos:** no son fallos, son lo siguiente por hacer.
+- Los arbustos y helechos son más simples que los árboles.
+- Las cascadas y la espuma no tienen todavía partículas de salpicadura propias.
+- Las estructuras de las POI del bosque (árbol hueco, pasarelas) siguen con sus formas anteriores.
+- Las rocas grandes de los acantilados son terreno, con estratos en el shader, no mallas propias.
+
+## 5. Regla de coste
 Cada efecto se justifica en `docs/PERFORMANCE.md`. Sin buffers de pantalla ni volumétricos reales. Todo sale de ecuaciones de shader, geometría compartida, MultiMesh y partículas con presupuesto por calidad.
 
-## 5. Validación por capturas (`-- --tour`)
+## 6. Validación por capturas (`-- --tour`)
 Cada fase se revisó con capturas renderizadas y se corrigió lo detectado:
 - **1.ª pasada:** cielo sepia, sendero demasiado marrón y ancho, niebla con bordes duros, copas facetadas, sotobosque oscuro → nuevo LUT, cielo más azul, sendero estrecho con adoquines, niebla suave, copas con sombreado suave.
 - **2.ª pasada (arquitectura):** remates que parecían cuernos → más bajos y curvados hacia la cumbrera; muros del laberinto demasiado fríos → piedra clara con albardilla vidriada; la plataforma del templo inundaba el pozo de una cascada → los pozos se tallan después de las plataformas y el templo se movió al hombro de la montaña.

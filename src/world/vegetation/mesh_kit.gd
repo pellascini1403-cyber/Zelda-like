@@ -196,13 +196,13 @@ const TREES := {
 	&"crystal": [&"crystal", &"crystal_lod", 0.5, 4.0],
 }
 ## Undergrowth kinds (no collision).
-const SHRUBS := [&"bush", &"fern", &"reeds", &"cactus", &"flower", &"grass", &"rock_moss"]
+const SHRUBS := [&"bush", &"fern", &"reeds", &"cactus", &"flower", &"grass", &"rock_moss", &"pebbles", &"twigs", &"log"]
 
 
 ## Raw arrays of vegetation meshes, cached on the main thread so worker
 ## threads can bake sector batches without touching the RenderingServer.
 static var _arrays: Dictionary = {}
-const BATCH_SHRUBS := [&"bush", &"fern", &"reeds", &"cactus"]
+const BATCH_SHRUBS := [&"bush", &"fern", &"reeds", &"cactus", &"pebbles", &"twigs", &"log"]
 
 
 static func warm_arrays() -> void:
@@ -236,6 +236,16 @@ static func get_mesh(key: StringName) -> Mesh:
 	if _cache.has(key):
 		return _cache[key]
 	var m: Mesh
+	# Organic trees: "<species>" / "<species>#<variant>" / "<species>_lod".
+	var ks := String(key)
+	var base_key := ks.get_slice("#", 0)
+	var variant := int(ks.get_slice("#", 1)) if ks.contains("#") else 0
+	var is_lod := base_key.ends_with("_lod")
+	var species := StringName(base_key.trim_suffix("_lod"))
+	if TreeKit.supports(species):
+		m = TreeKit.build(species, variant, is_lod)
+		_cache[key] = m
+		return m
 	match key:
 		&"pine": m = _pine(false)
 		&"pine_lod": m = _pine(true)
@@ -263,6 +273,9 @@ static func get_mesh(key: StringName) -> Mesh:
 		&"rock_moss": m = _rock(1, true)
 		&"grass": m = _grass()
 		&"flower": m = _flower()
+		&"pebbles": m = _pebbles()
+		&"twigs": m = _twigs()
+		&"log": m = _log()
 		_: push_error("MeshKit: unknown mesh " + key)
 	_cache[key] = m
 	return m
@@ -437,10 +450,7 @@ static func _crystal(lod: bool) -> ArrayMesh:
 
 
 static func _bush() -> ArrayMesh:
-	var b := Builder.new()
-	b.blob(Vector3(0, 0.55, 0), Vector3(1.0, 0.72, 1.0), JADE_TOP, JADE_UNDER, 1, 0.2, 2, true)
-	b.blob(Vector3(0.6, 0.4, 0.3), Vector3(0.65, 0.5, 0.65), JADE_TOP * 1.08, JADE_UNDER, 0, 0.15, 3, true)
-	return b.commit()
+	return TreeKit.bush(0)
 
 
 static func _fern() -> ArrayMesh:
@@ -485,27 +495,142 @@ static func _cactus() -> ArrayMesh:
 	return b.commit()
 
 
+## Boulders: a subdivided sphere sliced by random planes, so the stone has
+## large flat facets and crisp edges that catch the low sun (not a lumpy
+## ball). Upward faces are lighter (weathered, lichen or moss), undersides
+## and crevices darker; each facet varies slightly in tone.
 static func _rock(subdiv: int, mossy: bool) -> ArrayMesh:
 	var b := Builder.new()
-	var top := Color(0.36, 0.48, 0.3) if mossy else Color(0.56, 0.58, 0.58)
-	b.blob(Vector3.ZERO, Vector3(1.0, 0.8, 1.0), top, Color(0.3, 0.32, 0.34), subdiv, 0.22, 9)
+	var geo := icosphere(subdiv + 1)
+	var src: PackedVector3Array = geo[0]
+	var f: PackedInt32Array = geo[1]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 909 if mossy else 9
+	var planes: Array = []
+	for i in (9 if subdiv > 0 else 6):
+		var n := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.35, 1.0), rng.randf_range(-1, 1)).normalized()
+		planes.append([n, rng.randf_range(0.52, 0.82)])
+	var v := PackedVector3Array()
+	v.resize(src.size())
+	for i in src.size():
+		var p := src[i] * (1.0 + rng.randf_range(-0.05, 0.05))
+		for pl in planes:
+			var n: Vector3 = pl[0]
+			var over := p.dot(n) - float(pl[1])
+			if over > 0.0:
+				p -= n * over
+		v[i] = p * Vector3(1.0, 0.78, 1.0)
+	var top := Color(0.4, 0.5, 0.3) if mossy else Color(0.66, 0.66, 0.62)
+	var side := Color(0.48, 0.49, 0.48)
+	var under := Color(0.27, 0.29, 0.31)
+	for i in range(0, f.size(), 3):
+		var a := v[f[i]]
+		var bb := v[f[i + 1]]
+		var c := v[f[i + 2]]
+		var fn := -(bb - a).cross(c - a).normalized()
+		var up := fn.y
+		var col := side.lerp(top, smoothstep(0.25, 0.85, up)).lerp(under, smoothstep(-0.05, -0.6, up))
+		var cen := (a + bb + c) / 3.0
+		col *= 0.9 + 0.2 * fposmod(sin(cen.x * 7.1 + cen.y * 3.3 + cen.z * 5.7) * 43.7, 1.0)
+		b.tri(a, bb, c, col)
 	return b.commit()
 
 
+## Grass clump: 11 thin blades, each bent outward in three segments, so a
+## field reads as soft brushwork rather than spiky tufts.
 static func _grass() -> ArrayMesh:
 	var b := Builder.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
-	for i in 5:
-		var a := TAU * i / 5.0 + rng.randf() * 0.5
+	for i in 11:
+		var a := TAU * i / 11.0 + rng.randf() * 0.6
 		var dir := Vector3(cos(a), 0, sin(a))
-		var side := dir.cross(Vector3.UP) * 0.04
-		var root := dir * rng.randf_range(0.02, 0.15)
-		var h := rng.randf_range(0.28, 0.55)
-		var tip := root + dir * 0.14 + Vector3(0, h, 0)
-		var mid := root + dir * 0.05 + Vector3(0, h * 0.5, 0)
-		b.quad(root - side, root + side, mid + side * 0.6, mid - side * 0.6, Color.WHITE)
-		b.tri(mid - side * 0.6, mid + side * 0.6, tip, Color.WHITE)
+		var side := dir.cross(Vector3.UP) * rng.randf_range(0.022, 0.034)
+		var root := dir * rng.randf_range(0.0, 0.32)
+		var h := rng.randf_range(0.14, 0.36)
+		var lean := rng.randf_range(0.1, 0.26)
+		var p1 := root + dir * lean * 0.25 + Vector3(0, h * 0.4, 0)
+		var p2 := root + dir * lean * 0.6 + Vector3(0, h * 0.75, 0)
+		var tip := root + dir * lean + Vector3(0, h, 0)
+		b.quad(root - side, root + side, p1 + side * 0.85, p1 - side * 0.85, Color.WHITE)
+		b.quad(p1 - side * 0.85, p1 + side * 0.85, p2 + side * 0.55, p2 - side * 0.55, Color.WHITE)
+		b.tri(p2 - side * 0.55, p2 + side * 0.55, tip, Color.WHITE)
+	return b.commit()
+
+
+## A few small plane-cut stones half sunk in the ground.
+static func _pebbles() -> ArrayMesh:
+	var b := Builder.new()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 77
+	for k in 5:
+		var c := Vector3(rng.randf_range(-0.5, 0.5), 0.0, rng.randf_range(-0.5, 0.5))
+		var size := rng.randf_range(0.08, 0.22)
+		_stone(b, c, Vector3(size, size * rng.randf_range(0.5, 0.8), size * rng.randf_range(0.8, 1.2)), rng.randi())
+	return b.commit()
+
+
+static func _stone(b: Builder, center: Vector3, size: Vector3, seed_value: int) -> void:
+	var geo := icosphere(1)
+	var src: PackedVector3Array = geo[0]
+	var f: PackedInt32Array = geo[1]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var planes: Array = []
+	for i in 5:
+		planes.append([Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.2, 1.0), rng.randf_range(-1, 1)).normalized(), rng.randf_range(0.55, 0.8)])
+	var v := PackedVector3Array()
+	for p0 in src:
+		var p := p0
+		for pl in planes:
+			var over := p.dot(pl[0]) - float(pl[1])
+			if over > 0.0:
+				p -= (pl[0] as Vector3) * over
+		v.append(center + p * size)
+	for i in range(0, f.size(), 3):
+		var a := v[f[i]]
+		var bb := v[f[i + 1]]
+		var c := v[f[i + 2]]
+		var up := -(bb - a).cross(c - a).normalized().y
+		var col := Color(0.5, 0.5, 0.48).lerp(Color(0.7, 0.69, 0.64), clampf(up, 0.0, 1.0)).lerp(Color(0.3, 0.3, 0.32), clampf(-up, 0.0, 1.0))
+		b.tri(a, bb, c, col)
+
+
+## Fallen branches with a fork and a few dry leaves on the ground.
+static func _twigs() -> ArrayMesh:
+	var b := Builder.new()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 91
+	var wood := Color(0.42, 0.33, 0.25)
+	for k in 2:
+		var a := rng.randf() * TAU
+		var dir := Vector3(cos(a), 0.0, sin(a))
+		var p0 := Vector3(rng.randf_range(-0.3, 0.3), 0.04, rng.randf_range(-0.3, 0.3)) - dir * 0.6
+		var p1 := p0 + dir * 0.7 + Vector3(0, 0.03, 0)
+		var p2 := p1 + dir.rotated(Vector3.UP, rng.randf_range(-0.4, 0.4)) * 0.6
+		b.limb(p0, p1, 0.045, 0.035, 4, wood)
+		b.limb(p1, p2, 0.035, 0.015, 4, wood * 1.08)
+		b.limb(p1, p1 + dir.rotated(Vector3.UP, 0.9) * 0.35 + Vector3(0, 0.05, 0), 0.02, 0.008, 3, wood)
+	var leaf_cols := [Color(0.62, 0.45, 0.22), Color(0.55, 0.36, 0.2), Color(0.66, 0.56, 0.28)]
+	for k in 7:
+		var c := Vector3(rng.randf_range(-0.7, 0.7), 0.02, rng.randf_range(-0.7, 0.7))
+		var r := rng.randf_range(0.05, 0.09)
+		var ang := rng.randf() * TAU
+		var u := Vector3(cos(ang), 0, sin(ang)) * r
+		var w := Vector3(-sin(ang), 0, cos(ang)) * r * 0.5
+		b.quad(c - u, c - w, c + u, c + w + Vector3(0, 0.01, 0), leaf_cols[k % 3])
+	return b.commit()
+
+
+## Mossy fallen log with a broken stub.
+static func _log() -> ArrayMesh:
+	var b := Builder.new()
+	var bark := Color(0.38, 0.29, 0.22)
+	var a := Vector3(-1.3, 0.22, 0.0)
+	var c := Vector3(1.3, 0.18, 0.15)
+	b.limb(a, c, 0.26, 0.21, 7, bark, Color(0.34, 0.42, 0.22))
+	b.limb(Vector3(0.3, 0.3, 0.08), Vector3(0.55, 0.62, -0.25), 0.07, 0.04, 4, bark)
+	b.cylinder(a + Vector3(0.02, -0.26, 0), 0.0, 0.26, 0.26, 7, Color(0.6, 0.5, 0.36))
 	return b.commit()
 
 

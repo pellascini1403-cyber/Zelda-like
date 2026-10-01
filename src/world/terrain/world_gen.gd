@@ -331,6 +331,18 @@ func path_mask(x: float, z: float) -> float:
 
 
 ## 0..1 dampness near lakes, rivers, pools and shores.
+## Ground cover 0..1: dense grassy patches and open, sparser ground, so
+## meadows read as natural clumps instead of an even scatter.
+func ground_cover(x: float, z: float) -> float:
+	var n := _detail.get_noise_2d(x * 0.8 + 311.0, z * 0.8 - 97.0) * 0.6 + _mask.get_noise_2d(x * 2.3 - 51.0, z * 2.3 + 223.0) * 0.4
+	return clampf(n * 1.3 + 0.55, 0.0, 1.0)
+
+
+## Wildflower fields 0..1 (sparse patches in open meadows).
+func flower_field(x: float, z: float) -> float:
+	return smoothstep(0.25, 0.55, _dune.get_noise_2d(x * 1.7 + 1210.0, z * 1.7 - 640.0))
+
+
 func wet_mask(x: float, z: float, h: float) -> float:
 	var p := Vector2(x, z)
 	var w := 1.0 - smoothstep(0.0, 22.0, _distance_to_river(p) - 8.0)

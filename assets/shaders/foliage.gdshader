@@ -18,6 +18,8 @@ uniform bool emissive = false;
 uniform bool baked = false;
 uniform float snow_line = 150.0;
 uniform vec3 hue_shift : source_color = vec3(0.82, 0.96, 0.78);
+uniform sampler2D noise_tex : filter_linear_mipmap, repeat_enable;
+#include "res://assets/shaders/world_light.gdshaderinc"
 
 varying vec3 wpos;
 varying float tint;
@@ -63,6 +65,11 @@ void fragment() {
 	float snow_k = smoothstep(snow_line - snow_amount * 90.0, snow_line - snow_amount * 90.0 + 15.0, wpos.y) * smoothstep(0.2, 0.7, wnrm.y);
 	col = mix(col, vec3(0.92, 0.94, 0.99), snow_k);
 	col *= mix(1.0, 0.72, wetness * (1.0 - snow_k));
+	// Understory: shrubs, rocks and the lower trunks share the forest shade.
+	if (!emissive) {
+		float under = world_mask(wpos).r * (1.0 - smoothstep(1.2, 5.0, local_h));
+		col *= canopy_shade(under);
+	}
 	ALBEDO = col;
 	ROUGHNESS = mix(is_rock ? 0.85 : 0.72, 0.35, wetness);
 	SPECULAR = 0.3;

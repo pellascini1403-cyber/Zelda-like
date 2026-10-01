@@ -207,7 +207,7 @@ static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: 
 		return out
 
 	# Undergrowth (density scales with quality)
-	var shrub_count := int(40 * density)
+	var shrub_count := int(55 * density)
 	for k in shrub_count:
 		var x := ox + rng.randf() * CHUNK_SIZE
 		var z := oz + rng.randf() * CHUNK_SIZE
@@ -220,22 +220,31 @@ static func _place_vegetation(gen: WorldGen, grid: Grid, cx: int, cz: int, lod: 
 		var s := rng.randf_range(0.6, 1.3)
 		out[kind].append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s), Vector3(x - ox, h - 0.1, z - oz)))
 
-	var grass_count := int(2000 * density)
+	# Grass grows in clumped patches (ground_cover), thins on trails and
+	# under dense canopy; wildflowers gather in fields, not as confetti.
+	var grass_count := int(3200 * density)
 	for k in grass_count:
 		var lx := rng.randf() * CHUNK_SIZE
 		var lz := rng.randf() * CHUNK_SIZE
-		var h := grid.height(ox + lx, oz + lz)
+		var wx := ox + lx
+		var wz := oz + lz
+		var h := grid.height(wx, wz)
 		if h < 2.8 or h > gen.snow_line() - 20.0:
 			continue
-		if gen.desert_k(ox + lx, oz + lz) > 0.4 or gen.veil_k(ox + lx, oz + lz) > 0.5:
+		if gen.desert_k(wx, wz) > 0.4 or gen.veil_k(wx, wz) > 0.5:
 			continue
-		var nrm := grid.normal(ox + lx, oz + lz)
+		var nrm := grid.normal(wx, wz)
 		if nrm.y < 0.82:
 			continue
-		var s := rng.randf_range(0.75, 1.3)
-		var basis := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s, s * rng.randf_range(0.8, 1.4), s))
+		var cover := gen.ground_cover(wx, wz)
+		var keep := (0.12 + 0.88 * pow(cover, 1.4)) * (1.0 - gen.path_mask(wx, wz) * 0.85) * (1.0 - gen.forest_density(wx, wz) * 0.45)
+		if rng.randf() > keep:
+			continue
+		var s := rng.randf_range(0.75, 1.3) * lerpf(0.8, 1.15, cover)
+		var basis := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s, s * rng.randf_range(0.8, 1.3), s))
 		var t := Transform3D(basis, Vector3(lx, h - 0.05, lz))
-		if rng.randf() < 0.045:
+		var field := gen.flower_field(wx, wz) * (1.0 - gen.forest_density(wx, wz))
+		if rng.randf() < 0.012 + field * 0.3:
 			out[&"flower"].append(t)
 		else:
 			out[&"grass"].append(t)
@@ -276,19 +285,35 @@ static func _tree_species(gen: WorldGen, x: float, z: float, h: float, nrm: Vect
 
 static func _shrub_kind(gen: WorldGen, x: float, z: float, h: float, roll: float) -> StringName:
 	if gen.desert_k(x, z) > 0.5:
-		return &"cactus" if roll < 0.12 else &""
+		return &"cactus" if roll < 0.12 else (&"pebbles" if roll < 0.3 else &"")
 	if gen.veil_k(x, z) > 0.5:
 		return &"rock_moss" if roll < 0.15 else &""
 	var wet := gen.wet_mask(x, z, h)
 	if wet > 0.55:
-		return &"reeds" if roll < 0.7 else &"rock_moss"
+		return &"reeds" if roll < 0.7 else (&"pebbles" if roll < 0.85 else &"rock_moss")
 	var forest := gen.forest_density(x, z)
 	if forest > 0.5:
-		return &"fern" if roll < 0.55 else (&"bush" if roll < 0.85 else &"rock_moss")
-	if roll < 0.35:
-		return &"bush"
+		# Forest floor: ferns, shrubs, fallen branches and logs, mossy stones.
+		if roll < 0.4:
+			return &"fern"
+		if roll < 0.6:
+			return &"bush"
+		if roll < 0.78:
+			return &"twigs"
+		if roll < 0.86:
+			return &"log"
+		return &"rock_moss"
+	# Open meadow: shrubs in loose groups, stones where the grass thins,
+	# ferns only in lush hollows.
+	var cover := gen.ground_cover(x, z)
+	if roll < 0.26:
+		return &"bush" if cover > 0.35 else &"pebbles"
+	if roll < 0.34:
+		return &"fern" if cover > 0.7 or wet > 0.3 else &""
 	if roll < 0.5:
-		return &"fern"
+		return &"pebbles" if cover < 0.55 else &""
+	if roll < 0.53:
+		return &"twigs"
 	return &""
 
 

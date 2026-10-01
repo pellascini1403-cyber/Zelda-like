@@ -10,4 +10,8 @@ void fragment() {
 	ALBEDO = color;
 	ROUGHNESS = 0.75;
 	SPECULAR = 0.35;
+	// Lighting only (no painted detail): a soft rim keeps the silhouette
+	// readable against foliage and in backlight.
+	RIM = 0.3;
+	RIM_TINT = 0.5;
 }

@@ -101,7 +101,17 @@ func _apply_vegetation(data: Dictionary, veg_distance: float) -> void:
 		if lod == 0 and (def[0] != def[1] or batched):
 			# HLOD: full tree near, simplified tree further out, same sector
 			# (the far part comes from the sector batch when there is one).
-			_add_mm(t, def[0], mat, true, near)
+			# Organic species come in TreeKit.VARIANTS shapes per sector.
+			if TreeKit.supports(species):
+				var parts: Array = []
+				for vi in TreeKit.VARIANTS:
+					parts.append([])
+				for xf: Transform3D in t:
+					parts[_variant_of(xf.origin)].append(xf)
+				for vi in TreeKit.VARIANTS:
+					_add_mm(parts[vi], StringName("%s#%d" % [def[0], vi]), mat, true, near)
+			else:
+				_add_mm(t, def[0], mat, true, near)
 			if not batched:
 				_add_mm(t, def[1], mat, false, far, near)
 		elif not batched:
@@ -145,13 +155,21 @@ func _add_mm(transforms: Array, mesh_key: StringName, mat_key: StringName, shado
 		mm.set_instance_custom_data(i, Color(rng.randf(), 0, 0, 0))
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm
-	mmi.material_override = WorldMaterials.get_mat(mat_key)
+	# Multi-surface meshes (organic trees: wood + leaf cards) carry their
+	# own surface materials.
+	if mm.mesh.get_surface_count() < 2:
+		mmi.material_override = WorldMaterials.get_mat(mat_key)
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if shadows and Quality.shadows_for_vegetation() else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mmi.visibility_range_begin = vis_begin
 	mmi.visibility_range_end = vis_range
 	mmi.visibility_range_end_margin = 10.0
 	mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 	_veg_root.add_child(mmi)
+
+
+## Stable per-tree variant from its sector-local position.
+func _variant_of(o: Vector3) -> int:
+	return int(absf(sin(o.x * 12.9898 + o.z * 78.233 + coord.x * 3.1 + coord.y * 1.7)) * 43758.5453) % TreeKit.VARIANTS
 
 
 func _add_batch(b: Dictionary, vis_range: float, vis_begin: float) -> void:

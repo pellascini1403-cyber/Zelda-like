@@ -83,6 +83,9 @@ func setup(entity_type: EntityType) -> void:
 		_build_model()
 	else:
 		_build_placeholder()
+	# Contact shadow (works for placeholders and final models alike).
+	var every := 1 if type.kind == EntityType.Kind.PLAYER else 3
+	add_child(BlobShadow.create(maxf(type.collider_radius, 0.3), every))
 
 
 # --- Final model path ------------------------------------------------------------------

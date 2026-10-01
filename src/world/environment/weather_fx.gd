@@ -11,6 +11,10 @@ var sandstorm: GPUParticles3D
 var fireflies: GPUParticles3D
 var motes: GPUParticles3D
 var veil_sparks: GPUParticles3D
+## Sparse drifting leaves under trees and petals in blossom groves (day,
+## dry weather): a handful at a time, tumbling slowly on the wind.
+var leaves: GPUParticles3D
+var petals: GPUParticles3D
 var _flash: OmniLight3D
 var _flash_t := 0.0
 var _gen: WorldGen
@@ -26,7 +30,9 @@ func _ready() -> void:
 	fireflies = _make_ambient(Color(1.0, 0.92, 0.45, 1.0), Vector2(0.07, 0.07), 70, 5.0, Vector3(0.3, 0.2, 0.3), true)
 	motes = _make_ambient(Color(1.0, 0.97, 0.85, 0.65), Vector2(0.04, 0.04), 60, 7.0, Vector3(0.4, 0.05, 0.2), true)
 	veil_sparks = _make_ambient(Color(0.55, 1.0, 0.9, 1.0), Vector2(0.08, 0.08), 90, 4.0, Vector3(0.0, 0.8, 0.0), true)
-	for p in [sandstorm, fireflies, motes, veil_sparks]:
+	leaves = _make_falling([Color(0.55, 0.62, 0.26), Color(0.72, 0.6, 0.24), Color(0.42, 0.52, 0.22), Color(0.78, 0.48, 0.2)], 26)
+	petals = _make_falling([Color(1.0, 0.82, 0.88), Color(0.98, 0.7, 0.8), Color(1.0, 0.94, 0.95)], 34)
+	for p in [sandstorm, fireflies, motes, veil_sparks, leaves, petals]:
 		add_child(p)
 	_flash = OmniLight3D.new()
 	_flash.light_color = Color(0.85, 0.9, 1.0)
@@ -83,6 +89,59 @@ func _make_ambient(col: Color, size: Vector2, amount: int, life: float, vel: Vec
 	return p
 
 
+## Falling leaves / petals: tumbling quads, colour picked per particle.
+func _make_falling(cols: Array, amount: int) -> GPUParticles3D:
+	var p := GPUParticles3D.new()
+	p.amount = Quality.particle_amount(amount)
+	p.lifetime = 9.0
+	p.emitting = false
+	p.visibility_aabb = AABB(Vector3(-24, -14, -24), Vector3(48, 24, 48))
+	var pm := ParticleProcessMaterial.new()
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	pm.emission_box_extents = Vector3(18, 3, 18)
+	pm.direction = Vector3(0, -1, 0)
+	pm.spread = 40.0
+	pm.initial_velocity_min = 0.2
+	pm.initial_velocity_max = 0.5
+	pm.gravity = Vector3(0, -0.35, 0)
+	pm.angle_min = -180.0
+	pm.angle_max = 180.0
+	pm.angular_velocity_min = -160.0
+	pm.angular_velocity_max = 160.0
+	pm.turbulence_enabled = true
+	pm.turbulence_noise_strength = 1.4
+	pm.turbulence_noise_scale = 2.5
+	var g := Gradient.new()
+	g.set_color(0, cols[0])
+	g.set_color(1, cols[cols.size() - 1])
+	for i in range(1, cols.size() - 1):
+		g.add_point(float(i) / (cols.size() - 1), cols[i])
+	var gt := GradientTexture1D.new()
+	gt.gradient = g
+	pm.color_initial_ramp = gt
+	var fade := Gradient.new()
+	fade.set_color(0, Color(1, 1, 1, 0))
+	fade.add_point(0.1, Color.WHITE)
+	fade.add_point(0.85, Color.WHITE)
+	fade.set_color(fade.get_point_count() - 1, Color(1, 1, 1, 0))
+	var ft := GradientTexture1D.new()
+	ft.gradient = fade
+	pm.color_ramp = ft
+	p.process_material = pm
+	var quad := QuadMesh.new()
+	quad.size = Vector2(0.09, 0.055)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	m.vertex_color_use_as_albedo = true
+	m.albedo_texture = _soft_dot()
+	m.albedo_color = Color(0.85, 0.85, 0.85)
+	quad.material = m
+	p.draw_pass_1 = quad
+	return p
+
+
 func _make_precip(is_snow: bool) -> GPUParticles3D:
 	var p := GPUParticles3D.new()
 	p.amount = Quality.particle_amount(900 if is_snow else 1600)
@@ -125,6 +184,8 @@ func _process(delta: float) -> void:
 	var ground := c + Vector3(0, -2, 0)
 	for p in [sandstorm, fireflies, motes, veil_sparks]:
 		p.global_position = ground
+	leaves.global_position = c + Vector3(0, 5, 0)
+	petals.global_position = c + Vector3(0, 4, 0)
 	var region: StringName = (Game.player as Player).region if Game.player else &"valley"
 	var dry := Weather.rain < 0.1
 	sandstorm.emitting = Weather.sand > 0.2
@@ -133,13 +194,19 @@ func _process(delta: float) -> void:
 	fireflies.emitting = Clock.is_night() and dry and region != &"desert" and region != &"highlands"
 	motes.emitting = not Clock.is_night() and dry and Weather.sand < 0.1
 	veil_sparks.emitting = region == &"veil"
+	var calm_day := not Clock.is_night() and dry and Weather.sand < 0.1 and region != &"desert" and region != &"veil"
+	leaves.emitting = calm_day and _gen.forest_density(c.x, c.z) > 0.3
+	petals.emitting = calm_day and _gen.grove_mask(c.x, c.z) > 0.45 and _gen.forest_density(c.x, c.z) < 0.4
+	var drift := Weather.wind * Weather.wind_strength
+	for fp: GPUParticles3D in [leaves, petals]:
+		(fp.process_material as ParticleProcessMaterial).gravity = Vector3(drift.x * 0.9, -0.35, drift.z * 0.9)
 	rain.emitting = Weather.rain > 0.08 and not cold
 	snow.emitting = Weather.rain > 0.08 and cold
 	rain.amount_ratio = clampf(Weather.rain, 0.05, 1.0)
 	snow.amount_ratio = clampf(Weather.rain, 0.05, 1.0)
 	# Idle layers stop drawing once their last particles have faded
 	# (an invisible GPUParticles3D still costs a draw call per pass).
-	for p: GPUParticles3D in [rain, snow, sandstorm, fireflies, motes, veil_sparks]:
+	for p: GPUParticles3D in [rain, snow, sandstorm, fireflies, motes, veil_sparks, leaves, petals]:
 		if p.emitting:
 			p.visible = true
 			p.set_meta(&"idle_t", 0.0)

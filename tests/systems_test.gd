@@ -808,6 +808,10 @@ func _swim_at(x: float, z: float, depth: float = 1.2) -> void:
 	var p := Game.player as Player
 	p.global_position = Vector3(x, WorldGen.SEA_LEVEL - depth, z)
 	p.velocity = Vector3.ZERO
+	# A fresh swimmer each time: earlier legs must not leave the player
+	# exhausted (it would drown and wash ashore mid-check).
+	PlayerData.stamina = PlayerData.max_stamina
+	p.vitals.exhausted = false
 	p.change_state(&"swim")
 	await frames(3)
 
