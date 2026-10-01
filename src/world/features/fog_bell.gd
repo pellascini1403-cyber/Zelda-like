@@ -144,9 +144,8 @@ func _apply_lamp() -> void:
 
 func interact(player: Player) -> void:
 	toll()
-	if player.vehicle == null:
-		player.start_busy(&"interact", 0.4)
-		player.visual.play_action(&"interact", 0.4)
+	player.start_busy(&"interact", 0.4)
+	player.visual.play_action(&"interact", 0.4)
 	if not rung():
 		Quests.set_flag(StringName("bell:" + feature_id))
 	var nb := FogBell.find(next_id, get_tree()) if next_id != "" else null

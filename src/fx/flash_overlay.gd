@@ -1,6 +1,6 @@
 class_name FlashOverlay
 extends RefCounted
-## Hit / telegraph flash for entities and vehicles: a small additive overlay
+## Hit / telegraph flash for entities: a small additive overlay
 ## material per visual, attached to its parts only while the flash is on.
 
 

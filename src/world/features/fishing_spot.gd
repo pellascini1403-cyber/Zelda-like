@@ -5,7 +5,7 @@ extends Interactable
 ## inside a short window. What bites depends on the waters (lake, sea,
 ## river), the hour, the weather — data/fishing.json. A spot rests after a
 ## few catches. Needs a fishing rod. The same spot works for the lake, the
-## coast and the sea (and from the Bellhull's deck).
+## coast and the sea.
 
 enum Phase { IDLE, WAITING, BITE }
 
@@ -127,9 +127,8 @@ func interact(player: Player) -> void:
 			if PlayerData.inventory.count_of(&"fishing_rod") <= 0:
 				EventBus.toast.emit(tr("HINT_NEED_ROD"))
 				return
-			if player.vehicle == null:
-				player.start_busy(&"interact", 0.6)
-				player.visual.play_action(&"attack_1", 0.6)
+			player.start_busy(&"interact", 0.6)
+			player.visual.play_action(&"attack_1", 0.6)
 			phase = Phase.WAITING
 			_t = 0.0
 			_bite_at = wait_time()
@@ -149,9 +148,8 @@ func interact(player: Player) -> void:
 				EventBus.toast.emit(tr("FISH_ESCAPED"))
 				return
 			Fishing.land(fish)
-			if player.vehicle == null:
-				player.start_busy(&"interact", 0.5)
-				player.visual.play_action(&"interact", 0.5)
+			player.start_busy(&"interact", 0.5)
+			player.visual.play_action(&"interact", 0.5)
 			_catches += 1
 			if _catches >= CATCHES_BEFORE_REST:
 				_catches = 0

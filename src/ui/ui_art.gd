@@ -205,10 +205,6 @@ static func glyph(ci: CanvasItem, name: String, c: Vector2, s: float, col: Color
 			ci.draw_circle(c + Vector2(-h * 0.35, 0), h * 0.18, col)
 			for k in 3:
 				ci.draw_arc(c + Vector2(-h * 0.35, 0), h * (0.35 + k * 0.22), -PI * 0.3, PI * 0.3, 10, col, w * 0.8, true)
-		"wheel":    # Vantrel cut disc: a wheel split by a chevron
-			ci.draw_arc(c, h * 0.62, 0, TAU, 28, col, w, true)
-			ci.draw_circle(c, h * 0.16, col)
-			ci.draw_polyline(PackedVector2Array([c + Vector2(-h * 0.42, -h * 0.2), c + Vector2(0, h * 0.18), c + Vector2(h * 0.42, -h * 0.2)]), col, w * 0.8, true)
 		"quest":    # diamond with inner dot
 			diamond(ci, c, h * 0.7, col, false)
 			ci.draw_circle(c, h * 0.15, col)

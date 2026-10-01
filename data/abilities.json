@@ -3,6 +3,5 @@
   {"id": "jade_platform", "name_key": "ABILITY_JADE_PLATFORM", "desc_key": "ABILITY_JADE_PLATFORM_DESC", "glyph": "jade", "element": "jade", "stamina": 30, "cooldown": 3.0, "lifetime": 9.0, "max_active": 2, "size": [2.6, 0.35, 2.6]},
   {"id": "wind_sight", "name_key": "ABILITY_WIND_SIGHT", "desc_key": "ABILITY_WIND_SIGHT_DESC", "glyph": "eye", "element": "wind", "stamina": 0, "cooldown": 18.0, "radius": 70.0, "duration": 12.0},
   {"id": "stillness", "name_key": "ABILITY_STILLNESS", "desc_key": "ABILITY_STILLNESS_DESC", "glyph": "still", "element": "still", "stamina": 45, "cooldown": 28.0, "duration": 4.0, "time_scale": 0.35},
-  {"id": "strider_call", "name_key": "ABILITY_STRIDER_CALL", "desc_key": "ABILITY_STRIDER_CALL_DESC", "glyph": "call", "element": "wind", "stamina": 0, "cooldown": 6.0, "mount": "MOUNT_WINDSTRIDER"},
-  {"id": "vehicle_call", "name_key": "ABILITY_VEHICLE_CALL", "desc_key": "ABILITY_VEHICLE_CALL_DESC", "glyph": "wheel", "element": "wind", "stamina": 0, "cooldown": 8.0}
+  {"id": "strider_call", "name_key": "ABILITY_STRIDER_CALL", "desc_key": "ABILITY_STRIDER_CALL_DESC", "glyph": "call", "element": "wind", "stamina": 0, "cooldown": 6.0, "mount": "MOUNT_WINDSTRIDER"}
 ]

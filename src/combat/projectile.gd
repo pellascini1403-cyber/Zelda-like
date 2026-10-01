@@ -12,7 +12,7 @@ var gravity := 0.0
 var explode_radius := 0.0
 var life := 5.0
 var reflected := false
-## Damage multiplier against bosses (vehicle guns: never a boss shortcut).
+## Damage multiplier against bosses.
 var vs_boss := 1.0
 
 var _mesh: MeshInstance3D

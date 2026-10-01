@@ -15,7 +15,7 @@ currents (hard on the flood and ebb, slack at the turn) make roads: the
 Great Rip along the cliffs, a spur to the Wind Rock, a long eddy back west
 that glows at night. A whirlpool where they meet keeps what the sea loses.
 The Wind Rock's spout throws a swimmer out of the sea into an updraft —
-leave the Bellhull, ride the spout, glide to the High Isle. A ship broken in
+ride the spout, glide to the High Isle. A ship broken in
 two: bow aground, stern on a ledge offshore, the anchor chain between them.
 Rip finbacks come down the currents at you.
 """

@@ -8,7 +8,7 @@ Datos: `data/art_style.json` (tokens) y `data/visuals.json` (perfil por entidad)
 
 Código:
 - `src/data/art_style.gd` (materiales, colores, validación).
-- `src/entities/chibi_builder.gd`.
+- `src/entities/mannequin_builder.gd` (PLACEHOLDER — diseño final pendiente).
 - `src/entities/creature_builder.gd`.
 
 Capturas desde la cámara de juego: `docs/captures/characters/`.
@@ -32,7 +32,7 @@ Las referencias se analizaron para extraer **reglas**. No se copió ningún pers
 
 | Familia | Quién | Forma | Color |
 |---|---|---|---|
-| `human` | jugador, NPCs | chibi, redondeado, suave (mallas lisas) | color sólido propio del placeholder (piel más clara, pelo/cuero más oscuro) |
+| `human` | jugador, NPCs | estilizado y esbelto (maniquí placeholder) | color sólido propio del placeholder (piel más clara, pelo/cuero más oscuro) |
 | `enemy` | todos los enemigos y jefes | facetado, angular, puntiagudo | **negro + violeta** |
 | `wildlife` | fauna y monturas | redondo, tranquilo | color sólido propio, **sin violeta** |
 
@@ -104,34 +104,34 @@ La silueta de la especie manda: la araña parece araña y el lobo parece lobo. L
 
 ---
 
-## 4. Humanos: chibi
+## 4. Humanos: anatomía estilizada (maniquí PLACEHOLDER)
 
-**Proporciones** (fracción de la altura del collider de gameplay, `chibi` en `art_style.json`):
-- unas 2.6 cabezas de alto (radio de cabeza 0.2, en niños 0.225);
-- piernas 0.27, torso 0.28, brazos 0.27;
-- manos ×1.35 y pies ×1.4;
-- ojos oscuros en la cara, para leer hacia dónde mira.
+> **PLACEHOLDER — DISEÑO FINAL PENDIENTE.** Los humanos se dibujan hoy con un maniquí anatómico (`MannequinBuilder`) que solo sirve para validar proporciones, silueta, escala, distancia de cámara, luz sobre el cuerpo y movimiento. No es un diseño de personaje: no tiene rostro, ni ropa, ni peinado definitivos. Cuando lleguen los modelos finales, se integran con el mismo rig y sockets y el maniquí deja de usarse.
 
-**Variación real, no solo textura.** Cada NPC combina:
+**Regla anatómica común** (fracción de la altura del collider, `mannequin` en `art_style.json`; jugador 1,75 m):
+- unas **7,5 cabezas** de alto (cabeza 0,133); cadera a media altura (0,5);
+- **cuello largo y fino**, torso estrecho con cintura marcada y hombros naturales (semiancho 0,102);
+- **piernas largas**: muslo 0,22 y tibia 0,245, con rodilla articulada; pies largos y definidos (0,14);
+- **brazos largos**: brazo 0,19, antebrazo 0,16 y mano 0,1, de modo que la punta de los dedos llega a medio muslo; codo articulado;
+- **orejas ligeramente puntiagudas**, en forma de hoja hacia atrás, nunca de elfo caricaturesco;
+- cabeza ovoide estrecha con mandíbula y mentón definidos.
+
+**Nunca:** cabezones, brazos o piernas cortos, manos diminutas, torso ancho, cuerpos redondos, siluetas infantiles, proporciones chibi o aspecto de muñeco.
+
+**Variación** (misma regla para todos, distinto cuerpo):
 
 | Eje | Valores |
 |---|---|
-| complexión (`build`) | slim, average, stout, broad |
-| edad (`age`) | child (cabeza mayor), young, adult, elder (encorvado) |
-| escala (`scale`) | ±8 % de altura visual |
-| pelo (`hair`) | short, swept, spiky, long, ponytail, bun, pigtails, topknot, wild, bald |
-| tocado (`headwear`) | hood, cap, hat_wide, hat_cone, helmet, turban, bandana |
-| ropa (`outfit`) | tunic, robe, coat, apron, armor, vest, cloak |
-| accesorios | scarf, cape, backpack, big_pack, satchel, staff, hammer, rod, bow, quiver, book, scroll, lantern, spear, shield, basket, rope, pick, gourd, bell, glasses, goggles, beard, long_beard |
+| complexión (`build`) | slim, average, stout, broad (cambia la masa, no la altura) |
+| edad (`age`) | child (más bajo, cabeza algo mayor sin ser chibi), young, adult, elder (encorvado) |
+| escala (`scale`) | ±8 % de altura |
+| pelo (`hair`) | solo como volumen: casquete y una pista del estilo (coleta, moño, largo, mechón) |
 
-Así el oficio se lee por la silueta:
-- el herrero es ancho, con delantal y martillo;
-- el pescador lleva sombrero cónico, caña y cesta;
-- el guardia lleva casco, armadura, lanza y escudo;
-- el guardián del santuario es un anciano con túnica, farol y barba larga;
-- la mercader es robusta, con sombrero ancho y un gran fardo.
+La ropa, los tocados y los accesorios del sistema anterior **no** se dibujan sobre el maniquí: pertenecían al diseño chibi y el diseño definitivo está pendiente. Los perfiles de `visuals.json` se conservan como datos para los modelos finales.
 
-**Protagonista:** chibi original. Usa túnica, bufanda (movimiento secundario que ayuda a leer el planeo y las carreras) y un zurrón. Deja libres los sockets `hand_r` (armas) y `back` (planeador). Sigue siendo blanco.
+**Color:** bloques lisos (piel, una capa base del color propio de cada entidad para distinguir NPCs, pelo más oscuro). El jugador sigue siendo blanco.
+
+**Protagonista:** usa el mismo maniquí hasta tener su diseño. Sockets libres: `hand_r` (armas, en la mano del antebrazo) y `back` (planeador).
 
 ---
 
@@ -157,7 +157,7 @@ Contrato: `EntityVisual.LOGICAL` + `FALLBACK`. Los placeholders se animan de for
 - Las piezas pequeñas desaparecen a 40 m (escalado por tamaño: los cuernos de un jefe se ven desde más lejos). Cuerpo y cabeza siguen visibles hasta 180 m.
 - Las partículas se escalan con `Quality.particle_amount`.
 - Mallas y materiales compartidos (`ShapeKit`, caché de `ArtStyle`).
-- **Coste medido:** ~20 draw calls por NPC chibi cercano. Si el presupuesto lo exige, el siguiente paso es fusionar los adornos estáticos por pieza en una sola malla.
+- **Coste medido:** unas 25 piezas por maniquí cercano. Si el presupuesto lo exige, el siguiente paso es fusionar los adornos estáticos por pieza en una sola malla.
 
 ---
 
@@ -176,7 +176,7 @@ Contrato: `EntityVisual.LOGICAL` + `FALLBACK`. Los placeholders se animan de for
 10. ¿Es claramente original?
 
 **Humano nuevo:**
-1. ¿Mantiene proporciones chibi?
+1. ¿Sigue la regla anatómica común (7,5 cabezas, extremidades largas, orejas sutilmente puntiagudas)?
 2. ¿Pertenece a la misma familia?
 3. ¿Tiene silueta propia (oficio legible)?
 4. ¿Se ve atractivo y legible?

@@ -23,7 +23,7 @@
 | Zancaviento (montura) | cuadrúpedo | índigo `#5d4ea8` |
 
 Los placeholders siguen la dirección artística de personajes (`docs/CHARACTER_STYLE_GUIDE.md`), elegida por el perfil visual de cada entidad en `data/visuals.json`:
-- **Humanos (jugador y NPCs):** chibi (`ChibiBuilder`), color sólido propio en todas sus piezas (más claro para piel, más oscuro para pelo/cuero). El jugador sigue siendo blanco.
+- **Humanos (jugador y NPCs):** maniquí anatómico estilizado (`MannequinBuilder`, **PLACEHOLDER — diseño final pendiente**), en bloques lisos del color propio (piel más clara, pelo más oscuro). El jugador sigue siendo blanco.
 - **Enemigos:** familia corrupta negro + violeta (`CreatureBuilder`, `assets/shaders/enemy_body.gdshader`); el color único de la especie queda como un matiz sutil del cuerpo negro.
 - **Fauna:** formas redondas, color sólido, sin violeta.
 

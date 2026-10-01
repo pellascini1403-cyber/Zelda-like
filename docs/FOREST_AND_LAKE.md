@@ -58,7 +58,7 @@ night**, fireflies/bats/sparrows, the rare **Mist Fox** (fog, dawn).
 | **Fishing** (`FishingSpot`, `Fishing`, `data/fishing.json`) | rings on the water → cast → wait → pull in a 1.1 s window. Species by waters/hour/weather: perch (day), pike (dawn/dusk), **moon carp** (night, rare), **stormfin** (storm). Spots rest after 3 catches. Rain makes fish bite sooner. | coast/sea: `waters: "sea"` spots already placed (silverback, rare reef glint) |
 | **Diving** (`DiveState`, `AirVent`) | dodge on the surface to dive; sink, hold jump to rise; stamina = breath; out of breath = drowning damage; bubble vents refill; breath/swim gear (`tide_charm`) | sea caves, wrecks, reefs |
 | **Sunken Shrine** | lake bed at −9 m. Front door buried; enter by the broken roof or the side crack. Three drowned bells (inside, terrace, rubble) open the sanctum (`BellSequence` → `FlagGate`). Air vent inside; an eel keeps the waters. | any ruin under water |
-| **Storm buoys** (`StormBuoy`) | fair weather: rusty floats to hop across. Storm: one hums (telegraph), is struck: electrified water (shock ×2 on anything wet — you, eels), stormglass forms on its crown. More eels in storms. | sea storm fields, Bellhull routes |
+| **Storm buoys** (`StormBuoy`) | fair weather: rusty floats to hop across. Storm: one hums (telegraph), is struck: electrified water (shock ×2 on anything wet — you, eels), stormglass forms on its crown. More eels in storms. | sea storm fields |
 
 Lake wonders: Sunken Shrine (dive), Drowned Lanterns (night, on the
 water), Storm Buoys (storm), Moon Carp (fishing), White Heron (dawn, rare).
@@ -74,8 +74,7 @@ heartwood, mist fox fur, stealth hood, rootgrip charm, pearls, stormglass,
 tide charm, cosmetics (moonlit ribbon, heron plume), a cooking recipe.
 Most are not quests: you find them, the Atlas records them, you move on.
 
-## Bellhull at sea — built in the coast & sea phase
+## The sea — built in the coast & sea phase
 
 See docs/COAST_AND_SEA.md: the lake's water systems (fishing, diving,
-air vents, storm buoys, gates) now run the south sea, and the Bellhull
-fishes from its hatch, rides currents, starts dives and has a storm lining.
+air vents, storm buoys, gates) now run the south sea.

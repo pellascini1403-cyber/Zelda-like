@@ -56,11 +56,10 @@ func _run() -> void:
 	var p := Game.player as Player
 	Debug.god_mode = true
 	await seconds(1.0)
-	# --only <section>: run one section (quests, vehicles, ecosystems, forest, lake, sea, far).
+	# --only <section>: run one section (quests, ecosystems, forest, lake, sea, far).
 	var oi := OS.get_cmdline_user_args().find("--only")
 	if oi >= 0:
 		match OS.get_cmdline_user_args()[oi + 1]:
-			"vehicles": await _vehicles(w, p)
 			"ecosystems": await _ecosystems(w, p)
 			"forest": await _forest(w, p)
 			"lake": await _lake(w, p)
@@ -209,9 +208,6 @@ func _run() -> void:
 	# --- Quest world content -----------------------------------------------------------------------
 	await _quest_content(w, p)
 
-	# --- Premium vehicles ---------------------------------------------------------------------------
-	await _vehicles(w, p)
-
 	Debug.peaceful = false
 
 	# --- Ecosystems (expansion phase 2) ------------------------------------------------------------
@@ -271,16 +267,9 @@ func _run() -> void:
 		print("before: ", JSON.stringify(quests_before))
 		print("after:  ", after)
 	check(PlayerData.has_ability(&"stillness") and WorldState.flags.has("mount_windstrider") and WorldState.flags.has("boss_BOSS_THORNBACK"), "abilities, mount and boss state restored")
-	check(PlayerData.owns_vehicle(&"longwake") and PlayerData.owns_vehicle(&"sparrow") and PlayerData.owns_vehicle(&"bellhull"), "vehicles restored from the save")
 	check(DiscoveryDirector.is_found(&"forest_moon_gate") and WorldState.flags.has("moon_gate_open") and BrambleWall.burned("hollow_tree:door") and WorldState.flags.has("sunken_bells"), "discoveries, burned brambles and opened gates restored from the save")
 	check(WorldState.flags.has("mist_bells_answered") and DiscoveryDirector.is_found(&"rip_high_isle") and DiscoveryDirector.is_found(&"mist_mirage") and WorldState.flags.has("bell:mist_bell_1"), "far-sea bells, wonders and flags restored from the save")
 	check(DiscoveryDirector.is_found(&"sea_vanishing_bar") and WorldState.flags.has("lighthouse_lit") and WorldState.flags.has("gulls_cabin_open") and Quests.is_active(&"dq_sea_vanishing_isle"), "sea discoveries, the lit lamp, the opened cabin and sea quests restored from the save")
-	# Store entitlements belong to the account: a brand-new game gets them back.
-	PlayerData.reset_new_game()
-	Platform.apply_entitlements()
-	check(PlayerData.owns_vehicle(&"bellhull") and not PlayerData.owns_vehicle(&"longwake"), "store purchase re-applies to a new game, earned ones do not")
-	Platform.backend.clear_owned()
-	Platform.backend.sandbox = false
 	_finish()
 
 
@@ -449,166 +438,6 @@ func _quest_content(w: GameWorld, p: Player) -> void:
 			if ev.is_active():
 				_kill_near(ev.center, 40.0)
 		check(PlayerData.glimmer > g, "saving the traveller pays a reward")
-
-
-## Steers the driven vehicle toward `target` through the real input path.
-func _steer_to(target: Vector3, v: Vehicle) -> void:
-	var basis: Basis = Game.camera_rig.yaw_basis()
-	var d := target - v.global_position
-	d.y = 0.0
-	d = d.normalized()
-	var fwd := -basis.z
-	fwd.y = 0.0
-	var right := basis.x
-	right.y = 0.0
-	InputRouter.touch_move = Vector2(d.dot(right.normalized()), d.dot(fwd.normalized()))
-
-
-## Drives toward `target` for `secs`; returns the top speed reached.
-func _drive(v: Vehicle, target: Vector3, secs: float) -> float:
-	var top := 0.0
-	var t0 := Time.get_ticks_msec()
-	while Time.get_ticks_msec() - t0 < secs * 1000.0 and is_instance_valid(v):
-		_steer_to(target, v)
-		top = maxf(top, absf(v.speed))
-		await frames(1)
-	InputRouter.touch_move = Vector2.ZERO
-	return top
-
-
-func _summon_and_enter(p: Player, id: StringName) -> Vehicle:
-	PlayerData.equip_vehicle(id)
-	var mgr := VehicleManager.instance
-	if not mgr.summon(p):
-		return null
-	await seconds(0.6)
-	var v := mgr.active
-	p.enter_vehicle(v)
-	await frames(3)
-	return v
-
-
-func _vehicles(w: GameWorld, p: Player) -> void:
-	var mgr := VehicleManager.instance
-	check(mgr != null, "vehicle manager in the world")
-	check(not mgr.summon(p), "no vehicle, no summon")
-	# Restoration at the bench: parts + materials + glimmer.
-	check(not VehicleManager.restore_status(&"longwake")["ok"], "restoring needs the parts")
-	for vid in [&"longwake", &"sparrow"]:
-		for it in DB.vehicles[vid]["acquire"]["items"]:
-			PlayerData.inventory.add(StringName(it["id"]), int(it["count"]))
-	PlayerData.glimmer = 1300
-	check(VehicleManager.restore(&"longwake") and PlayerData.owns_vehicle(&"longwake"), "Longwake restored at the bench")
-	check(PlayerData.glimmer == 600 and PlayerData.inventory.count_of(&"longwake_core") == 0, "restoring spends glimmer and consumes the parts")
-	check(PlayerData.has_ability(&"vehicle_call"), "first vehicle teaches Vantrel Call")
-	check(VehicleManager.restore(&"sparrow"), "Sparrow restored at the bench")
-	# Store (sandboxed): optional purchase grants the capsule.
-	Platform.backend.clear_owned()
-	Platform.backend.sandbox = true
-	Platform.purchase("vehicle_bellhull")
-	await frames(2)
-	check(PlayerData.owns_vehicle(&"bellhull") and String(PlayerData.vehicles.get("bellhull", "")) == "store", "store purchase grants the Bellhull")
-	check(Platform.owns("vehicle_bellhull"), "entitlement recorded for restore")
-	mgr._unveil_pending = &""
-
-	# Heavy on the desert flats: fastest, boost goes beyond.
-	await teleport(1100.0, 250.0)
-	p.facing_yaw = -PI * 0.5
-	Game.camera_rig.yaw = -90.0
-	var far := Vector3(1400, 0, 250)
-	# The vehicle track must be empty: the desert has residents now
-	# (burrowers surface under wheels, imps run across the road).
-	_clear_hostiles(p.global_position, 120.0)
-	var heavy := await _summon_and_enter(p, &"longwake")
-	check(heavy != null and p.state_name() == &"drive", "Longwake summoned beside the player and driven")
-	var top_heavy := 0.0
-	if heavy:
-		var start := heavy.global_position
-		check(start.distance_to(p.global_position) < 8.0, "summon spot is next to the player")
-		top_heavy = await _drive(heavy, far, 6.0)
-		check(heavy.global_position.distance_to(start) > 60.0, "Longwake covers ground (%.0f m in 6 s)" % heavy.global_position.distance_to(start))
-		InputRouter.touch_sprint = true
-		var top_boost := await _drive(heavy, far, 1.5)
-		InputRouter.touch_sprint = false
-		check(top_boost > float(heavy.h["max_speed"]) * 0.98, "boost pushes past cruising speed (%.1f)" % top_boost)
-		p.exit_vehicle(false)
-		await frames(3)
-		check(p.vehicle == null and p.state_name() != &"drive", "getting out leaves the driver on foot")
-	# Light: slower top speed, but it jumps.
-	await teleport(1100.0, 250.0)
-	_clear_hostiles(p.global_position, 120.0)
-	p.facing_yaw = -PI * 0.5
-	var light := await _summon_and_enter(p, &"sparrow")
-	check(light != null, "Sparrow summoned (previous machine put away)")
-	var top_light := 0.0
-	if light:
-		check(get_tree().get_nodes_in_group(&"vehicles").size() == 1, "only one vehicle out at a time")
-		top_light = await _drive(light, far, 4.0)
-		var y0 := light.global_position.y
-		Input.action_press("jump")
-		await seconds(0.5)
-		Input.action_release("jump")
-		var peak := y0
-		for i in 40:
-			await frames(1)
-			peak = maxf(peak, light.global_position.y)
-		check(peak - y0 > 1.5, "charged jump leaves the ground (%.1f m)" % (peak - y0))
-		p.exit_vehicle(false)
-	check(top_heavy > top_light, "heavy is faster than light (%.1f > %.1f)" % [top_heavy, top_light])
-	# Capsule: slowest, amphibious, armed.
-	await teleport(1100.0, 250.0)
-	p.facing_yaw = -PI * 0.5
-	var cap := await _summon_and_enter(p, &"bellhull")
-	if cap:
-		check(not p.visual.visible, "the capsule encloses its driver")
-		var top_cap := await _drive(cap, far, 4.0)
-		check(top_cap < top_light, "capsule is the slowest (%.1f)" % top_cap)
-		InputRouter.touch_move = Vector2.ZERO
-		# The desert has its own residents now (burrowers, imps): clear the
-		# range so the auto-aim can only pick the test target.
-		for c in get_tree().get_nodes_in_group(&"creatures"):
-			if (c as Creature).kind_is_hostile() and (c as Node3D).global_position.distance_to(cap.global_position) < 45.0:
-				c.queue_free()
-		await frames(2)
-		var e := w.spawner.spawn_creature(&"ENEMY_THORNLING", cap.global_position + cap.facing_dir() * 9.0 + Vector3.UP, "", "test")
-		await frames(10)
-		var hp0: float = e.health.health if e else 0.0
-		Input.action_press("attack")
-		await seconds(2.2)
-		Input.action_release("attack")
-		var hit_ok := e == null or not is_instance_valid(e) or e.health.health < hp0
-		if not hit_ok:
-			print("chin debug: enemy at %s (d %.1f) hp %.0f/%.0f state %s hidden %s in_enemies %s | cap facing %s heat %.2f over %.1f mode %s" % [e.global_position, e.global_position.distance_to(cap.global_position), e.health.health, hp0, e.brain.state_name(), e.hidden, e.is_in_group(&"enemies"), cap.facing_dir(), cap.heat, cap.overheated, cap.mode])
-		check(hit_ok, "chin barrels hit the enemy in front")
-		check(cap.heat_ratio() > 0.3, "firing builds heat (%.2f)" % cap.heat_ratio())
-		mgr.boss_active = true
-		check(mgr.summon_block_reason(p) != "", "no summoning during a boss fight")
-		mgr.boss_active = false
-		p.exit_vehicle(false)
-	# Water: swim out, call the capsule, it floats; drive back to shore, it rolls out.
-	await teleport(-330.0, 60.0, 0.0)
-	p.global_position.y = WorldGen.SEA_LEVEL - 1.2
-	p.change_state(&"swim")
-	await frames(10)
-	var boat := await _summon_and_enter(p, &"bellhull")
-	check(boat != null, "the capsule can be called while swimming")
-	if boat:
-		for i in 90:
-			await frames(1)
-		check(boat.mode == &"water_mode" and boat.transform_t > 0.9, "water under the hull: water_mode, wheels folded")
-		check(absf(boat.global_position.y - (WorldGen.SEA_LEVEL - float(boat.h["draft"]))) < 0.4, "the capsule floats at its waterline")
-		var shore := Vector3(-250, 0, 100)
-		var t0 := Time.get_ticks_msec()
-		while boat.mode == &"water_mode" and Time.get_ticks_msec() - t0 < 30000:
-			_steer_to(shore, boat)
-			await frames(1)
-		InputRouter.touch_move = Vector2.ZERO
-		check(boat.mode == &"land_mode", "reaching the shore: land_mode, wheels down")
-		p.exit_vehicle(false)
-	var gy := w.gen.height(-250, 100)
-	check(not VehicleManager.spot_is_free(p.get_world_3d(), Vector3(-250, gy, 100), Vector3(2, 2, 2)), "summon spots cutting into the ground are rejected")
-	check(VehicleManager.spot_is_free(p.get_world_3d(), Vector3(-250, gy + 40.0, 100), Vector3(2, 2, 2)), "open air counts as free")
-	mgr.put_away()
 
 
 func _finish() -> void:
@@ -1135,70 +964,6 @@ func _sea(w: GameWorld, p: Player) -> void:
 	var ray := _spawn_test(w, &"ENEMY_STORM_RAY", p.global_position + Vector3(10, 3, 0))
 	await seconds(6.0)
 	check(not is_instance_valid(ray) or ray.dead, "clear sky: a storm ray fades back into the spray")
-	# --- The Bellhull at sea -------------------------------------------------------------------------
-	if not PlayerData.owns_vehicle(&"bellhull"):
-		Platform.backend.sandbox = true
-		Platform.purchase("vehicle_bellhull")
-	await _swim_at(126.0, 900.0)
-	var boat := await _summon_and_enter(p, &"bellhull")
-	check(boat != null, "the Bellhull can be called at sea")
-	if boat:
-		for i in 60:
-			await frames(1)
-		check(boat.mode == &"water_mode", "afloat: water mode")
-		var d0 := boat.global_position
-		await seconds(3.0)
-		check(boat.global_position.z - d0.z > 3.0, "the current carries the capsule too (%.1f m)" % (boat.global_position.z - d0.z))
-		# Fishing from the hatch over a wreck spot.
-		boat.global_position = Vector3(44.0, boat.global_position.y, 1232.0)
-		boat.velocity = Vector3.ZERO
-		boat.speed = 0.0
-		await seconds(1.5)
-		var ds := p.states[&"drive"] as DriveState
-		var spot := ds._fishing_spot_near(boat)
-		check(spot != null, "idling over fish, the hatch is a fishing seat")
-		if spot:
-			var catch0 := 0
-			for f in [&"wreck_grouper", &"silverback", &"stormfin"]:
-				catch0 += PlayerData.inventory.count_of(f)
-			spot.interact(p)
-			check(spot.phase == FishingSpot.Phase.WAITING and p.vehicle == boat, "cast from the capsule without climbing out")
-			for i in 60:
-				await seconds(0.2)
-				if spot.phase == FishingSpot.Phase.BITE:
-					break
-			spot.interact(p)
-			var catch1 := 0
-			for f in [&"wreck_grouper", &"silverback", &"stormfin"]:
-				catch1 += PlayerData.inventory.count_of(f)
-			check(catch1 == catch0 + 1, "a wreck-water catch landed from the Bellhull")
-		# Storm buoys shock hulls in the water - unless lined with stormglass.
-		boat.global_position = Vector3(752.0, boat.global_position.y, 1262.0)
-		await seconds(1.5)
-		var buoy: StormBuoy = null
-		for bb in _nodes_near(&"storm_buoys", Vector3(750, 0, 1260), 8.0):
-			buoy = bb
-		check(buoy != null, "squall buoys ring the Leviathan")
-		if buoy:
-			var h0 := boat.hull
-			buoy._strike()
-			await frames(2)
-			check(boat.hull < h0, "a lightning strike on a buoy shocks a hull in the water")
-			WorldState.flags["bellhull_stormproof"] = true
-			h0 = boat.hull
-			buoy._strike()
-			await frames(2)
-			check(is_equal_approx(boat.hull, h0), "stormglass lining: the strike slides off (%.1f -> %.1f)" % [h0, boat.hull])
-			WorldState.flags.erase("bellhull_stormproof")
-		# Out at sea: climb out into the water, and back in.
-		p.exit_vehicle(false)
-		await seconds(1.0)
-		check(p.vehicle == null and p.state_name() == &"swim", "leaving the capsule at sea puts you in the water")
-		p.enter_vehicle(boat)
-		await frames(3)
-		check(p.vehicle == boat and p.state_name() == &"drive", "and you climb back in from the water")
-		p.exit_vehicle(false)
-		VehicleManager.instance.put_away()
 	# --- Storms change the reef ----------------------------------------------------------------------
 	await _swim_at(548.0, 1030.0, 0.6)
 	await seconds(1.5)
@@ -1275,10 +1040,10 @@ func _sea(w: GameWorld, p: Player) -> void:
 		for st in q.get("stages", []):
 			for o in st.get("objectives", []):
 				var cond: Dictionary = o.get("conditions", {})
-				if String(cond.get("state", "")) in ["drive", "ride"] or cond.has("vehicle") or String(o.get("type", "")) == "mount":
+				if String(cond.get("state", "")) == "ride" or String(o.get("type", "")) == "mount":
 					needs_boat.append(qid)
 	check(sea_q == 5, "five sea quests (%d)" % sea_q)
-	check(needs_boat.is_empty(), "no main or sea quest needs a vehicle %s" % [needs_boat])
+	check(needs_boat.is_empty(), "no main or sea quest needs a mount %s" % [needs_boat])
 	check(DiscoveryDirector.found_count("coast") >= 8, "the Atlas records the sea (%d coast wonders)" % DiscoveryDirector.found_count("coast"))
 	Debug.peaceful = false
 
@@ -1513,22 +1278,6 @@ func _far_seas(w: GameWorld, p: Player) -> void:
 		for z in get_tree().get_nodes_in_group(&"updraft"):
 			lift = maxf(lift, z.lift_at(Vector3(spt.global_position.x + 1.0, 20.0, spt.global_position.z + 2.0)))
 		check(lift > 5.0, "and the wind over the rock keeps a glider rising")
-		await seconds(2.0)
-		if not PlayerData.owns_vehicle(&"bellhull"):
-			Platform.backend.sandbox = true
-			Platform.purchase("vehicle_bellhull")
-		await _swim_at(1288.0, 818.0)
-		var boat := await _summon_and_enter(p, &"bellhull")
-		if boat:
-			for i in 40:
-				await frames(1)
-			boat.global_position = Vector3(spt.global_position.x, boat.global_position.y, spt.global_position.z)
-			await frames(2)
-			spt.burst()
-			await frames(3)
-			check(p.vehicle == boat, "the Bellhull only rocks on it: to fly you leave the capsule")
-			p.exit_vehicle(false)
-			VehicleManager.instance.put_away()
 	# The High Isle (by spout and glide, or by climbing).
 	var top := _top_at(1348.0, 884.0)
 	p.global_position = Vector3(1345.0, top + 1.0, 880.0)

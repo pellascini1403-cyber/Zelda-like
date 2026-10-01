@@ -409,8 +409,7 @@
      "id": "abyssal_pearl",
      "count": 1
     }
-   ],
-   "flag": "bellhull_stormproof"
+   ]
   },
   "start": "talk:NPC_TIDEKEEPER",
   "requires": [

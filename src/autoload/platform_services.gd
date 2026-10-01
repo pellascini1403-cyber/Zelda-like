@@ -7,9 +7,8 @@ extends Node
 ## the export. Until then the desktop/stub backend is used everywhere.
 ##
 ## Monetization policy (enforced here, not in callers):
-##  * never pay-to-win: products are cosmetics, ad removal, expansions and
-##    the three premium vehicles (comfort/style/traversal; all three are
-##    also earnable in play; nothing story-, region- or boss-critical).
+##  * never pay-to-win: products are cosmetics, ad removal and expansions;
+##    nothing story-, region- or boss-critical.
 ##  * ads are opt-in rewarded ads only, and never during combat, cutscenes,
 ##    boss fights or while the player is mid-air / climbing.
 
@@ -28,8 +27,6 @@ func _ready() -> void:
 		_:
 			backend = PlatformBackend.new()
 	backend.init()
-	if OS.has_feature("preview") and OS.is_debug_build():
-		_enable_preview_entitlements()
 	backend.purchase_completed.connect(_on_purchase)
 	backend.purchases_restored.connect(_on_restored)
 	# Entitlements belong to the account, not to a save slot: re-apply them
@@ -39,17 +36,6 @@ func _ready() -> void:
 	backend.rewarded_finished.connect(func(p: String, ok: bool) -> void: rewarded_ad_finished.emit(p, ok))
 	EventBus.settings_changed.connect(func() -> void: backend.set_analytics_consent(Settings.get_value("analytics_consent")))
 	backend.set_analytics_consent(Settings.get_value("analytics_consent"))
-
-
-## Play-test builds (export feature tag "preview", debug only): the simulated
-## store is on and the account already owns every vehicle product, so the
-## three machines can be tried without earning or buying them. Held in memory
-## only: nothing is written to the entitlement cache.
-func _enable_preview_entitlements() -> void:
-	backend.sandbox = true
-	for id in DB.products:
-		if product(String(id)).get("grants", {}).has("vehicle"):
-			backend._owned[String(id)] = true
 
 
 ## -1 when the OS gives no thermal info; otherwise 0 nominal .. 3 critical.
@@ -118,10 +104,10 @@ func apply_entitlements() -> void:
 		_apply(id)
 
 
-func _apply(product_id: String) -> void:
-	var g: Dictionary = product(product_id).get("grants", {})
-	if g.has("vehicle"):
-		PlayerData.own_vehicle(StringName(g["vehicle"]), "store")
+## Products grant nothing in-game yet (ad removal and supporter packs are
+## read straight from ownership).
+func _apply(_product_id: String) -> void:
+	pass
 
 
 func log_event(event_name: String, params: Dictionary = {}) -> void:

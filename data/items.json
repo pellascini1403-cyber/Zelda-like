@@ -842,42 +842,6 @@
   "max_stack": 3
  },
  {
-  "id": "vantrel_plan_longwake",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
-  "id": "longwake_core",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
-  "id": "vantrel_plan_sparrow",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
-  "id": "sparrow_core",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
-  "id": "vantrel_plan_bellhull",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
-  "id": "bellhull_core",
-  "category": "key",
-  "max_stack": 1,
-  "rarity": 3
- },
- {
   "id": "gale_feather",
   "category": "material",
   "icon": "res://assets/icons/mat_filament.svg",

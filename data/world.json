@@ -1019,21 +1019,6 @@
       "lore": "LORE_SHRINE"
     },
     {
-      "id": "vantrel_depot",
-      "type": "depot",
-      "pos": [
-        1060,
-        460
-      ],
-      "name_key": "POI_VANTREL_DEPOT",
-      "yaw": 0.6,
-      "flatten": 16,
-      "pad_height": 15.8,
-      "clear_radius": 22,
-      "discover_radius": 36,
-      "lore": "LORE_VANTREL"
-    },
-    {
       "id": "canopy_walk",
       "type": "canopy_walk",
       "name_key": "POI_CANOPY_WALK",

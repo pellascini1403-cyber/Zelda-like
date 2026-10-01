@@ -63,7 +63,10 @@ Cultura original de la isla, construida en torno al viento y las velas:
 - La perspectiva aérea lleva la roca lejana a azul pálido y funde los picos con el cielo.
 
 ### Personajes (placeholders)
-Siguen siendo sólidos y sin detalle. Mejoran solo en **movimiento** (anticipación, inercia, inclinación, aterrizaje) y en **lectura** (telegrafías, reacciones).
+Los humanos usan un **maniquí anatómico estilizado** (PLACEHOLDER — diseño final pendiente): unas 7,5 cabezas, extremidades largas, cuello fino y orejas ligeramente puntiagudas. Sirve solo para validar proporciones, escala, cámara, luz y movimiento hasta que lleguen los modelos definitivos (ver `docs/CHARACTER_STYLE_GUIDE.md` §4). No hay proporciones chibi.
+
+### Mundo sin máquinas
+El mundo es natural y fantástico: no hay vehículos ni tecnología moderna. Los vehículos Vantrel (motos, cápsula, depósito, garaje, llamada, piezas, misiones y productos de tienda) se eliminaron; un test unitario (`test_no_machines`) impide que vuelvan por los datos.
 
 ### UI: «laca y oro»
 Paneles de laca tinta con filete dorado, esquinas cortadas en chaflán, ornamento de nube-voluta en separadores, tipografía **Marcellus** (títulos) y **Philosopher** (texto), botones de acción circulares tipo disco de jade con glifo y animaciones cortas (escala y brillo al tocar).

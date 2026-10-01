@@ -48,7 +48,7 @@ From outside it looks like a pale wall on the horizon, made of soft quads fading
 
 - **Mist dweller:**
   - Exists only in the mist and fades when it lifts.
-  - Keeps pace at about 22 m and circles, following the Bellhull or a swimmer.
+  - Keeps pace at about 22 m and circles, following a swimmer.
   - If you stop for about 3 s it closes in; move off fast and it melts back.
   - It cannot be experienced on land.
 
@@ -60,9 +60,9 @@ From outside it looks like a pale wall on the horizon, made of soft quads fading
 |---|---|---|
 | **The Great Rip** | a 475 m current under the cliffs; ride it end to end | the tide must be running |
 | **Wind spur → Wind Rock** | a branch that carries you to a sea stack | tide |
-| **The spout** | Bubbles boil (the warning), then it bursts and throws a *swimmer* out of the sea. The updraft over the rock keeps a glider rising. A Bellhull only rocks on it, so you leave the capsule to fly. | every 7 s (faster in storms) |
+| **The spout** | Bubbles boil (the warning), then it bursts and throws a *swimmer* out of the sea. The updraft over the rock keeps a glider rising.  | every 7 s (faster in storms) |
 | **The High Isle** | a 30 m mesa: reach it by the spout and a glide, or by climbing its cliffs; the cache on top holds the riptide anklet | — |
-| **Eye of the Lost** (whirlpool) | spins and draws in swimmers and boats; dive its eye to find the hoard on the bed | strongest when the tide runs |
+| **Eye of the Lost** (whirlpool) | spins and draws in swimmers; dive its eye to find the hoard on the bed | strongest when the tide runs |
 | **The Broken Pact** (wreck variant: *split*) | The bow is aground on Isla del Paso, dry, with the log. The stern sits on an offshore ledge 11 m down, with a vent and the strongbox. The anchor chain on the bed joins them: follow it. | dive |
 | **The Glowing Eddy** | the long return current glows green at night | night + running tide |
 
@@ -78,7 +78,7 @@ From outside it looks like a pale wall on the horizon, made of soft quads fading
 | Materials | the far seas | mist pearls, echo shells, rip scales, abyssal pearls |
 | Cosmetics | discoveries | bell-ringer's ribbon, glowing current ribbon |
 
-- **Fish** (fishing from the shore, while swimming, or from the Bellhull's hatch):
+- **Fish** (fishing from the shore or while swimming):
   - the **mistfin** (mist waters, dusk to morning);
   - the **rip mackerel** (rip waters).
 
@@ -94,17 +94,11 @@ New Atlas conditions: `mist`, `flow: strong|slack`.
 - **Voices in the Mist** (Sabel): teaches navigating by the bells.
 - **The Road in the Sea** (the oasis nomad): teaches the tidal currents, the spout and the glide.
 
-Everything else stays outside the journal. Neither quest needs the Bellhull, and a test checks this.
+Everything else stays outside the journal. Neither quest needs a mount, and a test checks this.
 
-## The Bellhull here
+## Getting around
 
-- Rides the currents.
-- Fishes from its hatch in mist and rip waters.
-- Is followed by mist dwellers.
-- Carries you to the Wind Rock.
-- Cannot fly: to use the spout you leave it.
-
-Every place can also be reached without it:
+The game has no vehicles; every place is reached swimming, climbing and gliding:
 
 - **West:** swim shore → bells → sanctuary, resting on each plinth; the Teeth can be climbed. The Echo Cave opens off the shore.
 - **East:** ride the Rip and the spur to the Wind Rock (a current roughly halves the stamina a metre costs), climb the Rock, take the spout and glide. Glide from the High Isle to the whirlpool and the eddy. Isla del Paso is about 80 m from the Rip.

@@ -20,7 +20,7 @@ AirVent, StormBuoy, FlagGate, QuestObject pages.
  Vigil Rock (44 m sea spire: climb, gale kites, updraft) ──glide──▶ Gull's Promise
    │  Home Current back to shore                          (wreck on a shoal)
    ▼
- ── the Bellhull's sea (reachable swimming with the currents, faster by boat) ──
+ ── the open sea (reachable swimming with the currents and resting on islets) ──
  Castaways' Islet (story in objects; Maren rows back at dusk)
  Crystal Reef (fair: wadeable garden, reef fish │ storm: 7 lightning spires, rays)
  Iron Leviathan (deep wreck on a silt bed, 8 squall buoys around it, kelp)
@@ -35,7 +35,7 @@ AirVent, StormBuoy, FlagGate, QuestObject pages.
 | Rule | When | Effect | Where |
 |---|---|---|---|
 | **Tides** (`Tide`) | low ≈ 22–2 h and 10–14 h, high ≈ 6 h and 18 h | sandbars (`TideBar`) rise dry at low water, drown at high; surf (`Surf`) throws you out of cave mouths at high water; the HUD shows the tide on the coast | Tide Isle causeway, Vanishing Bar, tide cave mouth |
-| **Currents** (`SeaCurrent`) | always | a foam strip that pushes swimmers, divers **and the Bellhull** (+1.2×); ride it out, fight it back | Gull / Light / Home currents; the reef rip pulls you out to sea |
+| **Currents** (`SeaCurrent`) | always | a foam strip that pushes swimmers and divers; ride it out, fight it back | Gull / Light / Home currents; the reef rip pulls you out to sea |
 | **Storms change the sea** | storm | reef spires hum then take lightning (electrified water, stormglass on the crown); squall buoys around the Leviathan; storm rays rise; the Tide Isle blowhole becomes an updraft to the storm ledge | Crystal Reef, Leviathan, Tide Isle |
 | **Night** | night | the lighthouse lamp only takes a flame after dark; lantern squid rise | Tidewarden Light, deep grounds |
 | **Dusk** | 16–21 h | Maren is on her islet; the drift whale surfaces west of Vigil Rock | Castaways' Islet, open sea |
@@ -43,9 +43,8 @@ AirVent, StormBuoy, FlagGate, QuestObject pages.
 Storms change decisions, not just damage: in fair weather the reef is a safe
 fishing and wading shelf; in a storm it is the only place that grows
 stormglass and glass shrimp bite more, but the spires shock anything wet
-and storm rays hunt. The Leviathan's squall buoys shock hulls: the safe
-route goes around, the rich one goes through (or line the hull with
-stormglass: the "Storm Night" reward `bellhull_stormproof`).
+and storm rays hunt. The Leviathan's squall buoys shock the water around
+them: the safe route goes around, the rich one goes through.
 
 ## Places (7 POIs + 9 terrain islets, data-driven)
 
@@ -65,19 +64,11 @@ optional jammed cabin (`cabin_gate` flag + lever opens its doorway; the
 stern roof is stove in), vent, pages, guardians.
 Three wrecks from one builder look and play differently.
 
-## The Bellhull at sea (premium, never required)
+## Reaching the open sea
 
-* Floats (water mode), carried or slowed by currents.
-* **Fishing from the hatch**: idle over a spot and interact — you cast
-  without climbing out (deep grounds are its natural use).
-* **Starting dives**: climb out at sea (you land in the water), dodge to
-  dive, climb back in afterwards.
-* Takes lightning through the hull in storm fields unless lined with
-  stormglass (Storm Night).
-* Long routes (castaways, deep grounds, Leviathan) are faster, drier and
-  safer by boat; every one of them can also be reached by swimming with
-  the currents and resting on islets, or gliding from Vigil Rock.
-* Validated: no main or sea quest has a vehicle condition (systems test).
+The game has no vehicles. Every long route (castaways, deep grounds,
+Leviathan) is reached by swimming with the currents and resting on islets,
+or by gliding from Vigil Rock.
 
 ## Fauna and enemies (unique placeholder colours, ≥48 RGB apart)
 
@@ -130,7 +121,7 @@ squid, the skiff, the tide cave, the deep grounds.
 
 Deepwater mask (head, −40 % breath drain), driftwood charm (+30 % swim
 speed, −15 % breath drain), deepwater broth recipe, tidewarden chart +
-three map reveals, Bellhull storm lining, tide ribbon (glider trail),
+three map reveals, tide ribbon (glider trail),
 abyssal pearls, stormglass.
 
 ## Discovery cues (no markers)
@@ -152,5 +143,4 @@ in docs/EXPANSION_PLAN.md (phase 4 mini-audit).
 
 * The water surface does not rise and fall with the tide: sandbars and
   surf carry the tide instead.
-* Wind does not push the Bellhull yet (currents do).
 * Wreck interiors are open hulls, not multi-room interiors.

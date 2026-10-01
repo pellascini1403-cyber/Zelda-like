@@ -3,7 +3,7 @@ extends CanvasLayer
 ## Full-screen menu (pauses the game): Inventory · Crafting · Map · Settings.
 ## Tabs are big touch targets; every panel is scroll-friendly.
 
-enum { TAB_INVENTORY, TAB_CRAFTING, TAB_MAP, TAB_JOURNAL, TAB_GARAGE, TAB_SETTINGS }
+enum { TAB_INVENTORY, TAB_CRAFTING, TAB_MAP, TAB_JOURNAL, TAB_SETTINGS }
 
 var hud: HUD
 var _root: Control
@@ -12,7 +12,6 @@ var _content: Control
 var _panels: Array[Control] = []
 var _tab_buttons: Array[Button] = []
 var _current := 0
-var garage: GaragePanel
 
 
 func _ready() -> void:
@@ -52,7 +51,7 @@ func _ready() -> void:
 	_tabs = HBoxContainer.new()
 	_tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(_tabs)
-	for key in ["TAB_INVENTORY", "TAB_CRAFTING", "TAB_MAP", "TAB_JOURNAL", "TAB_GARAGE", "TAB_SETTINGS"]:
+	for key in ["TAB_INVENTORY", "TAB_CRAFTING", "TAB_MAP", "TAB_JOURNAL", "TAB_SETTINGS"]:
 		var b := UITheme.button(tr(key), 64)
 		b.custom_minimum_size.x = 132
 		b.toggle_mode = true
@@ -67,8 +66,7 @@ func _ready() -> void:
 	_content = Control.new()
 	_content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(_content)
-	garage = GaragePanel.new()
-	for p: Control in [InventoryPanel.new(), CraftingPanel.new(), MapPanel.new(), JournalPanel.new(), garage, SettingsPanel.new()]:
+	for p: Control in [InventoryPanel.new(), CraftingPanel.new(), MapPanel.new(), JournalPanel.new(), SettingsPanel.new()]:
 		p.set_anchors_preset(Control.PRESET_FULL_RECT)
 		p.visible = false
 		_content.add_child(p)
@@ -84,15 +82,8 @@ func open(tab: int) -> void:
 	Audio.play_ui(&"menu_open", -6.0)
 
 
-## Garage opened from the Vantrel Depot bench (restoration enabled).
-func open_garage(at_bench: bool) -> void:
-	garage.at_bench = at_bench
-	open(TAB_GARAGE)
-
-
 func close_menu() -> void:
 	visible = false
-	garage.at_bench = false
 	Game.set_paused(false)
 	Audio.play_ui(&"menu_close", -8.0)
 

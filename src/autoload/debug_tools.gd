@@ -13,7 +13,7 @@ var god_mode := false
 var infinite_stamina := false
 var show_entity_debug := false
 var force_touch_ui := false
-## No hostile roaming spawns (tests, captures, vehicle tuning).
+## No hostile roaming spawns (tests, captures).
 var peaceful := false
 
 var _layer: CanvasLayer
@@ -142,8 +142,6 @@ func run(text: String) -> String:
 				if pos == Vector3.ZERO:
 					return "unknown poi"
 			pos.y = w.gen.height(pos.x, pos.z) + 3.0
-			if p.vehicle:
-				p.exit_vehicle(false)
 			p.global_position = pos
 			p.velocity = Vector3.ZERO
 			return "teleported to %s" % pos

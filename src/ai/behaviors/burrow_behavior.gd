@@ -53,7 +53,7 @@ class BurrowingState:
 		var hunting := false
 		if pl and not pl.is_dead():
 			var d := c.global_position.distance_to(pl.global_position)
-			var moving := Vector2(pl.velocity.x, pl.velocity.z).length() > 1.2 or pl.vehicle != null
+			var moving := Vector2(pl.velocity.x, pl.velocity.z).length() > 1.2
 			still = 0.0 if moving else still + delta
 			if d < float(c.type.ai_value("hear_range", 26.0)) and still < float(c.type.ai_value("still_time", 1.5)):
 				hunting = true

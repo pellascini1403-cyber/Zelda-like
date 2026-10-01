@@ -47,7 +47,7 @@ class SubmergedState:
 		var pl := Game.player as Player
 		if pl and not pl.is_dead():
 			var d := c.global_position.distance_to(pl.global_position)
-			var near_water := pl.water_depth() > -1.5 or pl.vehicle != null
+			var near_water := pl.water_depth() > -1.5
 			if d < float(c.type.ai_value("surface_range", 12.0)) and near_water and t > 1.5 and b.cooldown_ready(&"surface"):
 				return &"surface"
 			if d < 24.0 and near_water:

@@ -1,7 +1,7 @@
 class_name StalkerBehavior
 extends AIBehavior
 ## Mist hunters: they do not rush in. A dark hump keeps pace out at the
-## edge of sight, circling — behind the Bellhull, beside a swimmer. Keep
+## edge of sight, circling beside a swimmer. Keep
 ## moving and it only follows; stop (to fish, to look around, to dive) and
 ## it closes in. Move off fast and it melts back into the mist.
 ## Tuning: stalk_distance, stalk_depth, strike_after (s standing still).

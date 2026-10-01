@@ -1,8 +1,5 @@
 [
  {"id": "remove_ads", "type": "non_consumable", "name_key": "PRODUCT_REMOVE_ADS", "grants": {}},
  {"id": "supporter_pack", "type": "non_consumable", "name_key": "PRODUCT_SUPPORTER", "cosmetic": true, "grants": {}},
- {"id": "expansion_1", "type": "non_consumable", "name_key": "PRODUCT_EXPANSION_1", "grants": {}},
- {"id": "vehicle_longwake", "type": "non_consumable", "name_key": "VEH_LONGWAKE", "premium_vehicle": true, "grants": {"vehicle": "longwake"}, "store_ids": {"android": "vehicle_longwake", "ios": "com.vela.vehicle.longwake"}},
- {"id": "vehicle_sparrow", "type": "non_consumable", "name_key": "VEH_SPARROW", "premium_vehicle": true, "grants": {"vehicle": "sparrow"}, "store_ids": {"android": "vehicle_sparrow", "ios": "com.vela.vehicle.sparrow"}},
- {"id": "vehicle_bellhull", "type": "non_consumable", "name_key": "VEH_BELLHULL", "premium_vehicle": true, "grants": {"vehicle": "bellhull"}, "store_ids": {"android": "vehicle_bellhull", "ios": "com.vela.vehicle.bellhull"}}
+ {"id": "expansion_1", "type": "non_consumable", "name_key": "PRODUCT_EXPANSION_1", "grants": {}}
 ]

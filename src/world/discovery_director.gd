@@ -10,7 +10,7 @@ extends Node
 ##   radius: reach distance (m)        trigger: reach | interact
 ##   conditions: {period, hours: [a, b], weather: [...], not_weather,
 ##                flag, not_flag, ability, state: [player states],
-##                vehicle: true|id, mount: true, min_y, max_y}
+##                mount: true, min_y, max_y}
 ##   spawns: QuestSpawner entries shown while it is waiting to be found
 ##           (and after, when "persist": true)
 ##   reward: Rewards dictionary (paid once, source "disc:<id>")
@@ -79,8 +79,8 @@ static func world_ok(c: Dictionary) -> bool:
 	return true
 
 
-## Player conditions (how you have to be there: gliding, diving, on the
-## Bellhull, high enough...). Checked only at the moment of discovery.
+## Player conditions (how you have to be there: gliding, diving,
+## mounted, high enough...). Checked only at the moment of discovery.
 static func player_ok(c: Dictionary, p: Player) -> bool:
 	if p == null:
 		return false
@@ -88,11 +88,6 @@ static func player_ok(c: Dictionary, p: Player) -> bool:
 		return false
 	if c.has("state") and not String(p.state_name()) in c["state"]:
 		return false
-	if c.has("vehicle"):
-		if p.vehicle == null:
-			return false
-		if c["vehicle"] is String and String(p.vehicle.def.get("id", "")) != String(c["vehicle"]):
-			return false
 	if c.get("mount", false) and p.mount == null:
 		return false
 	if c.has("min_y") and p.global_position.y < float(c["min_y"]):
@@ -148,8 +143,6 @@ static func condition_text(d: Dictionary) -> String:
 		parts.append(TranslationServer.translate("COND_MIST"))
 	if c.has("flow"):
 		parts.append(TranslationServer.translate("COND_FLOW_STRONG" if String(c["flow"]) == "strong" else "COND_SLACK"))
-	if c.has("vehicle"):
-		parts.append(TranslationServer.translate("COND_BY_BOAT"))
 	if c.has("min_y"):
 		parts.append(TranslationServer.translate("COND_HIGH"))
 	if c.has("max_y"):

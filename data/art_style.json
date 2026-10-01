@@ -11,15 +11,22 @@
   "human_eye": "#1d1a22",
   "wildlife_eye": "#231c14"
  },
- "chibi": {
-  "_doc": "Fractions of the gameplay collider height. About 2.6 heads tall: big head, compact body, short limbs, big hands and feet.",
-  "head_radius": 0.2,
-  "child_head_radius": 0.225,
-  "leg_length": 0.27,
-  "torso_length": 0.28,
-  "arm_length": 0.27,
-  "hand_scale": 1.35,
-  "foot_scale": 1.4
+ "mannequin": {
+  "_doc": "PLACEHOLDER — final design pending. Anatomy of the human family as fractions of the gameplay collider height: about 7.5 heads, hips at half height, long neck and limbs, narrow torso, arms reaching mid-thigh, subtly pointed ears. Never chibi.",
+  "head_height": 0.133,
+  "hip_height": 0.5,
+  "thigh_length": 0.22,
+  "shin_length": 0.245,
+  "waist_height": 0.6,
+  "neck_base_height": 0.84,
+  "neck_length": 0.045,
+  "shoulder_height": 0.815,
+  "shoulder_half_width": 0.102,
+  "hip_half_width": 0.05,
+  "upper_arm_length": 0.19,
+  "forearm_length": 0.16,
+  "hand_length": 0.1,
+  "foot_length": 0.14
  },
  "builds": {
   "slim": 0.82,

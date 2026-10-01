@@ -2,9 +2,9 @@
 together: currents + tides + night (First Crossing), wreck entrances + the
 lever/gate (The Ship That Never Returned), cooking + diving + vents (Under
 the Keel), storms + the reef + storm rays (Storm Night), tides + a castaway's
-story (The Vanishing Isle). None needs the Bellhull: every place is reachable
+story (The Vanishing Isle). Every place is reachable
 by swimming with a current, gliding from Vigil Rock, or walking a low-tide
-bar; the Bellhull only makes it faster, drier and safer (docs/COAST_AND_SEA.md).
+bar (docs/COAST_AND_SEA.md).
 Most of the sea stays outside the journal: see seas.DISCOVERIES."""
 from qdsl import L, T, quest, stage, obj
 
@@ -77,7 +77,7 @@ Q(quest("sq_sea_storm_night", "side", "combat", "coast", 4, "medium",
            hint=[L("Stormglass forms on a spire's crown right after the strike. Be quick, and dry.", "El vidrio de tormenta se forma en la corona de la aguja justo tras el rayo. Sé rápido, y no estés mojado.", "O vidro-de-tempestade se forma na coroa da agulha logo após o raio. Seja rápido, e esteja seco.", "Le verre d'orage se forme au sommet de l'aiguille juste après la foudre. Sois vif, et sec.", "Sturmglas bildet sich direkt nach dem Einschlag auf der Nadelkrone. Sei schnell, und trocken.", "嵐硝子は落雷の直後に尖塔の頂にできる。素早く、濡れずに。", "폭풍유리는 번개가 친 직후 첨탑 꼭대기에 맺힌다. 빠르게, 젖지 말고.", "雷一劈下，礁尖顶上就会结出风暴玻璃。手要快，身子要干。")]),
      stage(obj("talk", "NPC_TIDEKEEPER", T("QO_T_RETURN", "NAME_TIDEKEEPER")),
            talk=[L("You came back from the reef in a storm. Most don't try twice. I'll line your hull with this: lightning slides off glass.", "Volviste del arrecife en plena tormenta. Casi nadie lo intenta dos veces. Forraré tu casco con esto: el rayo resbala sobre el vidrio.", "Você voltou do recife em plena tempestade. Quase ninguém tenta duas vezes. Vou forrar seu casco com isto: o raio escorrega no vidro.", "Tu es revenu du récif en pleine tempête. Peu essaient deux fois. Je vais en doubler ta coque : la foudre glisse sur le verre.", "Du kamst im Sturm vom Riff zurück. Die meisten versuchen es kein zweites Mal. Ich füttere deinen Rumpf damit aus: Blitze gleiten an Glas ab.", "嵐の中、礁から戻ってきたか。二度挑む者は少ない。これで船体を張ってやろう。雷は硝子を滑る。", "폭풍 속에 산호초에서 돌아왔구나. 두 번 하는 사람은 드물어. 이걸로 네 선체를 덧대 줄게. 번개는 유리에서 미끄러지거든.", "你在风暴里从礁石回来了，很少有人敢去第二次。我拿这个给你的船壳镶一层：雷打在玻璃上会滑走。")])],
-    {"glimmer": 80, "jade": 2, "items": [{"id": "abyssal_pearl", "count": 1}], "flag": "bellhull_stormproof"},
+    {"glimmer": 80, "jade": 2, "items": [{"id": "abyssal_pearl", "count": 1}]},
     start="talk:NPC_TIDEKEEPER", requires=["sq_sea_first_crossing"],
     offer_lines=[L("When the sky goes green over the reef, the spires start to sing. That's when the glass grows. And the rays come up to feed.", "Cuando el cielo se pone verde sobre el arrecife, las agujas empiezan a cantar. Entonces crece el vidrio. Y suben las rayas a comer.", "Quando o céu fica verde sobre o recife, as agulhas começam a cantar. É quando o vidro cresce. E as raias sobem para comer.", "Quand le ciel verdit sur le récif, les aiguilles se mettent à chanter. C'est là que pousse le verre. Et que les raies montent se nourrir.", "Wenn der Himmel über dem Riff grün wird, beginnen die Nadeln zu singen. Dann wächst das Glas. Und die Rochen steigen zum Fressen auf.", "礁の上の空が緑になると尖塔が歌い出す。そのとき硝子が育ち、エイが餌を求めて上がってくる。", "산호초 위 하늘이 초록으로 변하면 첨탑들이 노래하기 시작해. 그때 유리가 자라고, 가오리들이 먹으러 올라오지.", "礁石上空一发绿，礁尖就开始唱。那时玻璃在长，鳐鱼也浮上来觅食。")]))
 

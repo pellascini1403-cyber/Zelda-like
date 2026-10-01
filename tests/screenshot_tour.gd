@@ -53,14 +53,6 @@ const SHOTS := [
 	["32_lineup_enemies_night", 154.0, 94.0, -47.0, -10.0, 22.5, "clear", "lineup:enemies"],
 	["34_lineup_enemies_close", 154.0, 94.0, -47.0, -14.0, 10.5, "clear", "lineup:enemies_close"],
 	["35_lineup_warden", 154.0, 94.0, -47.0, 4.0, 17.5, "clear", "lineup:warden"],
-	["36_vehicles_lineup", 154.0, 94.0, -47.0, -10.0, 10.0, "clear", "vehicles:lineup"],
-	["36b_vehicles_close", 154.0, 94.0, -47.0, -14.0, 16.5, "clear", "vehicles:close"],
-	["37_vehicle_heavy_drive", 1100.0, 250.0, -90.0, -10.0, 10.5, "clear", "vehicles:drive_longwake"],
-	["37b_vehicle_light_jump", 1100.0, 250.0, -90.0, -8.0, 10.5, "clear", "vehicles:jump_sparrow"],
-	["38_vehicle_capsule_water", -330.0, 60.0, 45.0, -10.0, 11.0, "clear", "vehicles:water"],
-	["39_garage", 62.0, 170.0, 10.0, -8.0, 9.0, "clear", "vehicles:garage"],
-	["40_vantrel_depot", 1052.0, 448.0, -146.0, -4.0, 16.0, "clear", "vehicles:none"],
-	["41_vehicles_night", 1100.0, 250.0, -90.0, -10.0, 22.5, "clear", "vehicles:drive_longwake"],
 	["33_lineup_wildlife", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:wildlife"],
 	# Ecosystems expansion
 	["42_eco_families_a", 154.0, 94.0, -47.0, -10.0, 10.5, "clear", "lineup:eco_a"],
@@ -88,7 +80,6 @@ const SHOTS := [
 	# Phase 4: the coast and the sea
 	["62_coast_day", 112.0, 812.0, -168.6, 2.0, 10.0, "clear", "sea:none"],
 	["63_coast_sunset", 60.0, 810.0, 161.1, 3.0, 18.6, "clear", "sea:sunset"],
-	["64_bellhull_sailing", 126.0, 905.0, -165.8, -6.0, 11.0, "clear", "sea:sail"],
 	["65_remote_islet", -395.0, 1012.0, 152.5, -8.0, 17.6, "clear", "sea:swim"],
 	["66_wreck_exterior", 14.0, 1234.0, -135.0, -16.0, 11.0, "clear", "sea:swim"],
 	["67_wreck_interior", 30.0, 1250.0, 0.0, -38.0, 11.0, "clear", "sea:hold"],
@@ -235,8 +226,6 @@ func _shot(s: Array) -> void:
 	if String(s[7]).begins_with("lineup:"):
 		_lineup(String(s[7]).trim_prefix("lineup:"), p, w)
 		await get_tree().create_timer(0.8).timeout
-	if String(s[7]).begins_with("vehicles:"):
-		await _vehicle_shot(String(s[7]).trim_prefix("vehicles:"), p, w)
 	if String(s[7]).begins_with("wild:"):
 		await _wild_shot(String(s[7]).trim_prefix("wild:"), p, w)
 	if String(s[7]).begins_with("eco:"):
@@ -280,7 +269,7 @@ func _shot(s: Array) -> void:
 			w.hud.cooking._chosen = [&"emberroot", &"cap_mushroom"]
 			w.hud.cooking._refresh()
 			await get_tree().create_timer(0.4, true, false, true).timeout
-	if not String(s[7]) in ["vehicles:drive_longwake", "vehicles:jump_sparrow", "vehicles:water", "sea:sail", "sea:hold", "sea:glide"]:
+	if not String(s[7]) in ["sea:hold", "sea:glide"]:
 		rig.yaw = s[3]
 	rig.pitch = s[4]
 	if not s[7] in ["reward"]:
@@ -310,9 +299,6 @@ func _shot(s: Array) -> void:
 	InputRouter.touch_move = Vector2.ZERO
 	if p.state_name() in [&"dive", &"swim"]:
 		p.change_state(&"air")
-	if p.vehicle:
-		p.exit_vehicle(false)
-	w.vehicles.put_away()
 
 
 func _ray_top(x: float, z: float) -> float:
@@ -421,60 +407,6 @@ func _eco_shot(kind: String, p: Player, w: GameWorld) -> void:
 			await get_tree().create_timer(2.5).timeout
 
 
-## Vehicle captures: parked lineup, driving, jumping, floating, garage.
-func _vehicle_shot(kind: String, p: Player, w: GameWorld) -> void:
-	for id in DB.vehicles:
-		PlayerData.own_vehicle(id, "earned")
-	w.vehicles._unveil_pending = &""
-	w.hud.title_card.visible = false
-	match kind:
-		"lineup", "close":
-			var fwd := p.facing_dir()
-			var right := fwd.cross(Vector3.UP).normalized()
-			var dist := 7.0 if kind == "lineup" else 4.2
-			var ids := [&"longwake", &"sparrow", &"bellhull"]
-			for i in ids.size():
-				if kind == "close" and i != 0:
-					continue
-				var vis := VehicleVisual.new()
-				vis.add_to_group(&"tour_lineup")
-				w.add_child(vis)
-				vis.setup(DB.vehicles[ids[i]])
-				var pos := p.global_position + fwd * dist + right * (i - 1) * 3.4 * (1.0 if kind == "lineup" else 0.0)
-				pos.y = w.gen.height(pos.x, pos.z)
-				vis.global_position = pos
-				vis.rotation.y = p.facing_yaw + PI * 0.5 + 0.35
-		"drive_longwake", "jump_sparrow", "water":
-			var id: StringName = {"drive_longwake": &"longwake", "jump_sparrow": &"sparrow", "water": &"bellhull"}[kind]
-			if kind == "water":
-				p.global_position.y = WorldGen.SEA_LEVEL - 1.2
-				p.change_state(&"swim")
-				await get_tree().create_timer(0.3).timeout
-			PlayerData.equip_vehicle(id)
-			w.vehicles.summon(p)
-			await get_tree().create_timer(0.6).timeout
-			p.enter_vehicle(w.vehicles.active)
-			InputRouter.touch_move = Vector2(0, 1)
-			await get_tree().create_timer(2.4 if kind != "water" else 3.0).timeout
-			if kind == "jump_sparrow":
-				Input.action_press("jump")
-				await get_tree().create_timer(0.45).timeout
-				Input.action_release("jump")
-				await get_tree().create_timer(0.35).timeout
-			InputRouter.touch_move = Vector2.ZERO if kind == "water" else InputRouter.touch_move
-
-			(Game.camera_rig as CameraRig).yaw = rad_to_deg(w.vehicles.active.heading) + 25.0
-		"garage":
-			w.hud.visible = true
-			w.hud.menu.open(PauseMenu.TAB_GARAGE)
-			w.hud.menu.garage._selected = &"longwake"
-			w.hud.menu.garage.refresh()
-			await get_tree().create_timer(0.6, true, false, true).timeout
-
-
-## Visual-only lineup (no AI) in front of the player, turned 3/4 to camera.
-## Plain ids come from the database; bare species names are example
-## profiles with no gameplay data (spider, dragon...).
 func _lineup(which: String, p: Player, w: GameWorld) -> void:
 	var ids: Array = LINEUPS[which][0]
 	var dist: float = LINEUPS[which][1]
@@ -578,9 +510,6 @@ func _quest_setup(kind: String, p: Player, w: GameWorld) -> void:
 func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
 	var rig := Game.camera_rig as CameraRig
 	var fwd := p.facing_dir()
-	for id in DB.vehicles:
-		PlayerData.own_vehicle(id, "earned")
-	w.vehicles._unveil_pending = &""
 	match kind:
 		"sunset":
 			WorldState.flags["lighthouse_lit"] = true
@@ -638,29 +567,18 @@ func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
 				await get_tree().create_timer(0.12).timeout
 				Input.action_release("attack")
 				await get_tree().create_timer(0.2).timeout
-		"sail", "fish":
+		"fish":
+			# Fishing while treading water over a wreck spot.
 			p.global_position.y = WorldGen.SEA_LEVEL - 1.2
 			p.change_state(&"swim")
-			await get_tree().create_timer(0.3).timeout
-			PlayerData.equip_vehicle(&"bellhull")
-			w.vehicles.summon(p)
-			await get_tree().create_timer(0.6).timeout
-			var boat := w.vehicles.active
-			p.enter_vehicle(boat)
-			if kind == "sail":
-				InputRouter.touch_move = Vector2(0, 1)
-				await get_tree().create_timer(3.0).timeout
-				InputRouter.touch_move = Vector2.ZERO
-				rig.yaw = rad_to_deg(boat.heading) + 150.0
-			else:
-				await get_tree().create_timer(1.5).timeout
-				w.hud.visible = true
-				PlayerData.inventory.add(&"fishing_rod", 1)
-				for fs in get_tree().get_nodes_in_group(&"fishing_spots"):
-					if (fs as Node3D).global_position.distance_to(boat.global_position) < 10.0:
-						(fs as FishingSpot).interact(p)
-						break
-				await get_tree().create_timer(1.2).timeout
+			await get_tree().create_timer(1.5).timeout
+			w.hud.visible = true
+			PlayerData.inventory.add(&"fishing_rod", 1)
+			for fs in get_tree().get_nodes_in_group(&"fishing_spots"):
+				if (fs as Node3D).global_position.distance_to(p.global_position) < 10.0:
+					(fs as FishingSpot).interact(p)
+					break
+			await get_tree().create_timer(1.2).timeout
 		"hold":
 			# Inside the Gull's Promise: the stern cabin, door forced open,
 			# the log on the chart table, daylight through the stern windows.
@@ -703,16 +621,7 @@ func _sea_shot(kind: String, p: Player, w: GameWorld) -> void:
 			w.hud.visible = true
 			await get_tree().create_timer(1.5).timeout
 		"glide":
-			# Leave the Bellhull at the spout's foot, ride the burst and the updraft.
-			p.global_position.y = WorldGen.SEA_LEVEL - 1.2
-			p.change_state(&"swim")
-			await get_tree().create_timer(0.3).timeout
-			PlayerData.equip_vehicle(&"bellhull")
-			w.vehicles.summon(p)
-			await get_tree().create_timer(0.8).timeout
-			var boat := w.vehicles.active
-			if boat:
-				boat.global_position = Vector3(1274.0, boat.global_position.y, 806.0)
+			# Ride the spout's burst and the updraft over the rock.
 			PlayerData.inventory.add(&"vela_glider")
 			p.global_position = Vector3(1296.0, WorldGen.SEA_LEVEL + 40.0, 824.0)
 			p.velocity = Vector3.ZERO

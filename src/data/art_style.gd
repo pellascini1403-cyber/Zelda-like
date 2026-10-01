@@ -2,7 +2,7 @@ class_name ArtStyle
 extends RefCounted
 ## Character art direction as code-side helpers over data/art_style.json and
 ## data/visuals.json. Presentation only: gameplay never calls this.
-## Families: human (chibi), enemy (black + violet energy), wildlife (neutral).
+## Families: human (stylized mannequin placeholder), enemy (black + violet energy), wildlife (neutral).
 ## See docs/CHARACTER_STYLE_GUIDE.md.
 
 static var _mats: Dictionary = {}

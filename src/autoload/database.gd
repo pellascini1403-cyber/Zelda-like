@@ -7,7 +7,7 @@ extends Node
 const DATA_DIR := "res://data/"
 ## POI types StructureBuilder knows how to build.
 const POI_TYPES := ["village", "maze", "camp", "spires", "giant_tree", "overlook", "shipwreck", "watchtower", "summit", "den",
-	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry", "depot",
+	"temple", "shrine", "bridge", "ruins", "oasis", "arena", "anchor", "floating_isles", "npc_camp", "cave", "post", "quarry",
 	"canopy_walk", "hollow_tree", "moon_shrine", "sunken_shrine", "lighthouse", "sea_spire", "wreck", "castaway_camp", "tide_cave", "bell_shrine", "sea_cave", "standing_wreck", "split_wreck"]
 
 var items: Dictionary = {}          # StringName -> ItemData
@@ -30,7 +30,6 @@ var upgrades: Dictionary = {}       # StringName -> Warden altar upgrade track
 var cosmetics: Dictionary = {}      # StringName -> cosmetic (trail colours...)
 var art_style: Dictionary = {}      # character art direction tokens (presentation only)
 var visuals: Dictionary = {}        # StringName -> visual profile (presentation only)
-var vehicles: Dictionary = {}       # StringName -> premium vehicle definition
 var products: Dictionary = {}       # StringName -> store product (monetization catalogue)
 var discoveries: Dictionary = {}    # StringName -> discovery (optional wonders, not quests)
 var discovery_order: Array = []     # ids in file order (Atlas)
@@ -106,9 +105,6 @@ func reload() -> void:
 	for s in _load_array("shops.json"):
 		shops[StringName(s["id"])] = s
 	world_events = _load_array("world_events.json")
-	vehicles = {}
-	for v in _load_array("vehicles.json"):
-		vehicles[StringName(v["id"])] = v
 	products = {}
 	for pr in _load_array("products.json"):
 		products[StringName(pr["id"])] = pr
@@ -279,7 +275,6 @@ func validate() -> PackedStringArray:
 				errors.append("cooking special '%s' unknown item '%s'" % [sp["id"], ing])
 	errors.append_array(_validate_progression())
 	errors.append_array(ArtStyle.validate(self))
-	errors.append_array(_validate_vehicles())
 	errors.append_array(_validate_ecology())
 	return errors
 
@@ -365,31 +360,6 @@ func _validate_ecology() -> PackedStringArray:
 		for rg in f.get("regions", []):
 			if not regions.has(StringName(rg)):
 				errors.append("fauna '%s' unknown region '%s'" % [f.get("id", ""), rg])
-	return errors
-
-
-## Vehicles: costs name real items, quests exist, every vehicle is both
-## earnable (quest + restore) and sold (product), products grant real things.
-func _validate_vehicles() -> PackedStringArray:
-	var errors := PackedStringArray()
-	var quest_ids := {}
-	for q in quests:
-		quest_ids[q["id"]] = true
-	for v in vehicles.values():
-		var acq: Dictionary = v.get("acquire", {})
-		if not quest_ids.has(acq.get("quest", "")):
-			errors.append("vehicle '%s' unknown acquire quest '%s'" % [v["id"], acq.get("quest", "")])
-		for it in acq.get("items", []):
-			if not items.has(StringName(it["id"])):
-				errors.append("vehicle '%s' needs unknown item '%s'" % [v["id"], it["id"]])
-		if not products.has(StringName(v.get("product", ""))):
-			errors.append("vehicle '%s' unknown product '%s'" % [v["id"], v.get("product", "")])
-		if v.get("model", "") != "" and not ResourceLoader.exists(v["model"]):
-			errors.append("vehicle '%s' model not found: %s" % [v["id"], v["model"]])
-	for pr in products.values():
-		var g: Dictionary = pr.get("grants", {})
-		if g.has("vehicle") and not vehicles.has(StringName(g["vehicle"])):
-			errors.append("product '%s' grants unknown vehicle" % pr["id"])
 	return errors
 
 

@@ -124,20 +124,8 @@ func _strike() -> void:
 	info.kind = &"environment"
 	info.blockable = false
 	for body in CombatUtils.sphere_query(get_world_3d(), Vector3(global_position.x, WorldGen.SEA_LEVEL - 0.5, global_position.z), SHOCK_RADIUS, CombatUtils.CREATURE_MASK | CombatUtils.PLAYER_MASK):
-		# Hulls, and whoever sits inside one, are the boat loop's (below).
-		if body is Vehicle or (body is Player and (body as Player).vehicle != null):
-			continue
 		if (body as Node3D).global_position.y < WorldGen.SEA_LEVEL + 0.4:
 			CombatUtils.deal(body, info)
-	# Boats in the field take it through the hull (unless Sabel lined it
-	# with stormglass: "bellhull_stormproof", Storm Night's reward).
-	var stormproof := WorldState.flags.has("bellhull_stormproof")
-	for v in get_tree().get_nodes_in_group(&"vehicles"):
-		if stormproof:
-			break
-		var vv := v as Vehicle
-		if vv.mode == &"water_mode" and Vector2(vv.global_position.x - global_position.x, vv.global_position.z - global_position.z).length() < SHOCK_RADIUS:
-			vv.take_damage(info)
 	ElementFX.burst(get_parent(), Vector3(global_position.x, WorldGen.SEA_LEVEL + 0.1, global_position.z), &"electric", SHOCK_RADIUS)
 	_grow_glass()
 

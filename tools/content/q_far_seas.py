@@ -1,6 +1,6 @@
 """Far-sea quests (phase 4.5): two, each teaching one sea. Everything else
 in the Mist Sea and the Current Sea stays outside the journal.
-Neither needs the Bellhull: the bells line starts a swim from the west
+The bells line starts a swim from the west
 shore; the Great Rip carries a swimmer, the spout launches one."""
 from qdsl import L, T, quest, stage, obj
 import far_seas

@@ -51,7 +51,7 @@ var _action_t := 0.0
 var _action_len := 0.0
 var _flash := 0.0
 var _flash_overlay: ShaderMaterial
-## Placeholder rig description, filled by the builders (ChibiBuilder,
+## Placeholder rig description, filled by the builders (MannequinBuilder,
 ## CreatureBuilder): how the procedural animation should move it.
 var rig_kind: StringName = &"biped"   # biped | legged | float | serpent
 var legs: Array[Node3D] = []
@@ -131,7 +131,7 @@ func _build_placeholder() -> void:
 	match String(type.visual.get("family", "")):
 		"human":
 			rig_kind = &"biped"
-			ChibiBuilder.build(self, h, r)
+			MannequinBuilder.build(self, h, r)   # PLACEHOLDER — final design pending
 			_ensure_default_sockets()
 			return
 		"enemy":
@@ -497,6 +497,22 @@ func _animate_placeholder(delta: float) -> void:
 		rig.position.y = absf(sin(_phase)) * 0.05 * speed_ratio
 		rig.rotation.x = -0.12 * clampf(speed_ratio, 0.0, 1.3)
 		rig.rotation.z = _lean
+		# Two-segment limbs (MannequinBuilder): knees bend as the leg swings
+		# back and lifts, elbows stay soft and bend more when running.
+		var sp := clampf(speed_ratio, 0.0, 1.3)
+		for k in 2:
+			var shin_n: Node3D = _parts.get(&"shin_l" if k == 0 else &"shin_r")
+			if shin_n:
+				var ph := _phase + (0.0 if k == 0 else PI)
+				shin_n.rotation.x = 0.06 + maxf(sin(ph - 0.6), 0.0) * 1.1 * sp
+				match state:
+					&"fall", &"jump": shin_n.rotation.x = 0.9 if k == 0 else 0.35
+					&"ride": shin_n.rotation.x = 1.5
+					&"climb", &"climb_idle": shin_n.rotation.x = 0.7
+					&"swim": shin_n.rotation.x = 0.2 + maxf(sin(ph), 0.0) * 0.5
+			var fore_n: Node3D = _parts.get(&"forearm_l" if k == 0 else &"forearm_r")
+			if fore_n:
+				fore_n.rotation = Vector3(-0.18 - 0.75 * sp, 0, 0)
 		match state:
 			&"climb", &"climb_idle":
 				var c := sin(_phase * 0.8) if state == &"climb" else 0.0

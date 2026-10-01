@@ -1,7 +1,7 @@
 class_name TideBar
 extends StaticBody3D
 ## A sandbar / causeway stone that is dry at low tide and drowned at high
-## tide: walk out at low water, swim (or take the Bellhull) at high.
+## tide: walk out at low water, swim at high.
 
 const DRY_TOP := 0.35
 const DROWNED_TOP := -1.7

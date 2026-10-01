@@ -315,45 +315,6 @@ def pulses(total, period, offsets, res, decay, amps):
     return out
 
 
-def sfx4():
-    """Vantrel vehicles: engines (loops), water hull, capsule mechanics."""
-    global rng
-    rng = random.Random(1404)
-    n = lambda d: int(d * RATE)
-    # Heavy: slow lumpy twin (pulse pair + gap), deep sub, road rumble.
-    heavy = mix(pulses(2.0, 1 / 22.0, [0.0, 0.33], 105.0, 0.012, [1.0, 0.8]),
-                tone(44.0, 2.0, "sine", 0.35), [v * 0.5 for v in lowpass(noise(n(2.0)), 0.03)])
-    write("engine_heavy", loopify(lowpass(heavy, 0.25)), loop=True)
-    # Light: quick single, brighter resonance, a little rattle.
-    light = mix(pulses(1.0, 1 / 58.0, [0.0], 340.0, 0.005, [1.0]), [v * 0.25 for v in highpass(noise(n(1.0)), 0.2)],
-                tone(116.0, 1.0, "tri", 0.2))
-    write("engine_light", loopify(lowpass(light, 0.45)), loop=True)
-    # Capsule: electric-mechanical hum, gear ticks, faint servo whine.
-    hum = mix(tone(80.0, 2.0, "sine", 0.45), tone(160.0, 2.0, "tri", 0.18), tone(620.0, 2.0, "sine", 0.04),
-              pulses(2.0, 0.125, [0.0], 2400.0, 0.002, [0.35]))
-    write("engine_capsule", loopify(hum), loop=True)
-    # Hull on water: slapping burble over a low motor.
-    burble = lowpass(noise(n(2.0)), 0.06)
-    wob = [0.6 + 0.4 * math.sin(2 * math.pi * 3.0 * i / RATE) for i in range(n(2.0))]
-    water = mix([a * b for a, b in zip(burble, wob)], tone(70.0, 2.0, "sine", 0.25), tone(140.0, 2.0, "tri", 0.08))
-    write("hull_water", loopify(water, 0.2), loop=True)
-    write("vehicle_start", shaped(mix(tone(300.0, 0.35, "tri", 0.3, 1.8), [0.0] * n(0.3) + shaped(lowpass(noise(n(0.25)), 0.08), 0.002, 0.3),
-                                      [0.0] * n(0.3) + tone(90.0, 0.3, "sine", 0.5, -0.3)), 0.01, 0.6))
-    swirl = [v * math.sin(math.pi * i / n(0.9)) for i, v in enumerate(highpass(lowpass(noise(n(0.9)), 0.2), 0.03))]
-    clunk = [0.0] * n(0.75) + shaped(mix(tone(180.0, 0.35, "tri", 0.5, -0.3), lowpass(noise(n(0.12)), 0.3)), 0.001, 0.25)
-    write("vehicle_summon", mix(swirl, clunk))
-    write("vehicle_jump", shaped(mix(tone(210.0, 0.28, "tri", 0.5, 0.9), lowpass(noise(n(0.1)), 0.2)), 0.002, 0.5))
-    write("vehicle_land", shaped(mix(lowpass(noise(n(0.3)), 0.06), tone(85.0, 0.3, "sine", 0.6, -0.4)), 0.001, 0.35))
-    servo = tone(380.0, 0.6, "tri", 0.25, 1.4)
-    write("capsule_transform", mix(shaped(servo, 0.02, 0.8), [0.0] * n(0.6) + shaped(mix(tone(140.0, 0.3, "tri", 0.5, -0.3), lowpass(noise(n(0.3)), 0.25)), 0.001, 0.3),
-                                   [0.0] * n(0.65) + shaped(highpass(noise(n(0.4)), 0.3), 0.01, 0.5)))
-    write("capsule_fire", shaped(mix(tone(130.0, 0.2, "sine", 0.7, -0.55), shaped(lowpass(noise(n(0.14)), 0.2), 0.001, 0.3),
-                                     [v * 0.3 for v in highpass(noise(n(0.1)), 0.35)]), 0.001, 0.35))
-    write("capsule_overheat", mix(shaped(highpass(noise(n(0.9)), 0.3), 0.01, 0.6), tone(1800.0, 0.06, "sine", 0.3), [0.0] * n(0.12) + tone(1500.0, 0.06, "sine", 0.3)))
-    write("vehicle_unlock", mix(*[[0.0] * int(i * 0.16 * RATE) + pluck(f, 2.4, 0.4, 0.9994) for i, f in enumerate([220.0, 329.63, 440.0, 554.37, 659.25])],
-                                [0.0] * n(0.64) + shaped(mix(tone(1318.5, 1.6, "sine", 0.12), tone(1975.5, 1.6, "sine", 0.06)), 0.01, 0.8)))
-
-
 def music2():
     D = lambda *m: [440.0 * 2 ** ((x - 69) / 12) for x in m]
     # Boss: taiko-like drums, low fifths, urgent pentatonic plucks.
@@ -389,9 +350,6 @@ def ambience2():
 
 if __name__ == "__main__":
     import sys
-    if "--vehicles" in sys.argv:
-        sfx4()
-        raise SystemExit(0)
     if "--new" not in sys.argv:
         sfx()
         ambience()
@@ -400,5 +358,4 @@ if __name__ == "__main__":
     ambience2()
     music2()
     sfx3()   # last: earlier sounds keep their random streams
-    sfx4()   # own seeded stream
     print("audio written to", os.path.normpath(OUT))

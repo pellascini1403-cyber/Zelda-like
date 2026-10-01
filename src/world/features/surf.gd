@@ -26,17 +26,13 @@ func _physics_process(delta: float) -> void:
 		return
 	_t -= delta
 	var p := Game.player as Player
-	var body: Node3D = p.vehicle if p.vehicle else p
-	var d := Vector2(body.global_position.x - global_position.x, body.global_position.z - global_position.z).length()
+	var d := Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length()
 	if _t <= 0.0 and d < radius * 2.5:
 		_t = 1.2
 		Effects.splash(self, global_position + Vector3(randf_range(-radius, radius), 0.2, randf_range(-radius, radius)) * Vector3(1, 1, 0.5))
-	if d < radius and body.global_position.y < WorldGen.SEA_LEVEL + 1.5:
+	if d < radius and p.global_position.y < WorldGen.SEA_LEVEL + 1.5:
 		var push := dir * 9.0 + Vector3.UP * 1.5
-		if body is Vehicle:
-			(body as Vehicle).velocity += push * delta * 4.0
-		else:
-			p.velocity += push * delta * 4.0
+		p.velocity += push * delta * 4.0
 		if not _warned:
 			_warned = true
 			EventBus.toast.emit(tr("HINT_SURF"))

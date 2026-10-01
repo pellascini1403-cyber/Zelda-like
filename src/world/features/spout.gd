@@ -3,8 +3,7 @@ extends Node3D
 ## A sea spout: a rock blowhole under the surface that breathes. Bubbles
 ## rise and boil for a moment (the warning), then it bursts: a swimmer in
 ## its eye is thrown clear of the water — open the sail and the wind over
-## the rock carries you up. A boat only rocks on it: to fly, you leave the
-## Bellhull and swim in. Faster and higher in storms.
+## the rock carries you up. Faster and higher in storms.
 
 const LAUNCH := 24.0
 
@@ -82,13 +81,8 @@ func burst() -> void:
 	var p := Game.player as Player
 	if p == null:
 		return
-	var body: Node3D = p.vehicle if p.vehicle else p
-	var d := Vector2(body.global_position.x - global_position.x, body.global_position.z - global_position.z).length()
-	if d > radius or body.global_position.y > WorldGen.SEA_LEVEL + 2.0:
-		return
-	if p.vehicle:
-		# A capsule only rocks: it is too heavy to fly.
-		(p.vehicle as Vehicle).velocity.y += 3.0
+	var d := Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length()
+	if d > radius or p.global_position.y > WorldGen.SEA_LEVEL + 2.0:
 		return
 	var up := LAUNCH * (1.15 if Weather.storm > 0.4 else 1.0)
 	p.global_position.y = maxf(p.global_position.y, WorldGen.SEA_LEVEL + 0.3)

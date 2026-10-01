@@ -31,7 +31,7 @@ func _run() -> void:
 	test_ai_attack_pick()
 	test_placeholder_colors()
 	test_art_direction()
-	test_vehicles()
+	test_no_machines()
 	test_quests()
 	test_quest_objective_types()
 	test_quest_rewards()
@@ -294,7 +294,7 @@ func test_art_direction() -> void:
 		if e.kind in [EntityType.Kind.ENEMY, EntityType.Kind.BOSS]:
 			ok(fam == "enemy", "%s is in the enemy family" % e.id)
 		elif e.kind in [EntityType.Kind.PLAYER, EntityType.Kind.NPC]:
-			ok(fam == "human", "%s is chibi human" % e.id)
+			ok(fam == "human", "%s is in the human family" % e.id)
 		var v := EntityVisual.new()
 		v.setup(e)
 		ok(v.part(&"torso") != null and v.get_socket(&"hand_r") != null, "%s placeholder builds" % e.id)
@@ -318,47 +318,20 @@ func test_art_direction() -> void:
 	ok(ArtStyle.attack_color(DB.entity(&"ENEMY_THORNLING"), &"fire") == ElementFX.color(&"fire"), "elements keep their colour")
 
 
-## Premium vehicles: clear roles, one brand, earnable in play, never
-## pay-to-win, never needed by the story.
-func test_vehicles() -> void:
-	var v := DB.vehicles
-	ok(v.size() == 3, "three premium vehicles")
-	var heavy: Dictionary = v[&"longwake"]["handling"]
-	var light: Dictionary = v[&"sparrow"]["handling"]
-	var cap: Dictionary = v[&"bellhull"]["handling"]
-	ok(float(heavy["max_speed"]) > float(light["max_speed"]) and float(light["max_speed"]) > float(cap["max_speed"]), "speed: heavy > light > capsule")
-	ok(float(light.get("jump", 0)) > float(heavy.get("jump", 0)) and float(light["turn"]) > float(heavy["turn"]), "light bike: best jumps and agility")
-	ok(v[&"bellhull"].has("weapon") and not v[&"longwake"].has("weapon") and not v[&"sparrow"].has("weapon"), "only the capsule is armed")
-	ok(cap.has("water_speed") and not heavy.has("water_speed") and not light.has("water_speed"), "only the capsule is amphibious")
-	var w: Dictionary = v[&"bellhull"]["weapon"]
-	var shots := ceilf(1.0 / float(w["heat_per_shot"]))
-	var dps := float(w["damage"]) * shots / (shots * float(w["cooldown"]) + float(w["overheat_lock"]))
-	ok(dps <= 20.0 and float(w["boss_mult"]) <= 0.5, "capsule gun is support, not a shortcut (%.1f sustained dps)" % dps)
-	var main_reqs := {}
-	for q in DB.quests:
-		if q["type"] == "main":
-			for r in q.get("requires", []):
-				main_reqs[r] = true
-			for f in q.get("requires_flags", []):
-				ok(not "vehicle" in String(f), "main quest %s needs no vehicle flag" % q["id"])
-	for id in v:
-		var d: Dictionary = v[id]
-		var pr: Dictionary = DB.products.get(StringName(d["product"]), {})
-		ok(pr.get("type", "") == "non_consumable" and pr.get("premium_vehicle", false), "%s sold as an optional non-consumable" % id)
-		var qid := String(d["acquire"]["quest"])
-		ok(not main_reqs.has(qid), "%s quest is not on the critical path" % id)
-		ok(int(d["acquire"].get("glimmer", 0)) >= 400 and (d["acquire"]["items"] as Array).size() >= 3, "%s is hard to earn" % id)
-		var vis := VehicleVisual.new()
-		vis.setup(d)
-		var keys := {}
-		for mi in vis.find_children("M_*", "MeshInstance3D", true, false):
-			keys[String(mi.name).trim_prefix("M_")] = true
-		ok(keys.has("silver") and keys.has("rubber") and keys.has("glass") and keys.has("dark"), "%s: worn silver, black wheels, black glass" % id)
-		ok(vis.wheels.size() >= 1 and vis.seat() != null, "%s has wheels and a seat" % id)
-		vis.free()
+## The world is natural and fantastic: no machines. The Vantrel vehicles
+## (and their depot, garage, call, parts, quests and store products) were
+## removed for good; nothing may bring them back through the data.
+func test_no_machines() -> void:
+	ok(not ResourceLoader.exists("res://data/vehicles.json"), "no vehicle catalogue")
+	for pr in DB.products.values():
+		ok(not pr.get("grants", {}).has("vehicle") and not pr.get("premium_vehicle", false), "product %s grants no vehicle" % pr["id"])
+	ok(not DB.abilities.has(&"vehicle_call"), "no Vantrel Call")
 	for poi in DB.world.get("pois", []):
-		ok(not poi.has("vehicle"), "no vehicles parked around the map (%s)" % poi["id"])
-	ok(DB.products.has(&"remove_ads") and not DB.products[&"remove_ads"].get("grants", {}).has("vehicle"), "product catalogue is data")
+		ok(String(poi.get("type", "")) != "depot", "no vehicle depot (%s)" % poi["id"])
+	for q in DB.quests:
+		ok(not String(q["id"]).begins_with("vq_"), "no vehicle quests (%s)" % q["id"])
+	for id in [&"vantrel_plan_longwake", &"longwake_core", &"vantrel_plan_sparrow", &"sparrow_core", &"vantrel_plan_bellhull", &"bellhull_core"]:
+		ok(DB.item(id) == null, "no vehicle part %s" % id)
 
 
 func test_placeholder_colors() -> void:

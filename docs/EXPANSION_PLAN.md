@@ -1,5 +1,7 @@
 # VELA — Content & Variety Expansion Plan
 
+
+> **Note (later change):** the Vantrel premium vehicles (Longwake, Sparrow, Bellhull), their depot, garage, call, parts, quests and store products were removed when the art direction moved to a purely natural, fantastic world. Mentions of the Bellhull below are historical; nothing in the game depends on a vehicle any more.
 Status-tracked plan for the "Expansión profunda de contenido y variedad"
 phase. Source of truth for what exists: the content audit (baseline numbers
 below). Rule of the phase: **more distinct experiences, not bigger counters**.
