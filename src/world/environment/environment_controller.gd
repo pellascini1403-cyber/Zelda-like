@@ -78,6 +78,9 @@ func _ready() -> void:
 	env.adjustment_saturation = 1.05
 	env.adjustment_contrast = 1.06
 	env.adjustment_color_correction = ColorGrade.build_lut()
+	# Compatibility (Web, old GLES) applies height fog to everything below
+	# the camera and washes the image out: it keeps distance fog only.
+	_compat = RenderingServer.get_current_rendering_method() == "gl_compatibility"
 	world_env = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
@@ -162,6 +165,8 @@ func _process(delta: float) -> void:
 	var dawn := smoothstep(4.5, 6.5, h) * (1.0 - smoothstep(7.5, 10.0, h))
 	env.fog_height = 30.0 + dawn * 25.0
 	env.fog_height_density += dawn * 0.008
+	if _compat:
+		env.fog_height_density = 0.0
 
 	var cam := get_viewport().get_camera_3d()
 	# Sea mist banks: the view closes in to a few tens of metres, pale and
@@ -174,7 +179,8 @@ func _process(delta: float) -> void:
 		var pearl := Color(0.8, 0.82, 0.83) * clampf(daylight + 0.3, 0.5, 1.0)
 		env.fog_light_color = env.fog_light_color.lerp(pearl, mist * 0.9)
 		env.fog_density += mist * 0.035
-		env.fog_height_density += mist * 0.02
+		if not _compat:
+			env.fog_height_density += mist * 0.02
 		env.fog_sun_scatter = lerpf(0.45, 0.1, mist)
 		env.fog_aerial_perspective = lerpf(0.55, 0.0, mist)
 		env.fog_sky_affect = lerpf(0.55, 0.92, mist)
@@ -216,6 +222,7 @@ func _process(delta: float) -> void:
 
 var underwater := 0.0
 var mist := 0.0
+var _compat := false
 var _overlay: ColorRect
 
 

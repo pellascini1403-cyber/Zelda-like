@@ -130,6 +130,10 @@ func _add_mm(transforms: Array, mesh_key: StringName, mat_key: StringName, shado
 		return
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
+	# Explicit white instance colours: the Compatibility renderer (Web, old
+	# GLES devices) otherwise feeds the custom data into COLOR and the
+	# plants render black.
+	mm.use_colors = true
 	mm.use_custom_data = true
 	mm.mesh = MeshKit.get_mesh(mesh_key)
 	mm.instance_count = transforms.size()
@@ -137,6 +141,7 @@ func _add_mm(transforms: Array, mesh_key: StringName, mat_key: StringName, shado
 	rng.seed = hash(coord) + hash(mesh_key)
 	for i in transforms.size():
 		mm.set_instance_transform(i, transforms[i])
+		mm.set_instance_color(i, Color.WHITE)
 		mm.set_instance_custom_data(i, Color(rng.randf(), 0, 0, 0))
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm

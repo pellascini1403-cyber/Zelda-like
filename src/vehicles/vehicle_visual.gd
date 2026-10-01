@@ -31,6 +31,7 @@ var _collar: Node3D
 var _prop: Node3D
 var _lamp: SpotLight3D
 var _geoms: Array[GeometryInstance3D] = []
+var _flash_overlay: ShaderMaterial
 var _groups: Dictionary = {}          # Node3D -> {mat_key: SurfaceTool}
 var _lean := 0.0
 var _recoil := 0.0
@@ -445,7 +446,4 @@ func set_headlamp(on: bool) -> void:
 
 
 func set_flash(amount: float, color: Color = Color.WHITE) -> void:
-	for g in _geoms:
-		if is_instance_valid(g) and g.material_override is ShaderMaterial:
-			g.set_instance_shader_parameter(&"flash", amount)
-			g.set_instance_shader_parameter(&"flash_color", color)
+	_flash_overlay = FlashOverlay.apply(_geoms, _flash_overlay, amount, color)

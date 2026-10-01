@@ -13,8 +13,6 @@ uniform vec3 energy_color : source_color = vec3(0.54, 0.24, 1.0);
 uniform float energy = 0.3;
 uniform float rim = 0.55;
 uniform float roughness = 0.4;
-instance uniform float flash = 0.0;
-instance uniform vec3 flash_color : source_color = vec3(1.0, 1.0, 1.0);
 
 varying vec3 obj;
 
@@ -37,5 +35,5 @@ void fragment() {
 	ROUGHNESS = roughness;
 	SPECULAR = 0.6;
 	METALLIC = 0.2;
-	EMISSION = energy_color * (crack * 3.0 * pulse + fres * fres * rim) + flash_color * flash * 1.5;
+	EMISSION = energy_color * (crack * 3.0 * pulse + fres * fres * rim);
 }

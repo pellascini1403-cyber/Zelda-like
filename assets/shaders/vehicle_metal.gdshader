@@ -13,8 +13,6 @@ uniform float wear = 0.55;          // 0 = showroom, 1 = decades on the road
 uniform float dirt_height = 0.55;   // metres from the ground that collect dust
 uniform vec3 dirt_color : source_color = vec3(0.34, 0.3, 0.25);
 uniform float scratches = 1.0;
-instance uniform float flash = 0.0;
-instance uniform vec3 flash_color : source_color = vec3(1.0);
 
 varying vec3 obj;
 varying vec3 onrm;
@@ -57,5 +55,4 @@ void fragment() {
 	METALLIC = metallic * (1.0 - dust * 0.6);
 	ROUGHNESS = clamp(roughness + 0.22 * patches * wear + dust * 0.4 - scratch * 0.12, 0.05, 1.0);
 	SPECULAR = 0.5;
-	EMISSION = flash_color * flash * 1.2;
 }

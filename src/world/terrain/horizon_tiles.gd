@@ -151,11 +151,13 @@ func _add_trees(root: Node3D, transforms: Array, mesh_key: StringName, mat_key: 
 		return
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true   # see TerrainChunk._add_mm (Compatibility renderer)
 	mm.use_custom_data = true
 	mm.mesh = MeshKit.get_mesh(mesh_key)
 	mm.instance_count = transforms.size()
 	for i in transforms.size():
 		mm.set_instance_transform(i, transforms[i])
+		mm.set_instance_color(i, Color.WHITE)
 		mm.set_instance_custom_data(i, Color(randf(), 0, 0, 0))
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm

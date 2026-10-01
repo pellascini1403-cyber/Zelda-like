@@ -50,6 +50,7 @@ var _action: StringName = &""
 var _action_t := 0.0
 var _action_len := 0.0
 var _flash := 0.0
+var _flash_overlay: ShaderMaterial
 ## Placeholder rig description, filled by the builders (ChibiBuilder,
 ## CreatureBuilder): how the procedural animation should move it.
 var rig_kind: StringName = &"biped"   # biped | legged | float | serpent
@@ -376,10 +377,7 @@ func play_action(action: StringName, duration: float = 0.4) -> void:
 
 func set_flash(amount: float, color: Color = Color.WHITE) -> void:
 	_flash = amount
-	for g in _geoms:
-		if is_instance_valid(g):
-			g.set_instance_shader_parameter(&"flash", amount)
-			g.set_instance_shader_parameter(&"flash_color", color)
+	_flash_overlay = FlashOverlay.apply(_geoms, _flash_overlay, amount, color)
 
 
 ## 0 = solid, 1 = gone (phasing creatures, things under water).
