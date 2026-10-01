@@ -24,6 +24,11 @@ enum Kind { PLAYER, ENEMY, ANIMAL, NPC, BOSS }
 ## Maps logical animation states (idle, move, run, attack, hit, die...) to
 ## clip names inside the final model's AnimationPlayer.
 @export var anim_map: Dictionary = {}
+## Real rigged models only (docs/CHARACTER_PIPELINE.md): fit_height (bool,
+## scale the model to the collider height), palette (slot -> colour, opt-in
+## tint of skin/hair/cloth_a... material slots), spring_bones (extra chain
+## roots besides spring_* bones), spring {stiffness, damping, gravity}.
+@export var model_options: Dictionary = {}
 ## Visual profile from data/visuals.json (family, rank, species, body
 ## variation...). Filled by DB; presentation only, gameplay never reads it.
 @export var visual: Dictionary = {}
@@ -76,6 +81,7 @@ static func from_dict(d: Dictionary) -> EntityType:
 	var off: Array = d.get("model_offset", [0, 0, 0])
 	e.model_offset = Vector3(off[0], off[1], off[2])
 	e.anim_map = d.get("anim_map", {})
+	e.model_options = d.get("model_options", {})
 	var col: Dictionary = d.get("collider", {})
 	e.collider_radius = col.get("radius", 0.4)
 	e.collider_height = col.get("height", 1.8)

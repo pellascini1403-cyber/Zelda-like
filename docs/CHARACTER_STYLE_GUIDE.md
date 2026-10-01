@@ -106,6 +106,8 @@ La silueta de la especie manda: la araña parece araña y el lobo parece lobo. L
 
 ## 4. Humanos: anatomía estilizada (maniquí PLACEHOLDER)
 
+> **REGLA DEL PROYECTO.** Los personajes principales y los NPC humanos definitivos son **modelos 3D reales**: anatomía completa, rostro, cabello y ropa modelados, rig, materiales y animaciones. **Nunca** se construyen con primitivas generadas por código (cápsulas, cilindros, esferas, segmentos, tubos, piezas independientes). El maniquí es un placeholder técnico **congelado**: ya validó proporciones, escala, colisiones y animaciones, y no se refina más visualmente. Cómo entra un modelo real: [`docs/CHARACTER_PIPELINE.md`](CHARACTER_PIPELINE.md).
+
 > **PLACEHOLDER — DISEÑO FINAL PENDIENTE.** Los humanos se dibujan hoy con un maniquí anatómico (`MannequinBuilder`) que solo sirve para validar proporciones, silueta, escala, distancia de cámara, luz sobre el cuerpo y movimiento. No es un diseño de personaje: no tiene rostro, ni ropa, ni peinado definitivos. Cuando lleguen los modelos finales, se integran con el mismo rig y sockets y el maniquí deja de usarse.
 
 **Regla anatómica común** (fracción de la altura del collider, `mannequin` en `art_style.json`; jugador 1,75 m):
@@ -197,7 +199,7 @@ No se usan logos, símbolos, armas, criaturas ni personajes de ninguna obra exis
 Gameplay y representación siguen separados:
 - **Gameplay** (`entities.json`): identidad, collider, estadísticas, IA, ataques, drops, periodo, diálogo.
 - **Representación**: `model`, `model_scale`, `model_offset`, `anim_map` (en `entities.json`) y el perfil de `visuals.json` (familia, rango, especie, variación).
-- El perfil solo construye **placeholders**. Si `model` apunta a tu escena, se instancia **tal cual**: sin recolorear, sin cambiar proporciones, sin añadir piezas.
+- Si `model` apunta a tu escena, se instancia **tal cual**: sin cambiar proporciones ni añadir piezas. El perfil solo **elige** entre las variantes que trae el modelo (`outfit_*`, `hair_*`, `headwear_*`, `acc_*`), y solo se recolorea si la entidad declara `model_options.palette`.
 - Los efectos de familia siguen funcionando con tu modelo porque no dependen de la malla: telegraphs, proyectiles, flash de windup y disolución violeta.
-- Sockets opcionales en tu escena: `socket_hand_r`, `socket_back`, `socket_head`, `socket_center`. Los que falten se crean por defecto.
+- Sockets: se unen solos a los huesos del rig (`RightHand`, `UpperChest`, `Head`, `Hips`); un nodo `socket_<name>` en tu escena tiene prioridad. Detalles en [`docs/CHARACTER_PIPELINE.md`](CHARACTER_PIPELINE.md).
 - Añadir una especie nueva significa una entrada en `entities.json` (gameplay) y otra en `visuals.json` (look). Un test valida que toda entidad tiene perfil, que la familia coincide con su tipo y que el placeholder se construye.

@@ -3,11 +3,16 @@ extends RefCounted
 ## ============================================================================
 ##  PLACEHOLDER — DISEÑO FINAL PENDIENTE (final design pending)
 ## ============================================================================
+## FROZEN TECHNICAL PLACEHOLDER. Do not refine its look: final characters are
+## real rigged 3D models (docs/CHARACTER_PIPELINE.md, CharacterModel), never
+## code primitives. This builder only keeps proportions, scale, collisions and
+## animation testable until those models arrive.
+##
 ## Anatomy mannequin for the human family (player and NPCs). It exists ONLY
 ## to validate proportions, silhouette, scale, camera distance, light on the
 ## body and motion until the definitive character models arrive. It is not a
 ## character design: no face, no clothes, no costume details. When a real
-## model is delivered (EntityType.model_path), EntityVisual uses it instead
+## model is delivered (EntityType.model), EntityVisual uses it instead
 ## and this builder is no longer involved.
 ##
 ## Anatomy rule (docs/CHARACTER_STYLE_GUIDE.md §4, data/art_style.json

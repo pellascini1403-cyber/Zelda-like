@@ -64,6 +64,7 @@ El *smoke test* recorre la checklist del primer build: carga del mundo, caminar,
 - [Arquitectura](docs/ARCHITECTURE.md): capas, flujo de datos, cómo añadir contenido
 - [Sistemas](docs/SYSTEMS.md): propósito, dependencias, uso y extensión de cada sistema
 - [Assets y placeholders](docs/ASSETS.md): **cómo reemplazar placeholders por tus modelos finales**
+- [Pipeline de personajes 3D](docs/CHARACTER_PIPELINE.md): rig, huesos, animaciones, materiales, variantes de NPC, física secundaria y `--check-model`. Los personajes definitivos son modelos reales, nunca primitivas.
 - [Rendimiento móvil](docs/PERFORMANCE.md): presupuestos, mediciones reales, ajustes
 - [Controles](docs/CONTROLS.md) · [Build y exportación](docs/BUILD.md) · [Debug](docs/DEBUG.md) · [Publicación](docs/PUBLISHING.md) · [Diseño y hoja de ruta](docs/DESIGN.md)
 

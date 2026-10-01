@@ -65,6 +65,8 @@ Cultura original de la isla, construida en torno al viento y las velas:
 ### Personajes (placeholders)
 Los humanos usan un **maniquí anatómico estilizado** (PLACEHOLDER — diseño final pendiente): unas 7,5 cabezas, extremidades largas, cuello fino y orejas ligeramente puntiagudas. Sirve solo para validar proporciones, escala, cámara, luz y movimiento hasta que lleguen los modelos definitivos (ver `docs/CHARACTER_STYLE_GUIDE.md` §4). No hay proporciones chibi.
 
+> **REGLA DEL PROYECTO.** Los personajes principales y los NPC humanos definitivos son **modelos 3D reales**: anatomía completa, rostro, cabello y ropa modelados, rig, materiales y animaciones. **Nunca** se construyen con primitivas generadas por código (cápsulas, cilindros, esferas, segmentos, tubos, piezas independientes). El maniquí es un placeholder técnico **congelado**: ya validó proporciones, escala, colisiones y animaciones, y no se refina más visualmente. Cómo entra un modelo real: [`docs/CHARACTER_PIPELINE.md`](CHARACTER_PIPELINE.md).
+
 ### Mundo sin máquinas
 El mundo es natural y fantástico: no hay vehículos ni tecnología moderna. Los vehículos Vantrel (motos, cápsula, depósito, garaje, llamada, piezas, misiones y productos de tienda) se eliminaron; un test unitario (`test_no_machines`) impide que vuelvan por los datos.
 

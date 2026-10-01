@@ -32,6 +32,7 @@ func _run() -> void:
 	test_placeholder_colors()
 	test_art_direction()
 	test_no_machines()
+	test_character_pipeline()
 	test_quests()
 	test_quest_objective_types()
 	test_quest_rewards()
@@ -817,3 +818,68 @@ func test_ecosystems() -> void:
 			fauna_regions[rg] = true
 	for r in DB.regions:
 		ok(fauna_regions.has(String(r)), "region %s has ambient fauna" % r)
+
+
+## Real rigged character models plug into EntityVisual by convention
+## (docs/CHARACTER_PIPELINE.md): bones -> sockets, profile -> outfit/hair
+## meshes, opt-in palette on material slots, spring_* chains, clip mapping,
+## height fit. Driven by a test-only rigged fixture (boxes, no art).
+func test_character_pipeline() -> void:
+	var fixture = load("res://tests/character_fixture.gd")
+	var path: String = fixture.save()
+	ok(path != "" and ResourceLoader.exists(path), "character fixture saved")
+	if path == "":
+		return
+	var probe: Node3D = (load(path) as PackedScene).instantiate()
+	var base: EntityType = DB.entities[&"PLAYER"]
+	var rep := CharacterModel.analyze(probe, base)
+	ok(rep.errors.is_empty(), "rigged fixture passes the model check %s" % [rep.errors])
+	ok(rep.springs.size() == 3 and rep.clips.has("Idle") and rep.tris > 0, "check reports springs, clips and triangles")
+	ok(absf(rep.height - 1.8) < 0.01, "check measures the rest height (%.2f)" % rep.height)
+	probe.free()
+	var bare := Node3D.new()
+	ok(not CharacterModel.analyze(bare).errors.is_empty(), "an unrigged model is rejected by the check")
+	bare.free()
+
+	var e: EntityType = base.duplicate()
+	e.model = path
+	e.anim_map = {"idle": "Idle", "move": "Run", "attack": "Attack", "hit": "Hit", "die": "Death"}
+	e.model_options = {"fit_height": true, "palette": {"cloth_a": "#3a5f8a"}}
+	e.visual = {"family": "human", "outfit": "coat", "hair": "ponytail", "accessories": []}
+	var v := EntityVisual.new()
+	get_tree().root.add_child(v)
+	v.setup(e)
+	ok(not v.is_placeholder, "a model path replaces the placeholder")
+	var hand := v.get_socket(&"hand_r")
+	ok(hand is BoneAttachment3D and (hand as BoneAttachment3D).bone_name == "RightHand", "hand_r socket follows the RightHand bone")
+	ok(v.get_socket(&"back") is BoneAttachment3D and (v.get_socket(&"back") as BoneAttachment3D).bone_name == "UpperChest", "back socket follows UpperChest")
+	var m: Node3D = v.get_child(0)
+	ok(m.find_child("outfit_coat").visible and not m.find_child("outfit_tunic").visible, "profile picks the outfit mesh")
+	ok(m.find_child("hair_ponytail").visible and not m.find_child("hair_swept").visible, "profile picks the hair mesh")
+	ok(not m.find_child("acc_scarf").visible, "unlisted accessories are hidden")
+	ok(absf(m.scale.y - 1.75 / 1.8) < 0.01, "fit_height scales the model to the collider")
+	var coat: MeshInstance3D = m.find_child("outfit_coat")
+	var tinted := coat.get_surface_override_material(0) as StandardMaterial3D
+	ok(tinted != null and tinted.albedo_color.is_equal_approx(Color("#3a5f8a")), "palette tints the cloth_a slot")
+	var body: MeshInstance3D = m.find_child("Body")
+	ok(body.get_surface_override_material(0) == null, "slots without a palette entry keep the model's material")
+	var v2 := EntityVisual.new()
+	get_tree().root.add_child(v2)
+	v2.setup(e)
+	var coat2: MeshInstance3D = v2.get_child(0).find_child("outfit_coat")
+	ok(coat2.get_surface_override_material(0) == tinted, "NPCs with the same palette share one material")
+	ok(v.resolve_clip(&"sprint") == "Run" and v.resolve_clip(&"attack_2") == "Attack" and v.resolve_clip(&"die") == "Death", "logical states resolve through anim_map + FALLBACK")
+	var springs := m.find_children("Spring_*", "SpringBoneChain", true, false)
+	ok(springs.size() == 1, "one spring chain per spring_* root")
+	if springs.size() == 1:
+		var chain: SpringBoneChain = springs[0]
+		var skel := chain.get_skeleton()
+		var bi := skel.find_bone("spring_hair_1")
+		chain._process_modification()
+		var still := skel.get_bone_pose_rotation(bi)
+		v.global_position += Vector3(0.25, 0, 0)
+		chain._process_modification()
+		var moved := skel.get_bone_pose_rotation(bi)
+		ok(still.is_equal_approx(Quaternion.IDENTITY) and not moved.is_equal_approx(Quaternion.IDENTITY), "hair chain rests on the pose and lags when the body moves")
+	v.free()
+	v2.free()

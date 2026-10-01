@@ -70,6 +70,8 @@ func setup(entity_type: EntityType) -> void:
 		c.queue_free()
 	_parts.clear()
 	_sockets.clear()
+	_springs.clear()
+	_skeleton = null
 	_geoms.clear()
 	legs.clear()
 	wings.clear()
@@ -84,11 +86,15 @@ func setup(entity_type: EntityType) -> void:
 
 
 # --- Final model path ------------------------------------------------------------------
+## Real rigged characters (docs/CHARACTER_PIPELINE.md). Gameplay never
+## changes: the collider, AI and combat stay on the parent body.
 func _build_model() -> void:
 	is_placeholder = false
 	var scene: PackedScene = load(type.model)
 	_model = scene.instantiate()
-	_model.scale = Vector3.ONE * type.model_scale
+	var opts := type.model_options
+	var s := CharacterModel.fit_scale(_model, type.collider_height) if opts.get("fit_height", false) else type.model_scale
+	_model.scale = Vector3.ONE * s * float(type.visual.get("scale", 1.0))
 	_model.position = type.model_offset
 	add_child(_model)
 	_anim = _model.find_child("AnimationPlayer", true, false)
@@ -103,10 +109,49 @@ func _build_model() -> void:
 	for n in _model.find_children("*", "Node3D", true, false):
 		if n.name.begins_with("socket_"):
 			_sockets[StringName(n.name.trim_prefix("socket_"))] = n
+	# Variants of one model per NPC: outfit/hair/headwear/accessory meshes
+	# picked by the visual profile, optional palette on tintable slots.
+	CharacterModel.apply_variant(_model, type.visual)
+	CharacterModel.apply_palette(_model, opts.get("palette", {}))
+	_skeleton = CharacterModel.find_skeleton(_model)
+	if _skeleton:
+		_sockets.merge(CharacterModel.bind_sockets(_skeleton, _sockets))
+		_springs = CharacterModel.add_springs(_skeleton, opts)
 	for g in _model.find_children("*", "GeometryInstance3D", true, false):
 		_geoms.append(g)
+		(g as GeometryInstance3D).visibility_range_end = BODY_VISIBLE_RANGE * maxf(1.0, type.collider_height / 2.0)
 	# Sockets the model does not define fall back to sensible defaults.
 	_ensure_default_sockets()
+	if _anim:
+		_play_clip(state)
+
+
+## Distance LOD for real models: far characters stop evaluating animation and
+## secondary motion (the skeleton keeps its last pose), near ones run both.
+const MODEL_ANIM_RANGE := 70.0
+const MODEL_SPRING_RANGE := 22.0
+var _skeleton: Skeleton3D
+var _springs: Array[SpringBoneChain] = []
+var _lod_t := 0.0
+
+
+func _update_model_lod(delta: float) -> void:
+	_lod_t -= delta
+	if _lod_t > 0.0:
+		return
+	_lod_t = 0.25
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	var d := global_position.distance_to(cam.global_position) if cam else 0.0
+	var near_anim := d < MODEL_ANIM_RANGE * maxf(1.0, type.collider_height / 2.0)
+	if _anim:
+		_anim.active = near_anim
+	if _tree:
+		_tree.active = near_anim
+	var springs_on := d < MODEL_SPRING_RANGE and Quality.level >= 1   # MEDIUM and up
+	for sp in _springs:
+		if sp.active != springs_on:
+			sp.active = springs_on
+			sp.reset()
 
 
 # --- Placeholder path -----------------------------------------------------------------------
@@ -429,6 +474,8 @@ func _process(delta: float) -> void:
 		_tree.set("parameters/speed", speed_ratio)
 	if is_placeholder:
 		_animate_placeholder(delta)
+	else:
+		_update_model_lod(delta)
 
 
 ## Procedural pose animation for the mannequin placeholders. Enough to read

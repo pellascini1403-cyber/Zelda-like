@@ -27,9 +27,13 @@ Los placeholders siguen la dirección artística de personajes (`docs/CHARACTER_
 - **Enemigos:** familia corrupta negro + violeta (`CreatureBuilder`, `assets/shaders/enemy_body.gdshader`); el color único de la especie queda como un matiz sutil del cuerpo negro.
 - **Fauna:** formas redondas, color sólido, sin violeta.
 
-`flash` sigue siendo solo feedback de gameplay. Un test comprueba que el jugador es blanco, que cada tipo tiene un color único y que cada entidad tiene perfil visual de su familia. Tus modelos finales **nunca** se recolorean ni se modifican: el perfil visual solo afecta a los placeholders.
+`flash` sigue siendo solo feedback de gameplay. Un test comprueba que el jugador es blanco, que cada tipo tiene un color único y que cada entidad tiene perfil visual de su familia. Tus modelos finales no se recolorean ni se modifican: con un modelo real, el perfil solo elige entre las variantes que trae el propio modelo, y el tinte por slot es opt-in (`model_options.palette`).
 
 ## Reemplazar un placeholder por tu modelo final
+
+> **REGLA DEL PROYECTO.** Los personajes principales y los NPC humanos definitivos son **modelos 3D reales**: anatomía completa, rostro, cabello y ropa modelados, rig, materiales y animaciones. **Nunca** se construyen con primitivas generadas por código (cápsulas, cilindros, esferas, segmentos, tubos, piezas independientes). El maniquí es un placeholder técnico **congelado**: ya validó proporciones, escala, colisiones y animaciones, y no se refina más visualmente. Cómo entra un modelo real: [`docs/CHARACTER_PIPELINE.md`](CHARACTER_PIPELINE.md).
+
+**Personajes humanos:** sigue [`docs/CHARACTER_PIPELINE.md`](CHARACTER_PIPELINE.md), que cubre formato, rig, huesos, animaciones, materiales, variantes de NPC, colisiones, física secundaria, rendimiento y la herramienta `-- --check-model`. Lo de abajo es el resumen general, válido también para criaturas.
 
 1. Importa el modelo (`.glb` / `.gltf` / `.fbx`) en `assets/models/` y guárdalo como escena (`.tscn`), o usa el `.glb` directamente.
 2. En `data/entities.json`, en la entidad correspondiente:
@@ -45,7 +49,7 @@ Qué hace `EntityVisual` con tu modelo:
 - Lo instancia con la escala y el desplazamiento indicados. La orientación esperada es: frente hacia −Z y origen en los pies.
 - Busca un `AnimationPlayer` en el modelo y traduce los estados lógicos a tus clips mediante `anim_map` (si un clip no existe, se ignora).
 - **Sockets:** los nodos cuyo nombre empieza por `socket_` se registran (`socket_hand_r`, `socket_back`, `socket_head`, `socket_center`). Si el modelo no los trae, se crean posiciones por defecto a partir del collider. Las armas se enganchan en `hand_r` y la Vela en `back`.
-- Los *flashes* de golpe usan `set_instance_shader_parameter("flash")`. Si tu material no declara ese parámetro de instancia, simplemente no se verá el flash; opcionalmente añade `instance uniform float flash;` a tu shader.
+- Los *flashes* de golpe funcionan con cualquier material: `FlashOverlay` pone un `material_overlay` aditivo en tus mallas solo mientras dura el destello. No hace falta tocar tus shaders.
 
 Estados lógicos que el gameplay reproduce (`EntityVisual.LOGICAL`): `idle, walk, run, sprint, move, jump, fall, land, climb, climb_idle, ledge_climb, glide, swim, dodge, attack_1, attack_2, attack_3, attack, charge, spin, thrust, slam, lunge, windup, block, parry, hit, die, interact, gather, throw, eat, ride, roar`. No hace falta tenerlos todos: si falta un clip se usa el de `FALLBACK` (p. ej. `sprint → run → move → idle`, `parry → block`, `ledge_climb → climb`).
 
@@ -72,15 +76,16 @@ Las estructuras procedurales (`StructureKit`) son placeholders de *layout*: sus 
 
 ## Presupuestos recomendados para los assets finales (móvil)
 
-| Tipo | Triángulos LOD0 | Texturas | Materiales |
-|---|---|---|---|
-| Protagonista | ≤ 15k | 1× 2048 (atlas) | 1–2 |
-| Enemigo común | ≤ 6k | 1× 1024 | 1 |
-| Jefe | ≤ 25k | 1–2× 2048 | 1–2 |
-| NPC / animal | ≤ 5k | 1× 1024 | 1 |
-| Arma | ≤ 1,5k | 512 | 1 |
+| Tipo | Triángulos LOD0 | Huesos | Texturas | Materiales |
+|---|---|---|---|---|
+| Protagonista | ≤ 20k | ≤ 75 | 1–2× 2048 | ≤ 4 |
+| NPC | ≤ 10k | ≤ 65 | 1× 1024 | ≤ 3 |
+| Enemigo común | ≤ 8k | ≤ 60 | 1× 1024 | ≤ 2 |
+| Jefe | ≤ 30k | ≤ 90 | 1–2× 2048 | ≤ 4 |
+| Animal | ≤ 6k | ≤ 50 | 1× 1024 | ≤ 2 |
+| Arma | ≤ 1,5k | — | 512 | 1 |
 
-Incluye LOD1/LOD2 (el importador de Godot puede generarlos) y usa esqueletos de ≤ 60 huesos para personajes. Comprime las texturas con ETC2/ASTC (ya activado en el proyecto).
+Son los valores de `CharacterModel.BUDGET`, que `-- --check-model` comprueba. Incluye LOD1/LOD2 (el importador de Godot puede generarlos). Comprime las texturas con ETC2/ASTC (ya activado en el proyecto).
 
 ## Generadores de placeholders
 - `tools/gen_icons.py`: iconos SVG de glifo blanco (se tiñen por categoría).
